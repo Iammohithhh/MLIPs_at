@@ -36,6 +36,17 @@ const isCurrent = (href?: string) => !!href && (path === href || path.startsWith
     </nav>
 
     <div class="tools">
+      <button type="button" class="search-btn" data-search-open aria-label="Search the Atlas (Ctrl K)">
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"
+          ><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path
+            d="m13 13 4 4"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"></path></svg
+        >
+        <span class="search-label">Search</span>
+        <kbd data-search-kbd>Ctrl K</kbd>
+      </button>
       <ThemeToggle />
       <details class="mobile-menu">
         <summary aria-label="Menu">
@@ -65,7 +76,55 @@ const isCurrent = (href?: string) => !!href && (path === href || path.startsWith
   </div>
 </header>
 
+<script>
+  // The palette module (Orama + Pagefind) loads only when first opened.
+  const load = () => import('~/lib/search/palette').then((m) => m.open());
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+  document.querySelectorAll<HTMLElement>('[data-search-kbd]').forEach((k) => (k.textContent = isMac ? '⌘K' : 'Ctrl K'));
+  document.querySelectorAll<HTMLButtonElement>('[data-search-open]').forEach((b) => {
+    b.setAttribute('aria-label', `Search the Atlas (${isMac ? '⌘' : 'Ctrl'} K)`);
+    b.addEventListener('click', load);
+  });
+  document.addEventListener('keydown', (e) => {
+    const typing = (e.target as HTMLElement | null)?.closest('input, textarea, select, [contenteditable="true"]');
+    if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      load();
+    } else if (e.key === '/' && !typing) {
+      e.preventDefault();
+      load();
+    }
+  });
+</script>
+
 <style>
+  .search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 2.1rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.5rem;
+    background: var(--atlas-surface);
+    color: var(--atlas-ink-muted);
+    font: 500 0.8125rem var(--font-sans);
+    cursor: pointer;
+  }
+  .search-btn:hover {
+    border-color: var(--atlas-rule-strong);
+    color: var(--atlas-ink);
+  }
+  .search-btn kbd {
+    font: 0.6875rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  @media (max-width: 40rem) {
+    .search-label,
+    .search-btn kbd {
+      display: none;
+    }
+  }
   .site-header {
     position: sticky;
     top: 0;

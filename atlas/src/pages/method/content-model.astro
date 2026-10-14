@@ -105,7 +105,7 @@ const rules = [
               ) : (
                 <ul>
                   {byCollection[c].map((r) => (
-                    <li class={`rec status-${r.status}`}>
+                    <li class={`rec status-${r.status}`} id={`rec-${c}-${r.id}`}>
                       <span class="rec-title" set:html={typesetInline(r.title)} />
                       <span class="rec-meta">
                         <code>{r.id}</code>
@@ -219,6 +219,7 @@ const rules = [
     color: var(--atlas-ink-faint);
   }
   .rec {
+    scroll-margin-top: 6rem;
     display: grid;
     gap: 0.25rem;
     padding-block: 0.55rem;
