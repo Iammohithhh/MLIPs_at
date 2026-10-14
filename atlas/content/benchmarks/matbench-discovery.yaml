@@ -10,8 +10,8 @@ metrics:
   - { id: f1, name: F1 score for stability classification, unit: '', higher_is_better: true }
   - { id: kappa-srme, name: κ_SRME (thermal-conductivity error), unit: '', higher_is_better: false }
   - { id: rmsd, name: Relaxed-structure RMSD, unit: '', higher_is_better: false }
-  - { id: cps, name: Combined performance score, unit: '', higher_is_better: true, description: Weighted composite of other metrics; weights are a protocol choice. }
+  - { id: cps, name: Combined performance score, unit: '', higher_is_better: true, description: 'Defined on the website and in code (not the paper): F1 50%, κ_SRME 40%, RMSD 10%, on unique-prototype scores; weights are adjustable.' }
 protocols:
-  - { id: unique-prototypes, name: Unique-prototype test set, description: WBM test structures whose prototypes do not occur in the Materials Project training data. }
+  - { id: unique-prototypes, name: Unique-prototype test set, description: 'WBM structures after removing protostructures that occur in the Materials Project and duplicates within WBM (215,488 structures).' }
   - { id: full-test-set, name: Full test set, description: All WBM test structures. }
 review: { status: draft, last_checked: 2026-10-14, notes: Metric and protocol definitions to be synced from the benchmark repository. }

@@ -8,4 +8,8 @@ introduced_in: deng2023chgnet
 levels_of_theory: [pbe-pbeu-mp]
 configuration_types: [relaxation-trajectory]
 claims: [mptrj-level-of-theory]
-review: { status: draft, last_checked: 2026-10-14, notes: Add the structure count with its locator once checked against the full text. }
+size:
+  structures: 1580395
+  approximate: false
+  source: { paper: deng2023chgnet, locator: 'Results › Materials Project Trajectory Dataset' }
+review: { status: draft, last_checked: 2026-10-14, notes: 'Parsed from the September 2022 Materials Project database; split by 145,923 mp-ids.' }

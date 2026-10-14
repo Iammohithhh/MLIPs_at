@@ -7,5 +7,5 @@ identifiers:
   arxiv: '2206.07697'
 edges:
   - { type: compares-against, target: batzner2022nequip, documented: true }
-verified_against: secondary
+verified_against: full-text
 review: { status: draft, last_checked: 2026-10-14 }

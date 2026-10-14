@@ -1,0 +1,20 @@
+name: MACE-MP-0a medium (2023-12-03)
+family: mace
+implementation: mace
+version: 2023-12-03-mace-128-L1_epoch-199.model
+release: { date: 2023-12-03, source: batatia2023foundation }
+elements: 89
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: Trained on raw VASP energies, not the Materials Project-corrected energies used by CHGNet (mace-mp README).
+outputs: [energy, forces, stress]
+licence: MIT
+weights: { url: 'https://github.com/ACEsuit/mace-mp' }
+known_issues: [softening-phonons]
+claims: [mace-mp-0-trained-on-mptrj]
+review:
+  status: draft
+  last_checked: 2026-10-14
+  notes: Element count and licence from the mace-mp README (not the paper). Small (L0) and large (L2) variants and the later 0b/0b2/0b3 releases are separate checkpoints.

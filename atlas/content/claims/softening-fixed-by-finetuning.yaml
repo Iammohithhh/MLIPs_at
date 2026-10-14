@@ -1,8 +1,12 @@
 statement: >-
-  Fine-tuning a universal MLIP on a small number of additional reference structures largely corrects the
-  systematic softening.
+  For a specific chemical system, rescaling a universal model's energy by one scalar fitted to a single high-energy
+  configuration (a single force component) largely removes the softening locally — e.g. CHGNet's softening scale
+  rises from 0.859 to 0.965 in the paper's example. It is a local correction, not a global fix.
 grade: PUBLISHED_RESULT
 sources:
-  - { paper: deng2024softening }
-verified_against: abstract
-review: { status: draft, last_checked: 2026-10-14, notes: Quantify "small number" from the paper before publication. }
+  - { paper: deng2024softening, locator: 'arXiv v1 Sec. II.H, Eq. 4 and Fig. 6a; npj Fig. 6' }
+verified_against: full-text
+review:
+  status: draft
+  last_checked: 2026-10-14
+  notes: The arXiv abstract's "single additional data point" sentence was dropped from the npj version, which restricts the claim to a chemical system of interest.

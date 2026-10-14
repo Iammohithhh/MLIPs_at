@@ -1,9 +1,9 @@
 statement: >-
-  Allegro is strictly local: each atom's energy depends only on neighbours within a single cutoff, with no
-  message passing between atoms, so its receptive field does not grow with depth.
+  Allegro is strictly local: it builds many-body equivariant features with iterated tensor products on pairs within
+  one cutoff, without atom-centred message passing, so its receptive field stays the single cutoff sphere at any depth.
 grade: THEORY
 sources:
-  - { paper: musaelian2023allegro }
+  - { paper: musaelian2023allegro, locator: 'Abstract; Results › Scaling (Nat. Commun. 14, 579)' }
 scope: { model_families: [allegro] }
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Add section locator. }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-14 }

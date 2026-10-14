@@ -10,5 +10,5 @@ responses:
   - { description: Fine-tune on a small number of additional reference structures., claim: softening-fixed-by-finetuning }
 open_questions:
   - How much of the softening survives in checkpoints trained on off-equilibrium data (rattled, AIMD)?
-affected_checkpoints: [mace-mp-0]
+affected_checkpoints: [mace-mp-0a-medium]
 review: { status: draft, last_checked: 2026-10-14 }

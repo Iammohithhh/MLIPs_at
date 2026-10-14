@@ -1,7 +1,7 @@
-statement: The MACE-MP-0 checkpoints were trained on the MPtrj dataset.
+statement: The MACE-MP-0 checkpoints were trained on the MPtrj dataset (PBE/PBE+U, no dispersion correction).
 grade: PUBLISHED_RESULT
 sources:
-  - { paper: batatia2023foundation }
-scope: { checkpoints: [mace-mp-0], datasets: [mptrj] }
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Add section locator. }
+  - { paper: batatia2023foundation, locator: 'Methods › Training data (arXiv v3 Sec. 6; v1 Sec. 4.1)' }
+scope: { checkpoints: [mace-mp-0a-medium], datasets: [mptrj] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-14 }

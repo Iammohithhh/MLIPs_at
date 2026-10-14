@@ -4,8 +4,9 @@ year: 2023
 venue: Nature Communications 14, 579
 type: article
 identifiers:
+  doi: 10.1038/s41467-023-36329-y
   arxiv: '2204.05249'
 edges:
   - { type: extends, target: batzner2022nequip, documented: true, note: Same group; keeps equivariant features, removes message passing. }
-verified_against: secondary
+verified_against: full-text
 review: { status: draft, last_checked: 2026-10-14 }

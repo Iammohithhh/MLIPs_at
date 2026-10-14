@@ -1,9 +1,13 @@
-title: Overcoming systematic softening in universal machine learning interatomic potentials by fine-tuning
-authors: [Deng, B.]
-et_al: true
-year: 2024
-type: preprint
+title: Systematic softening in universal machine learning interatomic potentials
+authors: [Deng, B., Choi, Y., Zhong, P., Riebesell, J., Anand, S., Li, Z., Jun, K., Persson, K. A., Ceder, G.]
+year: 2025
+venue: npj Computational Materials 11, 9
+type: article
 identifiers:
+  doi: 10.1038/s41524-024-01500-6
   arxiv: '2405.07105'
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Author list truncated. }
+verified_against: full-text
+review:
+  status: draft
+  last_checked: 2026-10-14
+  notes: arXiv v1 title was "Overcoming systematic softening in universal machine learning interatomic potentials by fine-tuning"; figure numbers differ between versions.

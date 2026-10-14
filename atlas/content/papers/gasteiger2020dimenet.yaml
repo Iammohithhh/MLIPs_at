@@ -5,7 +5,7 @@ venue: International Conference on Learning Representations (ICLR) 2020
 type: conference
 identifiers:
   arxiv: '2003.03123'
-verified_against: secondary
+verified_against: full-text
 review:
   status: draft
   last_checked: 2026-10-14

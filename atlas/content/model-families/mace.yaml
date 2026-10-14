@@ -7,7 +7,7 @@ summary: >-
   symmetric tensor contraction, so few layers reach high body order.
 locality: { kind: message-passing, note: Typically two interaction layers. }
 symmetry: equivariant
-body_order: Higher-order messages built by symmetric contraction (ACE-style); confirm correlation order per model.
+body_order: Four-body messages (correlation order ν = 3) in the standard models — body order with respect to the node states; with respect to positions it can be higher.
 reuses_mechanism:
   - { family: nequip, mechanism: Equivariant message passing with tensor products of spherical harmonics }
 implementations: [mace]

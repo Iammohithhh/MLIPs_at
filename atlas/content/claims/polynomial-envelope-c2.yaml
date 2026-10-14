@@ -1,9 +1,9 @@
 statement: >-
-  The polynomial envelope u(d) = 1 − (p+1)(p+2)/2·d^p + p(p+2)·d^(p+1) − p(p+1)/2·d^(p+2) satisfies
-  u(1) = u′(1) = u″(1) = 0 for every order p, so it is continuous through the second derivative at the cutoff.
+  The polynomial envelope u(d) = 1 − (p+1)(p+2)/2·d^p + p(p+2)·d^(p+1) − p(p+1)/2·d^(p+2), with d = r/r_c, has a
+  root of multiplicity 3 at the cutoff, so u, u′ and u″ vanish there for every order p.
 grade: THEORY
 derivation: /method/design-system/#fig-cutoff
 sources:
-  - { paper: gasteiger2020dimenet }
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Add the equation locator in DimeNet. }
+  - { paper: gasteiger2020dimenet, locator: 'Eq. (8), Sec. 5 "Continuous cutoff" (arXiv v2); the paper uses p = 6' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-14 }

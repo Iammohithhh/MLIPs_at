@@ -1,9 +1,10 @@
 statement: >-
-  MPtrj is built from Materials Project relaxation trajectories computed with the PBE functional, with Hubbard U
-  corrections (PBE+U) for the compounds where the Materials Project applies them.
+  MPtrj (1,580,395 configurations) is parsed from Materials Project relaxation tasks computed with GGA (PBE) or
+  GGA+U, with Hubbard U applied to some transition-metal oxides and fluorides.
 grade: PUBLISHED_RESULT
 sources:
-  - { paper: deng2023chgnet }
+  - { paper: deng2023chgnet, locator: 'Results › Materials Project Trajectory Dataset; Methods › Data parsing (Nat. Mach. Intell.)' }
+  - { paper: batatia2023foundation, locator: 'Methods › Training data (arXiv v3 Sec. 6) — names the functional as PBE' }
 scope: { datasets: [mptrj] }
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Add section locator. }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-14 }

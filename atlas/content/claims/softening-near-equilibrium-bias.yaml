@@ -1,8 +1,8 @@
 statement: >-
-  The softening of universal MLIPs is attributed to training data concentrated near equilibrium (relaxation
-  trajectories), which under-samples high-energy, off-equilibrium configurations.
+  The authors attribute the softening primarily to a systematic underprediction of potential-energy-surface
+  curvature, which they trace to biased sampling of near-equilibrium configurations in the pre-training data.
 grade: PUBLISHED_RESULT
 sources:
-  - { paper: deng2024softening }
-verified_against: abstract
+  - { paper: deng2024softening, locator: 'Abstract (npj wording: "originates primarily from")' }
+verified_against: full-text
 review: { status: draft, last_checked: 2026-10-14 }

@@ -1,11 +1,13 @@
-title: 'Matbench Discovery: a framework to evaluate machine learning crystal stability predictions'
+title: A framework to evaluate machine learning crystal stability predictions
 authors: [Riebesell, J., Goodall, R. E. A., Benner, P., Chiang, Y., Deng, B., Ceder, G., Asta, M., Lee, A. A., Jain, A., Persson, K. A.]
-year: 2023
-type: preprint
+year: 2025
+venue: Nature Machine Intelligence 7, 836–847
+type: article
 identifiers:
+  doi: 10.1038/s42256-025-01055-1
   arxiv: '2308.14920'
-verified_against: secondary
+verified_against: full-text
 review:
   status: draft
   last_checked: 2026-10-14
-  notes: Journal version to be linked by the bibliography pipeline.
+  notes: arXiv title "Matbench Discovery – a framework to evaluate machine learning crystal stability predictions". Author correction 7, 1586 (2025). The combined performance score is defined on the website and in code, not in the paper.

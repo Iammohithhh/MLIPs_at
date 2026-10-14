@@ -1,14 +1,16 @@
 title: A foundation model for atomistic materials chemistry
-authors: [Batatia, I.]
+authors: [Batatia, I., Benner, P., Chiang, Y., Elena, A. M., Kovács, D. P., Riebesell, J.]
 et_al: true
-year: 2023
-type: preprint
+year: 2025
+venue: The Journal of Chemical Physics 163, 184110
+type: article
 identifiers:
+  doi: 10.1063/5.0297006
   arxiv: '2401.00096'
 edges:
   - { type: extends, target: batatia2022mace, documented: true }
-verified_against: secondary
+verified_against: full-text
 review:
   status: draft
   last_checked: 2026-10-14
-  notes: Author list truncated; year to be confirmed from arXiv metadata by the bibliography pipeline.
+  notes: 88 authors (six joint first authors listed; last author G. Csányi). Preprint 29 Dec 2023; arXiv v3 (Sep 2025) moves to MACE-MP-0b3. Full text read for arXiv v1 and v3, not the JCP version.
