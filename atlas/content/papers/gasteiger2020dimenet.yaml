@@ -1,5 +1,9 @@
 title: Directional message passing for molecular graphs
-authors: [Gasteiger, J., Groß, J., Günnemann, S.]
+topic: equivariant-message-passing
+authors:
+  - 'Gasteiger, J.'
+  - 'Groß, J.'
+  - 'Günnemann, S.'
 year: 2020
 venue: International Conference on Learning Representations (ICLR) 2020
 type: conference

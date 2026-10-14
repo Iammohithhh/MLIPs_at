@@ -1,0 +1,39 @@
+---
+// Inline citation to an Atlas paper record, with an optional locator
+// (figure/table/equation/section). Links to the full reference on /papers/.
+// Fails the build if the paper id does not exist.
+import { getEntry } from 'astro:content';
+import { authorList, bibEntry, citeLabel, venueLine } from '~/lib/bibliography';
+import type { Paper } from '~/content/schemas';
+
+interface Props {
+  id: string;
+  locator?: string;
+}
+
+const { id, locator } = Astro.props;
+const entry = await getEntry('papers', id);
+if (!entry) throw new Error(`<Cite>: unknown paper id "${id}"`);
+const p = entry.data as Paper;
+const b = bibEntry(id);
+const title = `${authorList(p, b, 3)} — ${p.title}. ${venueLine(p, b)}`;
+---
+
+<a class="cite" href={`/papers/#paper-${id}`} title={title}
+  >{citeLabel(p)}{locator && <span class="loc">, {locator}</span>}</a
+>
+
+<style>
+  .cite {
+    color: var(--atlas-lit);
+    text-decoration: none;
+    border-bottom: 1px dotted color-mix(in oklab, var(--atlas-lit) 60%, transparent);
+    white-space: nowrap;
+  }
+  .cite:hover {
+    border-bottom-style: solid;
+  }
+  .loc {
+    color: var(--atlas-ink-muted);
+  }
+</style>

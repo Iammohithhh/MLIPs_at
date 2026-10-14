@@ -1,5 +1,9 @@
 title: The missing term in effective pair potentials
-authors: [Berendsen, H. J. C., Grigera, J. R., Straatsma, T. P.]
+topic: force-fields-water
+authors:
+  - 'Berendsen, H. J. C.'
+  - 'Grigera, J. R.'
+  - 'Straatsma, T. P.'
 year: 1987
 venue: The Journal of Physical Chemistry 91, 6269–6271
 type: article

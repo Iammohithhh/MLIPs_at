@@ -1,5 +1,10 @@
 title: 'Long-range electrostatics in atomistic machine learning: a physical perspective'
-authors: [Grasselli, F., Rossi, K., de Gironcoli, S., Grisafi, A.]
+topic: electrostatics
+authors:
+  - 'Grasselli, F.'
+  - 'Rossi, K.'
+  - 'de Gironcoli, S.'
+  - 'Grisafi, A.'
 year: 2026
 type: preprint
 identifiers:

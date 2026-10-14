@@ -1,5 +1,7 @@
 title: Die Berechnung optischer und elektrostatischer Gitterpotentiale
-authors: [Ewald, P. P.]
+topic: electrostatics
+authors:
+  - 'Ewald, P. P.'
 year: 1921
 venue: Annalen der Physik 369, 253–287
 type: article

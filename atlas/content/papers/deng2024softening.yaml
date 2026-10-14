@@ -1,5 +1,15 @@
 title: Systematic softening in universal machine learning interatomic potentials
-authors: [Deng, B., Choi, Y., Zhong, P., Riebesell, J., Anand, S., Li, Z., Jun, K., Persson, K. A., Ceder, G.]
+topic: benchmarks-failures
+authors:
+  - 'Deng, B.'
+  - 'Choi, Y.'
+  - 'Zhong, P.'
+  - 'Riebesell, J.'
+  - 'Anand, S.'
+  - 'Li, Z.'
+  - 'Jun, K.'
+  - 'Persson, K. A.'
+  - 'Ceder, G.'
 year: 2025
 venue: npj Computational Materials 11, 9
 type: article

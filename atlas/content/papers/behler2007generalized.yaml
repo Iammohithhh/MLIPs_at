@@ -1,5 +1,8 @@
 title: Generalized neural-network representation of high-dimensional potential-energy surfaces
-authors: [Behler, J., Parrinello, M.]
+topic: descriptors-locality
+authors:
+  - 'Behler, J.'
+  - 'Parrinello, M.'
 year: 2007
 venue: Physical Review Letters 98, 146401
 type: article

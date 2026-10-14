@@ -1,5 +1,9 @@
 title: Convergence of lattice sums and Madelung's constant
-authors: [Borwein, D., Borwein, J. M., Taylor, K. F.]
+topic: electrostatics
+authors:
+  - 'Borwein, D.'
+  - 'Borwein, J. M.'
+  - 'Taylor, K. F.'
 year: 1985
 venue: Journal of Mathematical Physics 26, 2999–3009
 type: article

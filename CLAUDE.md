@@ -36,3 +36,6 @@ The full product vision and plan is in [MLIP_Atlas_Vision.md](MLIP_Atlas_Vision.
 - 3D: `src/three/` (Stage, impostor atoms, sticks/arrows, shells, lines, picking; shared lighting in `shading.ts`). Scene data lives in pure, tested modules under `src/lib/` (`chem/`, `physics/`, `scenes/`); islands in `src/islands/`. Three.js ShaderMaterial fragment shaders must declare `uniform mat4 projectionMatrix;` themselves.
 - The TeX lost-escape guard also fires on plain English words such as "sum" inside `	ext{}`; reword the label.
 - Screenshot check: `npx astro preview` then Playwright (`--channel msedge`) — WebGL renders in headless Edge.
+- Paper authors: one quoted `'Family, Initials'` per list item (block list). A YAML flow list `[Behler, J., Parrinello, M.]` splits every name; the schema rejects it.
+- Data pipelines (CPU, `pipeline/`): `atlas_pipeline.structures` → `atlas/src/data/structures/*.json`; `atlas_pipeline.bibliography` → `atlas/src/data/bibliography.json` (rerun after adding/editing a paper record; the test suite fails if a paper has no cached metadata or disagrees with Crossref/arXiv). Cite papers in pages with `<Cite id="…" locator="Fig. 2" />`.
+

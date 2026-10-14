@@ -1,5 +1,7 @@
 title: Atom-centered symmetry functions for constructing high-dimensional neural network potentials
-authors: [Behler, J.]
+topic: descriptors-locality
+authors:
+  - 'Behler, J.'
 year: 2011
 venue: The Journal of Chemical Physics 134, 074106
 type: article

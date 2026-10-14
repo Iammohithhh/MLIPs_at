@@ -1,0 +1,395 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Callout from '~/components/Callout.astro';
+import { auditContent } from '~/content/integrity';
+import { PAPER_TOPICS, type Paper } from '~/content/schemas';
+import { authorList, bibEntry, citeLabel, primaryUrl, venueLine } from '~/lib/bibliography';
+import { layoutPapers, NODE_R, type GraphEdge } from '~/lib/paper-graph';
+import { typesetInline } from '~/lib/typeset';
+
+const TOPIC_LABEL: Record<(typeof PAPER_TOPICS)[number], string> = {
+  electrostatics: 'Electrostatics & lattice sums',
+  'descriptors-locality': 'Descriptors & locality',
+  'equivariant-message-passing': 'Equivariant message passing',
+  'foundation-models-data': 'Foundation models & data',
+  'benchmarks-failures': 'Benchmarks & failures',
+  'force-fields-water': 'Classical force fields',
+  other: 'Other',
+};
+
+const papers = (await getCollection('papers'))
+  .map((e) => ({ id: e.id, data: e.data as Paper }))
+  .sort((a, b) => a.data.year - b.data.year || a.id.localeCompare(b.id));
+const lanes = PAPER_TOPICS.filter((t) => papers.some((p) => p.data.topic === t));
+
+// Back-links: which Atlas records reference each paper.
+const { records } = auditContent(`${process.cwd()}/content`);
+const usedBy = new Map<string, Array<{ collection: string; id: string }>>();
+for (const r of records.values()) {
+  for (const ref of r.refs) {
+    if (ref.target !== 'papers' || r.collection === 'papers') continue;
+    const list = usedBy.get(ref.id) ?? [];
+    if (!list.some((x) => x.collection === r.collection && x.id === r.id)) list.push({ collection: r.collection, id: r.id });
+    usedBy.set(ref.id, list);
+  }
+}
+
+const edges: GraphEdge[] = [];
+for (const p of papers) {
+  for (const c of bibEntry(p.id)?.cites ?? []) edges.push({ from: p.id, to: c, kind: 'cites' });
+  for (const e of p.data.edges) edges.push({ from: p.id, to: e.target, kind: 'typed', label: e.type });
+}
+const graph = layoutPapers(
+  papers.map((p) => ({ id: p.id, year: p.data.year, lane: lanes.indexOf(p.data.topic), label: citeLabel(p.data) })),
+  edges,
+  lanes.length,
+);
+const citeCount = edges.filter((e) => e.kind === 'cites').length;
+const SINGULAR: Record<string, string> = {
+  claims: 'claim',
+  concepts: 'concept',
+  principles: 'physical principle',
+  'model-families': 'model family',
+  checkpoints: 'checkpoint',
+  implementations: 'implementation',
+  datasets: 'dataset',
+  'levels-of-theory': 'level of theory',
+  benchmarks: 'benchmark',
+  'benchmark-results': 'benchmark result',
+  experiments: 'experiment',
+  applications: 'application',
+  'failure-cases': 'failure case',
+};
+const verifyLabel = { 'full-text': 'checked against full text', abstract: 'checked against abstract only', secondary: 'secondary sources only' };
+---
+
+<BaseLayout
+  title="Papers"
+  description="Every paper the MLIP Atlas cites: a chronology of who builds on whom, full references, how each source was checked, and which Atlas records rely on it."
+>
+  <article class="page-grid pp">
+    <header class="wide head">
+      <p class="eyebrow">Papers</p>
+      <h1 class="h-display">Where the ideas come from</h1>
+      <p class="lede">
+        {papers.length} papers back the Atlas so far — from Ewald's 1921 lattice sums to 2026 foundation models. Each is
+        checked against Crossref and arXiv, and each lists the Atlas records that rely on it, so you can audit a
+        claim back to its source.
+      </p>
+    </header>
+
+    <Figure number="1" title="Chronology and citations between Atlas papers" labels={['published-result']} id="fig-chrono">
+      <div class="chrono" data-chrono>
+        <svg viewBox={`0 0 ${graph.width} ${graph.height}`} role="group" aria-label={`Timeline of ${papers.length} papers in ${lanes.length} topic lanes with ${citeCount} citation links. Each paper is listed with its references below.`}>
+          {
+            lanes.map((t, k) => (
+              <g>
+                <line x1="140" x2={graph.width - 16} y1={graph.laneY[k]} y2={graph.laneY[k]} class="lane" />
+                <text x="4" y={graph.laneY[k]! + 4} class="lane-label">
+                  {TOPIC_LABEL[t]}
+                </text>
+              </g>
+            ))
+          }
+          {
+            graph.ticks.map((t) => (
+              <g>
+                <line x1={t.x} x2={t.x} y1="20" y2={graph.height - 26} class="tick" />
+                <text x={t.x} y={graph.height - 10} class="tick-label" text-anchor="middle">
+                  {t.year}
+                </text>
+              </g>
+            ))
+          }
+          <g class="edges">
+            {
+              graph.edges.map((e) => (
+                <path d={e.d} class={`edge ${e.kind}`} data-from={e.from} data-to={e.to}>
+                  <title>{e.kind === 'cites' ? `${e.from} cites ${e.to}` : `${e.from} ${e.label} ${e.to}`}</title>
+                </path>
+              ))
+            }
+          </g>
+          <g class="nodes">
+            {
+              graph.nodes.map((n) => (
+                <a href={`#paper-${n.id}`} class="node" data-node={n.id} aria-label={n.label}>
+                  <circle cx={n.x} cy={n.y} r={NODE_R} />
+                  {n.labelY !== null && (
+                    <text x={n.x} y={n.labelY} text-anchor="middle">
+                      {n.label}
+                    </text>
+                  )}
+                </a>
+              ))
+            }
+          </g>
+        </svg>
+        <p class="chrono-readout" aria-live="polite">Hover a paper to trace what it cites and what cites it.</p>
+      </div>
+      <Fragment slot="caption">
+        <p>
+          <strong>Arcs above a lane: citations</strong> found in OpenAlex reference lists (only between papers the
+          Atlas holds). <strong>Arcs below: typed relations</strong> stated in the Atlas records (extends, compares
+          against …). Years before 1990 are compressed. Citation links show influence and context, never quality.
+        </p>
+      </Fragment>
+      <Fragment slot="source">
+        Metadata: Crossref, arXiv API and OpenAlex, fetched by <code>pipeline/atlas_pipeline/bibliography.py</code>.
+      </Fragment>
+    </Figure>
+
+    <section class="wide refs" aria-labelledby="refs-h">
+      <h2 id="refs-h" class="h-section">References</h2>
+      <Callout kind="note" title="How to read a reference">
+        <p>
+          “Checked against full text” means an Atlas maintainer read the paper itself for the claims that cite it; records
+          checked only against an abstract or secondary sources cannot be published. The metadata line confirms that
+          the title, year and first author match Crossref or arXiv.
+        </p>
+      </Callout>
+      {
+        lanes.map((t) => (
+          <section class="topic">
+            <h3 class="h-sub">{TOPIC_LABEL[t]}</h3>
+            <ol>
+              {papers
+                .filter((p) => p.data.topic === t)
+                .map((p) => {
+                  const b = bibEntry(p.id);
+                  const url = primaryUrl(p.data);
+                  const uses = usedBy.get(p.id) ?? [];
+                  const ok = b && b.checks.every((c) => c.level === 'ok');
+                  return (
+                    <li id={`paper-${p.id}`} class="ref">
+                      <p class="ref-main">
+                        <span class="ref-authors">{authorList(p.data, b)}</span> ({p.data.year}).{' '}
+                        <span class="ref-title" set:html={typesetInline(p.data.title)} />.{' '}
+                        <span class="ref-venue">{venueLine(p.data, b)}</span>.{' '}
+                        {url && <a href={url}>{p.data.identifiers.doi ? `doi:${p.data.identifiers.doi}` : url.replace('https://', '')}</a>}
+                        {p.data.identifiers.doi && p.data.identifiers.arxiv && (
+                          <>
+                            {' · '}
+                            <a href={`https://arxiv.org/abs/${p.data.identifiers.arxiv}`}>arXiv:{p.data.identifiers.arxiv}</a>
+                          </>
+                        )}
+                      </p>
+                      <p class="ref-meta">
+                        <span class={`chip v-${p.data.verified_against}`}>{verifyLabel[p.data.verified_against]}</span>
+                        <span class={`chip ${ok ? 'ok' : 'warn'}`}>{ok ? 'metadata matches Crossref/arXiv' : 'metadata check pending'}</span>
+                        {b?.openalex?.cited_by_count != null && (
+                          <span class="chip">
+                            cited by {b.openalex.cited_by_count.toLocaleString('en-GB')} (OpenAlex, {b.fetched})
+                          </span>
+                        )}
+                      </p>
+                      {uses.length > 0 && (
+                        <p class="ref-uses">
+                          Used by:{' '}
+                          {uses.map((u, k) => (
+                            <>
+                              {k > 0 && ', '}
+                              <span class="use">
+                                {SINGULAR[u.collection] ?? u.collection}{' '}
+                                <code>{u.id}</code>
+                              </span>
+                            </>
+                          ))}
+                        </p>
+                      )}
+                      {p.data.review.notes && <p class="ref-notes" set:html={typesetInline(p.data.review.notes)} />}
+                    </li>
+                  );
+                })}
+            </ol>
+          </section>
+        ))
+      }
+    </section>
+  </article>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-chrono]').forEach((root) => {
+    const readout = root.querySelector<HTMLElement>('.chrono-readout')!;
+    const initial = readout.textContent ?? '';
+    const edges = Array.from(root.querySelectorAll<SVGPathElement>('.edge'));
+    const label = (id: string) => root.querySelector(`[data-node="${id}"]`)?.getAttribute('aria-label') ?? id;
+    const focus = (id: string | null) => {
+      root.classList.toggle('tracing', id !== null);
+      const cites: string[] = [];
+      const citedBy: string[] = [];
+      root.querySelectorAll('.node').forEach((n) => n.classList.remove('on', 'near'));
+      for (const e of edges) {
+        const out = e.dataset.from === id;
+        const inc = e.dataset.to === id;
+        e.classList.toggle('on', out || inc);
+        if (id === null || !(out || inc)) continue;
+        root.querySelector(`[data-node="${e.dataset.from}"]`)?.classList.add('near');
+        root.querySelector(`[data-node="${e.dataset.to}"]`)?.classList.add('near');
+        if (e.classList.contains('cites')) (out ? cites : citedBy).push(label(out ? e.dataset.to! : e.dataset.from!));
+      }
+      if (id === null) {
+        readout.textContent = initial;
+        return;
+      }
+      root.querySelector(`[data-node="${id}"]`)?.classList.add('on');
+      readout.textContent = `${label(id)} — cites ${cites.length ? cites.join(', ') : 'no other Atlas paper'}; cited by ${citedBy.length ? citedBy.join(', ') : 'no other Atlas paper'}.`;
+    };
+    root.querySelectorAll<SVGAElement>('.node').forEach((n) => {
+      const id = n.dataset.node!;
+      n.addEventListener('pointerenter', () => focus(id));
+      n.addEventListener('focus', () => focus(id));
+      n.addEventListener('pointerleave', () => focus(null));
+      n.addEventListener('blur', () => focus(null));
+    });
+  });
+</script>
+
+<style>
+  .pp {
+    padding-block: clamp(2rem, 5vw, 4rem) 4rem;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .chrono {
+    overflow-x: auto;
+  }
+  .chrono svg {
+    display: block;
+    min-width: 760px;
+    width: 100%;
+    height: auto;
+  }
+  .lane {
+    stroke: var(--atlas-rule);
+  }
+  .lane-label {
+    font: 600 11px var(--font-sans);
+    fill: var(--atlas-ink-faint);
+  }
+  .tick {
+    stroke: var(--atlas-rule);
+    stroke-dasharray: 2 5;
+  }
+  .tick-label {
+    font: 11px var(--font-mono);
+    fill: var(--atlas-ink-faint);
+  }
+  .edge {
+    fill: none;
+    stroke-width: 1.1;
+    transition: opacity 0.15s, stroke 0.15s;
+  }
+  .edge.cites {
+    stroke: color-mix(in oklab, var(--atlas-lit) 55%, transparent);
+  }
+  .edge.typed {
+    stroke: color-mix(in oklab, var(--atlas-arch) 60%, transparent);
+    stroke-dasharray: 4 3;
+  }
+  .tracing .edge {
+    opacity: 0.12;
+  }
+  .tracing .edge.on {
+    opacity: 1;
+    stroke-width: 2;
+  }
+  .node circle {
+    fill: var(--atlas-surface);
+    stroke: var(--atlas-lit);
+    stroke-width: 2;
+  }
+  .node text {
+    font: 10.5px var(--font-sans);
+    fill: var(--atlas-ink-muted);
+    paint-order: stroke;
+    stroke: var(--atlas-surface);
+    stroke-width: 3px;
+  }
+  .node:focus-visible circle,
+  .node.on circle {
+    fill: var(--atlas-lit);
+  }
+  .tracing .node:not(.on):not(.near) {
+    opacity: 0.3;
+  }
+  .chrono-readout {
+    padding: 0.5rem 1rem 0.8rem;
+    min-height: 2.6em;
+    font: 0.875rem/1.5 var(--font-sans);
+  }
+  .refs {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .topic {
+    margin-top: 1.75rem;
+  }
+  .topic h3 {
+    margin-bottom: 0.5rem;
+  }
+  .ref {
+    padding-block: 0.8rem;
+    border-top: 1px solid var(--atlas-rule);
+    scroll-margin-top: 6rem;
+  }
+  .ref:target {
+    background: color-mix(in oklab, var(--atlas-lit) 7%, transparent);
+  }
+  .ref-main {
+    font: 1rem/1.55 var(--font-serif);
+  }
+  .ref-title {
+    font-style: italic;
+  }
+  .ref-main a {
+    color: var(--atlas-lit);
+    font-size: 0.875rem;
+    word-break: break-all;
+  }
+  .ref-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+  }
+  .chip {
+    font: 600 0.6875rem var(--font-sans);
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.3rem;
+    border: 1px solid var(--atlas-rule);
+    color: var(--atlas-ink-muted);
+  }
+  .chip.v-full-text,
+  .chip.ok {
+    color: var(--atlas-verified);
+    border-color: color-mix(in oklab, var(--atlas-verified) 40%, transparent);
+  }
+  .chip.v-abstract,
+  .chip.v-secondary,
+  .chip.warn {
+    color: var(--atlas-caveat);
+    border-color: color-mix(in oklab, var(--atlas-caveat) 40%, transparent);
+  }
+  .ref-uses,
+  .ref-notes {
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-muted);
+  }
+  .ref-uses code {
+    font-size: 0.75rem;
+  }
+  .ref-notes {
+    font-style: italic;
+    color: var(--atlas-ink-faint);
+  }
+</style>

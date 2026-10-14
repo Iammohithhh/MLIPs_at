@@ -1,5 +1,12 @@
 title: A foundation model for atomistic materials chemistry
-authors: [Batatia, I., Benner, P., Chiang, Y., Elena, A. M., Kovács, D. P., Riebesell, J.]
+topic: foundation-models-data
+authors:
+  - 'Batatia, I.'
+  - 'Benner, P.'
+  - 'Chiang, Y.'
+  - 'Elena, A. M.'
+  - 'Kovács, D. P.'
+  - 'Riebesell, J.'
 et_al: true
 year: 2025
 venue: The Journal of Chemical Physics 163, 184110

@@ -136,11 +136,29 @@ export const PAPER_EDGE_TYPES = [
   'responds-to',
 ] as const;
 
+/** Lanes of the Papers chronology; a navigation aid, not a classification claim. */
+export const PAPER_TOPICS = [
+  'electrostatics',
+  'descriptors-locality',
+  'equivariant-message-passing',
+  'foundation-models-data',
+  'benchmarks-failures',
+  'force-fields-water',
+  'other',
+] as const;
+
 export const paper = z
   .object({
     title: nonEmpty,
-    /** "Family, Given-initials" in author order. Use `et_al` when the list is truncated. */
-    authors: z.array(nonEmpty).min(1),
+    topic: z.enum(PAPER_TOPICS).default('other'),
+    /**
+     * "Family, Given-initials" in author order, one quoted string per author (a YAML
+     * flow list [Behler, J., Parrinello, M.] would split each name in two). Use
+     * `et_al` when the list is truncated.
+     */
+    authors: z
+      .array(z.string().regex(/^[^,]+, \S.*$/, 'write each author as "Family, Initials" in quotes'))
+      .min(1),
     et_al: z.boolean().default(false),
     year: z.number().int().min(1900).max(2100),
     venue: z.string().optional(),

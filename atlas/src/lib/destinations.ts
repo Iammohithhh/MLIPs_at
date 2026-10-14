@@ -108,7 +108,8 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Typed citation graph, chronology, paper records',
     phase: 3,
     tone: 'lit',
-    inNav: false,
+    href: '/papers/',
+    inNav: true,
   },
   {
     id: 'learn',

@@ -1,0 +1,2296 @@
+{
+ "batatia2022mace": {
+  "arxiv": {
+   "authors": [
+    "Ilyes Batatia",
+    "Dávid Péter Kovács",
+    "Gregor N. C. Simm",
+    "Christoph Ortner",
+    "Gábor Csányi"
+   ],
+   "id": "2206.07697v2",
+   "primary_category": "stat.ML",
+   "published": "2022-06-15",
+   "title": "MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields",
+   "updated": "2023-01-26"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Batatia, I.' vs fetched ['batatia']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 286,
+   "id": "W4283021369",
+   "publication_year": 2022,
+   "referenced_works": []
+  }
+ },
+ "batatia2023foundation": {
+  "arxiv": {
+   "authors": [
+    "Ilyes Batatia",
+    "Philipp Benner",
+    "Yuan Chiang",
+    "Alin M. Elena",
+    "Dávid P. Kovács",
+    "Janosh Riebesell",
+    "Xavier R. Advincula",
+    "Mark Asta",
+    "Matthew Avaylon",
+    "William J. Baldwin",
+    "Fabian Berger",
+    "Noam Bernstein",
+    "Arghya Bhowmik",
+    "Filippo Bigi",
+    "Samuel M. Blau",
+    "Vlad Cărare",
+    "Michele Ceriotti",
+    "Sanggyu Chong",
+    "James P. Darby",
+    "Sandip De",
+    "Flaviano Della Pia",
+    "Volker L. Deringer",
+    "Rokas Elijošius",
+    "Zakariya El-Machachi",
+    "Fabio Falcioni",
+    "Edvin Fako",
+    "Andrea C. Ferrari",
+    "John L. A. Gardner",
+    "Mikolaj J. Gawkowski",
+    "Annalena Genreith-Schriever",
+    "Janine George",
+    "Rhys E. A. Goodall",
+    "Jonas Grandel",
+    "Clare P. Grey",
+    "Petr Grigorev",
+    "Shuang Han",
+    "Will Handley",
+    "Hendrik H. Heenen",
+    "Kersti Hermansson",
+    "Christian Holm",
+    "Cheuk Hin Ho",
+    "Stephan Hofmann",
+    "Jad Jaafar",
+    "Konstantin S. Jakob",
+    "Hyunwook Jung",
+    "Venkat Kapil",
+    "Aaron D. Kaplan",
+    "Nima Karimitari",
+    "James R. Kermode",
+    "Panagiotis Kourtis",
+    "Namu Kroupa",
+    "Jolla Kullgren",
+    "Matthew C. Kuner",
+    "Domantas Kuryla",
+    "Guoda Liepuoniute",
+    "Chen Lin",
+    "Johannes T. Margraf",
+    "Ioan-Bogdan Magdău",
+    "Angelos Michaelides",
+    "J. Harry Moore",
+    "Aakash A. Naik",
+    "Samuel P. Niblett",
+    "Sam Walton Norwood",
+    "Niamh O'Neill",
+    "Christoph Ortner",
+    "Kristin A. Persson",
+    "Karsten Reuter",
+    "Andrew S. Rosen",
+    "Louise A. M. Rosset",
+    "Lars L. Schaaf",
+    "Christoph Schran",
+    "Benjamin X. Shi",
+    "Eric Sivonxay",
+    "Tamás K. Stenczel",
+    "Viktor Svahn",
+    "Christopher Sutton",
+    "Thomas D. Swinburne",
+    "Jules Tilly",
+    "Cas van der Oord",
+    "Santiago Vargas",
+    "Eszter Varga-Umbrich",
+    "Tejs Vegge",
+    "Martin Vondrák",
+    "Yangshuai Wang",
+    "William C. Witt",
+    "Thomas Wolf",
+    "Fabian Zills",
+    "Gábor Csányi"
+   ],
+   "id": "2401.00096v3",
+   "primary_category": "physics.chem-ph",
+   "published": "2023-12-29",
+   "title": "A foundation model for atomistic materials chemistry",
+   "updated": "2025-09-04"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2023, 2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Batatia, I.' vs fetched ['batatia', 'batatia']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "deng2023chgnet",
+   "deng2024softening",
+   "riebesell2023matbench"
+  ],
+  "crossref": {
+   "article_number": "184110",
+   "authors": [
+    {
+     "family": "Batatia",
+     "given": "Ilyes"
+    },
+    {
+     "family": "Benner",
+     "given": "Philipp"
+    },
+    {
+     "family": "Chiang",
+     "given": "Yuan"
+    },
+    {
+     "family": "Elena",
+     "given": "Alin M."
+    },
+    {
+     "family": "Kovács",
+     "given": "Dávid P."
+    },
+    {
+     "family": "Riebesell",
+     "given": "Janosh"
+    },
+    {
+     "family": "Advincula",
+     "given": "Xavier R."
+    },
+    {
+     "family": "Asta",
+     "given": "Mark"
+    },
+    {
+     "family": "Avaylon",
+     "given": "Matthew"
+    },
+    {
+     "family": "Baldwin",
+     "given": "William J."
+    },
+    {
+     "family": "Berger",
+     "given": "Fabian"
+    },
+    {
+     "family": "Bernstein",
+     "given": "Noam"
+    },
+    {
+     "family": "Bhowmik",
+     "given": "Arghya"
+    },
+    {
+     "family": "Bigi",
+     "given": "Filippo"
+    },
+    {
+     "family": "Blau",
+     "given": "Samuel M."
+    },
+    {
+     "family": "Cărare",
+     "given": "Vlad"
+    },
+    {
+     "family": "Ceriotti",
+     "given": "Michele"
+    },
+    {
+     "family": "Chong",
+     "given": "Sanggyu"
+    },
+    {
+     "family": "Darby",
+     "given": "James P."
+    },
+    {
+     "family": "De",
+     "given": "Sandip"
+    },
+    {
+     "family": "Della Pia",
+     "given": "Flaviano"
+    },
+    {
+     "family": "Deringer",
+     "given": "Volker L."
+    },
+    {
+     "family": "Elijošius",
+     "given": "Rokas"
+    },
+    {
+     "family": "El-Machachi",
+     "given": "Zakariya"
+    },
+    {
+     "family": "Fako",
+     "given": "Edvin"
+    },
+    {
+     "family": "Falcioni",
+     "given": "Fabio"
+    },
+    {
+     "family": "Ferrari",
+     "given": "Andrea C."
+    },
+    {
+     "family": "Gardner",
+     "given": "John L. A."
+    },
+    {
+     "family": "Gawkowski",
+     "given": "Mikołaj J."
+    },
+    {
+     "family": "Genreith-Schriever",
+     "given": "Annalena"
+    },
+    {
+     "family": "George",
+     "given": "Janine"
+    },
+    {
+     "family": "Goodall",
+     "given": "Rhys E. A."
+    },
+    {
+     "family": "Grandel",
+     "given": "Jonas"
+    },
+    {
+     "family": "Grey",
+     "given": "Clare P."
+    },
+    {
+     "family": "Grigorev",
+     "given": "Petr"
+    },
+    {
+     "family": "Han",
+     "given": "Shuang"
+    },
+    {
+     "family": "Handley",
+     "given": "Will"
+    },
+    {
+     "family": "Heenen",
+     "given": "Hendrik H."
+    },
+    {
+     "family": "Hermansson",
+     "given": "Kersti"
+    },
+    {
+     "family": "Ho",
+     "given": "Cheuk Hin"
+    },
+    {
+     "family": "Hofmann",
+     "given": "Stephan"
+    },
+    {
+     "family": "Holm",
+     "given": "Christian"
+    },
+    {
+     "family": "Jaafar",
+     "given": "Jad"
+    },
+    {
+     "family": "Jakob",
+     "given": "Konstantin S."
+    },
+    {
+     "family": "Jung",
+     "given": "Hyunwook"
+    },
+    {
+     "family": "Kapil",
+     "given": "Venkat"
+    },
+    {
+     "family": "Kaplan",
+     "given": "Aaron D."
+    },
+    {
+     "family": "Karimitari",
+     "given": "Nima"
+    },
+    {
+     "family": "Kermode",
+     "given": "James R."
+    },
+    {
+     "family": "Kourtis",
+     "given": "Panagiotis"
+    },
+    {
+     "family": "Kroupa",
+     "given": "Namu"
+    },
+    {
+     "family": "Kullgren",
+     "given": "Jolla"
+    },
+    {
+     "family": "Kuner",
+     "given": "Matthew C."
+    },
+    {
+     "family": "Kuryla",
+     "given": "Domantas"
+    },
+    {
+     "family": "Liepuoniute",
+     "given": "Guoda"
+    },
+    {
+     "family": "Lin",
+     "given": "Chen"
+    },
+    {
+     "family": "Margraf",
+     "given": "Johannes T."
+    },
+    {
+     "family": "Magdău",
+     "given": "Ioan-Bogdan"
+    },
+    {
+     "family": "Michaelides",
+     "given": "Angelos"
+    },
+    {
+     "family": "Moore",
+     "given": "J. Harry"
+    },
+    {
+     "family": "Naik",
+     "given": "Aakash A."
+    },
+    {
+     "family": "Niblett",
+     "given": "Samuel P."
+    },
+    {
+     "family": "Norwood",
+     "given": "Sam Walton"
+    },
+    {
+     "family": "O’Neill",
+     "given": "Niamh"
+    },
+    {
+     "family": "Ortner",
+     "given": "Christoph"
+    },
+    {
+     "family": "Persson",
+     "given": "Kristin A."
+    },
+    {
+     "family": "Reuter",
+     "given": "Karsten"
+    },
+    {
+     "family": "Rosen",
+     "given": "Andrew S."
+    },
+    {
+     "family": "Rosset",
+     "given": "Louise A. M."
+    },
+    {
+     "family": "Schaaf",
+     "given": "Lars L."
+    },
+    {
+     "family": "Schran",
+     "given": "Christoph"
+    },
+    {
+     "family": "Shi",
+     "given": "Benjamin X."
+    },
+    {
+     "family": "Sivonxay",
+     "given": "Eric"
+    },
+    {
+     "family": "Stenczel",
+     "given": "Tamás K."
+    },
+    {
+     "family": "Sutton",
+     "given": "Christopher"
+    },
+    {
+     "family": "Svahn",
+     "given": "Viktor"
+    },
+    {
+     "family": "Swinburne",
+     "given": "Thomas D."
+    },
+    {
+     "family": "Tilly",
+     "given": "Jules"
+    },
+    {
+     "family": "van der Oord",
+     "given": "Cas"
+    },
+    {
+     "family": "Vargas",
+     "given": "Santiago"
+    },
+    {
+     "family": "Varga-Umbrich",
+     "given": "Eszter"
+    },
+    {
+     "family": "Vegge",
+     "given": "Tejs"
+    },
+    {
+     "family": "Vondrák",
+     "given": "Martin"
+    },
+    {
+     "family": "Wang",
+     "given": "Yangshuai"
+    },
+    {
+     "family": "Witt",
+     "given": "William C."
+    },
+    {
+     "family": "Wolf",
+     "given": "Thomas"
+    },
+    {
+     "family": "Zills",
+     "given": "Fabian"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/5.0297006",
+   "issue": "18",
+   "page": null,
+   "title": "A foundation model for atomistic materials chemistry",
+   "type": "journal-article",
+   "volume": "163",
+   "year": 2025
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 562,
+   "id": "W4416191329",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W26088913",
+    "W566353445",
+    "W1031578623",
+    "W1576668315",
+    "W1596185547",
+    "W1650939490",
+    "W1682403713",
+    "W1972363204",
+    "W1973634181",
+    "W1973836541",
+    "W1974466605",
+    "W1974672343",
+    "W1975147762",
+    "W1976828803",
+    "W1977897877",
+    "W1978206078",
+    "W1981049088",
+    "W1981368803",
+    "W1984003326",
+    "W1985272737",
+    "W1991247300",
+    "W1992985800",
+    "W1996690849",
+    "W1998010646",
+    "W2001309119",
+    "W2003949305",
+    "W2003975937",
+    "W2007395042",
+    "W2007585463",
+    "W2009728110",
+    "W2016366655",
+    "W2017686863",
+    "W2018120102",
+    "W2018664638",
+    "W2019465613",
+    "W2021057298",
+    "W2021420045",
+    "W2025444507",
+    "W2029948600",
+    "W2030971064",
+    "W2032246079",
+    "W2035250039",
+    "W2035399181",
+    "W2039144759",
+    "W2039498898",
+    "W2040818206",
+    "W2047707369",
+    "W2047968138",
+    "W2048765455",
+    "W2054525473",
+    "W2056323984",
+    "W2058210998",
+    "W2059838064",
+    "W2059843903",
+    "W2061098915",
+    "W2066182614",
+    "W2066966625",
+    "W2067296924",
+    "W2068607732",
+    "W2076885050",
+    "W2079105963",
+    "W2083415705",
+    "W2087585288",
+    "W2087698390",
+    "W2088621693",
+    "W2090918240",
+    "W2091096906",
+    "W2092157292",
+    "W2094005838",
+    "W2096747776",
+    "W2103003278",
+    "W2105125648",
+    "W2108167034",
+    "W2114722820",
+    "W2123693412",
+    "W2133406747",
+    "W2133787774",
+    "W2139062161",
+    "W2147699377",
+    "W2150842775",
+    "W2155173831",
+    "W2156454985",
+    "W2158043072",
+    "W2159752439",
+    "W2167035995",
+    "W2169911761",
+    "W2229814172",
+    "W2230728100",
+    "W2299046272",
+    "W2320826695",
+    "W2320854343",
+    "W2322479756",
+    "W2332028502",
+    "W2332549384",
+    "W2333787883",
+    "W2337496963",
+    "W2341002069",
+    "W2435408353",
+    "W2474258807",
+    "W2511699341",
+    "W2516026821",
+    "W2537664546",
+    "W2541404351",
+    "W2557395015",
+    "W2566642125",
+    "W2591369052",
+    "W2592723127",
+    "W2593868456",
+    "W2601081289",
+    "W2617243879",
+    "W2617392626",
+    "W2624679515",
+    "W2737381275",
+    "W2754490138",
+    "W2767057132",
+    "W2778051509",
+    "W2785377343",
+    "W2788484525",
+    "W2789714093",
+    "W2792137452",
+    "W2793001658",
+    "W2799063346",
+    "W2800301423",
+    "W2807020292",
+    "W2808198009",
+    "W2884886715",
+    "W2886870077",
+    "W2886978164",
+    "W2888430576",
+    "W2889326414",
+    "W2890961624",
+    "W2891277417",
+    "W2894705920",
+    "W2901336416",
+    "W2904377931",
+    "W2910729328",
+    "W2910857709",
+    "W2915955404",
+    "W2919043374",
+    "W2921846453",
+    "W2922733622",
+    "W2935759974",
+    "W2946418155",
+    "W2949074671",
+    "W2949095042",
+    "W2952544883",
+    "W2953681697",
+    "W2954088480",
+    "W2957565081",
+    "W2963591029",
+    "W2963943736",
+    "W2965305148",
+    "W2967766509",
+    "W2969422465",
+    "W2971894235",
+    "W2975270375",
+    "W2976088130",
+    "W2980084484",
+    "W2981001391",
+    "W2982215879",
+    "W2991533556",
+    "W2991989817",
+    "W3000044980",
+    "W3004536390",
+    "W3005808935",
+    "W3010758650",
+    "W3014911130",
+    "W3016932526",
+    "W3017007397",
+    "W3019217361",
+    "W3023937119",
+    "W3024746059",
+    "W3027308092",
+    "W3031028823",
+    "W3035829375",
+    "W3039596418",
+    "W3039808479",
+    "W3043268085",
+    "W3044111935",
+    "W3047440919",
+    "W3047653023",
+    "W3048673539",
+    "W3082215798",
+    "W3083045331",
+    "W3084103887",
+    "W3086372695",
+    "W3089428833",
+    "W3093999435",
+    "W3101195217",
+    "W3103756575",
+    "W3113349972",
+    "W3119697748",
+    "W3126463765",
+    "W3143460494",
+    "W3150829435",
+    "W3160236773",
+    "W3163995736",
+    "W3176386153",
+    "W3177331664",
+    "W3189164715",
+    "W3195293013",
+    "W3199988343",
+    "W3201073812",
+    "W3206148627",
+    "W3207252639",
+    "W3210084966",
+    "W3214753571",
+    "W4206848246",
+    "W4210385306",
+    "W4214945478",
+    "W4220694746",
+    "W4220833539",
+    "W4221141605",
+    "W4221147791",
+    "W4225405705",
+    "W4226086163",
+    "W4226120291",
+    "W4244599413",
+    "W4249736682",
+    "W4250823436",
+    "W4280570022",
+    "W4281808879",
+    "W4282041110",
+    "W4283019026",
+    "W4283332303",
+    "W4284664280",
+    "W4288067758",
+    "W4295846579",
+    "W4296037872",
+    "W4310135808",
+    "W4310633502",
+    "W4310714033",
+    "W4315631574",
+    "W4317631152",
+    "W4317808528",
+    "W4318071628",
+    "W4319081542",
+    "W4319865391",
+    "W4321085451",
+    "W4322766470",
+    "W4323532825",
+    "W4324122635",
+    "W4327694595",
+    "W4360999745",
+    "W4367048790",
+    "W4377694431",
+    "W4381716411",
+    "W4383198377",
+    "W4383995031",
+    "W4384206875",
+    "W4385295406",
+    "W4385303289",
+    "W4385406529",
+    "W4385418318",
+    "W4385476139",
+    "W4385952529",
+    "W4386069793",
+    "W4386740800",
+    "W4386884640",
+    "W4386931203",
+    "W4387012447",
+    "W4387341160",
+    "W4387866108",
+    "W4388557165",
+    "W4389132751",
+    "W4389680298",
+    "W4389818315",
+    "W4390130067",
+    "W4390754891",
+    "W4391291514",
+    "W4391805016",
+    "W4391956434",
+    "W4393854049",
+    "W4396708749",
+    "W4399303478",
+    "W4399578151",
+    "W4402827043",
+    "W4402883542",
+    "W4402993739",
+    "W4403336382",
+    "W4403392418",
+    "W4405499204",
+    "W4405574099",
+    "W4406237260",
+    "W4406405186",
+    "W4410113994",
+    "W4410498985",
+    "W4411065020",
+    "W4411543224",
+    "W4411845957"
+   ]
+  }
+ },
+ "batzner2022nequip": {
+  "arxiv": {
+   "authors": [
+    "Simon Batzner",
+    "Albert Musaelian",
+    "Lixin Sun",
+    "Mario Geiger",
+    "Jonathan P. Mailoa",
+    "Mordechai Kornbluth",
+    "Nicola Molinari",
+    "Tess E. Smidt",
+    "Boris Kozinsky"
+   ],
+   "id": "2101.03164v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2021-01-08",
+   "title": "E(3)-Equivariant Graph Neural Networks for Data-Efficient and Accurate Interatomic Potentials",
+   "updated": "2021-12-16"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2021, 2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Batzner, S.' vs fetched ['batzner', 'batzner']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "gasteiger2020dimenet"
+  ],
+  "crossref": {
+   "article_number": "2453",
+   "authors": [
+    {
+     "family": "Batzner",
+     "given": "Simon"
+    },
+    {
+     "family": "Musaelian",
+     "given": "Albert"
+    },
+    {
+     "family": "Sun",
+     "given": "Lixin"
+    },
+    {
+     "family": "Geiger",
+     "given": "Mario"
+    },
+    {
+     "family": "Mailoa",
+     "given": "Jonathan P."
+    },
+    {
+     "family": "Kornbluth",
+     "given": "Mordechai"
+    },
+    {
+     "family": "Molinari",
+     "given": "Nicola"
+    },
+    {
+     "family": "Smidt",
+     "given": "Tess E."
+    },
+    {
+     "family": "Kozinsky",
+     "given": "Boris"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-022-29939-5",
+   "issue": "1",
+   "page": null,
+   "title": "E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials",
+   "type": "journal-article",
+   "volume": "13",
+   "year": 2022
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 1908,
+   "id": "W4225405705",
+   "publication_year": 2022,
+   "referenced_works": [
+    "W26088913",
+    "W1810694562",
+    "W1963876808",
+    "W1976866255",
+    "W1979544533",
+    "W1981368803",
+    "W2007395042",
+    "W2025444507",
+    "W2063040771",
+    "W2067236515",
+    "W2067827137",
+    "W2079105963",
+    "W2083222334",
+    "W2083415705",
+    "W2194775991",
+    "W2197007850",
+    "W2301215934",
+    "W2335163884",
+    "W2527189750",
+    "W2541404351",
+    "W2585152223",
+    "W2601081289",
+    "W2606780347",
+    "W2726670313",
+    "W2742127985",
+    "W2772764871",
+    "W2775461895",
+    "W2785523195",
+    "W2788652239",
+    "W2788775653",
+    "W2804359235",
+    "W2825179178",
+    "W2899663614",
+    "W2900475422",
+    "W2908510526",
+    "W2910857709",
+    "W2923693308",
+    "W2931073303",
+    "W2948990653",
+    "W2963373387",
+    "W2970971581",
+    "W2976347420",
+    "W2980902481",
+    "W2990037784",
+    "W3003486042",
+    "W3005615127",
+    "W3012230641",
+    "W3028442620",
+    "W3034390843",
+    "W3038047497",
+    "W3042508420",
+    "W3104792026",
+    "W3106310231",
+    "W3118587469",
+    "W3126679164",
+    "W3159653252",
+    "W3163857962",
+    "W3172185465",
+    "W3189651386",
+    "W3208707586",
+    "W4225405705",
+    "W4237462218",
+    "W4287126984",
+    "W4287704235",
+    "W4287828570",
+    "W4288419263",
+    "W4293358966",
+    "W4295312788",
+    "W4300537282",
+    "W4301369164",
+    "W6600310816",
+    "W6601065604",
+    "W6601849091",
+    "W6603079871",
+    "W6604545811",
+    "W6606450621",
+    "W6631793792",
+    "W6677978660",
+    "W6765940776",
+    "W6819060087",
+    "W6825796211",
+    "W6829887170",
+    "W6912526729",
+    "W6912722889"
+   ]
+  }
+ },
+ "behler2007generalized": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2007; fetched [2007]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Behler, J.' vs fetched ['behler']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": "146401",
+   "authors": [
+    {
+     "family": "Behler",
+     "given": "Jörg"
+    },
+    {
+     "family": "Parrinello",
+     "given": "Michele"
+    }
+   ],
+   "container": "Physical Review Letters",
+   "doi": "10.1103/physrevlett.98.146401",
+   "issue": "14",
+   "page": null,
+   "title": "Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces",
+   "type": "journal-article",
+   "volume": "98",
+   "year": 2007
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 4975,
+   "id": "W2025444507",
+   "publication_year": 2007,
+   "referenced_works": [
+    "W1971460427",
+    "W1976244430",
+    "W1992191950",
+    "W1992617006",
+    "W1993765343",
+    "W2005821725",
+    "W2012700578",
+    "W2033187512",
+    "W2034668150",
+    "W2059448777",
+    "W2061179540",
+    "W2078402226",
+    "W2078678909",
+    "W2087585288",
+    "W2130437470",
+    "W2149655632",
+    "W2230728100"
+   ]
+  }
+ },
+ "behler2011symmetry": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2011; fetched [2011]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Behler, J.' vs fetched ['behler']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized"
+  ],
+  "crossref": {
+   "article_number": "074106",
+   "authors": [
+    {
+     "family": "Behler",
+     "given": "Jörg"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.3553717",
+   "issue": "7",
+   "page": null,
+   "title": "Atom-centered symmetry functions for constructing high-dimensional neural network potentials",
+   "type": "journal-article",
+   "volume": "134",
+   "year": 2011
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 1610,
+   "id": "W1975997599",
+   "publication_year": 2011,
+   "referenced_works": [
+    "W1554663460",
+    "W1964926949",
+    "W1966939946",
+    "W1967108496",
+    "W1971920777",
+    "W1976147568",
+    "W1985542939",
+    "W1986912357",
+    "W1991310029",
+    "W1992527220",
+    "W1998860313",
+    "W2000363633",
+    "W2000407885",
+    "W2000957843",
+    "W2006267273",
+    "W2012700578",
+    "W2015541791",
+    "W2017447741",
+    "W2019427580",
+    "W2021891874",
+    "W2022101332",
+    "W2025444507",
+    "W2025625972",
+    "W2026371600",
+    "W2028344119",
+    "W2038651707",
+    "W2041778475",
+    "W2042640655",
+    "W2046001409",
+    "W2053289371",
+    "W2061179540",
+    "W2063007245",
+    "W2063739545",
+    "W2067050455",
+    "W2081693079",
+    "W2082144555",
+    "W2082369519",
+    "W2083415705",
+    "W2086710296",
+    "W2087404659",
+    "W2091822987",
+    "W2092196700",
+    "W2095085454",
+    "W2103496339",
+    "W2130437470",
+    "W2137983211",
+    "W2153615070",
+    "W2415374455",
+    "W2950674591",
+    "W3098341684",
+    "W4253211852"
+   ]
+  }
+ },
+ "berendsen1987spce": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1987; fetched [1987]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Berendsen, H. J. C.' vs fetched ['berendsen']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Berendsen",
+     "given": "H. J. C."
+    },
+    {
+     "family": "Grigera",
+     "given": "J. R."
+    },
+    {
+     "family": "Straatsma",
+     "given": "T. P."
+    }
+   ],
+   "container": "The Journal of Physical Chemistry",
+   "doi": "10.1021/j100308a038",
+   "issue": "24",
+   "page": "6269-6271",
+   "title": "The missing term in effective pair potentials",
+   "type": "journal-article",
+   "volume": "91",
+   "year": 1987
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 13345,
+   "id": "W2049475242",
+   "publication_year": 1987,
+   "referenced_works": [
+    "W1994779514"
+   ]
+  }
+ },
+ "borwein1985madelung": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 0.67 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1985; fetched [1985]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Borwein, D.' vs fetched ['borwein']"
+   }
+  ],
+  "cites": [
+   "evjen1932",
+   "ewald1921"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Borwein",
+     "given": "David"
+    },
+    {
+     "family": "Borwein",
+     "given": "Jonathan M."
+    },
+    {
+     "family": "Taylor",
+     "given": "Keith F."
+    }
+   ],
+   "container": "Journal of Mathematical Physics",
+   "doi": "10.1063/1.526675",
+   "issue": "11",
+   "page": "2999-3009",
+   "title": "Convergence of lattice sums and Madelung’s constant",
+   "type": "journal-article",
+   "volume": "26",
+   "year": 1985
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 99,
+   "id": "W2032372625",
+   "publication_year": 1985,
+   "referenced_works": [
+    "W1517845546",
+    "W1990678100",
+    "W1990729881",
+    "W2001676859",
+    "W2046098117",
+    "W2056722718",
+    "W2061751250",
+    "W3175367423"
+   ]
+  }
+ },
+ "cheng2025les": {
+  "arxiv": {
+   "authors": [
+    "Bingqing Cheng"
+   ],
+   "id": "2408.15165v2",
+   "primary_category": "cs.LG",
+   "published": "2024-08-27",
+   "title": "Latent Ewald summation for machine learning of long-range interactions",
+   "updated": "2024-12-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2024, 2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Cheng, B.' vs fetched ['cheng', 'cheng']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "deng2023chgnet"
+  ],
+  "crossref": {
+   "article_number": "80",
+   "authors": [
+    {
+     "family": "Cheng",
+     "given": "Bingqing"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-025-01577-7",
+   "issue": "1",
+   "page": null,
+   "title": "Latent Ewald summation for machine learning of long-range interactions",
+   "type": "journal-article",
+   "volume": "11",
+   "year": 2025
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 92,
+   "id": "W4408876037",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W1981045787",
+    "W2002506550",
+    "W2025444507",
+    "W2029413789",
+    "W2064780160",
+    "W2065419564",
+    "W2083415705",
+    "W2122074132",
+    "W2170006871",
+    "W2170560995",
+    "W2197007850",
+    "W2755181646",
+    "W2884817966",
+    "W2900475422",
+    "W2910857709",
+    "W2923693308",
+    "W2943626891",
+    "W2991533556",
+    "W3047157148",
+    "W3093149769",
+    "W3123300545",
+    "W3132956480",
+    "W3133931590",
+    "W3159653252",
+    "W3178108585",
+    "W3181402237",
+    "W3189651386",
+    "W3209636498",
+    "W4213092775",
+    "W4220834411",
+    "W4225405705",
+    "W4386740800",
+    "W4387803785",
+    "W4392382360",
+    "W4400776655",
+    "W4404929144",
+    "W6601883942"
+   ]
+  }
+ },
+ "deng2023chgnet": {
+  "arxiv": {
+   "authors": [
+    "Bowen Deng",
+    "Peichen Zhong",
+    "KyuJung Jun",
+    "Janosh Riebesell",
+    "Kevin Han",
+    "Christopher J. Bartel",
+    "Gerbrand Ceder"
+   ],
+   "id": "2302.14231v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2023-02-28",
+   "title": "CHGNet: Pretrained universal neural network potential for charge-informed atomistic modeling",
+   "updated": "2023-06-20"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Deng, B.' vs fetched ['deng', 'deng']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Deng",
+     "given": "Bowen"
+    },
+    {
+     "family": "Zhong",
+     "given": "Peichen"
+    },
+    {
+     "family": "Jun",
+     "given": "KyuJung"
+    },
+    {
+     "family": "Riebesell",
+     "given": "Janosh"
+    },
+    {
+     "family": "Han",
+     "given": "Kevin"
+    },
+    {
+     "family": "Bartel",
+     "given": "Christopher J."
+    },
+    {
+     "family": "Ceder",
+     "given": "Gerbrand"
+    }
+   ],
+   "container": "Nature Machine Intelligence",
+   "doi": "10.1038/s42256-023-00716-3",
+   "issue": "9",
+   "page": "1031-1041",
+   "title": "CHGNet as a pretrained universal neural network potential for charge-informed atomistic modelling",
+   "type": "journal-article",
+   "volume": "5",
+   "year": 2023
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 913,
+   "id": "W4386740800",
+   "publication_year": 2023,
+   "referenced_works": [
+    "W248096629",
+    "W569478347",
+    "W1925279193",
+    "W1965040837",
+    "W1972527805",
+    "W1979544533",
+    "W1981368803",
+    "W1985628158",
+    "W1986575501",
+    "W1992985800",
+    "W2007395042",
+    "W2015197254",
+    "W2022158969",
+    "W2026617639",
+    "W2034467213",
+    "W2038583777",
+    "W2044028691",
+    "W2046102153",
+    "W2051622977",
+    "W2074950413",
+    "W2083956694",
+    "W2093379693",
+    "W2134642132",
+    "W2142688365",
+    "W2155709000",
+    "W2170006871",
+    "W2230728100",
+    "W2481085855",
+    "W2601081289",
+    "W2766856748",
+    "W2806715593",
+    "W2893525128",
+    "W2963207368",
+    "W2964871839",
+    "W2971237462",
+    "W2991989817",
+    "W3002725229",
+    "W3009030042",
+    "W3033241142",
+    "W3081541163",
+    "W3086372695",
+    "W3092189307",
+    "W3123322699",
+    "W3124564697",
+    "W3126533621",
+    "W3155265294",
+    "W3159653252",
+    "W3162678041",
+    "W3163995736",
+    "W3198085804",
+    "W3199420120",
+    "W3212512279",
+    "W3216349399",
+    "W4220804649",
+    "W4220834411",
+    "W4225405705",
+    "W4282041110",
+    "W4287163433",
+    "W4297990630",
+    "W4304694206",
+    "W4306313211",
+    "W4310135808",
+    "W4312202464",
+    "W4319865391",
+    "W4366996000",
+    "W4394135222",
+    "W6931735199",
+    "W6931810421"
+   ]
+  }
+ },
+ "deng2024softening": {
+  "arxiv": {
+   "authors": [
+    "Bowen Deng",
+    "Yunyeong Choi",
+    "Peichen Zhong",
+    "Janosh Riebesell",
+    "Shashwat Anand",
+    "Zhuohan Li",
+    "KyuJung Jun",
+    "Kristin A. Persson",
+    "Gerbrand Ceder"
+   ],
+   "id": "2405.07105v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-05-11",
+   "title": "Overcoming systematic softening in universal machine learning interatomic potentials by fine-tuning",
+   "updated": "2024-05-11"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2024, 2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Deng, B.' vs fetched ['deng', 'deng']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "deng2023chgnet"
+  ],
+  "crossref": {
+   "article_number": "9",
+   "authors": [
+    {
+     "family": "Deng",
+     "given": "Bowen"
+    },
+    {
+     "family": "Choi",
+     "given": "Yunyeong"
+    },
+    {
+     "family": "Zhong",
+     "given": "Peichen"
+    },
+    {
+     "family": "Riebesell",
+     "given": "Janosh"
+    },
+    {
+     "family": "Anand",
+     "given": "Shashwat"
+    },
+    {
+     "family": "Li",
+     "given": "Zhuohan"
+    },
+    {
+     "family": "Jun",
+     "given": "KyuJung"
+    },
+    {
+     "family": "Persson",
+     "given": "Kristin A."
+    },
+    {
+     "family": "Ceder",
+     "given": "Gerbrand"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-024-01500-6",
+   "issue": "1",
+   "page": null,
+   "title": "Systematic softening in universal machine learning interatomic potentials",
+   "type": "journal-article",
+   "volume": "11",
+   "year": 2025
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 145,
+   "id": "W4406237260",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W832976576",
+    "W1975172861",
+    "W1976800781",
+    "W1979544533",
+    "W1979837402",
+    "W1986211266",
+    "W1988418549",
+    "W1991432121",
+    "W1992985800",
+    "W1993926972",
+    "W2006441761",
+    "W2007395042",
+    "W2015197254",
+    "W2034467213",
+    "W2036890154",
+    "W2111349554",
+    "W2112845989",
+    "W2122427541",
+    "W2330625839",
+    "W2515095299",
+    "W2766856748",
+    "W2775708988",
+    "W2911987625",
+    "W2912728862",
+    "W2925546833",
+    "W3092189307",
+    "W3093828447",
+    "W3093999435",
+    "W3096934495",
+    "W3116800649",
+    "W3126463765",
+    "W3137040735",
+    "W3203765198",
+    "W3212644888",
+    "W4220804649",
+    "W4220914069",
+    "W4225405705",
+    "W4280597794",
+    "W4282041110",
+    "W4296801525",
+    "W4304694206",
+    "W4310135808",
+    "W4310714033",
+    "W4319865391",
+    "W4368618012",
+    "W4379768497",
+    "W4385490607",
+    "W4386740800",
+    "W4387450994",
+    "W4388697929",
+    "W4389680298",
+    "W4392166749",
+    "W4396708749",
+    "W4400526657",
+    "W4400776655",
+    "W6859250802"
+   ]
+  }
+ },
+ "evjen1932": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1932; fetched [1932]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Evjen, H. M.' vs fetched ['evjen']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Evjen",
+     "given": "H. M."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.39.675",
+   "issue": "4",
+   "page": "675-687",
+   "title": "On the Stability of Certain Heteropolar Crystals",
+   "type": "journal-article",
+   "volume": "39",
+   "year": 1932
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 484,
+   "id": "W1990678100",
+   "publication_year": 1932,
+   "referenced_works": [
+    "W1973804794",
+    "W2005680235",
+    "W2006524862",
+    "W2008309071",
+    "W2010174860",
+    "W2010696971",
+    "W2022202314",
+    "W2148000181",
+    "W2298056114",
+    "W2581883146",
+    "W2610558345",
+    "W4250941737"
+   ]
+  }
+ },
+ "ewald1921": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1921; fetched [1921]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Ewald, P. P.' vs fetched ['ewald']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Ewald",
+     "given": "P. P."
+    }
+   ],
+   "container": "Annalen der Physik",
+   "doi": "10.1002/andp.19213690304",
+   "issue": "3",
+   "page": "253-287",
+   "title": "Die Berechnung optischer und elektrostatischer Gitterpotentiale",
+   "type": "journal-article",
+   "volume": "369",
+   "year": 1921
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 6013,
+   "id": "W2001676859",
+   "publication_year": 1921,
+   "referenced_works": [
+    "W616852617",
+    "W2033785435",
+    "W2049763180",
+    "W2089195096",
+    "W4241210176"
+   ]
+  }
+ },
+ "gasteiger2020dimenet": {
+  "arxiv": {
+   "authors": [
+    "Johannes Gasteiger",
+    "Janek Groß",
+    "Stephan Günnemann"
+   ],
+   "id": "2003.03123v2",
+   "primary_category": "cs.LG",
+   "published": "2020-03-06",
+   "title": "Directional Message Passing for Molecular Graphs",
+   "updated": "2022-04-05"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2020; fetched [2020]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gasteiger, J.' vs fetched ['gasteiger']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 304,
+   "id": "W4287828570",
+   "publication_year": 2020,
+   "referenced_works": []
+  }
+ },
+ "grasselli2026longrange": {
+  "arxiv": {
+   "authors": [
+    "Federico Grasselli",
+    "Kevin Rossi",
+    "Stefano de Gironcoli",
+    "Andrea Grisafi"
+   ],
+   "id": "2602.11071v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2026-02-11",
+   "title": "Long-range electrostatics in atomistic machine learning: a physical perspective",
+   "updated": "2026-08-17"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Grasselli, F.' vs fetched ['grasselli']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 1,
+   "id": "W7128713787",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
+ "musaelian2023allegro": {
+  "arxiv": {
+   "authors": [
+    "Albert Musaelian",
+    "Simon Batzner",
+    "Anders Johansson",
+    "Lixin Sun",
+    "Cameron J. Owen",
+    "Mordechai Kornbluth",
+    "Boris Kozinsky"
+   ],
+   "id": "2204.05249v1",
+   "primary_category": "physics.comp-ph",
+   "published": "2022-04-11",
+   "title": "Learning Local Equivariant Representations for Large-Scale Atomistic Dynamics",
+   "updated": "2022-04-11"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2022, 2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Musaelian, A.' vs fetched ['musaelian', 'musaelian']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized"
+  ],
+  "crossref": {
+   "article_number": "579",
+   "authors": [
+    {
+     "family": "Musaelian",
+     "given": "Albert"
+    },
+    {
+     "family": "Batzner",
+     "given": "Simon"
+    },
+    {
+     "family": "Johansson",
+     "given": "Anders"
+    },
+    {
+     "family": "Sun",
+     "given": "Lixin"
+    },
+    {
+     "family": "Owen",
+     "given": "Cameron J."
+    },
+    {
+     "family": "Kornbluth",
+     "given": "Mordechai"
+    },
+    {
+     "family": "Kozinsky",
+     "given": "Boris"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-023-36329-y",
+   "issue": "1",
+   "page": null,
+   "title": "Learning local equivariant representations for large-scale atomistic dynamics",
+   "type": "journal-article",
+   "volume": "14",
+   "year": 2023
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 684,
+   "id": "W4319162181",
+   "publication_year": 2023,
+   "referenced_works": [
+    "W26088913",
+    "W1979544533",
+    "W1981368803",
+    "W2007395042",
+    "W2011301426",
+    "W2025444507",
+    "W2029413789",
+    "W2061179540",
+    "W2063040771",
+    "W2064807075",
+    "W2067236515",
+    "W2070059498",
+    "W2078794610",
+    "W2079105963",
+    "W2080635178",
+    "W2083222334",
+    "W2083415705",
+    "W2100052098",
+    "W2147993766",
+    "W2194775991",
+    "W2197007850",
+    "W2301215934",
+    "W2323439927",
+    "W2527189750",
+    "W2541404351",
+    "W2585152223",
+    "W2726670313",
+    "W2742127985",
+    "W2772764871",
+    "W2778051509",
+    "W2788652239",
+    "W2788775653",
+    "W2910857709",
+    "W2923693308",
+    "W2976347420",
+    "W2985776732",
+    "W2990037784",
+    "W3003486042",
+    "W3005615127",
+    "W3012230641",
+    "W3034390843",
+    "W3041909131",
+    "W3102316735",
+    "W3104644561",
+    "W3104792026",
+    "W3106310231",
+    "W3121470668",
+    "W3131639938",
+    "W3132277775",
+    "W3138658169",
+    "W3163857962",
+    "W3172185465",
+    "W3189651386",
+    "W3201073812",
+    "W3208707586",
+    "W3209219382",
+    "W4200135834",
+    "W4220914069",
+    "W4225405705",
+    "W4286588524",
+    "W4290805632",
+    "W4294316513",
+    "W4301895638",
+    "W6790192711"
+   ]
+  }
+ },
+ "prodan2005nearsightedness": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2005; fetched [2005]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Prodan, E.' vs fetched ['prodan']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Prodan",
+     "given": "E."
+    },
+    {
+     "family": "Kohn",
+     "given": "W."
+    }
+   ],
+   "container": "Proceedings of the National Academy of Sciences",
+   "doi": "10.1073/pnas.0505436102",
+   "issue": "33",
+   "page": "11635-11638",
+   "title": "Nearsightedness of electronic matter",
+   "type": "journal-article",
+   "volume": "102",
+   "year": 2005
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 549,
+   "id": "W2142501550",
+   "publication_year": 2005,
+   "referenced_works": [
+    "W1560926455",
+    "W1964357583",
+    "W1968994119",
+    "W1973446427",
+    "W1981883795",
+    "W1991050432",
+    "W2002323044",
+    "W2005062393",
+    "W2028049533",
+    "W2045839260",
+    "W2058153375",
+    "W2061720484",
+    "W2065022163",
+    "W2069396629",
+    "W2070616942",
+    "W2072565812",
+    "W2084004920",
+    "W2087000097",
+    "W2100781154",
+    "W2112930989",
+    "W2230728100"
+   ]
+  }
+ },
+ "riebesell2023matbench": {
+  "arxiv": {
+   "authors": [
+    "Janosh Riebesell",
+    "Rhys E. A. Goodall",
+    "Philipp Benner",
+    "Yuan Chiang",
+    "Bowen Deng",
+    "Gerbrand Ceder",
+    "Mark Asta",
+    "Alpha A. Lee",
+    "Anubhav Jain",
+    "Kristin A. Persson"
+   ],
+   "id": "2308.14920v3",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2023-08-28",
+   "title": "Matbench Discovery -- A framework to evaluate machine learning crystal stability predictions",
+   "updated": "2024-12-10"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2023, 2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Riebesell, J.' vs fetched ['riebesell', 'riebesell']"
+   }
+  ],
+  "cites": [
+   "batatia2023foundation",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "deng2023chgnet",
+   "deng2024softening"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Riebesell",
+     "given": "Janosh"
+    },
+    {
+     "family": "Goodall",
+     "given": "Rhys E. A."
+    },
+    {
+     "family": "Benner",
+     "given": "Philipp"
+    },
+    {
+     "family": "Chiang",
+     "given": "Yuan"
+    },
+    {
+     "family": "Deng",
+     "given": "Bowen"
+    },
+    {
+     "family": "Ceder",
+     "given": "Gerbrand"
+    },
+    {
+     "family": "Asta",
+     "given": "Mark"
+    },
+    {
+     "family": "Lee",
+     "given": "Alpha A."
+    },
+    {
+     "family": "Jain",
+     "given": "Anubhav"
+    },
+    {
+     "family": "Persson",
+     "given": "Kristin A."
+    }
+   ],
+   "container": "Nature Machine Intelligence",
+   "doi": "10.1038/s42256-025-01055-1",
+   "issue": "6",
+   "page": "836-847",
+   "title": "A framework to evaluate machine learning crystal stability predictions",
+   "type": "journal-article",
+   "volume": "7",
+   "year": 2025
+  },
+  "fetched": "2026-10-14",
+  "openalex": {
+   "cited_by_count": 154,
+   "id": "W4411543224",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W1976492731",
+    "W1992985800",
+    "W2025444507",
+    "W2034097448",
+    "W2044028691",
+    "W2104489082",
+    "W2112845989",
+    "W2134329894",
+    "W2152152303",
+    "W2464725281",
+    "W2511699341",
+    "W2531602199",
+    "W2551323975",
+    "W2594183968",
+    "W2734520197",
+    "W2766856748",
+    "W2788775653",
+    "W2801403847",
+    "W2802931990",
+    "W2885048850",
+    "W2910857709",
+    "W2949015218",
+    "W2949095042",
+    "W2964332384",
+    "W2978707075",
+    "W2997959813",
+    "W3041359432",
+    "W3089428833",
+    "W3091739897",
+    "W3093999435",
+    "W3096619549",
+    "W3100710928",
+    "W3101477835",
+    "W3113009196",
+    "W3126463765",
+    "W3164565151",
+    "W3168446231",
+    "W3203205513",
+    "W3203875161",
+    "W3212512279",
+    "W4225405705",
+    "W4288050273",
+    "W4298140799",
+    "W4306313211",
+    "W4310135808",
+    "W4310514953",
+    "W4316507319",
+    "W4319865391",
+    "W4319989573",
+    "W4321085451",
+    "W4362700002",
+    "W4367174359",
+    "W4386721625",
+    "W4386740800",
+    "W4387964204",
+    "W4388567027",
+    "W4389132751",
+    "W4390528994",
+    "W4391631778",
+    "W4394582003",
+    "W4396547347",
+    "W4396706898",
+    "W4396816788",
+    "W4402827043",
+    "W4403051164",
+    "W4403245491",
+    "W4403382065",
+    "W4403582283",
+    "W4406237260",
+    "W4416191329",
+    "W6739901393",
+    "W6874042194",
+    "W6893138734",
+    "W6894249930"
+   ]
+  }
+ }
+}

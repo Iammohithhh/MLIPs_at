@@ -1,5 +1,7 @@
 title: Latent Ewald summation for machine learning of long-range interactions
-authors: [Cheng, B.]
+topic: electrostatics
+authors:
+  - 'Cheng, B.'
 year: 2025
 venue: npj Computational Materials 11, 80
 type: article
