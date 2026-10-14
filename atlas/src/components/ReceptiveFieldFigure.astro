@@ -319,17 +319,13 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
 
 <style>
   .rf {
-    --q-pos: #2f6bd9;
-    --q-neg: #c2620f;
+    --q-pos: var(--atlas-q-pos);
+    --q-neg: var(--atlas-q-neg);
     background: var(--atlas-surface);
     border: 1px solid var(--atlas-rule);
     border-radius: 0.9rem;
     box-shadow: var(--atlas-shadow);
     overflow: hidden;
-  }
-  :global([data-theme='dark']) .rf {
-    --q-pos: #7aa7ff;
-    --q-neg: #f0a35a;
   }
   .rf-controls {
     display: flex;

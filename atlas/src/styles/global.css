@@ -10,61 +10,67 @@
 /* purple = literature, amber = uncertainty/caveat, red = documented failure. */
 /* Text-on-canvas contrast for every accent is ≥ 4.5:1 in both themes.        */
 /* ------------------------------------------------------------------------- */
+/* Softened palette: warm paper canvas, charcoal ink, desaturated accents —     */
+/* readable (text tokens stay ≥ 4.5:1) without hard black-on-white contrast.   */
 :root {
   color-scheme: light;
-  --atlas-canvas: #f9f9f7;
-  --atlas-surface: #ffffff;
-  --atlas-surface-2: #f1f2f0;
-  --atlas-ink: #0f172a;
-  --atlas-ink-muted: #475569;
-  --atlas-ink-faint: #5f6b7d;
-  --atlas-rule: #dde1e6;
-  --atlas-rule-strong: #b9c0ca;
+  --atlas-canvas: #f6f4ef;
+  --atlas-surface: #fbfaf7;
+  --atlas-surface-2: #eeebe4;
+  --atlas-ink: #2b323c;
+  --atlas-ink-muted: #545c67;
+  --atlas-ink-faint: #646b75;
+  --atlas-rule: #e2ded5;
+  --atlas-rule-strong: #c9c4b9;
 
-  --atlas-arch: #1d4ed8;
-  --atlas-phys: #0f766e;
-  --atlas-lit: #6a4c9c;
-  --atlas-caveat: #a14a07;
-  --atlas-fail: #b91c1c;
-  --atlas-verified: #047857;
-  --atlas-neutral: #475569;
+  --atlas-arch: #3f5d96;
+  --atlas-phys: #3a7069;
+  --atlas-lit: #6b5a8c;
+  --atlas-caveat: #8c5f25;
+  --atlas-fail: #9f4740;
+  --atlas-verified: #44704f;
+  --atlas-neutral: #5a616b;
 
-  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 18%, transparent);
-  --atlas-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 4px 16px rgb(15 23 42 / 0.05);
+  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 16%, transparent);
+  --atlas-shadow: 0 1px 2px rgb(43 50 60 / 0.05), 0 4px 16px rgb(43 50 60 / 0.04);
 
   /* Figure palette (SVG/2D plots); tuned per theme. */
-  --atlas-fig-atom: #8b95a5;
-  --atlas-fig-atom-dim: #d3d8df;
-  --atlas-fig-bond: #c4cad3;
-  --atlas-fig-center: #0f172a;
+  --atlas-fig-atom: #969ca5;
+  --atlas-fig-atom-dim: #dad6cd;
+  --atlas-fig-bond: #cbc6bc;
+  --atlas-fig-center: #2b323c;
+  --atlas-q-pos: #5b78ad;
+  --atlas-q-neg: #b98a5a;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --atlas-canvas: #0d1320;
-  --atlas-surface: #131b2b;
-  --atlas-surface-2: #1a2436;
-  --atlas-ink: #e3e8f0;
-  --atlas-ink-muted: #a6b2c4;
-  --atlas-ink-faint: #8794a8;
-  --atlas-rule: #263247;
-  --atlas-rule-strong: #3a4862;
+  --atlas-canvas: #181b20;
+  --atlas-surface: #1e2228;
+  --atlas-surface-2: #252a31;
+  --atlas-ink: #d3d7dc;
+  --atlas-ink-muted: #a7adb5;
+  --atlas-ink-faint: #8f969f;
+  --atlas-rule: #2e333b;
+  --atlas-rule-strong: #414750;
 
-  --atlas-arch: #82a8ff;
-  --atlas-phys: #4fd1c1;
-  --atlas-lit: #bca6f2;
-  --atlas-caveat: #f2b54b;
-  --atlas-fail: #f58c8c;
-  --atlas-verified: #5fd3a0;
-  --atlas-neutral: #a6b2c4;
+  --atlas-arch: #93a8cf;
+  --atlas-phys: #86b5ad;
+  --atlas-lit: #b2a6cc;
+  --atlas-caveat: #c9a875;
+  --atlas-fail: #d39893;
+  --atlas-verified: #95bb9e;
+  --atlas-neutral: #a7adb5;
 
-  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 26%, transparent);
-  --atlas-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 24px rgb(0 0 0 / 0.25);
+  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 22%, transparent);
+  --atlas-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 24px rgb(0 0 0 / 0.18);
 
-  --atlas-fig-atom: #7d8aa0;
-  --atlas-fig-atom-dim: #2b364a;
-  --atlas-fig-bond: #34415a;
-  --atlas-fig-center: #e3e8f0;
+  --atlas-fig-atom: #7f868f;
+  --atlas-fig-atom-dim: #343941;
+  --atlas-fig-bond: #3c424b;
+  --atlas-fig-center: #d3d7dc;
+  --atlas-q-pos: #8ea3c9;
+  --atlas-q-neg: #c9a27c;
 }
 
 @theme inline {

@@ -20,17 +20,17 @@ export interface SceneTheme {
 
 const FALLBACK: SceneTheme = {
   dark: false,
-  canvas: '#f9f9f7',
-  surface: '#ffffff',
-  ink: '#0f172a',
-  inkMuted: '#475569',
-  rule: '#dde1e6',
-  ruleStrong: '#b9c0ca',
-  arch: '#1d4ed8',
-  phys: '#0f766e',
-  lit: '#6a4c9c',
-  caveat: '#a14a07',
-  fail: '#b91c1c',
+  canvas: '#f6f4ef',
+  surface: '#fbfaf7',
+  ink: '#2b323c',
+  inkMuted: '#545c67',
+  rule: '#e2ded5',
+  ruleStrong: '#c9c4b9',
+  arch: '#3f5d96',
+  phys: '#3a7069',
+  lit: '#6b5a8c',
+  caveat: '#8c5f25',
+  fail: '#9f4740',
 };
 
 function read(): SceneTheme {
