@@ -56,7 +56,6 @@
  "provenance": {
   "source": "ase.build.bulk('Cu', 'fcc', a=3.615, cubic=True)",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "a = 3.615 Å is an input."
  }
 }

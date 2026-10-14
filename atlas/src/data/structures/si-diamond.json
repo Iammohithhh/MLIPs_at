@@ -80,7 +80,6 @@
  "provenance": {
   "source": "ase.build.bulk('Si', 'diamond', a=5.431, cubic=True)",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "a = 5.431 Å is an input chosen close to the experimental room-temperature value."
  }
 }

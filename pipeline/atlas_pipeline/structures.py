@@ -13,7 +13,6 @@ from __future__ import annotations
 import json
 import sys
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 from typing import Callable
 
@@ -108,7 +107,6 @@ def to_atlas(atoms: Atoms, recipe: Recipe) -> dict:
         "provenance": {
             "source": recipe.source,
             "generator": f"ase {ase.__version__}",
-            "created": date.today().isoformat(),
             "notes": recipe.notes,
         },
     }

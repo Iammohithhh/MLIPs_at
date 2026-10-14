@@ -416,7 +416,6 @@
  "provenance": {
   "source": "ase.build.fcc111('Au', size=(4, 4, 4), a=4.078, vacuum=8.0, orthogonal=False); centred along z",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "Periodic in-plane only; a = 4.078 Å is an input. 16 Å of vacuum separates the slab from its images along z."
  }
 }

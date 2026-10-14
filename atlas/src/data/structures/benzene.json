@@ -88,7 +88,6 @@
  "provenance": {
   "source": "ase.build.molecule('C6H6')",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "Coordinates from the G2 set as tabulated in ASE: MP2(full)/6-31G(d) optimised geometries (Curtiss et al., J. Chem. Phys. 106, 1063 (1997))."
  }
 }

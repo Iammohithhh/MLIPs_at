@@ -56,7 +56,6 @@
  "provenance": {
   "source": "ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21, u=0.382)",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "a, c and the internal parameter u are inputs; the cell is not orthogonal."
  }
 }

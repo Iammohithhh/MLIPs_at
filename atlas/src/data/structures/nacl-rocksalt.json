@@ -80,7 +80,6 @@
  "provenance": {
   "source": "ase.build.bulk('NaCl', 'rocksalt', a=5.64, cubic=True)",
   "generator": "ase 3.29.0",
-  "created": "2026-10-14",
   "notes": "a = 5.64 Å is an input (nearest-neighbour Na–Cl distance a/2 = 2.82 Å)."
  }
 }
