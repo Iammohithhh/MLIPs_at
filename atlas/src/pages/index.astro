@@ -7,41 +7,46 @@ import { labelsInGroup, LABELS } from '~/lib/labels';
 
 const statusLabels = labelsInGroup('status');
 
-// "Architecture ≠ checkpoint ≠ dataset ≠ result" — one concrete, sourced chain.
-const chain = [
-  {
+// "Architecture ≠ checkpoint ≠ dataset ≠ result" — one concrete, sourced example.
+// Architecture and training data both feed a checkpoint; a benchmark result
+// measures that checkpoint, on a separate test set, under one protocol.
+const cards = {
+  arch: {
     kind: 'Architecture',
     tone: 'arch',
     name: 'MACE',
     what: 'A recipe: equivariant message passing with higher body-order messages. No weights, no numbers.',
     source: { text: 'Batatia et al., NeurIPS 2022', href: 'https://arxiv.org/abs/2206.07697' },
-    edge: 'trained into',
   },
-  {
-    kind: 'Checkpoint',
-    tone: 'phys',
-    name: 'MACE-MP-0',
-    what: 'One specific set of trained weights, with a version, size and licence. The same architecture yields many checkpoints.',
-    source: { text: 'Batatia et al., arXiv:2401.00096', href: 'https://arxiv.org/abs/2401.00096' },
-    edge: 'trained on',
-  },
-  {
-    kind: 'Dataset',
+  data: {
+    kind: 'Training dataset',
     tone: 'neutral',
     name: 'MPtrj',
-    what: 'Materials Project relaxation trajectories at the PBE/PBE+U level of theory. Its functional and sampling shape what the checkpoint can know.',
+    what: 'Materials Project relaxation trajectories computed with PBE/PBE+U. Its functional and its near-equilibrium sampling shape what any checkpoint trained on it can know.',
     source: { text: 'Deng et al., Nat. Mach. Intell. 2023', href: 'https://arxiv.org/abs/2302.14231' },
-    edge: 'evaluated as',
   },
-  {
+  ckpt: {
+    kind: 'Checkpoint',
+    tone: 'phys',
+    name: 'MACE-MP-0 (medium)',
+    what: 'One specific set of trained weights. The MACE-MP-0 release alone contains small, medium and large checkpoints — same architecture, same data, different weights.',
+    source: { text: 'Batatia et al., arXiv:2401.00096', href: 'https://arxiv.org/abs/2401.00096' },
+  },
+  result: {
     kind: 'Benchmark result',
     tone: 'lit',
     name: 'A number under a protocol',
-    what: 'e.g. a Matbench Discovery metric for one checkpoint, on one test set, under one protocol, on one date. Not a property of “MACE”.',
+    what: 'e.g. one Matbench Discovery metric for that checkpoint, on the benchmark’s own test set (not its training data), under one protocol, on one date. Not a property of “MACE”.',
     source: { text: 'Riebesell et al., arXiv:2308.14920', href: 'https://arxiv.org/abs/2308.14920' },
-    edge: null,
   },
-] as const;
+} as const;
+type CardKey = keyof typeof cards;
+const edges: Array<{ area: string; label: string; dir: 'right' | 'down-right' | 'up-right' }> = [
+  { area: 'e-arch', label: 'instantiated as', dir: 'down-right' },
+  { area: 'e-data', label: 'trains', dir: 'up-right' },
+  { area: 'e-eval', label: 'evaluated as', dir: 'right' },
+];
+const order: CardKey[] = ['arch', 'data', 'ckpt', 'result'];
 ---
 
 <BaseLayout
@@ -64,7 +69,7 @@ const chain = [
         </div>
         <p class="hero-hint">
           <strong>Try the figure.</strong> Click any atom to make it atom <i>i</i>, step the message-passing layers, then
-          switch to long range. Hover <i>r</i><sub>c</sub> in the formula to find it in the picture.
+          switch to long range. Hover (or tap) <i>r</i><sub>c</sub> in the formula to find it in the picture.
         </p>
       </div>
       <div class="hero-figure">
@@ -82,11 +87,12 @@ const chain = [
         “Model X scores Y” hides four different objects. The Atlas gives each its own record and never lets one stand
         in for another.
       </p>
-      <ol class="chain">
+      <div class="chain" role="list">
         {
-          chain.map((c) => (
-            <li class={`chain-item tone-${c.tone}`}>
-              <div class="chain-card">
+          order.map((k) => {
+            const c = cards[k];
+            return (
+              <div class={`chain-card tone-${c.tone} area-${k}`} role="listitem">
                 <p class="chain-kind">{c.kind}</p>
                 <p class="chain-name">{c.name}</p>
                 <p class="chain-what">{c.what}</p>
@@ -94,21 +100,24 @@ const chain = [
                   {c.source.text}
                 </a>
               </div>
-              {c.edge && (
-                <div class="chain-edge" aria-hidden="true">
-                  <span>{c.edge}</span>
-                  <svg viewBox="0 0 40 12" width="40" height="12">
-                    <path d="M0 6h36M31 1.5 37 6l-6 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                  </svg>
-                </div>
-              )}
-            </li>
+            );
+          })
+        }
+        {
+          edges.map((e) => (
+            <div class={`chain-edge ${e.area} dir-${e.dir}`} aria-hidden="true">
+              <span>{e.label}</span>
+              <svg viewBox="0 0 40 12" width="40" height="12">
+                <path d="M0 6h36M31 1.5 37 6l-6 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+            </div>
           ))
         }
-      </ol>
+      </div>
       <p class="chain-note">
-        Checkpoints trained at different levels of theory are not directly comparable, and benchmark numbers from
-        different protocols are never merged into one ranking.
+        The checkpoint, not the architecture or the dataset, is what a benchmark measures. Checkpoints trained at
+        different levels of theory are not directly comparable, and numbers from different protocols are never merged
+        into one ranking.
       </p>
     </div>
   </section>
@@ -239,18 +248,24 @@ const chain = [
     margin-bottom: 2rem;
   }
 
-  /* four-object chain */
+  /* four-object chain: architecture and data feed the checkpoint; the result measures it */
   .chain {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
-  }
-  .chain-item {
-    display: flex;
+    grid-template-columns: minmax(0, 1fr) 6.5rem minmax(0, 1fr) 6rem minmax(0, 1fr);
+    grid-template-areas:
+      'arch e-arch ckpt e-eval result'
+      'data e-data ckpt e-eval result';
+    gap: 0.9rem 0;
     align-items: stretch;
   }
+  .area-arch { grid-area: arch; }
+  .area-data { grid-area: data; }
+  .area-ckpt { grid-area: ckpt; align-self: center; }
+  .area-result { grid-area: result; align-self: center; }
+  .e-arch { grid-area: e-arch; }
+  .e-data { grid-area: e-data; }
+  .e-eval { grid-area: e-eval; }
   .chain-card {
-    flex: 1;
     padding: 1.1rem 1.1rem 1rem;
     background: var(--atlas-surface);
     border: 1px solid var(--atlas-rule);
@@ -289,29 +304,28 @@ const chain = [
     align-items: center;
     justify-content: center;
     gap: 0.15rem;
-    width: 3.25rem;
-    flex: none;
     color: var(--atlas-ink-faint);
-    font: italic 0.6875rem/1.1 var(--font-serif);
+    font: italic 0.75rem/1.1 var(--font-serif);
     text-align: center;
   }
+  .dir-down-right svg { transform: rotate(22deg); }
+  .dir-up-right svg { transform: rotate(-22deg); }
   .chain-note {
     margin-top: 1rem;
     font-size: 0.875rem;
     color: var(--atlas-ink-faint);
+    max-width: 52rem;
   }
   @media (max-width: 64rem) {
     .chain {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'arch' 'e-arch' 'data' 'e-data' 'ckpt' 'e-eval' 'result';
       max-width: 34rem;
-    }
-    .chain-item {
-      flex-direction: column;
+      gap: 0.3rem;
     }
     .chain-edge {
-      width: auto;
       flex-direction: row;
-      padding-block: 0.4rem;
+      padding-block: 0.3rem;
     }
     .chain-edge svg {
       transform: rotate(90deg);
@@ -371,6 +385,13 @@ const chain = [
   }
   .dest:has(.dest-link):hover {
     border-color: var(--atlas-rule-strong);
+  }
+  .dest-link:focus-visible {
+    outline: none;
+  }
+  .dest:has(.dest-link:focus-visible) {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
   }
 
   /* labels band */

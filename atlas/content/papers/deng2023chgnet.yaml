@@ -1,0 +1,9 @@
+title: CHGNet as a pretrained universal neural network potential for charge-informed atomistic modelling
+authors: [Deng, B., Zhong, P., Jun, K., Riebesell, J., Han, K., Bartel, C. J., Ceder, G.]
+year: 2023
+venue: Nature Machine Intelligence 5, 1031–1041
+type: article
+identifiers:
+  arxiv: '2302.14231'
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,11 @@
+title: Learning local equivariant representations for large-scale atomistic dynamics
+authors: [Musaelian, A., Batzner, S., Johansson, A., Sun, L., Owen, C. J., Kornbluth, M., Kozinsky, B.]
+year: 2023
+venue: Nature Communications 14, 579
+type: article
+identifiers:
+  arxiv: '2204.05249'
+edges:
+  - { type: extends, target: batzner2022nequip, documented: true, note: Same group; keeps equivariant features, removes message passing. }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14 }

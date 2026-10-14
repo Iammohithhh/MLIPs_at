@@ -1,0 +1,9 @@
+title: Coulomb interaction between charges
+summary: >-
+  Point charges interact with an energy that decays only as 1/r, so in a periodic crystal the lattice sum
+  converges conditionally and needs Ewald-type summation. No finite cutoff captures it exactly.
+equations:
+  - tex: 'E = \frac{1}{4\pi\varepsilon_0}\sum_{i<j} \frac{q_i q_j}{r_{ij}}'
+    label: pairwise Coulomb energy of point charges
+papers: [cheng2025les]
+review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,10 @@
+title: Locality and the cutoff radius
+summary: >-
+  Most MLIPs write the energy as a sum of atomic contributions, each depending only on neighbours within a cutoff
+  radius r_c. Locality makes models linear-scaling and transferable, and fixes what they can never see.
+explains: [nearsightedness]
+relevant_to: [behler-parrinello, allegro, nequip, mace]
+demonstrated_by: [receptive-field-figure]
+related: [receptive-field, smooth-cutoff, long-range-electrostatics]
+claims: [allegro-strictly-local]
+review: { status: draft, last_checked: 2026-10-14 }

@@ -2,9 +2,19 @@
 // Homepage figure: which atoms can influence atom i under a local cutoff, after
 // T message-passing layers, and through long-range Coulomb terms. The graph is
 // computed (cutoff graph + breadth-first hops), not drawn by hand.
+import Assumptions from './Assumptions.astro';
 import Badge from './Badge.astro';
 import Math from './Math.astro';
-import { RF, labelOnCircle, rfModel, rfReadout, rfReadoutHtml, rfState, type RFMode } from '~/lib/receptive-field-figure';
+import {
+  RF,
+  atomPosition,
+  labelOnCircle,
+  rfModel,
+  rfReadout,
+  rfReadoutHtml,
+  rfState,
+  type RFMode,
+} from '~/lib/receptive-field-figure';
 import { nearestAtom } from '~/lib/toy-lattice';
 
 const model = rfModel();
@@ -16,6 +26,7 @@ const c = model.atoms[center]!;
 const rcLabel = labelOnCircle(c.x, c.y, model.rc);
 const ballLabel = labelOnCircle(c.x, c.y, T * model.rc);
 const readout = rfReadout(state, mode, model.atoms.length);
+const position = atomPosition(center, c.q);
 const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
 ---
 
@@ -27,15 +38,17 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
       <button type="button" data-set-mode="long" aria-pressed="false">Long range</button>
     </div>
     <div class="seg layers" role="group" aria-label="Message-passing layers T">
-      <span class="seg-label" aria-hidden="true">T</span>
+      <span class="seg-label" aria-hidden="true" data-sym="T">T</span>
       {layers.map((k) => <button type="button" data-set-t={k} aria-pressed={k === T ? 'true' : 'false'}>{k}</button>)}
     </div>
   </div>
 
   <svg
     viewBox={`0 0 ${RF.width} ${RF.height}`}
-    role="img"
-    aria-label="A two-dimensional toy ionic layer. Atom i is marked; atoms that can influence it are highlighted. Use the arrow keys to move atom i, or click an atom."
+    role="application"
+    aria-roledescription="interactive lattice"
+    aria-label="Two-dimensional toy ionic layer. Arrow keys move atom i; atoms that can influence it are highlighted."
+    aria-describedby="rf-readout"
     tabindex="0"
   >
     <g class="lr">
@@ -94,7 +107,10 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
   </svg>
 
   <figcaption>
-    <p class="readout" aria-live="polite" set:html={rfReadoutHtml(readout)} />
+    <p class="readout" id="rf-readout" aria-live="polite">
+      <span class="readout-text" set:html={rfReadoutHtml(readout)} />
+      <span class="sr-only readout-pos">{position}</span>
+    </p>
     <div class="legend" aria-hidden="true">
       <span class="lg lg-center"><span>atom <i>i</i></span></span>
       <span class="lg lg-in only-local-mp"><span>can influence <i>i</i> <em>(shade = hops)</em></span></span>
@@ -102,7 +118,8 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
       <span class="lg lg-pos only-long">+ ion</span>
       <span class="lg lg-neg only-long">− ion</span>
       <span class="lg lg-att only-long">attractive</span>
-      <span class="lg lg-rep only-long">repulsive (opacity ∝ 1/r)</span>
+      <span class="lg lg-rep only-long">repulsive</span>
+      <span class="lg-note only-long">line opacity ∝ 1/r</span>
       <span class="lg lg-rc"><span>cutoff <i>r</i><sub>c</sub></span></span>
       <span class="lg lg-ball only-mp"><span><i>T</i>·<i>r</i><sub>c</sub> bound</span></span>
     </div>
@@ -113,14 +130,39 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
       </div>
       <p class="math-note">
         Receptive field after <Math tex={String.raw`\sym{T}{T}`} /> layers:&nbsp;
-        <Math tex={String.raw`\mathcal{R}_i^{(T)} = \{\, j : d_G(i,j) \le \sym{T}{T} \,\} \subseteq \{\, j : r_{ij} < \sym{Trc}{T\,r_c} \,\}`} />
+        <Math tex={String.raw`\mathcal{R}_i^{(T)} = \{\, j : d_G(i,j) \le \sym{T}{T} \,\} \subseteq \{\, j : r_{ij} < \sym{Trc}{T\,\sym{rc}{r_c}} \,\}`} />
       </p>
     </div>
+    <details class="rf-assumptions" open>
+      <summary>Assumptions &amp; definitions</summary>
+      <Assumptions
+        title="Toy model, not a material"
+        items={[
+          { term: 'System', value: `Finite 2D layer of ${RF.nx} × ${RF.ny} sites with toy charges ±1; open boundaries (no periodic images).` },
+          { term: 'Cutoff graph', value: 'An edge joins i and j when r_ij < r_c, with r_c = 1.5 lattice spacings.' },
+          { term: 'd_G(i, j)', value: 'Number of edges on the shortest path from i to j; one hop per message-passing layer.' },
+          { term: 'Why ⊆', value: 'A path of at most T edges, each shorter than r_c, spans less than T·r_c (triangle inequality).' },
+          { term: 'Long range', value: 'Schematic: no Coulomb or Ewald sum is evaluated; solid = q_i q_j < 0, dashed = q_i q_j > 0.' },
+        ]}
+      />
+    </details>
   </figcaption>
 </figure>
 
 <script>
-  import { RF, labelOnCircle, rfModel, rfReadout, rfReadoutHtml, rfState, type RFMode } from '~/lib/receptive-field-figure';
+  import {
+    FULL_WINDOW,
+    RF,
+    atomPosition,
+    cropAround,
+    labelOnCircle,
+    rfModel,
+    rfReadout,
+    rfReadoutHtml,
+    rfState,
+    type RFMode,
+    type VisibleWindow,
+  } from '~/lib/receptive-field-figure';
   import { nearestAtom } from '~/lib/toy-lattice';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -149,7 +191,19 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
     const mark = svg.querySelector<SVGGElement>('.center-mark')!;
     const rcLabel = svg.querySelector<SVGTextElement>('.rc-label')!;
     const ballLabel = svg.querySelector<SVGTextElement>('.ball-label')!;
-    const readout = root.querySelector<HTMLElement>('.readout')!;
+    const readoutText = root.querySelector<HTMLElement>('.readout-text')!;
+    const readoutPos = root.querySelector<HTMLElement>('.readout-pos')!;
+
+    // Narrow screens show a square crop that pans to keep atom i (and its labels)
+    // in view; wide screens show the whole layer.
+    let narrow = false;
+    let view: VisibleWindow = FULL_WINDOW;
+    const PAN_MARGIN = 2 * RF.a;
+    function frame(cx: number) {
+      if (!narrow) view = FULL_WINDOW;
+      else if (view === FULL_WINDOW || cx < view.x0 + PAN_MARGIN || cx > view.x1 - PAN_MARGIN) view = cropAround(cx);
+      svg.setAttribute('viewBox', `${view.x0} 0 ${view.x1 - view.x0} ${RF.height}`);
+    }
 
     function update() {
       root.dataset.mode = mode;
@@ -164,6 +218,7 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
         el.dataset.in = h <= s.layers ? '1' : '0';
       });
 
+      frame(c.x);
       for (const el of [ball, cutoff]) {
         el.setAttribute('cx', c.x.toFixed(2));
         el.setAttribute('cy', c.y.toFixed(2));
@@ -171,10 +226,10 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
       cutoff.setAttribute('r', String(model.rc));
       ball.setAttribute('r', String(T * model.rc));
       mark.setAttribute('transform', `translate(${c.x.toFixed(2)} ${c.y.toFixed(2)})`);
-      const p1 = labelOnCircle(c.x, c.y, model.rc);
+      const p1 = labelOnCircle(c.x, c.y, model.rc, view);
       rcLabel.setAttribute('x', p1.x.toFixed(1));
       rcLabel.setAttribute('y', p1.y.toFixed(1));
-      const p2 = labelOnCircle(c.x, c.y, T * model.rc);
+      const p2 = labelOnCircle(c.x, c.y, T * model.rc, view);
       ballLabel.setAttribute('x', p2.x.toFixed(1));
       ballLabel.setAttribute('y', p2.y.toFixed(1));
       ballLabel.querySelector('.t-num')!.textContent = String(T);
@@ -196,7 +251,8 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
         }),
       );
 
-      readout.innerHTML = rfReadoutHtml(rfReadout(s, mode, model.atoms.length));
+      readoutText.innerHTML = rfReadoutHtml(rfReadout(s, mode, model.atoms.length));
+      readoutPos.textContent = atomPosition(center, c.q);
       root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) => {
         b.setAttribute('aria-pressed', String(b.dataset.setMode === mode));
       });
@@ -206,14 +262,14 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
       });
     }
 
-    // On narrow screens show a square crop around the middle so atoms stay legible.
-    const fit = () => {
-      const narrow = svg.clientWidth < 600;
-      const x0 = (RF.width - RF.height) / 2;
-      svg.setAttribute('viewBox', narrow ? `${x0} 0 ${RF.height} ${RF.height}` : `0 0 ${RF.width} ${RF.height}`);
-    };
-    new ResizeObserver(fit).observe(svg);
-    fit();
+    new ResizeObserver(() => {
+      const next = svg.clientWidth < 600;
+      if (next !== narrow) {
+        narrow = next;
+        view = FULL_WINDOW;
+        update();
+      }
+    }).observe(svg);
 
     root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) =>
       b.addEventListener('click', () => {
@@ -352,6 +408,11 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
   .ball-label {
     display: none;
   }
+  /* Hovering T·r_c in the formula reveals the bound in every view. */
+  .ball.sym-active,
+  .ball-label.sym-active {
+    display: inline;
+  }
   .sym-label {
     font: italic 600 15px var(--font-serif);
     text-anchor: middle;
@@ -423,6 +484,7 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
   .lg-rc::before { background: color-mix(in oklab, var(--atlas-phys) 10%, transparent); border: 1.5px solid var(--atlas-phys); }
   .lg-ball::before { border: 1.5px dashed var(--atlas-ink-faint); }
   .lg em { font-style: normal; color: var(--atlas-ink-faint); }
+  .lg-note { color: var(--atlas-ink-faint); }
   .lg i { font-family: var(--font-serif); }
 
   .only-long,
@@ -432,6 +494,15 @@ const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
   .rf[data-mode='long'] .only-long,
   .rf[data-mode='mp'] .only-mp {
     display: inline-flex;
+  }
+  .rf-assumptions {
+    font-size: 0.8125rem;
+  }
+  .rf-assumptions summary {
+    cursor: pointer;
+    color: var(--atlas-ink-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
   .rf[data-mode='long'] .only-local-mp {
     display: none;

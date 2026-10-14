@@ -1,0 +1,9 @@
+statement: >-
+  Allegro is strictly local: each atom's energy depends only on neighbours within a single cutoff, with no
+  message passing between atoms, so its receptive field does not grow with depth.
+grade: THEORY
+sources:
+  - { paper: musaelian2023allegro }
+scope: { model_families: [allegro] }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: Add section locator. }

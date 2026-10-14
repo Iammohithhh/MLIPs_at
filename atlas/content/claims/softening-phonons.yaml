@@ -1,0 +1,9 @@
+statement: >-
+  M3GNet, CHGNet and MACE-MP-0 systematically underpredict energies, forces and phonon frequencies relative to
+  their DFT references across a large set of materials (a softened potential-energy surface).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: deng2024softening }
+scope: { checkpoints: [mace-mp-0] }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-14, notes: 'Vision §6 cites 229 PhononDB compounds; confirm the count and figure locator against the full text.' }

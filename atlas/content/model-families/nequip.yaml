@@ -1,0 +1,11 @@
+name: NequIP
+paradigms: [equivariant]
+introduced_in: batzner2022nequip
+year: 2022
+summary: >-
+  An E(3)-equivariant message-passing network whose node features are irreducible representations (scalars,
+  vectors, higher-order tensors) combined through tensor products with spherical harmonics of bond directions.
+locality: { kind: message-passing, note: Receptive field grows by one cutoff per interaction layer. }
+symmetry: equivariant
+implementations: [nequip]
+review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,7 @@
+name: nequip
+repo: https://github.com/mir-group/nequip
+language: Python
+framework: pytorch
+licence: MIT
+families: [nequip]
+review: { status: draft, last_checked: 2026-10-14 }

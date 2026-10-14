@@ -1,0 +1,7 @@
+statement: >-
+  After T message-passing layers on a graph whose edges join atoms closer than the cutoff r_c, atom i can only be
+  influenced by atoms within T graph hops; every such atom lies closer than T·r_c, so the receptive field is a
+  subset of the ball of radius T·r_c (often a strict subset).
+grade: THEORY
+derivation: /
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-14, notes: Triangle inequality along a path of at most T edges, each shorter than r_c; checked numerically in receptive-field-figure.test.ts. }

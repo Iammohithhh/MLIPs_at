@@ -2,6 +2,7 @@
 // every element on the page that carries the same key — symbols inside KaTeX
 // equations, symbol-legend chips, SVG marks in figures — and broadcasts the key so
 // canvas/3D islands (which have no DOM per object) can highlight their counterpart.
+// Mouse: hover. Keyboard: focus. Touch/pen: tap toggles, tapping elsewhere clears.
 
 export const SYMBOL_EVENT = 'atlas:symbol';
 const ACTIVE_CLASS = 'sym-active';
@@ -47,7 +48,8 @@ export function onSymbolChange(handler: (detail: SymbolEventDetail) => void): ()
   return () => document.removeEventListener(SYMBOL_EVENT, listener);
 }
 
-function symbolOf(target: EventTarget | null): string | null {
+/** The innermost linked symbol containing `target` (symbols may nest, e.g. r_c inside T·r_c). */
+export function symbolOf(target: EventTarget | null): string | null {
   if (!(target instanceof Element)) return null;
   const el = target.closest('[data-sym]');
   return el?.getAttribute('data-sym') ?? null;
@@ -59,23 +61,46 @@ let installed = false;
 export function installLinkedSymbols(): void {
   if (installed || typeof document === 'undefined') return;
   installed = true;
+
+  // Hover is mouse-only: touch fires pointerover then pointerout around every tap,
+  // which would set and immediately clear the highlight.
   document.addEventListener('pointerover', (e) => {
+    if (e.pointerType !== 'mouse') return;
     const sym = symbolOf(e.target);
     if (sym !== null) setActiveSymbol(sym);
   });
   document.addEventListener('pointerout', (e) => {
+    if (e.pointerType !== 'mouse') return;
     const from = symbolOf(e.target);
     const to = symbolOf(e.relatedTarget);
     if (from !== null && to !== from) setActiveSymbol(to);
   });
+  // A tap also focuses buttons (focusin fires before pointerup); let the tap decide.
+  let tapping = false;
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      tapping = e.pointerType !== 'mouse';
+    },
+    true,
+  );
+  document.addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'mouse') return;
+    const sym = symbolOf(e.target);
+    setActiveSymbol(sym !== null && sym !== current ? sym : null);
+  });
+
   document.addEventListener('focusin', (e) => {
+    if (tapping) return;
     const sym = symbolOf(e.target);
     if (sym !== null) setActiveSymbol(sym);
   });
   document.addEventListener('focusout', (e) => {
+    if (tapping) return;
     if (symbolOf(e.target) !== null && symbolOf(e.relatedTarget) === null) setActiveSymbol(null);
   });
   document.addEventListener('keydown', (e) => {
+    tapping = false;
     if (e.key === 'Escape') setActiveSymbol(null);
   });
 }

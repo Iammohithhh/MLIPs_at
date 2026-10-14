@@ -1,0 +1,7 @@
+name: mace
+repo: https://github.com/ACEsuit/mace
+language: Python
+framework: pytorch
+licence: MIT
+families: [mace]
+review: { status: draft, last_checked: 2026-10-14 }

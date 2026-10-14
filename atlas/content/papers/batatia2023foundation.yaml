@@ -1,0 +1,14 @@
+title: A foundation model for atomistic materials chemistry
+authors: [Batatia, I.]
+et_al: true
+year: 2023
+type: preprint
+identifiers:
+  arxiv: '2401.00096'
+edges:
+  - { type: extends, target: batatia2022mace, documented: true }
+verified_against: secondary
+review:
+  status: draft
+  last_checked: 2026-10-14
+  notes: Author list truncated; year to be confirmed from arXiv metadata by the bibliography pipeline.

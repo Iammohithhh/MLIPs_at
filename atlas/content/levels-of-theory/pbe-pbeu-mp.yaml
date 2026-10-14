@@ -1,0 +1,8 @@
+name: PBE / PBE+U (Materials Project settings)
+method: DFT
+functional: PBE
+corrections: [Hubbard U on selected transition-metal oxides and fluorides, Materials Project energy-correction scheme]
+basis: Plane waves with PAW pseudopotentials
+codes: [VASP]
+notes: Checkpoints trained at this level are not directly comparable with r²SCAN- or hybrid-trained ones.
+review: { status: draft, last_checked: 2026-10-14 }

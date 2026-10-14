@@ -39,14 +39,14 @@ const rules = [
   'Accuracy over breadth: a record is not published until it passes review.',
 ];
 
-const tiers: Array<{ id: string; where: string; what: string; label: LabelKey; place: 'browser' | 'server' | 'offline' }> =
+const tiers: Array<{ id: string; where: string; what: string; labels: LabelKey[]; place: 'browser' | 'server' | 'offline' }> =
   [
-    { id: 'T0', where: 'Browser · TypeScript', what: 'Analytic toys: Coulomb sums, QEq solves, 1D Poisson, cutoff functions', label: 'toy-model', place: 'browser' },
-    { id: 'T1', where: 'Browser · WebGPU compute', what: 'Ewald sums, many-particle toy MD, field volumes', label: 'live-calculation', place: 'browser' },
-    { id: 'T2', where: 'Browser · lammps.js (WebAssembly)', what: 'Real classical MD with standard potentials (LJ, EAM, Tersoff)', label: 'live-calculation', place: 'browser' },
-    { id: 'T3', where: 'Browser · ONNX Runtime Web', what: 'R&D: a small real MLIP on small systems', label: 'live-calculation', place: 'browser' },
-    { id: 'T4', where: 'Atlas CPU inference server', what: 'Foundation-model Observatory: energies, forces, short scans on small structures', label: 'live-calculation', place: 'server' },
-    { id: 'T5', where: 'Offline CPU precompute', what: 'Trajectories, phonons, Architecture X-ray tensors, reference data', label: 'precomputed', place: 'offline' },
+    { id: 'T0', where: 'Browser · TypeScript', what: 'Analytic toys: Coulomb sums, QEq solves, 1D Poisson, cutoff functions', labels: ['toy-model'], place: 'browser' },
+    { id: 'T1', where: 'Browser · WebGPU compute', what: 'Ewald sums, many-particle toy MD, field volumes', labels: ['toy-model', 'live-calculation'], place: 'browser' },
+    { id: 'T2', where: 'Browser · lammps.js (WebAssembly)', what: 'Real classical MD with standard potentials (LJ, EAM, Tersoff)', labels: ['live-calculation'], place: 'browser' },
+    { id: 'T3', where: 'Browser · ONNX Runtime Web', what: 'R&D: a small real MLIP on small systems', labels: ['live-calculation'], place: 'browser' },
+    { id: 'T4', where: 'Atlas CPU inference server', what: 'Foundation-model Observatory: energies, forces, short scans on small structures', labels: ['live-calculation'], place: 'server' },
+    { id: 'T5', where: 'Offline CPU precompute', what: 'Trajectories, phonons, Architecture X-ray tensors, reference data', labels: ['precomputed'], place: 'offline' },
   ];
 
 const units = [
@@ -62,7 +62,7 @@ const phase1 = [
   { item: 'Astro project, layout, light/dark themes, self-hosted type', done: true },
   { item: 'Labels, figure captions, callouts, assumptions panels', done: true },
   { item: 'Build-time KaTeX with linked symbols', done: true },
-  { item: 'Content schemas for every entity (claims, papers, checkpoints, …)', done: false },
+  { item: 'Content schemas for every entity, with build-time integrity checks', done: true },
   { item: 'Impostor-sphere atomic viewer (cell, replicas, shells, vectors, measure)', done: false },
   { item: 'Structure pipeline (ASE → compact typed data)', done: false },
   { item: 'Bibliography pipeline (arXiv / Crossref / OpenAlex)', done: false },
@@ -125,8 +125,10 @@ const phase1 = [
     <section class="wide block" id="compute" aria-labelledby="tiers-h">
       <h2 id="tiers-h" class="h-section">Compute tiers</h2>
       <p class="prose-note">
-        Every result is labelled with the tier that produced it. The site itself is static; 3D and toy physics run in
-        your browser, live model inference runs on a CPU server, and heavy results are precomputed offline on CPU.
+        Every result carries its status label, and its provenance names the tier that produced it. Whether a result
+        is a toy depends on the model, not the hardware: toy MD on the GPU is still a TOY MODEL. The site itself is
+        static; 3D and toy physics run in your browser, live model inference runs on a CPU server, and heavy results
+        are precomputed offline on CPU.
       </p>
       <ol class="tiers">
         {
@@ -136,7 +138,9 @@ const phase1 = [
               <span class="tier-where">{t.where}</span>
               <span class="tier-what">{t.what}</span>
               <span class="tier-label">
-                <Badge label={t.label} />
+                {t.labels.map((l) => (
+                  <Badge label={l} />
+                ))}
               </span>
             </li>
           ))
@@ -187,7 +191,8 @@ const phase1 = [
         }
       </ul>
       <p class="prose-note small">
-        See the <a href="/method/design-system/">design system</a> for the visual components every page is built from.
+        See the <a href="/method/design-system/">design system</a> for the visual components every page is built from,
+        and the <a href="/method/content-model/">content model</a> for the records behind them.
       </p>
     </section>
   </article>
@@ -304,6 +309,12 @@ const phase1 = [
   }
   .tier-what {
     color: var(--atlas-ink-muted);
+  }
+  .tier-label {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    justify-content: flex-end;
   }
   @media (max-width: 48rem) {
     .tier {

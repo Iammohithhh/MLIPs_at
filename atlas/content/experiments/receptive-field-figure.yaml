@@ -1,0 +1,14 @@
+title: Which atoms can influence atom i?
+question: How far can information reach under a local cutoff, after T message-passing layers, and through Coulomb terms?
+kind: figure
+module: P2
+status: TOY_MODEL
+tier: T0
+page: /
+assumptions:
+  - { term: System, value: 2D square lattice of ±1 toy ions with deterministic jitter; not a real material. }
+  - { term: Graph, value: Edges join atoms closer than r_c = 1.5 lattice spacings; one hop per layer. }
+  - { term: Long range, value: 'Schematic only: line opacity ∝ 1/r; no lattice sum is evaluated.' }
+concepts: [locality, receptive-field, long-range-electrostatics]
+claims: [mp-receptive-field-bound]
+review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,11 @@
+name: MPtrj
+domain: [inorganic-materials]
+summary: >-
+  Structures, energies, forces, stresses and magnetic moments sampled from Materials Project relaxation
+  trajectories. Mostly near-equilibrium configurations — a bias that matters for phonons and off-equilibrium
+  dynamics.
+introduced_in: deng2023chgnet
+levels_of_theory: [pbe-pbeu-mp]
+configuration_types: [relaxation-trajectory]
+claims: [mptrj-level-of-theory]
+review: { status: draft, last_checked: 2026-10-14, notes: Add the structure count with its locator once checked against the full text. }

@@ -1,0 +1,9 @@
+title: E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials
+authors: [Batzner, S., Musaelian, A., Sun, L., Geiger, M., Mailoa, J. P., Kornbluth, M., Molinari, N., Smidt, T. E., Kozinsky, B.]
+year: 2022
+venue: Nature Communications 13, 2453
+type: article
+identifiers:
+  arxiv: '2101.03164'
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14 }

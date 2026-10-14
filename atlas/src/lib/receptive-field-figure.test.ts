@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RF, labelOnCircle, rfModel, rfReadout, rfState } from './receptive-field-figure';
+import { RF, atomPosition, cropAround, labelOnCircle, rfModel, rfReadout, rfState } from './receptive-field-figure';
 import { distance, nearestAtom } from './toy-lattice';
 
 const model = rfModel();
@@ -69,5 +69,37 @@ describe('homepage receptive-field model', () => {
       expect(p.y).toBeGreaterThanOrEqual(8);
       expect(p.y).toBeLessThanOrEqual(RF.height);
     }
+  });
+});
+
+describe('long-range readout and narrow-screen crop', () => {
+  it('counts atoms beyond r_c that T layers can still reach', () => {
+    const T = 2;
+    const s = rfState(model, center, 'long', T);
+    const mp = rfState(model, center, 'mp', T);
+    const local = rfState(model, center, 'local', T);
+    // Reachable within T hops minus those already inside r_c.
+    expect(s.beyondReachable).toBe(mp.inField - local.inField);
+    expect(rfReadout(s, 'long', model.atoms.length)).toContain(`${s.beyondReachable} are reachable`);
+    expect(rfReadout(s, 'long', model.atoms.length)).toContain('strictly local model sees none');
+  });
+
+  it('crops a square window around atom i, clamped to the figure', () => {
+    expect(cropAround(0)).toEqual({ x0: 0, x1: RF.height });
+    expect(cropAround(RF.width)).toEqual({ x0: RF.width - RF.height, x1: RF.width });
+    const mid = cropAround(RF.width / 2);
+    expect(mid.x1 - mid.x0).toBe(RF.height);
+  });
+
+  it('places labels inside the visible window', () => {
+    const view = cropAround(100);
+    const p = labelOnCircle(100, RF.height / 2, 200, view);
+    expect(p.x).toBeGreaterThanOrEqual(view.x0);
+    expect(p.x).toBeLessThanOrEqual(view.x1);
+  });
+
+  it('describes atom i by grid position and charge', () => {
+    expect(atomPosition(0, 1)).toBe(`Atom i: row 1 of ${RF.ny}, column 1 of ${RF.nx}, positive ion.`);
+    expect(atomPosition(RF.nx + 2, -1)).toContain('row 2');
   });
 });

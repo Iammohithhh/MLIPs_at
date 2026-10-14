@@ -20,7 +20,10 @@ export const RF = {
   origin: { x: 22, y: 22 },
   width: 880,
   height: 528,
-  /** Cutoff in units of the lattice spacing: includes 1st and 2nd neighbours. */
+  /**
+   * Cutoff in units of the lattice spacing. Nominally includes 1st and 2nd neighbours
+   * of the ideal lattice; with jitter a few 2nd-neighbour pairs fall outside r_c.
+   */
   rcFactor: 1.5,
   atomRadius: 9,
   maxLayers: 4,
@@ -63,6 +66,10 @@ export interface RFState {
   inBall: number;
   flowEdges: Array<[number, number]>;
   longRange: LongRangeLine[];
+  /** Long-range view: atoms beyond r_c that T message-passing layers could still reach. */
+  beyondReachable: number;
+  /** Layer count T selected for message passing (kept while other views are shown). */
+  T: number;
 }
 
 export function rfState(model: RFModel, center: number, mode: RFMode, T: number): RFState {
@@ -70,8 +77,12 @@ export function rfState(model: RFModel, center: number, mode: RFMode, T: number)
   const hops = hopDistances(model.adj, center);
   const rf = receptiveField(model.atoms, model.adj, hops, center, model.rc, layers);
   const longRange: LongRangeLine[] = [];
+  let beyondReachable = 0;
   if (mode === 'long') {
     const c = model.atoms[center]!;
+    model.atoms.forEach((a, j) => {
+      if (j !== center && hops[j]! <= T && distance(a, c) >= model.rc) beyondReachable++;
+    });
     model.atoms.forEach((a, j) => {
       if (j === center) return;
       const r = distance(a, c);
@@ -83,7 +94,7 @@ export function rfState(model: RFModel, center: number, mode: RFMode, T: number)
       });
     });
   }
-  return { hops, layers, ...rf, longRange };
+  return { hops, layers, ...rf, longRange, beyondReachable, T };
 }
 
 export function rfReadout(state: RFState, mode: RFMode, total: number): string {
@@ -99,19 +110,51 @@ export function rfReadout(state: RFState, mode: RFMode, total: number): string {
         : `Here that equals every atom in the disc of radius ${T}·r_c.`;
     return `After T = ${T} layer${T > 1 ? 's' : ''}, ${state.inField} atoms can influence atom i (≤ ${T} graph hop${T > 1 ? 's' : ''}). ${ball}`;
   }
-  return `Atom i also couples to all ${total - 1 - state.inField} ions beyond r_c through 1/r Coulomb terms (drawn schematically). A cutoff model sees none of them.`;
+  const beyond = total - 1 - state.inField;
+  const T = state.T;
+  return (
+    `In this finite toy cluster, atom i also couples to all ${beyond} ions beyond r_c through 1/r Coulomb terms (drawn schematically). ` +
+    `A strictly local model sees none of them; with T = ${T} message-passing layer${T > 1 ? 's' : ''}, ${state.beyondReachable} are reachable — through learned messages, not a 1/r law.`
+  );
 }
 
-/** Pick a label position on a circle that stays inside the figure. */
-export function labelOnCircle(cx: number, cy: number, r: number): { x: number; y: number } {
+/** Horizontal window of the figure that is currently visible (narrow screens crop it). */
+export interface VisibleWindow {
+  x0: number;
+  x1: number;
+}
+
+export const FULL_WINDOW: VisibleWindow = { x0: 0, x1: RF.width };
+
+/** Square crop of the figure centred on x, clamped to the figure. */
+export function cropAround(x: number): VisibleWindow {
+  const w = RF.height;
+  const x0 = Math.min(RF.width - w, Math.max(0, x - w / 2));
+  return { x0, x1: x0 + w };
+}
+
+/** Pick a label position on a circle that stays inside the visible part of the figure. */
+export function labelOnCircle(
+  cx: number,
+  cy: number,
+  r: number,
+  view: VisibleWindow = FULL_WINDOW,
+): { x: number; y: number } {
   const angles = [-90, -60, -120, -30, -150, 0, 180, 90];
   for (const deg of angles) {
     const t = (deg * Math.PI) / 180;
     const x = cx + r * Math.cos(t);
     const y = cy + r * Math.sin(t) - 6;
-    if (x > 30 && x < RF.width - 30 && y > 16 && y < RF.height - 8) return { x, y };
+    if (x > view.x0 + 30 && x < view.x1 - 30 && y > 16 && y < RF.height - 8) return { x, y };
   }
-  return { x: cx, y: Math.max(16, cy - r - 6) };
+  return { x: Math.min(view.x1 - 30, Math.max(view.x0 + 30, cx)), y: Math.max(16, cy - r - 6) };
+}
+
+/** Grid position of an atom, for the screen-reader readout. */
+export function atomPosition(index: number, q: number): string {
+  const row = Math.floor(index / RF.nx) + 1;
+  const col = (index % RF.nx) + 1;
+  return `Atom i: row ${row} of ${RF.ny}, column ${col} of ${RF.nx}, ${q > 0 ? 'positive' : 'negative'} ion.`;
 }
 
 /** Readout as HTML with r_c typeset. */

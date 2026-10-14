@@ -1,0 +1,7 @@
+title: Nearsightedness of electronic matter
+summary: >-
+  In many systems a local electronic property responds only weakly to perturbations far away. This is the
+  physical justification for writing the energy as a sum of contributions from finite atomic neighbourhoods —
+  and it fails for long-range electrostatics and for metals' screening on the relevant length scales.
+papers: [prodan2005nearsightedness]
+review: { status: draft, last_checked: 2026-10-14 }

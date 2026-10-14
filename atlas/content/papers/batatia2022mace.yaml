@@ -1,0 +1,11 @@
+title: 'MACE: Higher order equivariant message passing neural networks for fast and accurate force fields'
+authors: [Batatia, I., Kovács, D. P., Simm, G. N. C., Ortner, C., Csányi, G.]
+year: 2022
+venue: Advances in Neural Information Processing Systems (NeurIPS) 35
+type: conference
+identifiers:
+  arxiv: '2206.07697'
+edges:
+  - { type: compares-against, target: batzner2022nequip, documented: true }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14 }

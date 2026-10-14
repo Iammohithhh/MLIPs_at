@@ -1,0 +1,11 @@
+title: Atom-centered symmetry functions for constructing high-dimensional neural network potentials
+authors: [Behler, J.]
+year: 2011
+venue: The Journal of Chemical Physics 134, 074106
+type: article
+identifiers:
+  doi: 10.1063/1.3553717
+edges:
+  - { type: extends, target: behler2007generalized, documented: true }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14 }

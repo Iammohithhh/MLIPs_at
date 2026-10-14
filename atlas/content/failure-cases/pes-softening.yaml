@@ -1,0 +1,14 @@
+title: Systematic softening of universal MLIPs
+claim: softening-phonons
+grade: PUBLISHED_RESULT
+evidence: [softening-phonons]
+mechanisms:
+  - { description: Training data concentrated near equilibrium under-samples off-equilibrium configurations., grade: PUBLISHED_RESULT, claim: softening-near-equilibrium-bias }
+diagnostics:
+  - Compare phonon frequencies or energy–displacement curvature with the DFT reference at the same level of theory
+responses:
+  - { description: Fine-tune on a small number of additional reference structures., claim: softening-fixed-by-finetuning }
+open_questions:
+  - How much of the softening survives in checkpoints trained on off-equilibrium data (rattled, AIMD)?
+affected_checkpoints: [mace-mp-0]
+review: { status: draft, last_checked: 2026-10-14 }

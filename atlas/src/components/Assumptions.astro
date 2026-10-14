@@ -33,7 +33,7 @@ const { items, title = 'Assumptions, units & conventions' } = Astro.props;
     {
       items.map((it) => (
         <div>
-          <dt>{it.term}</dt>
+          <dt set:html={typesetInline(it.term)} />
           <dd set:html={typesetInline(it.value)} />
         </div>
       ))

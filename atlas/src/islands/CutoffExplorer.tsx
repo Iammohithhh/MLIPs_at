@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useState, type PointerEvent } from 'react';
 import './CutoffExplorer.css';
 import { cosineCurvatureJump, cosineCutoff, polynomialEnvelope, type CutoffValue } from '~/lib/cutoffs';
 import { useLinkedSymbol } from '~/lib/useLinkedSymbol';
@@ -36,6 +36,22 @@ export default function CutoffExplorer() {
   const [active, setSym] = useLinkedSymbol('cutoff-explorer');
   const ids = useId();
 
+  // Mouse hovers; touch and pen tap to toggle (stopping the document-level tap
+  // handler from immediately clearing it again).
+  const link = (sym: string) => ({
+    onPointerEnter: (e: PointerEvent<Element>) => {
+      if (e.pointerType === 'mouse') setSym(sym);
+    },
+    onPointerLeave: (e: PointerEvent<Element>) => {
+      if (e.pointerType === 'mouse') setSym(null);
+    },
+    onPointerUp: (e: PointerEvent<Element>) => {
+      if (e.pointerType === 'mouse') return;
+      e.stopPropagation();
+      setSym(active === sym ? null : sym);
+    },
+  });
+
   const x = (r: number) => M.l + (r / R_MAX) * (W - M.l - M.r);
   const rs = useMemo(() => Array.from({ length: N + 1 }, (_, i) => (i / N) * R_MAX), []);
 
@@ -64,7 +80,7 @@ export default function CutoffExplorer() {
   return (
     <div className="cutoff-explorer">
       <div className="ce-controls">
-        <label htmlFor={`${ids}-rc`} data-sym="rc" onPointerEnter={() => setSym('rc')} onPointerLeave={() => setSym(null)}>
+        <label htmlFor={`${ids}-rc`} data-sym="rc" {...link('rc')}>
           <span>
             cutoff <i>r</i>
             <sub>c</sub>
@@ -80,7 +96,7 @@ export default function CutoffExplorer() {
           />
           <output>{rc.toFixed(1)} Å</output>
         </label>
-        <label htmlFor={`${ids}-p`} onPointerEnter={() => setSym('p')} onPointerLeave={() => setSym(null)}>
+        <label htmlFor={`${ids}-p`} {...link('p')}>
           <span>
             envelope order <i>p</i>
           </span>
@@ -130,14 +146,12 @@ export default function CutoffExplorer() {
               <path
                 d={path(data.poly, panel.key, y, false)}
                 className={`ce-curve ce-poly${active === 'u' || active === 'p' ? ' is-active' : ''}`}
-                onPointerEnter={() => setSym('u')}
-                onPointerLeave={() => setSym(null)}
+                {...link('u')}
               />
               <path
                 d={path(data.cos, panel.key, y, true)}
                 className={`ce-curve ce-cos${active === 'fc' ? ' is-active' : ''}`}
-                onPointerEnter={() => setSym('fc')}
-                onPointerLeave={() => setSym(null)}
+                {...link('fc')}
               />
               {panel.key === 'd2f' && (
                 <g className="ce-jump">
@@ -164,8 +178,7 @@ export default function CutoffExplorer() {
           y1={M.t - 6}
           y2={height - M.b + 4}
           className={`ce-rc${active === 'rc' ? ' is-active' : ''}`}
-          onPointerEnter={() => setSym('rc')}
-          onPointerLeave={() => setSym(null)}
+          {...link('rc')}
         />
         <text x={x(rc) + 6} y={M.t + 4} className={`ce-rc-label${active === 'rc' ? ' is-active' : ''}`}>
           r<tspan dy="4" fontSize="0.75em">c</tspan>
@@ -176,10 +189,10 @@ export default function CutoffExplorer() {
       </svg>
 
       <ul className="ce-legend">
-        <li className="cos" onPointerEnter={() => setSym('fc')} onPointerLeave={() => setSym(null)}>
+        <li className="cos" {...link('fc')}>
           cosine cutoff — <em>f</em> and <em>f′</em> continuous, <em>f″</em> jumps
         </li>
-        <li className="poly" onPointerEnter={() => setSym('u')} onPointerLeave={() => setSym(null)}>
+        <li className="poly" {...link('u')}>
           polynomial envelope (p = {p}) — continuous through <em>f″</em>
         </li>
       </ul>

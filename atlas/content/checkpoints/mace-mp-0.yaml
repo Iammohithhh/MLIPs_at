@@ -1,0 +1,13 @@
+name: MACE-MP-0
+family: mace
+implementation: mace
+release: { source: batatia2023foundation }
+elements: 89
+training:
+  - { stage: training, dataset: mptrj, level_of_theory: pbe-pbeu-mp }
+outputs: [energy, forces, stress]
+licence: To be confirmed from the release page
+weights: { url: 'https://github.com/ACEsuit/mace-mp' }
+known_issues: [softening-phonons]
+claims: [mace-mp-0-trained-on-mptrj]
+review: { status: draft, last_checked: 2026-10-14, notes: Small/medium/large variants to be split into separate records with pinned hashes. }

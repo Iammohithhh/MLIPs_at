@@ -1,0 +1,8 @@
+statement: >-
+  Fine-tuning a universal MLIP on a small number of additional reference structures largely corrects the
+  systematic softening.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: deng2024softening }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-14, notes: Quantify "small number" from the paper before publication. }

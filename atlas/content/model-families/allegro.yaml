@@ -1,0 +1,14 @@
+name: Allegro
+paradigms: [equivariant]
+introduced_in: musaelian2023allegro
+year: 2023
+summary: >-
+  A strictly local equivariant model: equivariant features live on ordered pairs of atoms within one cutoff and
+  are refined by tensor products with neighbour directions, without passing messages between atoms.
+locality: { kind: strictly-local, note: Receptive field fixed at one cutoff regardless of depth. }
+symmetry: equivariant
+reuses_mechanism:
+  - { family: nequip, mechanism: E(3)-equivariant tensor-product features }
+implementations: [allegro]
+claims: [allegro-strictly-local]
+review: { status: draft, last_checked: 2026-10-14 }

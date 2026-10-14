@@ -1,0 +1,288 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Callout from '~/components/Callout.astro';
+import ContentModelDiagram, { type StatusCounts } from '~/components/ContentModelDiagram.astro';
+import Figure from '~/components/Figure.astro';
+import { COLLECTION_META, recordTitle } from '~/content/meta';
+import { COLLECTION_NAMES, schemaRelations, type CollectionName } from '~/content/schemas';
+import { typesetInline } from '~/lib/typeset';
+
+type Row = { id: string; title: string; status: 'draft' | 'in-review' | 'published'; verified?: string; notes?: string };
+
+const byCollection = {} as Record<CollectionName, Row[]>;
+const counts = {} as Record<CollectionName, StatusCounts>;
+for (const c of COLLECTION_NAMES) {
+  const entries = await getCollection(c);
+  const rows: Row[] = entries
+    .map((e) => {
+      const data = e.data as Record<string, unknown> & {
+        review: { status: Row['status']; notes?: string };
+        verified_against?: string;
+      };
+      const row: Row = { id: e.id, title: recordTitle(data), status: data.review.status };
+      if (data.verified_against) row.verified = data.verified_against;
+      if (data.review.notes) row.notes = data.review.notes;
+      return row;
+    })
+    .sort((a, b) => a.id.localeCompare(b.id));
+  byCollection[c] = rows;
+  counts[c] = {
+    draft: rows.filter((r) => r.status === 'draft').length,
+    'in-review': rows.filter((r) => r.status === 'in-review').length,
+    published: rows.filter((r) => r.status === 'published').length,
+  };
+}
+const total = Object.values(byCollection).reduce((n, r) => n + r.length, 0);
+const publishedTotal = Object.values(counts).reduce((n, c) => n + c.published, 0);
+const relations = schemaRelations();
+
+const rules = [
+  'Every reference names a record that exists in the right collection.',
+  'Nothing published rests on unpublished content: a published record may only reference published records.',
+  'A paper or claim checked only against an abstract or a secondary summary cannot be published.',
+  'Published claims give a figure, table, equation or section locator for every source.',
+  'PUBLISHED_RESULT claims cite a source; THEORY claims cite a source or an on-page derivation; REPRODUCED claims also link a matching Atlas run.',
+  'A benchmark result names a protocol and a metric that its benchmark defines — results from different protocols stay apart.',
+  'A checkpoint’s training level of theory must be one its dataset actually provides.',
+  'Experiment pages and derivation links must point at pages that exist.',
+  'Unknown fields are rejected, so a typo never passes silently.',
+];
+---
+
+<BaseLayout
+  title="Content model"
+  description="How MLIP Atlas records are structured and checked: every entity, every typed reference, and the integrity rules the build enforces."
+>
+  <article class="page-grid cmp">
+    <header class="wide head">
+      <p class="eyebrow">Method · Content model</p>
+      <h1 class="h-display">Every page is built from checked records</h1>
+      <p class="lede">
+        Fourteen kinds of record — from physical principles to single benchmark numbers — linked by typed references.
+        The build validates every record and fails if any rule below is broken. {total} records exist today;
+        {publishedTotal} {publishedTotal === 1 ? 'is' : 'are'} published, the rest are visible drafts awaiting review.
+      </p>
+    </header>
+
+    <Figure number="1" title="The Atlas content model" labels={[]} id="fig-model">
+      <ContentModelDiagram counts={counts} />
+      <Fragment slot="caption">
+        <p>
+          <strong>Architecture, checkpoint, dataset and benchmark result are separate records.</strong> Arrows are
+          generated from the schema fields the validator enforces, so the diagram cannot drift from the rules; bars
+          show how many records of each kind are published, in review or draft.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h" class="h-section">Rules the build enforces</h2>
+      <ol class="rules">{rules.map((r) => <li>{r}</li>)}</ol>
+      <Callout kind="note" title="Drafts are visible on purpose">
+        <p>
+          A draft can have open questions — a missing locator, a source read only in abstract. It is listed below with
+          its review notes rather than hidden, and it cannot be published until every rule passes.
+        </p>
+      </Callout>
+    </section>
+
+    <section class="wide block" aria-labelledby="records-h">
+      <h2 id="records-h" class="h-section">Records</h2>
+      <div class="collections">
+        {
+          COLLECTION_NAMES.map((c) => (
+            <section class={`coll tone-${COLLECTION_META[c].tone}`} aria-labelledby={`coll-${c}`}>
+              <h3 id={`coll-${c}`} class="h-sub">
+                {COLLECTION_META[c].label} <span class="n">{byCollection[c].length}</span>
+              </h3>
+              <p class="role">{COLLECTION_META[c].role}</p>
+              {byCollection[c].length === 0 ? (
+                <p class="empty">
+                  No records yet.
+                  {c === 'benchmark-results' && ' Leaderboard numbers are synced automatically from their source (Phase 3), never typed in by hand.'}
+                </p>
+              ) : (
+                <ul>
+                  {byCollection[c].map((r) => (
+                    <li class={`rec status-${r.status}`}>
+                      <span class="rec-title" set:html={typesetInline(r.title)} />
+                      <span class="rec-meta">
+                        <code>{r.id}</code>
+                        <span class="chip">{r.status}</span>
+                        {r.verified && <span class="chip ver">source: {r.verified}</span>}
+                      </span>
+                      {r.notes && <span class="rec-notes" set:html={typesetInline(r.notes)} />}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="wide block" aria-labelledby="rel-h">
+      <h2 id="rel-h" class="h-section">All typed references</h2>
+      <p class="note">The text equivalent of Fig. 1: every field that references another record.</p>
+      <div class="rel-wrap">
+        <table class="rel">
+          <thead>
+            <tr><th scope="col">Record</th><th scope="col">Field</th><th scope="col">References</th></tr>
+          </thead>
+          <tbody>
+            {
+              relations.map((r) => (
+                <tr>
+                  <td>{COLLECTION_META[r.from].label}</td>
+                  <td><code>{r.field}</code></td>
+                  <td>{COLLECTION_META[r.to].label}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .cmp {
+    padding-block: clamp(2rem, 5vw, 4rem) 4rem;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .block {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .block h2 {
+    margin-bottom: 1rem;
+  }
+  .note {
+    font: 1rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    margin-bottom: 1rem;
+  }
+  .rules {
+    counter-reset: rule;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .rules li {
+    counter-increment: rule;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    font: 1.0625rem/1.55 var(--font-serif);
+  }
+  .rules li::before {
+    content: counter(rule);
+    font: 600 0.8125rem/1.9 var(--font-sans);
+    color: var(--atlas-ink-faint);
+  }
+  .collections {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+    gap: 1rem;
+  }
+  .coll {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-top: 3px solid var(--tone);
+    border-radius: 0.7rem;
+    background: var(--atlas-surface);
+  }
+  .tone-arch { --tone: var(--atlas-arch); }
+  .tone-phys { --tone: var(--atlas-phys); }
+  .tone-lit { --tone: var(--atlas-lit); }
+  .tone-fail { --tone: var(--atlas-fail); }
+  .tone-neutral { --tone: var(--atlas-neutral); }
+  .n {
+    font: 600 0.8125rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+    margin-left: 0.3rem;
+  }
+  .role {
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-muted);
+    margin-block: 0.15rem 0.6rem;
+  }
+  .empty {
+    font-size: 0.875rem;
+    color: var(--atlas-ink-faint);
+  }
+  .rec {
+    display: grid;
+    gap: 0.25rem;
+    padding-block: 0.55rem;
+    border-top: 1px solid var(--atlas-rule);
+    font-size: 0.875rem;
+  }
+  .rec-title {
+    line-height: 1.4;
+  }
+  .status-draft .rec-title {
+    color: var(--atlas-ink-muted);
+  }
+  .rec-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .rec-meta code {
+    font-size: 0.75rem;
+    color: var(--atlas-ink-faint);
+  }
+  .chip {
+    font: 600 0.6875rem var(--font-sans);
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.3rem;
+    border: 1px solid var(--atlas-rule);
+    color: var(--atlas-ink-muted);
+  }
+  .status-published .chip:not(.ver) {
+    color: var(--atlas-verified);
+    border-color: color-mix(in oklab, var(--atlas-verified) 45%, transparent);
+  }
+  .status-draft .chip:not(.ver) {
+    color: var(--atlas-caveat);
+    border-color: color-mix(in oklab, var(--atlas-caveat) 45%, transparent);
+  }
+  .rec-notes {
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-faint);
+    font-style: italic;
+  }
+  .rel-wrap {
+    overflow-x: auto;
+  }
+  .rel {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .rel th,
+  .rel td {
+    text-align: left;
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .rel thead th {
+    font: 600 0.75rem var(--font-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--atlas-ink-faint);
+  }
+  .rel code {
+    font-size: 0.8125rem;
+  }
+</style>

@@ -1,0 +1,11 @@
+name: Behler–Parrinello neural network potential
+aliases: [HDNNP, BPNN]
+paradigms: [descriptor-regression]
+introduced_in: behler2007generalized
+year: 2007
+summary: >-
+  The total energy is a sum of atomic energies, each predicted by a neural network from a fixed vector of
+  atom-centred symmetry functions describing the neighbourhood inside a smooth cutoff.
+locality: { kind: strictly-local, note: One cutoff; descriptors are fixed functions of neighbour geometry. }
+symmetry: invariant
+review: { status: draft, last_checked: 2026-10-14 }

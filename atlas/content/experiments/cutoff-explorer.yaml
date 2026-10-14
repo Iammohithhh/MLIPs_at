@@ -1,0 +1,12 @@
+title: Which derivatives of a smooth cutoff are continuous at r_c?
+question: Do the cosine cutoff and the polynomial envelope switch interactions off equally smoothly?
+kind: figure
+status: TOY_MODEL
+tier: T0
+page: /method/design-system/#fig-cutoff
+assumptions:
+  - { term: Domain, value: Pair distance 0–8 Å; both functions are zero for r ≥ r_c. }
+  - { term: Parameters, value: r_c and p are free; defaults 5 Å and p = 6 are illustrative. }
+concepts: [smooth-cutoff]
+claims: [cosine-cutoff-curvature-jump, polynomial-envelope-c2]
+review: { status: draft, last_checked: 2026-10-14 }

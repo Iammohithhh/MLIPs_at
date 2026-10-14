@@ -1,0 +1,17 @@
+name: Matbench Discovery
+summary: >-
+  Evaluates how well models identify thermodynamically stable inorganic crystals from unrelaxed prototypes, plus
+  geometry, thermal-conductivity and other physics tasks. Results are reported per protocol; the combined score is
+  itself a weighted choice.
+url: https://matbench-discovery.materialsproject.org/
+introduced_in: riebesell2023matbench
+domain: [inorganic-materials]
+metrics:
+  - { id: f1, name: F1 score for stability classification, unit: '', higher_is_better: true }
+  - { id: kappa-srme, name: κ_SRME (thermal-conductivity error), unit: '', higher_is_better: false }
+  - { id: rmsd, name: Relaxed-structure RMSD, unit: '', higher_is_better: false }
+  - { id: cps, name: Combined performance score, unit: '', higher_is_better: true, description: Weighted composite of other metrics; weights are a protocol choice. }
+protocols:
+  - { id: unique-prototypes, name: Unique-prototype test set, description: WBM test structures whose prototypes do not occur in the Materials Project training data. }
+  - { id: full-test-set, name: Full test set, description: All WBM test structures. }
+review: { status: draft, last_checked: 2026-10-14, notes: Metric and protocol definitions to be synced from the benchmark repository. }

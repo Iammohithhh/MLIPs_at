@@ -1,0 +1,7 @@
+title: Forces are the negative gradient of the energy
+summary: >-
+  An interatomic potential that predicts forces as −∂E/∂R conserves energy in molecular dynamics; smoothness of
+  the energy (including at the cutoff) controls smoothness of forces and force constants.
+equations:
+  - tex: '\vect{F}_i = -\frac{\partial E}{\partial \vect{R}_i}'
+review: { status: draft, last_checked: 2026-10-14 }

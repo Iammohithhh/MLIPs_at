@@ -34,16 +34,13 @@
   const order: Pref[] = ['system', 'light', 'dark'];
   const media = window.matchMedia('(prefers-color-scheme: dark)');
 
-  function readPref(): Pref {
-    try {
-      const v = localStorage.getItem(KEY);
-      return v === 'light' || v === 'dark' ? v : 'system';
-    } catch {
-      return 'system';
-    }
-  }
+  // The preference lives in memory; storage only persists it across pages, so the
+  // toggle still works when storage is blocked (private windows, strict settings).
+  const initial = document.documentElement.dataset.themePref;
+  let pref: Pref = initial === 'light' || initial === 'dark' ? initial : 'system';
 
-  function apply(pref: Pref) {
+  function apply(next: Pref) {
+    pref = next;
     const theme = pref === 'system' ? (media.matches ? 'dark' : 'light') : pref;
     const root = document.documentElement;
     const changed = root.dataset.theme !== theme;
@@ -57,19 +54,23 @@
     if (changed) document.dispatchEvent(new CustomEvent('atlas:theme', { detail: { theme } }));
   }
 
-  apply(readPref());
+  function persist(next: Pref) {
+    try {
+      if (next === 'system') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, next);
+    } catch {
+      /* storage unavailable: the choice still applies to this page view */
+    }
+  }
+
+  apply(pref);
   media.addEventListener('change', () => {
-    if (readPref() === 'system') apply('system');
+    if (pref === 'system') apply('system');
   });
   document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((b) =>
     b.addEventListener('click', () => {
-      const next = order[(order.indexOf(readPref()) + 1) % order.length]!;
-      try {
-        if (next === 'system') localStorage.removeItem(KEY);
-        else localStorage.setItem(KEY, next);
-      } catch {
-        /* storage unavailable: still apply for this page view */
-      }
+      const next = order[(order.indexOf(pref) + 1) % order.length]!;
+      persist(next);
       apply(next);
     }),
   );

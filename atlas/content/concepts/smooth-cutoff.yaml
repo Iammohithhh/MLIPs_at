@@ -1,0 +1,10 @@
+title: Smooth cutoff functions
+summary: >-
+  Pair contributions are multiplied by a function that goes to zero at r_c so the energy stays smooth as atoms
+  cross the cutoff. How many derivatives vanish at r_c decides whether forces and force constants are continuous.
+explains: [forces-from-energy]
+relevant_to: [behler-parrinello, nequip, mace, allegro]
+demonstrated_by: [cutoff-explorer]
+related: [locality]
+claims: [cosine-cutoff-curvature-jump, polynomial-envelope-c2]
+review: { status: draft, last_checked: 2026-10-14 }

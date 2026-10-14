@@ -1,0 +1,9 @@
+statement: >-
+  MPtrj is built from Materials Project relaxation trajectories computed with the PBE functional, with Hubbard U
+  corrections (PBE+U) for the compounds where the Materials Project applies them.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: deng2023chgnet }
+scope: { datasets: [mptrj] }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: Add section locator. }

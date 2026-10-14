@@ -1,0 +1,250 @@
+---
+// Entity diagram of the Atlas content model. Edges come from schemaRelations(),
+// i.e. from the ref() fields the validator actually enforces; counts and review
+// status come from the records in content/. Hover or focus a node to trace it.
+import { diagramEdges } from '~/content/diagram';
+import { COLLECTION_META, NODE } from '~/content/meta';
+import { COLLECTION_NAMES, schemaRelations, type CollectionName } from '~/content/schemas';
+
+export type StatusCounts = { draft: number; 'in-review': number; published: number };
+
+interface Props {
+  counts: Record<CollectionName, StatusCounts>;
+}
+
+const { counts } = Astro.props;
+const edges = diagramEdges(schemaRelations());
+const W = 1040;
+const H = 640;
+const barW = NODE.w - 24;
+---
+
+<div class="cm" data-cm>
+  <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label="Content model: collections and the references between them">
+    <defs>
+      <marker id="cm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+      </marker>
+    </defs>
+    <g class="cm-edges">
+      {
+        edges.map((e) => (
+          <path
+            d={e.d}
+            class:list={['cm-edge', { self: e.self }]}
+            data-from={e.from}
+            data-to={e.to}
+            marker-end="url(#cm-arrow)"
+          >
+            <title>{`${COLLECTION_META[e.from].label} → ${COLLECTION_META[e.to].label}: ${e.fields.join(', ')}`}</title>
+          </path>
+        ))
+      }
+    </g>
+    <g class="cm-nodes">
+      {
+        COLLECTION_NAMES.map((c) => {
+          const m = COLLECTION_META[c];
+          const n = counts[c];
+          const total = n.draft + n['in-review'] + n.published;
+          const seg = (k: keyof StatusCounts) => (total ? (n[k] / total) * barW : 0);
+          return (
+            <g
+              class={`cm-node tone-${m.tone}`}
+              data-node={c}
+              transform={`translate(${m.pos.x} ${m.pos.y})`}
+              tabindex="0"
+              role="button"
+              aria-label={`${m.label}: ${total} records (${n.published} published, ${n['in-review']} in review, ${n.draft} draft). ${m.role}.`}
+            >
+              <rect width={NODE.w} height={NODE.h} rx="10" class="cm-box" />
+              <rect width="4" height={NODE.h - 16} x="0" y="8" rx="2" class="cm-tone" />
+              <text x="14" y="22" class="cm-label">
+                {m.label}
+              </text>
+              <text x={NODE.w - 12} y="22" class="cm-count" text-anchor="end">
+                {total}
+              </text>
+              <g transform={`translate(14 ${NODE.h - 20})`}>
+                <rect width={barW} height="6" rx="3" class="cm-bar-bg" />
+                {total > 0 && (
+                  <>
+                    <rect width={seg('published')} height="6" class="cm-bar published" />
+                    <rect x={seg('published')} width={seg('in-review')} height="6" class="cm-bar review" />
+                    <rect x={seg('published') + seg('in-review')} width={seg('draft')} height="6" class="cm-bar draft" />
+                  </>
+                )}
+              </g>
+              <text x="14" y={NODE.h - 27} class="cm-role">
+                {m.role}
+              </text>
+            </g>
+          );
+        })
+      }
+    </g>
+  </svg>
+  <p class="cm-readout" aria-live="polite">Hover or focus a collection to trace what it references and what references it.</p>
+  <div class="cm-key" aria-hidden="true">
+    <span class="k published">published</span>
+    <span class="k review">in review</span>
+    <span class="k draft">draft</span>
+    <span class="k-out">→ references</span>
+  </div>
+</div>
+
+<script>
+  import { COLLECTION_META } from '~/content/meta';
+  import type { CollectionName } from '~/content/schemas';
+
+  document.querySelectorAll<HTMLElement>('[data-cm]').forEach((root) => {
+    const readout = root.querySelector<HTMLElement>('.cm-readout')!;
+    const initial = readout.textContent ?? '';
+    const edges = Array.from(root.querySelectorAll<SVGPathElement>('.cm-edge'));
+    const label = (c: string) => COLLECTION_META[c as CollectionName]?.label ?? c;
+
+    function focus(node: string | null) {
+      root.classList.toggle('tracing', node !== null);
+      root.querySelectorAll<SVGGElement>('.cm-node').forEach((n) => n.classList.toggle('on', n.dataset.node === node));
+      const out: string[] = [];
+      const inc: string[] = [];
+      for (const e of edges) {
+        const isOut = e.dataset.from === node;
+        const isIn = e.dataset.to === node;
+        e.classList.toggle('out', isOut);
+        e.classList.toggle('in', isIn && !isOut);
+        if (node === null) continue;
+        if (isOut) out.push(label(e.dataset.to!));
+        if (isIn && !isOut) inc.push(label(e.dataset.from!));
+        if (isIn || isOut) {
+          root.querySelector(`[data-node="${e.dataset.from}"]`)?.classList.add('near');
+          root.querySelector(`[data-node="${e.dataset.to}"]`)?.classList.add('near');
+        }
+      }
+      if (node === null) {
+        root.querySelectorAll('.cm-node.near').forEach((n) => n.classList.remove('near'));
+        readout.textContent = initial;
+        return;
+      }
+      readout.textContent =
+        `${label(node)} reference ${out.length ? out.join(', ') : 'nothing'}; ` +
+        `referenced by ${inc.length ? inc.join(', ') : 'nothing'}.`;
+    }
+
+    root.querySelectorAll<SVGGElement>('.cm-node').forEach((n) => {
+      const on = () => {
+        root.querySelectorAll('.cm-node.near').forEach((x) => x.classList.remove('near'));
+        focus(n.dataset.node ?? null);
+      };
+      n.addEventListener('pointerenter', on);
+      n.addEventListener('focus', on);
+      n.addEventListener('pointerleave', () => focus(null));
+      n.addEventListener('blur', () => focus(null));
+    });
+  });
+</script>
+
+<style>
+  .cm {
+    color: var(--atlas-ink-faint);
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .cm-edge {
+    fill: none;
+    stroke: var(--atlas-rule-strong);
+    stroke-width: 1.3;
+    color: var(--atlas-rule-strong);
+    transition: opacity 0.15s, stroke 0.15s;
+  }
+  .tracing .cm-edge {
+    opacity: 0.12;
+  }
+  .tracing .cm-edge.out,
+  .tracing .cm-edge.in {
+    opacity: 1;
+    stroke-width: 2;
+  }
+  .tracing .cm-edge.out {
+    stroke: var(--atlas-arch);
+    color: var(--atlas-arch);
+  }
+  .tracing .cm-edge.in {
+    stroke: var(--atlas-phys);
+    color: var(--atlas-phys);
+  }
+  .cm-node {
+    cursor: default;
+    outline: none;
+    transition: opacity 0.15s;
+  }
+  .tracing .cm-node:not(.on):not(.near) {
+    opacity: 0.35;
+  }
+  .cm-box {
+    fill: var(--atlas-surface);
+    stroke: var(--atlas-rule);
+  }
+  .cm-node.on .cm-box,
+  .cm-node:focus-visible .cm-box {
+    stroke: var(--tone);
+    stroke-width: 2;
+  }
+  .cm-tone {
+    fill: var(--tone);
+  }
+  .cm-label {
+    font: 650 14px var(--font-sans);
+    fill: var(--atlas-ink);
+  }
+  .cm-count {
+    font: 600 14px var(--font-mono);
+    fill: var(--atlas-ink-muted);
+  }
+  .cm-role {
+    font: 11px var(--font-sans);
+    fill: var(--atlas-ink-faint);
+  }
+  .cm-bar-bg {
+    fill: var(--atlas-surface-2);
+  }
+  .cm-bar.published { fill: var(--atlas-verified); }
+  .cm-bar.review { fill: var(--atlas-arch); }
+  .cm-bar.draft { fill: var(--atlas-caveat); }
+  .tone-arch { --tone: var(--atlas-arch); }
+  .tone-phys { --tone: var(--atlas-phys); }
+  .tone-lit { --tone: var(--atlas-lit); }
+  .tone-fail { --tone: var(--atlas-fail); }
+  .tone-neutral { --tone: var(--atlas-neutral); }
+  .cm-readout {
+    margin-top: 0.5rem;
+    min-height: 2.6em;
+    font: 0.875rem/1.5 var(--font-sans);
+    color: var(--atlas-ink);
+    padding-inline: 1rem;
+  }
+  .cm-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1rem 0.9rem;
+    font: 0.8125rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .k::before {
+    content: '';
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.4rem;
+    border-radius: 2px;
+    margin-right: 0.4rem;
+    vertical-align: 0.1rem;
+    background: var(--c);
+  }
+  .k.published { --c: var(--atlas-verified); }
+  .k.review { --c: var(--atlas-arch); }
+  .k.draft { --c: var(--atlas-caveat); }
+</style>

@@ -1,0 +1,14 @@
+name: MACE
+paradigms: [equivariant]
+introduced_in: batatia2022mace
+year: 2022
+summary: >-
+  An equivariant message-passing network whose messages are many-body: atomic basis features are combined by a
+  symmetric tensor contraction, so few layers reach high body order.
+locality: { kind: message-passing, note: Typically two interaction layers. }
+symmetry: equivariant
+body_order: Higher-order messages built by symmetric contraction (ACE-style); confirm correlation order per model.
+reuses_mechanism:
+  - { family: nequip, mechanism: Equivariant message passing with tensor products of spherical harmonics }
+implementations: [mace]
+review: { status: draft, last_checked: 2026-10-14 }

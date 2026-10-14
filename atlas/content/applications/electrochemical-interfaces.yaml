@@ -1,0 +1,11 @@
+title: Electrochemical interfaces
+domain: energy
+summary: >-
+  Metal or oxide electrodes in contact with electrolyte under an applied potential: image charges, interfacial
+  water dipoles, ion discharge and constant-potential conditions all involve long-range electrostatics.
+key_physics: [long-range-electrostatics, locality]
+requirements:
+  - Long-range electrostatics or an explicit argument why it is unnecessary
+  - A strategy for the electrode potential (separate models per potential, electron-count conditioning, …)
+  - Validation against electrostatic phenomenology, not only energy/force errors
+review: { status: draft, last_checked: 2026-10-14 }

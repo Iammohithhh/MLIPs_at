@@ -1,0 +1,7 @@
+name: allegro
+repo: https://github.com/mir-group/allegro
+language: Python
+framework: pytorch
+licence: MIT
+families: [allegro]
+review: { status: draft, last_checked: 2026-10-14 }

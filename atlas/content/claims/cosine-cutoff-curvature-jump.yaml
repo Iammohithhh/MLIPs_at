@@ -1,0 +1,9 @@
+statement: >-
+  The cosine cutoff f_c(r) = ½[cos(πr/r_c) + 1] and its first derivative vanish at r_c, but its second derivative
+  tends to π²/(2r_c²) from below and is zero beyond r_c: the curvature is discontinuous at the cutoff.
+grade: THEORY
+derivation: /method/design-system/#fig-cutoff
+sources:
+  - { paper: behler2011symmetry }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: Derivation is on the page; the source only defines the function. Add the equation locator. }

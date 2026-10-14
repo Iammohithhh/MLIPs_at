@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { katexOptions } from './src/lib/katex-options.mjs';
+import contentIntegrity from './src/integrations/content-integrity';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
   // Lossless, HTML-aware whitespace compression. Astro 7's default ('jsx') drops
   // line breaks between prose and inline elements ("orderp"), which breaks text.
   compressHTML: true,
-  integrations: [react(), mdx()],
+  integrations: [contentIntegrity(), react(), mdx()],
   markdown: {
     // KaTeX runs at build time: pages ship HTML + MathML, no maths JS.
     processor: unified({

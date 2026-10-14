@@ -1,0 +1,11 @@
+title: 'Matbench Discovery: a framework to evaluate machine learning crystal stability predictions'
+authors: [Riebesell, J., Goodall, R. E. A., Benner, P., Chiang, Y., Deng, B., Ceder, G., Asta, M., Lee, A. A., Jain, A., Persson, K. A.]
+year: 2023
+type: preprint
+identifiers:
+  arxiv: '2308.14920'
+verified_against: secondary
+review:
+  status: draft
+  last_checked: 2026-10-14
+  notes: Journal version to be linked by the bibliography pipeline.
