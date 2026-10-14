@@ -1,0 +1,86 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "nacl-rocksalt",
+ "title": "Sodium chloride, rock salt (conventional cell)",
+ "symbols": [
+  "Na",
+  "Cl",
+  "Na",
+  "Cl",
+  "Na",
+  "Cl",
+  "Na",
+  "Cl"
+ ],
+ "positions": [
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   2.82,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   2.82,
+   2.82
+  ],
+  [
+   2.82,
+   2.82,
+   2.82
+  ],
+  [
+   2.82,
+   0.0,
+   2.82
+  ],
+  [
+   0.0,
+   0.0,
+   2.82
+  ],
+  [
+   2.82,
+   2.82,
+   0.0
+  ],
+  [
+   0.0,
+   2.82,
+   0.0
+  ]
+ ],
+ "cell": [
+  [
+   5.64,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   5.64,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   5.64
+  ]
+ ],
+ "pbc": [
+  true,
+  true,
+  true
+ ],
+ "provenance": {
+  "source": "ase.build.bulk('NaCl', 'rocksalt', a=5.64, cubic=True)",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "a = 5.64 Å is an input (nearest-neighbour Na–Cl distance a/2 = 2.82 Å)."
+ }
+}

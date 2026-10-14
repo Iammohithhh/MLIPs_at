@@ -1,0 +1,42 @@
+[
+ {
+  "id": "si-diamond",
+  "title": "Silicon, diamond structure (conventional cell)",
+  "atoms": 8
+ },
+ {
+  "id": "nacl-rocksalt",
+  "title": "Sodium chloride, rock salt (conventional cell)",
+  "atoms": 8
+ },
+ {
+  "id": "cu-fcc",
+  "title": "Copper, fcc (conventional cell)",
+  "atoms": 4
+ },
+ {
+  "id": "zno-wurtzite",
+  "title": "Zinc oxide, wurtzite (hexagonal cell, γ = 120°)",
+  "atoms": 4
+ },
+ {
+  "id": "au111-slab",
+  "title": "Au(111) slab, 4 × 4 × 4 layers, vacuum along c",
+  "atoms": 64
+ },
+ {
+  "id": "h2o",
+  "title": "Water (G2 geometry)",
+  "atoms": 3
+ },
+ {
+  "id": "benzene",
+  "title": "Benzene (G2 geometry)",
+  "atoms": 12
+ },
+ {
+  "id": "ethanol",
+  "title": "Ethanol (G2 geometry)",
+  "atoms": 9
+ }
+]

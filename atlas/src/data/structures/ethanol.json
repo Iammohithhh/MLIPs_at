@@ -1,0 +1,76 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "ethanol",
+ "title": "Ethanol (G2 geometry)",
+ "symbols": [
+  "C",
+  "C",
+  "O",
+  "H",
+  "H",
+  "H",
+  "H",
+  "H",
+  "H"
+ ],
+ "positions": [
+  [
+   1.168181,
+   -0.400382,
+   0.0
+  ],
+  [
+   0.0,
+   0.559462,
+   0.0
+  ],
+  [
+   -1.190083,
+   -0.227669,
+   0.0
+  ],
+  [
+   -1.946623,
+   0.381525,
+   0.0
+  ],
+  [
+   0.042557,
+   1.207508,
+   0.886933
+  ],
+  [
+   0.042557,
+   1.207508,
+   -0.886933
+  ],
+  [
+   2.115891,
+   0.1448,
+   0.0
+  ],
+  [
+   1.128599,
+   -1.037234,
+   0.885881
+  ],
+  [
+   1.128599,
+   -1.037234,
+   -0.885881
+  ]
+ ],
+ "cell": null,
+ "pbc": [
+  false,
+  false,
+  false
+ ],
+ "provenance": {
+  "source": "ase.build.molecule('CH3CH2OH')",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "Coordinates from the G2 set as tabulated in ASE: MP2(full)/6-31G(d) optimised geometries (Curtiss et al., J. Chem. Phys. 106, 1063 (1997))."
+ }
+}

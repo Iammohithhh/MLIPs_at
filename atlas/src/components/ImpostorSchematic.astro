@@ -1,0 +1,152 @@
+---
+// Schematic of a ray-cast sphere impostor, drawn in a 2D slice through the eye and
+// the sphere centre. Geometry is computed (tangent lines, billboard half-width,
+// ray–sphere hits), so the picture is exact for its stated numbers.
+const W = 640;
+const H = 300;
+const eye = { x: 50, y: 150 };
+const c = { x: 430, y: 150 };
+const R = 82;
+const D = c.x - eye.x;
+const halfWidth = R / Math.sqrt(1 - (R / D) ** 2); // billboard half-size through the centre
+const sinT = R / D;
+const cosT = Math.sqrt(1 - sinT * sinT);
+// Tangent points from the eye.
+const tangent = (s: number) => {
+  const ang = s * Math.asin(sinT);
+  const L = Math.sqrt(D * D - R * R);
+  return { x: eye.x + L * Math.cos(ang), y: eye.y + L * Math.sin(ang) };
+};
+const tUp = tangent(-1);
+const tDown = tangent(1);
+// Two rays through the billboard: one hits, one misses (between silhouette and quad corner).
+function hit(yOnQuad: number) {
+  const dx = c.x - eye.x;
+  const dy = yOnQuad - eye.y;
+  const len = Math.hypot(dx, dy);
+  const d = { x: dx / len, y: dy / len };
+  const oc = { x: c.x - eye.x, y: c.y - eye.y };
+  const b = d.x * oc.x + d.y * oc.y;
+  const h = b * b - (oc.x * oc.x + oc.y * oc.y) + R * R;
+  if (h < 0) return { d, hit: null };
+  const t = b - Math.sqrt(h);
+  return { d, hit: { x: eye.x + d.x * t, y: eye.y + d.y * t } };
+}
+const rayHit = hit(c.y - 0.55 * halfWidth);
+const rayMiss = hit(c.y + 0.985 * halfWidth);
+const extend = (d: { x: number; y: number }, len: number) => ({ x: eye.x + d.x * len, y: eye.y + d.y * len });
+const hp = rayHit.hit!;
+const n = { x: (hp.x - c.x) / R, y: (hp.y - c.y) / R };
+void cosT;
+---
+
+<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="A ray from the eye passes through a camera-facing square drawn over the sphere; where it meets the sphere the true surface point, normal and depth are computed; rays that miss the sphere are discarded.">
+  <defs>
+    <marker id="imp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+  <!-- tangent cone -->
+  <line x1={eye.x} y1={eye.y} x2={tUp.x} y2={tUp.y} class="cone"></line>
+  <line x1={eye.x} y1={eye.y} x2={tDown.x} y2={tDown.y} class="cone"></line>
+  <!-- sphere -->
+  <circle cx={c.x} cy={c.y} r={R} class="sphere"></circle>
+  <line x1={c.x} y1={c.y} x2={c.x + R * Math.cos(-0.9)} y2={c.y + R * Math.sin(-0.9)} class="radius" data-sym="R"></line>
+  <text x={c.x + 0.62 * R * Math.cos(-0.9) + 10} y={c.y + 0.62 * R * Math.sin(-0.9) + 4} class="lbl" data-sym="R">R</text>
+  <circle cx={c.x} cy={c.y} r="3.5" class="centre" data-sym="c"></circle>
+  <text x={c.x + 8} y={c.y + 16} class="lbl" data-sym="c">c</text>
+  <!-- billboard quad (seen edge-on) -->
+  <line x1={c.x} y1={c.y - halfWidth} x2={c.x} y2={c.y + halfWidth} class="quad"></line>
+  <text x={c.x + 6} y={c.y - halfWidth - 6} class="note">camera-facing quad</text>
+  <!-- rays -->
+  <line x1={eye.x} y1={eye.y} x2={hp.x} y2={hp.y} class="ray hit" data-sym="t"></line>
+  <line x1={hp.x} y1={hp.y} x2={hp.x + n.x * 46} y2={hp.y + n.y * 46} class="normal" marker-end="url(#imp-arrow)"></line>
+  <text x={hp.x + n.x * 52 - 8} y={hp.y + n.y * 52} class="lbl">n</text>
+  <circle cx={hp.x} cy={hp.y} r="4" class="hitpt"></circle>
+  <text x={(eye.x + hp.x) / 2 - 10} y={(eye.y + hp.y) / 2 - 8} class="lbl" data-sym="t">t</text>
+  {(() => {
+    const e = extend(rayMiss.d, c.x - eye.x + 4);
+    return <line x1={eye.x} y1={eye.y} x2={e.x} y2={e.y} class="ray miss" />;
+  })()}
+  {(() => {
+    const e = extend(rayMiss.d, c.x - eye.x + 4);
+    return (
+      <text x={e.x + 8} y={e.y + 4} class="note">
+        misses → discarded
+      </text>
+    );
+  })()}
+  <!-- eye -->
+  <g transform={`translate(${eye.x} ${eye.y})`}>
+    <path d="M-16,0 Q0,-11 16,0 Q0,11 -16,0 z" class="eye"></path>
+    <circle r="4" class="pupil"></circle>
+  </g>
+  <text x={eye.x - 18} y={eye.y + 30} class="note">eye (view-space origin)</text>
+  <line x1={eye.x + 20} y1={eye.y + 52} x2={eye.x + 80} y2={eye.y + 52} class="dir" marker-end="url(#imp-arrow)" data-sym="d"></line>
+  <text x={eye.x + 86} y={eye.y + 56} class="lbl" data-sym="d">d̂</text>
+</svg>
+
+<style>
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--atlas-ink-muted);
+  }
+  .cone {
+    stroke: var(--atlas-rule-strong);
+    stroke-dasharray: 4 5;
+  }
+  .sphere {
+    fill: color-mix(in oklab, var(--atlas-phys) 10%, transparent);
+    stroke: var(--atlas-phys);
+    stroke-width: 1.6;
+  }
+  .radius {
+    stroke: var(--atlas-phys);
+    stroke-width: 1.4;
+  }
+  .centre {
+    fill: var(--atlas-ink);
+  }
+  .quad {
+    stroke: var(--atlas-arch);
+    stroke-width: 4;
+    stroke-linecap: round;
+    opacity: 0.75;
+  }
+  .ray {
+    stroke-width: 1.6;
+  }
+  .ray.hit {
+    stroke: var(--atlas-ink);
+  }
+  .ray.miss {
+    stroke: var(--atlas-ink-faint);
+    stroke-dasharray: 3 4;
+  }
+  .normal,
+  .dir {
+    stroke: currentColor;
+    stroke-width: 1.4;
+  }
+  .hitpt {
+    fill: var(--atlas-caveat);
+  }
+  .eye {
+    fill: var(--atlas-surface);
+    stroke: var(--atlas-ink-muted);
+    stroke-width: 1.4;
+  }
+  .pupil {
+    fill: var(--atlas-ink-muted);
+  }
+  .lbl {
+    font: italic 600 15px var(--font-serif);
+    fill: var(--atlas-ink);
+  }
+  .note {
+    font: 12px var(--font-sans);
+    fill: var(--atlas-ink-faint);
+  }
+</style>

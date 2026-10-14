@@ -64,8 +64,8 @@ const phase1 = [
   { item: 'Build-time KaTeX with linked symbols', done: true },
   { item: 'Content schemas for every entity, with build-time integrity checks', done: true },
   { item: 'Impostor-sphere atomic viewer: cell, periodic images, shells, vectors, picking', done: true },
-  { item: 'Viewer: distance/angle measurement and structure upload', done: false },
-  { item: 'Structure pipeline (ASE → compact typed data)', done: false },
+  { item: 'Viewer: distance/angle/dihedral measurement and structure upload (XYZ, POSCAR)', done: true },
+  { item: 'Structure pipeline (ASE → typed JSON with provenance)', done: true },
   { item: 'Bibliography pipeline (arXiv / Crossref / OpenAlex)', done: false },
   { item: 'Search: Pagefind full text, Orama facets, ⌘K', done: false },
   { item: 'CI quality gates (types, build, physics tests, schema checks)', done: false },
@@ -193,7 +193,8 @@ const phase1 = [
       </ul>
       <p class="prose-note small">
         See the <a href="/method/design-system/">design system</a> for the visual components every page is built from,
-        and the <a href="/method/content-model/">content model</a> for the records behind them.
+        the <a href="/method/content-model/">content model</a> for the records behind them, and the
+        <a href="/method/atomic-viewer/">atomic viewer</a> for how structures are drawn.
       </p>
     </section>
   </article>

@@ -81,7 +81,7 @@ export const isoDate = z.union([
   z.date().transform((d) => d.toISOString().slice(0, 10)),
 ]);
 
-const url = z.string().url();
+const url = z.url();
 const nonEmpty = z.string().trim().min(1);
 
 export const REVIEW_STATUSES = ['draft', 'in-review', 'published'] as const;

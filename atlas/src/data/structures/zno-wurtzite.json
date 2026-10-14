@@ -1,0 +1,62 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "zno-wurtzite",
+ "title": "Zinc oxide, wurtzite (hexagonal cell, γ = 120°)",
+ "symbols": [
+  "Zn",
+  "O",
+  "Zn",
+  "O"
+ ],
+ "positions": [
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   -0.0,
+   1.876388,
+   0.61478
+  ],
+  [
+   -0.0,
+   1.876388,
+   2.605
+  ],
+  [
+   0.0,
+   0.0,
+   3.21978
+  ]
+ ],
+ "cell": [
+  [
+   3.25,
+   0.0,
+   0.0
+  ],
+  [
+   -1.625,
+   2.814583,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   5.21
+  ]
+ ],
+ "pbc": [
+  true,
+  true,
+  true
+ ],
+ "provenance": {
+  "source": "ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21, u=0.382)",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "a, c and the internal parameter u are inputs; the cell is not orthogonal."
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "cu-fcc",
+ "title": "Copper, fcc (conventional cell)",
+ "symbols": [
+  "Cu",
+  "Cu",
+  "Cu",
+  "Cu"
+ ],
+ "positions": [
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   1.8075,
+   1.8075
+  ],
+  [
+   1.8075,
+   0.0,
+   1.8075
+  ],
+  [
+   1.8075,
+   1.8075,
+   0.0
+  ]
+ ],
+ "cell": [
+  [
+   3.615,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   3.615,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   3.615
+  ]
+ ],
+ "pbc": [
+  true,
+  true,
+  true
+ ],
+ "provenance": {
+  "source": "ase.build.bulk('Cu', 'fcc', a=3.615, cubic=True)",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "a = 3.615 Å is an input."
+ }
+}

@@ -1,0 +1,170 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import SymbolLegend from '~/components/SymbolLegend.astro';
+import ImpostorSchematic from '~/components/ImpostorSchematic.astro';
+import AtomViewer from '~/islands/viewer/AtomViewer';
+import { ljCluster } from '~/lib/scenes/viewer-gallery';
+import { ELEMENT_SOURCE } from '~/lib/structure/elements.generated';
+import type { Structure } from '~/lib/structure/types';
+
+// Pipeline outputs (pipeline/atlas_pipeline/structures.py), in gallery order.
+const files = import.meta.glob<Structure>('../../data/structures/*.json', { eager: true, import: 'default' });
+const order = ['nacl-rocksalt', 'si-diamond', 'zno-wurtzite', 'cu-fcc', 'au111-slab', 'h2o', 'ethanol', 'benzene'];
+const pipeline = order
+  .map((id) => Object.entries(files).find(([path]) => path.endsWith(`/${id}.json`))?.[1])
+  .filter((s): s is Structure => !!s);
+const structures: Structure[] = [...pipeline, ljCluster()];
+
+const intersectTex = String.raw`\sym{t}{t} = \sym{d}{\hat{\mathbf d}}\cdot\sym{c}{\mathbf c} \;-\; \sqrt{\big(\sym{d}{\hat{\mathbf d}}\cdot\sym{c}{\mathbf c}\big)^2 - |\sym{c}{\mathbf c}|^2 + \sym{R}{R}^2}, \qquad \mathbf n = \frac{\sym{t}{t}\,\sym{d}{\hat{\mathbf d}} - \sym{c}{\mathbf c}}{\sym{R}{R}}`;
+const quadTex = String.raw`s = \frac{\sym{R}{R}}{\sqrt{1 - \sym{R}{R}^2/|\sym{c}{\mathbf c}|^2}}`;
+---
+
+<BaseLayout
+  title="The atomic viewer"
+  description="How the MLIP Atlas draws atoms: ray-cast sphere impostors, periodic cells, replicas, cutoff shells with periodic images, display bonds, vectors and measurements — with the conventions stated."
+>
+  <article class="page-grid av">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/method/">Method</a> · Atomic viewer</p>
+      <h1 class="h-display">The atomic viewer</h1>
+      <p class="lede">
+        Every 3D scene in the Atlas is built from the same pieces: exact spheres for atoms, a periodic cell that knows its
+        images, and measurements you can check. Try them on structures built by the Atlas pipeline.
+      </p>
+    </header>
+
+    <Figure number="1" title="Atlas structure gallery" labels={['precomputed']} id="fig-viewer">
+      <AtomViewer client:visible structures={structures} />
+      <Fragment slot="caption">
+        <p>
+          <strong>Select an atom and switch on the cutoff shell</strong> to see every atom within <i>r</i><sub>c</sub>,
+          including periodic images that lie outside the drawn cells (drawn faded) — the neighbourhood a local MLIP
+          actually sees. Shift-click two, three or four atoms to measure a distance, angle or dihedral between the drawn
+          images. The Lennard-Jones cluster carries toy forces computed in your browser.
+        </p>
+      </Fragment>
+      <Fragment slot="assumptions">
+        <Assumptions
+          items={[
+            { term: 'Units', value: 'Lengths in Å; lattice vectors are the rows a, b, c; fractional coordinates f give r = f·[a; b; c].' },
+            { term: 'Inputs, not measurements', value: 'Lattice constants are stated inputs to ASE; molecules use G2 geometries (MP2/6-31G(d)).' },
+            { term: 'Bonds', value: 'Drawn when d < 1.15 (r_i + r_j) with covalent radii — a drawing convention, not a bonding claim.' },
+            { term: 'Shell', value: 'Counts every periodic image within r_c of the selected atom (open boundaries for molecules).' },
+            { term: 'LJ forces', value: 'TOY MODEL: V(r) = 4ε[(σ/r)¹² − (σ/r)⁶] in reduced units, open cluster, no cutoff; arrows in ε/σ.' },
+          ]}
+        />
+      </Fragment>
+      <Fragment slot="source">
+        Structures: <code>pipeline/atlas_pipeline/structures.py</code> (each structure lists its exact ASE call). Radii:
+        {ELEMENT_SOURCE.radii}. Colours: muted {ELEMENT_SOURCE.colors}.
+      </Fragment>
+    </Figure>
+
+    <section class="block" aria-labelledby="imp-h">
+      <h2 id="imp-h" class="h-section">How a sphere is drawn</h2>
+      <p class="prose-note">
+        Instead of approximating each atom with hundreds of triangles, the Atlas draws one small square per atom, always
+        facing the camera, and lets the graphics card solve for the exact sphere behind every pixel of that square.
+      </p>
+    </section>
+
+    <Figure number="2" title="A ray-cast sphere impostor, in a slice through the eye and the sphere centre" labels={['schematic']} id="fig-impostor">
+      <ImpostorSchematic />
+      <Fragment slot="caption">
+        <p>
+          <strong>The square only has to cover the sphere’s silhouette.</strong> For each pixel the shader casts the ray
+          from the eye, solves for its first intersection with the sphere (Eq. 1), and discards the pixel if there is
+          none. The hit point gives the true surface normal for lighting and the true depth, so spheres stay perfectly
+          round at any zoom and intersect bonds and each other correctly.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <section class="block">
+      <Math display number="1" tex={intersectTex} />
+      <Math display number="2" tex={quadTex} />
+      <SymbolLegend
+        items={[
+          { sym: 'd', tex: String.raw`\hat{\mathbf d}`, meaning: 'unit ray direction from the eye', units: '1' },
+          { sym: 'c', tex: String.raw`\mathbf c`, meaning: 'sphere centre in view space', units: 'Å' },
+          { sym: 'R', tex: 'R', meaning: 'sphere radius', units: 'Å' },
+          { sym: 't', tex: 't', meaning: 'distance to the first hit', units: 'Å' },
+        ]}
+      />
+      <Callout kind="derivation" title="Where Eq. 1 and Eq. 2 come from">
+        <p>
+          A point on the ray is t d̂ with |d̂| = 1. It lies on the sphere when |t d̂ − c|² = R², i.e.
+          t² − 2t (d̂·c) + |c|² − R² = 0; the smaller root is the visible surface (Eq. 1), and a negative discriminant
+          means the ray misses. The rays tangent to the sphere form a cone of half-angle θ with sin θ = R/|c|; its cross
+          section through the centre, perpendicular to the axis, has radius |c| tan θ, which is Eq. 2 — the half-size of
+          the square (plus a 3% margin).
+        </p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="conv-h">
+      <h2 id="conv-h" class="h-section">Conventions and checks</h2>
+      <ul class="checks">
+        <li>
+          <strong>Minimum image.</strong> Displacements are wrapped in fractional coordinates and then compared with the
+          26 neighbouring images; tested against a brute-force search over ±5 cells in a skewed triclinic cell.
+        </li>
+        <li>
+          <strong>Neighbour lists with images.</strong> Atoms closer than <i>r</i><sub>c</sub> are found in every periodic
+          image (a cell list over the wrapped, padded structure); tested against direct enumeration and against ASE.
+        </li>
+        <li>
+          <strong>Crystal geometry.</strong> Rock salt gives six Cl⁻ at a/2 around each Na⁺ and twelve Na⁺ at a/√2;
+          diamond gives four neighbours at √3a/4 at the tetrahedral angle arccos(−1/3).
+        </li>
+        <li>
+          <strong>Measurements</strong> use the drawn images directly, so a distance across a cell boundary is exactly
+          the one you see.
+        </li>
+        <li>
+          <strong>Elements without a tabulated covalent radius</strong> are drawn with a fallback radius and flagged in
+          the selection panel.
+        </li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .av {
+    padding-block: clamp(2rem, 5vw, 4rem) 4rem;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+  }
+  .head a {
+    color: inherit;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .block h2 {
+    margin-bottom: 0.75rem;
+  }
+  .prose-note {
+    font: 1.0625rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+  }
+  .checks {
+    display: grid;
+    gap: 0.75rem;
+    font: 1rem/1.6 var(--font-serif);
+  }
+  .checks i {
+    font-family: var(--font-serif);
+  }
+</style>

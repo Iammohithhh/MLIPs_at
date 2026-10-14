@@ -1,0 +1,40 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "h2o",
+ "title": "Water (G2 geometry)",
+ "symbols": [
+  "O",
+  "H",
+  "H"
+ ],
+ "positions": [
+  [
+   0.0,
+   0.0,
+   0.119262
+  ],
+  [
+   0.0,
+   0.763239,
+   -0.477047
+  ],
+  [
+   0.0,
+   -0.763239,
+   -0.477047
+  ]
+ ],
+ "cell": null,
+ "pbc": [
+  false,
+  false,
+  false
+ ],
+ "provenance": {
+  "source": "ase.build.molecule('H2O')",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "Coordinates from the G2 set as tabulated in ASE: MP2(full)/6-31G(d) optimised geometries (Curtiss et al., J. Chem. Phys. 106, 1063 (1997))."
+ }
+}

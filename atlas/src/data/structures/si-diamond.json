@@ -1,0 +1,86 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "si-diamond",
+ "title": "Silicon, diamond structure (conventional cell)",
+ "symbols": [
+  "Si",
+  "Si",
+  "Si",
+  "Si",
+  "Si",
+  "Si",
+  "Si",
+  "Si"
+ ],
+ "positions": [
+  [
+   0.0,
+   0.0,
+   0.0
+  ],
+  [
+   1.35775,
+   1.35775,
+   1.35775
+  ],
+  [
+   0.0,
+   2.7155,
+   2.7155
+  ],
+  [
+   1.35775,
+   4.07325,
+   4.07325
+  ],
+  [
+   2.7155,
+   0.0,
+   2.7155
+  ],
+  [
+   4.07325,
+   1.35775,
+   4.07325
+  ],
+  [
+   2.7155,
+   2.7155,
+   0.0
+  ],
+  [
+   4.07325,
+   4.07325,
+   1.35775
+  ]
+ ],
+ "cell": [
+  [
+   5.431,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   5.431,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   5.431
+  ]
+ ],
+ "pbc": [
+  true,
+  true,
+  true
+ ],
+ "provenance": {
+  "source": "ase.build.bulk('Si', 'diamond', a=5.431, cubic=True)",
+  "generator": "ase 3.29.0",
+  "created": "2026-10-14",
+  "notes": "a = 5.431 Å is an input chosen close to the experimental room-temperature value."
+ }
+}
