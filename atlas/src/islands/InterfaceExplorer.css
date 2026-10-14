@@ -1,0 +1,276 @@
+.ix {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--atlas-surface);
+  box-shadow: var(--atlas-shadow);
+}
+
+.ix-stage {
+  position: relative;
+  height: clamp(360px, 62vh, 600px);
+  background: var(--atlas-canvas);
+  touch-action: none;
+}
+.ix-stage canvas {
+  display: block;
+  outline: none;
+}
+
+.ix-toolbar {
+  position: absolute;
+  inset: 0.75rem 0.75rem auto 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.ix-toolbar > * {
+  pointer-events: auto;
+}
+
+.ix .seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.6rem;
+  background: color-mix(in oklab, var(--atlas-surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+}
+.ix .seg button {
+  font: 500 0.8125rem/1 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.45rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.ix .seg button:hover {
+  color: var(--atlas-ink);
+}
+.ix .seg button[aria-pressed='true'] {
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), inset 0 0 0 1px var(--atlas-rule);
+}
+.ix .seg-label {
+  font: italic 0.85rem var(--font-serif);
+  color: var(--atlas-ink-faint);
+  padding: 0 0.35rem 0 0.4rem;
+}
+
+.ix-reset {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  font: 500 0.75rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.45rem;
+  background: color-mix(in oklab, var(--atlas-surface) 88%, transparent);
+  cursor: pointer;
+}
+.ix-reset:hover {
+  color: var(--atlas-ink);
+}
+
+.ix-hint {
+  position: absolute;
+  left: 0.85rem;
+  bottom: 0.8rem;
+  margin: 0;
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-faint);
+  pointer-events: none;
+}
+
+.ix-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 1.25rem 1.75rem;
+  padding: 1.1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--atlas-rule);
+}
+.ix-readout {
+  font: 0.9rem/1.55 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  min-width: 0;
+}
+.ix-readout p {
+  margin: 0 0 0.5rem;
+}
+.ix-readout strong {
+  color: var(--atlas-ink);
+}
+.ix-readout .num {
+  font-variant-numeric: tabular-nums;
+}
+.ix-atom {
+  color: var(--atlas-ink);
+}
+.ix-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  vertical-align: -0.05rem;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2);
+}
+.ix-q {
+  font-variant-numeric: tabular-nums;
+}
+.ix .key {
+  white-space: nowrap;
+}
+.ix .key.att {
+  color: var(--atlas-arch);
+  font-weight: 600;
+}
+.ix .key.rep {
+  color: var(--atlas-caveat);
+  font-weight: 600;
+}
+
+.ix-chart {
+  margin: 0;
+  grid-row: span 2;
+}
+.ix-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.ix-chart .grid {
+  stroke: var(--atlas-rule);
+  stroke-width: 1;
+}
+.ix-chart .tick {
+  font: 10px var(--font-sans);
+  fill: var(--atlas-ink-faint);
+}
+.ix-chart .ball {
+  fill: color-mix(in oklab, var(--atlas-phys) 10%, transparent);
+  stroke: color-mix(in oklab, var(--atlas-phys) 55%, transparent);
+  stroke-dasharray: 3 2;
+}
+.ix-chart .reach {
+  fill: color-mix(in oklab, var(--atlas-phys) 45%, transparent);
+}
+.ix-chart .is-current .reach {
+  fill: var(--atlas-phys);
+}
+.ix-chart .is-current .tick {
+  fill: var(--atlas-ink);
+  font-weight: 600;
+}
+.ix-chart figcaption {
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-faint);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  align-items: center;
+}
+.ix-chart .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.ix-chart .item i {
+  font-family: var(--font-serif);
+}
+.ix-chart .key {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+}
+.ix-chart .key.reach {
+  background: var(--atlas-phys);
+}
+.ix-chart .key.ball {
+  border: 1px dashed var(--atlas-phys);
+}
+
+.ix-controls {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.ix-controls > label {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.ix-controls input[type='range'] {
+  width: 100%;
+  accent-color: var(--atlas-phys);
+}
+.ix-controls output {
+  font: 0.8125rem var(--font-mono);
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+  min-width: 4.2rem;
+  text-align: right;
+}
+.ix-controls select {
+  grid-column: span 2;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.5rem;
+}
+.ix-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.ix-toggles input {
+  accent-color: var(--atlas-phys);
+}
+
+.ix [data-sym].sym-active,
+.ix-controls label.sym-active span {
+  background: var(--atlas-sym-bg);
+  border-radius: 3px;
+}
+
+.stage-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 2rem;
+  text-align: center;
+  font: 0.9rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+
+@media (max-width: 760px) {
+  .ix-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ix-chart {
+    grid-row: auto;
+  }
+  .ix-hint {
+    display: none;
+  }
+  .ix-stage {
+    height: clamp(340px, 70vh, 520px);
+  }
+}

@@ -2,10 +2,19 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import Badge from '~/components/Badge.astro';
 import ReceptiveFieldFigure from '~/components/ReceptiveFieldFigure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import InterfaceExplorer from '~/islands/InterfaceExplorer';
 import { DESTINATIONS } from '~/lib/destinations';
 import { labelsInGroup, LABELS } from '~/lib/labels';
 
 const statusLabels = labelsInGroup('status');
+
+const ixAssumptions = [
+  { term: 'System', value: 'Illustrative Au(111) slab (4 layers, a = 4.078 Å) under a 13 Å water film with one Na⁺ and one Cl⁻; periodic in x and y, open along z.' },
+  { term: 'Positions', value: 'Placed by rule (lattice + random sequential addition at liquid density, SPC/E geometry), not relaxed or simulated.' },
+  { term: 'Graph', value: 'Edges join atoms closer than r_c (minimum image); after T layers atom i is influenced only by atoms ≤ T hops away.' },
+  { term: 'Long range', value: 'SPC/E partial charges (O −0.8476 e, H +0.4238 e), ions ±1 e, Au uncharged; lines show minimum-image pairs only, no Ewald sum.' },
+];
 
 // "Architecture ≠ checkpoint ≠ dataset ≠ result" — one concrete, sourced example.
 // Architecture and training data both feed a checkpoint; a benchmark result
@@ -59,21 +68,52 @@ const order: CardKey[] = ['arch', 'data', 'ckpt', 'result'];
       <div class="hero-text">
         <p class="eyebrow">An evidence-first atlas</p>
         <h1 class="h-display">Mapping the science of machine-learned atomistic modelling</h1>
+      </div>
+      <div class="hero-side">
         <p class="lede">
           Explore the models. Understand the physics. Discover the limitations. Every figure here is either computed,
           sourced or labelled as a toy — and you can see which.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="/method/">How evidence is checked →</a>
-          <a class="btn" href="#destinations">Where to go</a>
+          <a class="btn btn-primary" href="/physics-lab/">Enter the Physics Lab →</a>
+          <a class="btn" href="/method/">How evidence is checked</a>
         </div>
-        <p class="hero-hint">
-          <strong>Try the figure.</strong> Click any atom to make it atom <i>i</i>, step the message-passing layers, then
-          switch to long range. Hover (or tap) <i>r</i><sub>c</sub> in the formula to find it in the picture.
+      </div>
+    </div>
+    <div class="wide hero-figure">
+      <div class="fig-head-row">
+        <p class="fig-kicker">Fig. 1 · Which atoms can influence atom <i>i</i>?</p>
+        <div class="fig-badges"><Badge label="toy-model" /><Badge label="schematic" /></div>
+      </div>
+      <div class="ix-slot">
+        <InterfaceExplorer client:visible />
+        <noscript><p class="noscript">This figure is interactive and needs JavaScript. Fig. 2 below shows the same idea as a static diagram.</p></noscript>
+      </div>
+      <p class="hero-hint">
+        <strong>Try it.</strong> Click any atom to make it atom <i>i</i>, step the message-passing layers <i>T</i>,
+        then switch to long range. Hover <i>r</i><sub>c</sub> in the readout to light up the cutoff sphere.
+      </p>
+      <Assumptions items={ixAssumptions} />
+    </div>
+  </section>
+
+  <section class="page-grid section" aria-labelledby="flat">
+    <div class="wide flat-grid">
+      <div>
+        <p class="eyebrow">The same question, flattened</p>
+        <h2 id="flat" class="h-section">Why distance alone over-counts</h2>
+        <p class="section-lede">
+          Message passing follows edges, not straight lines. An atom inside the sphere of radius <i>T</i>·<i>r</i><sub>c</sub>
+          is reachable only if a chain of at most <i>T</i> edges, each shorter than <i>r</i><sub>c</sub>, leads to it.
+          On a flat toy layer you can see every edge.
+        </p>
+        <p class="section-lede">
+          This is the receptive field of a local message-passing potential. Anything outside it — however strong its
+          Coulomb field — cannot change the prediction for atom <i>i</i>, unless the model adds an explicit long-range term.
         </p>
       </div>
-      <div class="hero-figure">
-        <p class="fig-kicker">Fig. 1 · Which atoms can influence atom <i>i</i>?</p>
+      <div class="hero-figure-2d">
+        <p class="fig-kicker">Fig. 2 · The receptive field on a 2D toy layer</p>
         <ReceptiveFieldFigure />
       </div>
     </div>
@@ -189,9 +229,48 @@ const order: CardKey[] = ['arch', 'data', 'ckpt', 'result'];
   }
   .hero-inner {
     display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1.25rem, 4vw, 3.5rem);
+    align-items: end;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .hero-figure {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .fig-head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+  .fig-head-row .fig-kicker {
+    margin: 0;
+  }
+  .fig-badges {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .ix-slot {
+    min-height: clamp(560px, 80vh, 860px);
+  }
+  .noscript {
+    padding: 2rem;
+    border: 1px dashed var(--atlas-rule-strong);
+    border-radius: 0.75rem;
+    color: var(--atlas-ink-muted);
+  }
+  .flat-grid {
+    display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: center;
+    align-items: start;
+  }
+  @media (max-width: 64rem) {
+    .flat-grid {
+      grid-template-columns: 1fr;
+    }
   }
   @media (max-width: 64rem) {
     .hero-inner {
@@ -199,8 +278,10 @@ const order: CardKey[] = ['arch', 'data', 'ckpt', 'result'];
     }
   }
   .hero-text h1 {
-    margin-block: 0.75rem 1.25rem;
-    font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+    margin-block: 0.75rem 0;
+    font-size: clamp(2.2rem, 4.6vw, 3.9rem);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
   .lede {
@@ -212,13 +293,13 @@ const order: CardKey[] = ['arch', 'data', 'ckpt', 'result'];
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
-    margin-block: 1.75rem 1.5rem;
+    margin-block: 1.25rem 0;
   }
   .hero-hint {
     font-size: 0.875rem;
     line-height: 1.55;
     color: var(--atlas-ink-muted);
-    max-width: 30rem;
+    max-width: 52rem;
     padding-left: 0.85rem;
     border-left: 2px solid var(--atlas-phys);
   }
