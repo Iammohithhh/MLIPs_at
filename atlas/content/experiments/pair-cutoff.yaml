@@ -1,0 +1,14 @@
+title: Two ions and a cutoff
+question: What does a pair term that vanishes at r_c miss of the Coulomb interaction between two ions?
+kind: physics-lab
+module: P1
+status: TOY_MODEL
+tier: T0
+page: /physics-lab/beyond-the-cutoff/#pair
+assumptions:
+  - { term: System, value: 'Na⁺ (+1 e) and Cl⁻ (−1 e) in vacuum; distance r from 2 to 14 Å.' }
+  - { term: Coulomb, value: 'E_C = k q₁q₂/r with k = 14.3996 eV·Å.' }
+  - { term: Toy short-range term, value: 'E_sr = E_C·u(r/r_c), u the DimeNet polynomial envelope (p = 6); exactly zero for r ≥ r_c. Not any real MLIP.' }
+concepts: [locality, smooth-cutoff, long-range-electrostatics]
+claims: [cutoff-pair-misses-coulomb-tail]
+review: { status: draft, last_checked: 2026-10-14 }

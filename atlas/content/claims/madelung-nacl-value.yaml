@@ -1,0 +1,9 @@
+statement: >-
+  The Madelung constant of rock salt referred to the nearest-neighbour distance is M = 1.747565; the Atlas's
+  in-browser Ewald summation reproduces it to better than 1e-6 independently of the splitting parameter.
+grade: THEORY
+sources:
+  - { paper: ewald1921 }
+derivation: /physics-lab/beyond-the-cutoff/#madelung
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: Checked numerically in physics.test.ts against the tabulated value 1.74756459463. }

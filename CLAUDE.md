@@ -33,3 +33,6 @@ The full product vision and plan is in [MLIP_Atlas_Vision.md](MLIP_Atlas_Vision.
 - In `.astro` files pass TeX as ``tex={String.raw`...`}`` — quoted attributes process escapes (`\v`, `\b`); `assertTexIntact` fails the build if this happens.
 - Linked symbols: `\sym{key}{tex}` in TeX ↔ `data-sym="key"` on SVG/HTML ↔ `useLinkedSymbol()` in islands.
 - Elements created by client scripts don't get Astro scoped-style attributes; style them with `:global()`.
+- 3D: `src/three/` (Stage, impostor atoms, sticks/arrows, shells, lines, picking; shared lighting in `shading.ts`). Scene data lives in pure, tested modules under `src/lib/` (`chem/`, `physics/`, `scenes/`); islands in `src/islands/`. Three.js ShaderMaterial fragment shaders must declare `uniform mat4 projectionMatrix;` themselves.
+- The TeX lost-escape guard also fires on plain English words such as "sum" inside `	ext{}`; reword the label.
+- Screenshot check: `npx astro preview` then Playwright (`--channel msedge`) — WebGL renders in headless Edge.

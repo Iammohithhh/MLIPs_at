@@ -3,7 +3,7 @@ summary: >-
   Each message-passing layer lets information travel one cutoff further, so after T layers an atom can be
   influenced by atoms up to T graph hops away — bounded by, but often smaller than, the ball of radius T·r_c.
 relevant_to: [nequip, mace]
-demonstrated_by: [receptive-field-figure]
+demonstrated_by: [receptive-field-figure, interface-receptive-field]
 related: [locality]
 claims: [mp-receptive-field-bound]
 review: { status: draft, last_checked: 2026-10-14 }

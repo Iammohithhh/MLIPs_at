@@ -1,0 +1,15 @@
+title: Which atoms can influence atom i? (3D interface)
+question: At an Au(111)/water/NaCl interface, which atoms lie within the cutoff, within T message-passing hops, and beyond reach but still Coulomb-coupled?
+kind: figure
+module: P2
+status: TOY_MODEL
+tier: T0
+page: /
+assumptions:
+  - { term: System, value: 'Illustrative Au(111) slab (4 layers, a = 4.078 Å) under a 13 Å SPC/E water film with one Na⁺ and one Cl⁻; periodic in x and y.' }
+  - { term: Positions, value: 'Placed by rule (lattice + random sequential addition at liquid density), not relaxed or simulated.' }
+  - { term: Graph, value: 'Edges join atoms closer than r_c (minimum image); one hop per message-passing layer.' }
+  - { term: Long range, value: 'SPC/E partial charges, ions ±1 e, Au uncharged; minimum-image pairs only, no Ewald sum.' }
+concepts: [locality, receptive-field, long-range-electrostatics]
+claims: [mp-receptive-field-bound]
+review: { status: draft, last_checked: 2026-10-14 }

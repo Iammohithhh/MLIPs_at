@@ -1,0 +1,6 @@
+statement: >-
+  Any pair term that is exactly zero beyond r_c misses the whole Coulomb interaction k q₁q₂/r of a pair farther apart
+  than r_c, however the term is shaped inside the cutoff.
+grade: THEORY
+derivation: /physics-lab/beyond-the-cutoff/#pair
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-14, notes: Immediate from the definition; the page's toy makes it visible and physics.test.ts checks the decomposition. }

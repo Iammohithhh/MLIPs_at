@@ -27,6 +27,7 @@ export const DESTINATIONS: Destination[] = [
     signature: '3D experiments with linked plots and linked-symbol equations',
     phase: 2,
     tone: 'phys',
+    href: '/physics-lab/',
     inNav: true,
   },
   {

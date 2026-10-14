@@ -1,0 +1,14 @@
+title: The lattice sum that refuses to converge
+question: How much of an ion's electrostatic energy in rock salt is captured by summing neighbours inside a growing sphere or cube?
+kind: physics-lab
+module: P1
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/beyond-the-cutoff/#madelung
+assumptions:
+  - { term: System, value: 'Ideal rock-salt lattice of point charges ±1 e, nearest-neighbour distance r0 = 2.82 Å.' }
+  - { term: Quantity, value: 'Madelung constant M, with E_i = −M k e²/r0 for every ion; computed live in the browser.' }
+  - { term: Methods, value: 'Partial sums over spheres and cubes, Evjen-weighted cubes, and Ewald summation (α = 1.2/r0).' }
+concepts: [ewald-summation, long-range-electrostatics]
+claims: [madelung-sphere-sums-diverge, madelung-nacl-value]
+review: { status: draft, last_checked: 2026-10-14 }

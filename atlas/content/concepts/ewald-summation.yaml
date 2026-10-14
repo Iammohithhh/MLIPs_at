@@ -1,0 +1,10 @@
+title: Ewald summation
+summary: >-
+  Splits 1/r into a short-range part, erfc(αr)/r, summed in real space, and a smooth long-range part, erf(αr)/r,
+  summed in reciprocal space. Turns the conditionally convergent Coulomb lattice sum into two rapidly convergent ones.
+explains: [coulomb-interaction]
+demonstrated_by: [madelung-sums]
+related: [long-range-electrostatics, locality]
+papers: [ewald1921]
+claims: [madelung-sphere-sums-diverge, madelung-nacl-value]
+review: { status: draft, last_checked: 2026-10-14 }

@@ -3,7 +3,7 @@ summary: >-
   Charges interact beyond any cutoff. Long-range MLIPs add explicit or latent charges and sum their interactions
   (Ewald, PME, charge equilibration) on top of a local model.
 explains: [coulomb-interaction]
-demonstrated_by: [receptive-field-figure]
-related: [locality]
+demonstrated_by: [receptive-field-figure, interface-receptive-field, pair-cutoff, madelung-sums]
+related: [locality, ewald-summation]
 papers: [cheng2025les]
 review: { status: draft, last_checked: 2026-10-14 }

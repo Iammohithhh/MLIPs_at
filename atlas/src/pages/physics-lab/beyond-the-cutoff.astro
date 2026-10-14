@@ -1,0 +1,218 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import PairCutoffLab from '~/islands/PairCutoffLab';
+import MadelungLab from '~/islands/MadelungLab';
+
+const pairAssumptions = [
+  { term: 'System', value: 'Na⁺ (+1 e) and Cl⁻ (−1 e) as point charges in vacuum; r from 2.4 to 14 Å.' },
+  { term: 'Coulomb', value: 'E_C = k q₁q₂/r, k = e²/4πε₀ = 14.3996 eV·Å. Negative energy = attraction.' },
+  { term: 'Toy short-range term', value: 'E_sr = E_C · u(r/r_c) with the DimeNet polynomial envelope, p = 6. Exactly zero for r ≥ r_c. Not the form of any real MLIP.' },
+  { term: 'Not modelled', value: 'Short-range repulsion, polarisation and any environment: this is the bare electrostatic pair term.' },
+];
+
+const madelungAssumptions = [
+  { term: 'System', value: 'Ideal rock-salt lattice of point charges ±1 e; nearest-neighbour distance r₀ = 2.82 Å (NaCl). Reference ion: the Na⁺ at the centre.' },
+  { term: 'Quantity', value: 'Madelung constant M, dimensionless: each ion has electrostatic energy E_i = −M k e²/r₀ (≈ −8.92 eV for NaCl).' },
+  { term: 'Partial sums', value: 'Spheres: all ions with |n| ≤ R. Cubes: max|nᵢ| ≤ N. Neutral cubes: Evjen weights ½, ¼, ⅛ on faces, edges, corners.' },
+  { term: 'Ewald', value: 'Conventional cubic cell (4 Na⁺ + 4 Cl⁻), α = 1.2/r₀, real-space images to ±3 cells, reciprocal vectors to |m| ≤ 8. Converged to < 10⁻⁶.' },
+];
+---
+
+<BaseLayout
+  title="Can an atom feel beyond the cutoff?"
+  description="Physics Lab P1: a cutoff-limited pair term against the Coulomb interaction, and the Madelung sum of rock salt over spheres, cubes and Ewald summation — computed live in your browser."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/physics-lab/">Physics Lab</a> · P1</p>
+      <h1 class="h-display">Can an atom feel beyond the cutoff?</h1>
+      <p class="lede">
+        Most machine-learned potentials build the energy from atoms inside a cutoff sphere a few ångström wide. Charges
+        do not respect that sphere. Two experiments show what a cutoff misses, and why even summing “everything” is
+        harder than it sounds.
+      </p>
+      <div class="head-badges">
+        <Badge label="toy-model" />
+        <Badge label="live-calculation" />
+        <Badge label="theory" />
+      </div>
+    </header>
+
+    <section class="block" id="pair" aria-labelledby="pair-h">
+      <h2 id="pair-h" class="h-section">1 · Two ions and a cutoff</h2>
+      <p>
+        Two point charges interact through Coulomb’s law. The energy falls off only as 1/<i>r</i>:
+      </p>
+      <Math display number="1" tex={String.raw`\sym{EC}{E_{\mathrm C}}(\sym{r}{r}) = \frac{k\,q_1 q_2}{\sym{r}{r}}, \qquad k = \frac{e^2}{4\pi\varepsilon_0} = 14.3996\ \mathrm{eV}\,\text{Å}`} />
+      <p>
+        Now build the crudest possible local model: keep the Coulomb pair term, but switch it off smoothly at the cutoff
+        <Math tex={String.raw`\sym{rc}{r_{\mathrm c}}`} /> with the same polynomial envelope <i>u</i> used for MLIP radial bases
+        (<a href="/method/design-system/#fig-cutoff">see the cutoff explorer</a>):
+      </p>
+      <Math display number="2" tex={String.raw`\sym{Esr}{E_{\mathrm{sr}}}(\sym{r}{r}) = \sym{EC}{E_{\mathrm C}}(\sym{r}{r})\; u\!\left(\sym{r}{r}/\sym{rc}{r_{\mathrm c}}\right), \qquad \sym{Esr}{E_{\mathrm{sr}}} = 0 \ \text{ for } \sym{r}{r} \ge \sym{rc}{r_{\mathrm c}}`} />
+      <p>
+        Drag the ions apart. Inside the cutoff the toy term tracks Coulomb’s law; past <i>r</i><sub>c</sub> it is exactly
+        zero, while the true attraction is still more than an electronvolt at 10 Å.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A Coulomb pair against a cutoff-limited pair term" labels={['toy-model']} number={1} id="fig-pair" framed={false}>
+        <PairCutoffLab client:visible />
+        <Fragment slot="caption">
+          The blue curve is the Coulomb energy (1); the dashed amber curve is the toy short-range term (2). The shaded band is
+          what the toy misses. Past the cutoff the band <em>is</em> the interaction: any pair term that vanishes at
+          <i>r</i><sub>c</sub> misses it entirely, however it is shaped inside.
+        </Fragment>
+        <Assumptions slot="assumptions" items={pairAssumptions} />
+        <Fragment slot="source">Definitions on this page; envelope from J. Gasteiger, J. Groß, S. Günnemann, DimeNet, ICLR 2020 (<a href="https://arxiv.org/abs/2003.03123">arXiv:2003.03123</a>).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block">
+      <Callout kind="caveat" title="What this toy is not">
+        Real MLIPs do not learn a damped Coulomb term. Their short-range energy is a learned function of the whole
+        neighbourhood, and stacked message-passing layers let information travel several cutoffs (see
+        <a href="/#fig-1">Fig. 1 on the homepage</a>). What survives is the conclusion: an interaction between two atoms
+        farther apart than the receptive field is invisible to a purely local model.
+      </Callout>
+    </section>
+
+    <section class="block" id="madelung" aria-labelledby="mad-h">
+      <h2 id="mad-h" class="h-section">2 · A crystal: the sum that refuses to converge</h2>
+      <p>
+        If one cutoff is too short, why not sum over every ion? In rock salt each ion sees alternating shells of opposite
+        charge, and its electrostatic energy is set by the Madelung constant
+      </p>
+      <Math display number="3" tex={String.raw`E_i = -\frac{M\,k e^2}{r_0}, \qquad M = -\sum_{\mathbf n \neq \mathbf 0} \frac{(-1)^{n_1+n_2+n_3}}{|\mathbf n|}`} />
+      <p>
+        where <b>n</b> runs over the integer lattice in units of the nearest-neighbour distance <i>r</i><sub>0</sub>. The
+        series looks innocent but converges only <em>conditionally</em>: its value depends on the order in which you add the
+        terms. Grow a sphere around the central ion and the partial sums never settle; grow a cube and they do. Make each
+        cube charge-neutral with fractional boundary weights (Evjen, 1932) and they converge within a few shells.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Partial Madelung sums of rock salt over spheres, cubes and neutral cubes" labels={['live-calculation', 'theory']} number={2} id="fig-madelung" framed={false}>
+        <MadelungLab client:visible />
+        <Fragment slot="caption">
+          Left: the crystal, with ions inside the summation region in full colour (amber tint = fractional Evjen weight).
+          Right: the running estimate of <i>M</i> as the region grows, computed in your browser, against the Ewald result
+          (green line). The sphere sums swing by more than ±5 because a sphere boundary encloses a net charge; that surplus,
+          not distant detail, dominates. The plot continues to 12 <i>r</i><sub>0</sub>; the 3D view stops at 5.
+        </Fragment>
+        <Assumptions slot="assumptions" items={madelungAssumptions} />
+        <Fragment slot="source">
+          Divergence of sphere sums and convergence of cube sums: D. Borwein, J. M. Borwein, K. F. Taylor, J. Math. Phys. 26,
+          2999 (1985). Neutral cubes: H. M. Evjen, Phys. Rev. 39, 675 (1932). Method: P. P. Ewald, Ann. Phys. 369, 253 (1921).
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="ewald-h">
+      <h2 id="ewald-h" class="h-section">Ewald’s way out</h2>
+      <p>
+        Ewald summation splits every 1/<i>r</i> into a part that dies quickly in real space and a smooth part that dies
+        quickly in reciprocal space:
+      </p>
+      <Math display number="4" tex={String.raw`\frac{1}{r} = \underbrace{\frac{\operatorname{erfc}(\alpha r)}{r}}_{\text{short range: real space}} + \underbrace{\frac{\operatorname{erf}(\alpha r)}{r}}_{\text{smooth: reciprocal space}}`} />
+      <p>Both pieces converge absolutely, so the order of summation no longer matters. For the potential at ion <i>i</i> in a periodic cell of volume <i>V</i>:</p>
+      <Math display number="5" tex={String.raw`\varphi_i = \sum_{j}\sum_{\mathbf L}{}^{'} q_j \frac{\operatorname{erfc}(\alpha |\mathbf r_{ij}+\mathbf L|)}{|\mathbf r_{ij}+\mathbf L|} + \frac{4\pi}{V}\sum_{\mathbf k\neq 0}\frac{e^{-k^2/4\alpha^2}}{k^2}\sum_j q_j \cos(\mathbf k\cdot\mathbf r_{ij}) - \frac{2\alpha}{\sqrt\pi}\,q_i`} />
+      <p>
+        The figure runs exactly this, with α = 1.2/<i>r</i><sub>0</sub>, and recovers <i>M</i> = 1.747565 to six digits.
+        Changing α moves weight between the two sums but not the answer, which the Atlas test suite checks.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="mlip-h">
+      <h2 id="mlip-h" class="h-section">What this means for machine-learned potentials</h2>
+      <ul class="takeaways">
+        <li>
+          <strong>A cutoff is a modelling choice, not physics.</strong> Electrostatics between charged or polar fragments
+          reaches far beyond typical cutoffs of 4–6 Å, and further than a few message-passing layers in many systems.
+        </li>
+        <li>
+          <strong>“Just sum everything” is not well defined for periodic systems.</strong> Long-range models therefore
+          predict charge-like quantities locally and hand them to an Ewald-type sum, as in latent Ewald summation
+          (B. Cheng, <a href="https://doi.org/10.1038/s41524-025-01577-7">npj Comput. Mater. 2025</a>), or solve for charges
+          self-consistently (charge equilibration).
+        </li>
+        <li>
+          <strong>Which systems need it is an empirical question.</strong> A 2026 perspective sorts the approaches into local
+          charge models, deliberately non-local models and finite-field coupling (Grasselli et al.,
+          <a href="https://arxiv.org/abs/2602.11071">arXiv:2602.11071</a>). Interfaces with ions and polar solvents, like the
+          one on the <a href="/">homepage</a>, are where the question is sharpest.
+        </li>
+      </ul>
+      <Callout kind="note" title="Next in the Physics Lab">
+        P2 grows the receptive field layer by layer (start with <a href="/">Fig. 1</a>), and the electrochemistry lab
+        returns to these sums with water dipoles at a metal surface.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head {
+    margin-bottom: 1.5rem;
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head .eyebrow a:hover {
+    text-decoration: underline;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block i {
+    font-style: italic;
+  }
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .takeaways {
+    display: grid;
+    gap: 0.9rem;
+    padding-left: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .takeaways strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+</style>

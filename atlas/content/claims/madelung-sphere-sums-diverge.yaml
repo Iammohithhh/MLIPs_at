@@ -1,0 +1,9 @@
+statement: >-
+  For rock-salt NaCl, the Madelung series summed over expanding spheres does not converge, while sums over expanding
+  cubes do; the lattice sum is only conditionally convergent, so its value depends on the order of summation.
+grade: THEORY
+sources:
+  - { paper: borwein1985madelung }
+derivation: /physics-lab/beyond-the-cutoff/#madelung
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: Numerically illustrated on the page (sphere partial sums keep swinging by more than 1 for R > 10 r0; tested in physics.test.ts). Add the theorem locator from the full text. }

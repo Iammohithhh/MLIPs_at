@@ -4,7 +4,7 @@ summary: >-
   radius r_c. Locality makes models linear-scaling and transferable, and fixes what they can never see.
 explains: [nearsightedness]
 relevant_to: [behler-parrinello, allegro, nequip, mace]
-demonstrated_by: [receptive-field-figure]
+demonstrated_by: [receptive-field-figure, interface-receptive-field, pair-cutoff]
 related: [receptive-field, smooth-cutoff, long-range-electrostatics]
 claims: [allegro-strictly-local]
 review: { status: draft, last_checked: 2026-10-14 }

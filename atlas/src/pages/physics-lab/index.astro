@@ -1,0 +1,200 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Glyph from '~/components/LabGlyph.astro';
+
+// Physics Lab modules (vision §12). `href` only when the experiment exists.
+interface Module {
+  id: string;
+  title: string;
+  question: string;
+  manipulate: string;
+  tier: string;
+  href?: string;
+  where?: string;
+}
+
+const modules: Module[] = [
+  { id: 'P1', title: 'Can an atom feel beyond the cutoff?', question: 'What does a cutoff miss, and why is “sum everything” ill-defined in a crystal?', manipulate: 'Ion separation, cutoff, summation sphere or cube', tier: 'T0 · browser', href: '/physics-lab/beyond-the-cutoff/' },
+  { id: 'P2', title: 'Receptive field', question: 'Which atoms can influence atom i after T message-passing layers?', manipulate: 'Atom i, cutoff, layers, long-range web', tier: 'T0 · browser', href: '/#fig-1', where: 'On the homepage' },
+  { id: 'P3', title: 'Smooth cutoffs & body order', question: 'How do pair, angular and four-body terms add up, and how smoothly do they switch off?', manipulate: 'A triplet or quadruplet of atoms; cutoff shape', tier: 'T0 · browser' },
+  { id: 'P4', title: 'What changes under rotation?', question: 'Which outputs stay fixed and which co-rotate: invariance vs equivariance?', manipulate: 'Rotate a molecule; watch energy and force vectors', tier: 'T0 · browser' },
+  { id: 'P5', title: 'Spherical harmonics & tensor products', question: 'How do equivariant networks combine directions without breaking symmetry?', manipulate: 'Lobes Yₗᵐ on a neighbour; couple l₁ ⊗ l₂', tier: 'T0 · browser' },
+  { id: 'P6', title: 'Ewald Lab', question: 'How does splitting 1/r into real- and reciprocal-space parts make lattice sums converge?', manipulate: 'Splitting parameter α, k-space cut-off, cell', tier: 'T1 · browser GPU' },
+  { id: 'P7', title: 'Latent charges', question: 'What charge-like quantities does a long-range MLIP learn from energies and forces alone?', manipulate: 'Atoms coloured by learned latent charge', tier: 'T5 · precomputed' },
+  { id: 'P8', title: 'Charge equilibration', question: 'How do charges flow to equalise electronegativity in a changing environment?', manipulate: 'Electronegativity and hardness per atom', tier: 'T0 · browser' },
+  { id: 'P9', title: 'Periodic boundaries & finite size', question: 'What do periodic images do to a slab with a dipole?', manipulate: 'Replicate and resize the cell; dipole correction', tier: 'T0 · browser' },
+  { id: 'P10', title: 'PES softening', question: 'Why do universal potentials systematically under-predict curvature, and how little data fixes it?', manipulate: 'Displace an atom along a phonon mode', tier: 'T5 · precomputed' },
+  { id: 'P11', title: 'Transferability', question: 'How does error grow as configurations leave the training distribution?', manipulate: 'Morph from training-like to shifted structures', tier: 'T5 · precomputed' },
+  { id: 'P12', title: 'Dynamics & stability', question: 'What do energy drift, RDFs and diffusion reveal that force errors hide?', manipulate: 'Play two trajectories side by side', tier: 'T2 · lammps.js' },
+];
+
+const open = modules.filter((m) => m.href);
+const next = modules.filter((m) => !m.href);
+---
+
+<BaseLayout
+  title="Physics Lab"
+  description="Interactive experiments on the physics machine-learned interatomic potentials approximate: locality, receptive fields, symmetry, electrostatics and Ewald sums, charge equilibration, periodic boundaries."
+>
+  <article class="page-grid pl">
+    <header class="wide head">
+      <p class="eyebrow">Physics Lab</p>
+      <h1 class="h-display">Thought experiments you can hold</h1>
+      <p class="lede">
+        Every module asks one question about the physics a machine-learned potential approximates, sets it up in 3D,
+        links the scene to a plot and the equations, and states its assumptions in view. Each result says whether it is a
+        toy, a live calculation or precomputed.
+      </p>
+    </header>
+
+    <section class="wide" aria-labelledby="open-h">
+      <h2 id="open-h" class="h-sub section-title">Open now</h2>
+      <ul class="open-grid">
+        {
+          open.map((m) => (
+            <li class="card is-open">
+              <a href={m.href} class="card-link">
+                <span class="mod">{m.id}</span>
+                <Glyph id={m.id} />
+                <span class="card-title">{m.title}</span>
+                <span class="card-q">{m.question}</span>
+                <span class="card-meta">
+                  <span>{m.manipulate}</span>
+                  <span class="tier">{m.where ?? m.tier}</span>
+                </span>
+                <span class="go" aria-hidden="true">Open →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wide" aria-labelledby="next-h">
+      <h2 id="next-h" class="h-sub section-title">Being built</h2>
+      <p class="note">These open one at a time, each only when its physics, tests and sources are complete.</p>
+      <ul class="next-grid">
+        {
+          next.map((m) => (
+            <li class="card">
+              <span class="mod">{m.id}</span>
+              <Glyph id={m.id} />
+              <span class="card-title">{m.title}</span>
+              <span class="card-q">{m.question}</span>
+              <span class="card-meta">
+                <span>{m.manipulate}</span>
+                <span class="tier">{m.tier}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .pl {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .section-title {
+    margin: clamp(2rem, 4vw, 3rem) 0 1rem;
+  }
+  .note {
+    margin: -0.5rem 0 1rem;
+    color: var(--atlas-ink-muted);
+    font-size: 0.9rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .open-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: 1rem;
+  }
+  .next-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15.5rem), 1fr));
+    gap: 0.75rem;
+  }
+  .card {
+    position: relative;
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+    padding: 1rem 1.1rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+    background: var(--atlas-surface);
+  }
+  .card.is-open {
+    padding: 0;
+    border-color: color-mix(in oklab, var(--atlas-phys) 40%, var(--atlas-rule));
+    box-shadow: var(--atlas-shadow);
+  }
+  .card-link {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.25rem 1.35rem 1.25rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: inherit;
+  }
+  .card-link:hover {
+    background: color-mix(in oklab, var(--atlas-phys) 5%, var(--atlas-surface));
+  }
+  .mod {
+    font: 600 0.75rem var(--font-mono);
+    color: var(--atlas-phys);
+    letter-spacing: 0.04em;
+  }
+  .card :global(.glyph) {
+    width: 100%;
+    height: 5.25rem;
+    color: var(--atlas-phys);
+  }
+  .card:not(.is-open) :global(.glyph) {
+    color: var(--atlas-ink-faint);
+    height: 4rem;
+  }
+  .card-title {
+    font: 600 1.15rem/1.3 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .card:not(.is-open) .card-title {
+    font-size: 1rem;
+  }
+  .card-q {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--atlas-ink-muted);
+  }
+  .card-meta {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    color: var(--atlas-ink-faint);
+  }
+  .tier {
+    font-family: var(--font-mono);
+  }
+  .go {
+    font: 600 0.875rem var(--font-sans);
+    color: var(--atlas-phys);
+  }
+</style>
+

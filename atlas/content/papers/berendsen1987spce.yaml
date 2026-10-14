@@ -1,0 +1,9 @@
+title: The missing term in effective pair potentials
+authors: [Berendsen, H. J. C., Grigera, J. R., Straatsma, T. P.]
+year: 1987
+venue: The Journal of Physical Chemistry 91, 6269–6271
+type: article
+identifiers:
+  doi: 10.1021/j100308a038
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-14, notes: SPC/E parameters (q_O = −0.8476 e, r_OH = 1 Å, 109.47°) as widely tabulated; confirm against the paper's table. }

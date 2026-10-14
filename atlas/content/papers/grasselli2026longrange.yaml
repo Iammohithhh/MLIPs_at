@@ -1,0 +1,8 @@
+title: 'Long-range electrostatics in atomistic machine learning: a physical perspective'
+authors: [Grasselli, F., Rossi, K., de Gironcoli, S., Grisafi, A.]
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2602.11071'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-14, notes: 'Abstract read (arXiv, revised Aug 2026): taxonomy of local charge models, deliberately nonlocal models and finite-field coupling.' }

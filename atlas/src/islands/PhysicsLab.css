@@ -1,0 +1,421 @@
+.lab {
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--atlas-surface);
+  box-shadow: var(--atlas-shadow);
+}
+
+.lab-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.lab-split--wide {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+
+.lab-stage {
+  position: relative;
+  min-height: 420px;
+  background: var(--atlas-canvas);
+  border-right: 1px solid var(--atlas-rule);
+  touch-action: none;
+}
+.lab-stage--short {
+  min-height: 340px;
+}
+.lab-stage canvas {
+  display: block;
+  outline: none;
+}
+
+.lab-toolbar {
+  position: absolute;
+  inset: 0.75rem 0.75rem auto 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.lab-toolbar > * {
+  pointer-events: auto;
+}
+.lab .seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.6rem;
+  background: color-mix(in oklab, var(--atlas-surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+}
+.lab .seg button {
+  font: 500 0.8125rem/1 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.45rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.lab .seg button[aria-pressed='true'] {
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), inset 0 0 0 1px var(--atlas-rule);
+}
+
+.lab-tag {
+  font: 600 0.8rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: color-mix(in oklab, var(--atlas-surface) 85%, transparent);
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+.lab-tag--soft {
+  font: italic 500 0.85rem var(--font-serif);
+  color: var(--atlas-phys);
+  border-color: transparent;
+  background: transparent;
+}
+
+/* Legend overlaid on a 3D stage */
+.stage-legend {
+  position: absolute;
+  left: 0.85rem;
+  bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  margin: 0;
+  padding: 0.35rem 0.6rem;
+  list-style: none;
+  font: 0.78rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+  background: color-mix(in oklab, var(--atlas-surface) 85%, transparent);
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.5rem;
+  pointer-events: none;
+}
+.stage-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.stage-legend small {
+  color: var(--atlas-ink-faint);
+}
+.stage-legend .dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2);
+}
+.stage-legend .ring {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--atlas-phys);
+}
+.stage-legend .ring.out {
+  border-color: var(--atlas-caveat);
+}
+
+/* Plot */
+.lab-plot {
+  margin: 0;
+  padding: 0.9rem 1rem 0.75rem;
+  display: grid;
+  align-content: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.lab-plot svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.lab-plot .grid {
+  stroke: var(--atlas-rule);
+}
+.lab-plot .axis {
+  stroke: var(--atlas-rule-strong);
+}
+.lab-plot .tick {
+  font: 11px var(--font-sans);
+  fill: var(--atlas-ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.lab-plot .axis-label {
+  font: italic 12px var(--font-serif);
+  fill: var(--atlas-ink-muted);
+}
+.lab-plot .curve {
+  fill: none;
+  stroke-width: 2.2;
+  transition: stroke-width 0.15s;
+}
+.lab-plot .curve.is-active {
+  stroke-width: 3.6;
+}
+.lab-plot .coulomb {
+  stroke: var(--atlas-arch);
+}
+.lab-plot .toy {
+  stroke: var(--atlas-caveat);
+  stroke-dasharray: 6 3;
+}
+.lab-plot .tail {
+  fill: color-mix(in oklab, var(--atlas-arch) 14%, transparent);
+}
+.lab-plot .dot.coulomb {
+  fill: var(--atlas-arch);
+  stroke: var(--atlas-surface);
+  stroke-width: 2;
+}
+.lab-plot .dot.toy {
+  fill: var(--atlas-caveat);
+  stroke: var(--atlas-surface);
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+.lab-plot .rc-line {
+  stroke: var(--atlas-phys);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+.lab-plot .rc-line.is-active {
+  stroke-width: 3;
+}
+.lab-plot .rc-label {
+  font: italic 13px var(--font-serif);
+  fill: var(--atlas-phys);
+}
+.lab-plot .r-line {
+  stroke: var(--atlas-ink-faint);
+  stroke-width: 1;
+}
+
+.lab-plot .shown-band {
+  fill: color-mix(in oklab, var(--atlas-phys) 5%, transparent);
+}
+.lab-plot .band-label {
+  font: 10px var(--font-sans);
+  fill: var(--atlas-ink-faint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.lab-plot .ewald {
+  stroke: var(--atlas-verified);
+  stroke-width: 2;
+}
+.lab-plot .ewald-label {
+  font: 600 11px var(--font-sans);
+  fill: var(--atlas-verified);
+  paint-order: stroke;
+  stroke: var(--atlas-surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.lab-plot .curve.sphere {
+  stroke: color-mix(in oklab, var(--atlas-caveat) 70%, transparent);
+  stroke-width: 1.6;
+}
+.lab-plot .curve.sphere.is-active {
+  stroke: var(--atlas-caveat);
+  stroke-width: 2.4;
+}
+.lab-plot .pt {
+  stroke: var(--atlas-surface);
+  stroke-width: 1.5;
+  opacity: 0.55;
+}
+.lab-plot .pt.is-active {
+  opacity: 1;
+}
+.lab-plot .pt.cube {
+  fill: var(--atlas-arch);
+}
+.lab-plot .pt.evjen {
+  fill: var(--atlas-lit);
+}
+.lab-plot .now {
+  fill: none;
+  stroke-width: 2.5;
+}
+.lab-plot .now.sphere {
+  stroke: var(--atlas-caveat);
+}
+.lab-plot .now.cube {
+  stroke: var(--atlas-arch);
+}
+.lab-plot .now.evjen {
+  stroke: var(--atlas-lit);
+}
+
+.lab-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.lab-legend .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.lab-legend i {
+  font-family: var(--font-serif);
+}
+.lab-legend .swatch {
+  display: inline-block;
+  width: 1.1rem;
+  height: 0.2rem;
+  border-radius: 2px;
+}
+.lab-legend .coulomb .swatch {
+  background: var(--atlas-arch);
+}
+.lab-legend .toy .swatch {
+  background: repeating-linear-gradient(90deg, var(--atlas-caveat) 0 5px, transparent 5px 8px);
+}
+.lab-legend .tail .swatch {
+  height: 0.7rem;
+  background: color-mix(in oklab, var(--atlas-arch) 18%, transparent);
+}
+.lab-legend .sphere .swatch {
+  background: var(--atlas-caveat);
+}
+.lab-legend .cube .swatch {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--atlas-arch);
+}
+.lab-legend .evjen .swatch {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  background: var(--atlas-lit);
+}
+.lab-legend .ewald .swatch {
+  background: var(--atlas-verified);
+}
+
+/* Controls and readout */
+.lab-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 1rem 1.75rem;
+  padding: 1rem 1.25rem 1.15rem;
+}
+.lab-controls {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+  min-width: 0;
+}
+.lab-controls label {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.lab-controls i {
+  font-family: var(--font-serif);
+}
+.lab-controls input[type='range'] {
+  width: 100%;
+  accent-color: var(--atlas-phys);
+}
+.lab-controls output {
+  font: 0.8125rem var(--font-mono);
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.lab-readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  min-width: 0;
+}
+.lab-readout > div {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.5rem;
+  background: var(--atlas-canvas);
+}
+.lab-readout dt {
+  font: 0.7rem var(--font-sans);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-faint);
+}
+.lab-readout dd {
+  margin: 0.15rem 0 0;
+  font: 600 1rem var(--font-mono);
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+}
+.lab-readout dd small {
+  font-weight: 400;
+  color: var(--atlas-ink-muted);
+}
+.lab-readout .is-alert {
+  border-color: color-mix(in oklab, var(--atlas-caveat) 55%, var(--atlas-rule));
+}
+.lab-readout .is-alert dd {
+  color: var(--atlas-caveat);
+}
+.lab-readout .is-good dd {
+  color: var(--atlas-verified);
+}
+.lab-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font: 0.875rem/1.55 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  max-width: 62rem;
+}
+.lab-note i {
+  font-family: var(--font-serif);
+}
+.lab-note strong {
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.lab [data-sym].sym-active {
+  background: var(--atlas-sym-bg);
+  border-radius: 3px;
+}
+
+@media (max-width: 860px) {
+  .lab-split,
+  .lab-split--wide,
+  .lab-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lab-stage,
+  .lab-stage--short {
+    border-right: 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    min-height: 0;
+    height: clamp(320px, 62vh, 440px);
+  }
+  .lab-controls label {
+    grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+  }
+}
