@@ -1,0 +1,393 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Badge from '~/components/Badge.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import { LABELS, labelsInGroup, type LabelGroup, type LabelKey } from '~/lib/labels';
+
+const groups: Array<{ id: LabelGroup; title: string; intro: string }> = [
+  {
+    id: 'status',
+    title: 'Result status',
+    intro: 'How a figure, number or interactive was produced. Exactly one applies to every result.',
+  },
+  {
+    id: 'evidence',
+    title: 'Evidence grades',
+    intro:
+      'Used in the Failure Atlas and on claims, alongside PUBLISHED RESULT and REPRODUCED, to separate proven failure, plausible mechanism and illustration.',
+  },
+  {
+    id: 'provenance',
+    title: 'Provenance markers',
+    intro: 'Extra markers that stop illustrations and electronic-structure output being read as model predictions.',
+  },
+];
+
+const rules = [
+  'Architecture, checkpoint, implementation, dataset and evaluation are separate records, everywhere.',
+  'Every non-trivial claim has a claim ID with a locator (figure, table or section), or is derived on the page.',
+  'Benchmark numbers from incompatible protocols are never merged; every number carries its protocol, date and source.',
+  'Proven failure, plausible mechanism and illustrative toy are kept apart and labelled.',
+  'Every simulation lists assumptions, units, boundary conditions and sign/reference conventions in view.',
+  'What an energy/force MLIP predicts is distinguished from what electronic-structure methods compute.',
+  'Records are versioned, timestamped and diffable; the changelog is public.',
+  'Visuals are original or licensed; reused figures are cited.',
+  'Corrections are one click away from every claim (a pre-filled issue with the claim ID).',
+  'Live results show exact reproduction code.',
+  'Leaderboard snapshots are pulled automatically from the source, dated, and never editorialised into rankings.',
+  'Accuracy over breadth: a record is not published until it passes review.',
+];
+
+const tiers: Array<{ id: string; where: string; what: string; label: LabelKey; place: 'browser' | 'server' | 'offline' }> =
+  [
+    { id: 'T0', where: 'Browser · TypeScript', what: 'Analytic toys: Coulomb sums, QEq solves, 1D Poisson, cutoff functions', label: 'toy-model', place: 'browser' },
+    { id: 'T1', where: 'Browser · WebGPU compute', what: 'Ewald sums, many-particle toy MD, field volumes', label: 'live-calculation', place: 'browser' },
+    { id: 'T2', where: 'Browser · lammps.js (WebAssembly)', what: 'Real classical MD with standard potentials (LJ, EAM, Tersoff)', label: 'live-calculation', place: 'browser' },
+    { id: 'T3', where: 'Browser · ONNX Runtime Web', what: 'R&D: a small real MLIP on small systems', label: 'live-calculation', place: 'browser' },
+    { id: 'T4', where: 'Atlas CPU inference server', what: 'Foundation-model Observatory: energies, forces, short scans on small structures', label: 'live-calculation', place: 'server' },
+    { id: 'T5', where: 'Offline CPU precompute', what: 'Trajectories, phonons, Architecture X-ray tensors, reference data', label: 'precomputed', place: 'offline' },
+  ];
+
+const units = [
+  { q: 'Length', u: 'Å', note: '1 Å = 0.1 nm' },
+  { q: 'Energy', u: 'eV', note: 'per structure unless stated per atom' },
+  { q: 'Force', u: 'eV/Å', note: 'F = −∂E/∂R (force points downhill)' },
+  { q: 'Stress', u: 'eV/Å³', note: '1 eV/Å³ = 160.2177 GPa; sign convention stated per figure' },
+  { q: 'Charge', u: 'e', note: 'elementary charge; model “charges” are labelled as latent or physical' },
+  { q: 'Temperature', u: 'K', note: '' },
+];
+
+const phase1 = [
+  { item: 'Astro project, layout, light/dark themes, self-hosted type', done: true },
+  { item: 'Labels, figure captions, callouts, assumptions panels', done: true },
+  { item: 'Build-time KaTeX with linked symbols', done: true },
+  { item: 'Content schemas for every entity (claims, papers, checkpoints, …)', done: false },
+  { item: 'Impostor-sphere atomic viewer (cell, replicas, shells, vectors, measure)', done: false },
+  { item: 'Structure pipeline (ASE → compact typed data)', done: false },
+  { item: 'Bibliography pipeline (arXiv / Crossref / OpenAlex)', done: false },
+  { item: 'Search: Pagefind full text, Orama facets, ⌘K', done: false },
+  { item: 'CI quality gates (types, build, physics tests, schema checks)', done: false },
+];
+---
+
+<BaseLayout
+  title="How the Atlas is verified"
+  description="The MLIP Atlas method: result labels, evidence grades, editorial rules, compute tiers, units and conventions."
+>
+  <article class="page-grid method">
+    <header class="wide head">
+      <p class="eyebrow">Method</p>
+      <h1 class="h-display">How the Atlas is verified</h1>
+      <p class="lede">
+        The Atlas is only useful if you can tell, at a glance, what kind of thing you are looking at: a toy that
+        illustrates a mechanism, a live calculation, a stored run, a published figure, or a published result the Atlas
+        re-ran itself. This page defines the labels and the rules behind them.
+      </p>
+    </header>
+
+    <section class="wide block" id="labels" aria-labelledby="labels-h">
+      <h2 id="labels-h" class="h-section">Labels</h2>
+      <div class="label-groups">
+        {
+          groups.map((g) => (
+            <div class="label-group">
+              <h3 class="h-sub">{g.title}</h3>
+              <p class="group-intro">{g.intro}</p>
+              <dl>
+                {labelsInGroup(g.id).map((k) => (
+                  <div id={`label-${k}`} class="label-row">
+                    <dt>
+                      <Badge label={k} size="md" link={false} />
+                    </dt>
+                    <dd>{LABELS[k].definition}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+      <Callout kind="caveat" title="The DFT rule">
+        <p>
+          A density of states, Fermi level or band alignment is an electronic-structure result on a named snapshot.
+          It is labelled <Badge label="dft-reference" link={false} /> and never presented as the prediction of an
+          energy/force MLIP — unless that model explicitly outputs the quantity.
+        </p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h" class="h-section">Editorial rules</h2>
+      <ol class="rules">{rules.map((r) => <li>{r}</li>)}</ol>
+    </section>
+
+    <section class="wide block" id="compute" aria-labelledby="tiers-h">
+      <h2 id="tiers-h" class="h-section">Compute tiers</h2>
+      <p class="prose-note">
+        Every result is labelled with the tier that produced it. The site itself is static; 3D and toy physics run in
+        your browser, live model inference runs on a CPU server, and heavy results are precomputed offline on CPU.
+      </p>
+      <ol class="tiers">
+        {
+          tiers.map((t) => (
+            <li class={`tier place-${t.place}`}>
+              <span class="tier-id">{t.id}</span>
+              <span class="tier-where">{t.where}</span>
+              <span class="tier-what">{t.what}</span>
+              <span class="tier-label">
+                <Badge label={t.label} />
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="tier-key" aria-hidden="true">
+        <span class="k browser">in your browser</span>
+        <span class="k server">Atlas CPU server</span>
+        <span class="k offline">offline CPU</span>
+      </div>
+    </section>
+
+    <section class="block" id="units" aria-labelledby="units-h">
+      <h2 id="units-h" class="h-section">Units and conventions</h2>
+      <p class="prose-note">
+        Unless a figure says otherwise, the Atlas uses the units below. Forces are the negative gradient of the
+        potential energy,
+      </p>
+      <Math display tex={String.raw`\vect{F}_i = -\frac{\partial E}{\partial \vect{R}_i},`} />
+      <table class="units">
+        <thead><tr><th scope="col">Quantity</th><th scope="col">Unit</th><th scope="col">Note</th></tr></thead>
+        <tbody>
+          {
+            units.map((u) => (
+              <tr>
+                <th scope="row">{u.q}</th>
+                <td>{u.u}</td>
+                <td>{u.note}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="block" id="status" aria-labelledby="status-h">
+      <h2 id="status-h" class="h-section">Build status</h2>
+      <p class="prose-note">Phase 1 — foundations. Later phases build on these pieces in dependency order.</p>
+      <ul class="checklist">
+        {
+          phase1.map((p) => (
+            <li class:list={{ done: p.done }}>
+              <span class="tick" aria-hidden="true">{p.done ? '✓' : ''}</span>
+              {p.item}
+              <span class="sr-only">{p.done ? '(done)' : '(to do)'}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="prose-note small">
+        See the <a href="/method/design-system/">design system</a> for the visual components every page is built from.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .method {
+    padding-block: clamp(2rem, 5vw, 4rem) 4rem;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .block {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .block h2 {
+    margin-bottom: 1rem;
+  }
+  .prose-note {
+    font: 1.0625rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+    margin-bottom: 1rem;
+  }
+  .prose-note.small {
+    font-size: 0.9375rem;
+    margin-top: 1rem;
+  }
+  .prose-note a {
+    color: var(--atlas-arch);
+  }
+
+  .label-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.25rem;
+  }
+  .label-group {
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.7rem;
+    background: var(--atlas-surface);
+  }
+  .group-intro {
+    font-size: 0.875rem;
+    color: var(--atlas-ink-muted);
+    margin-block: 0.3rem 0.9rem;
+  }
+  .label-row {
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--atlas-rule);
+    scroll-margin-top: 6rem;
+  }
+  .label-row:target {
+    background: color-mix(in oklab, var(--atlas-phys) 8%, transparent);
+    border-radius: 0.4rem;
+    padding-inline: 0.5rem;
+  }
+  .label-row dd {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--atlas-ink-muted);
+  }
+
+  .rules {
+    counter-reset: rule;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .rules li {
+    counter-increment: rule;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    font: 1.0625rem/1.55 var(--font-serif);
+  }
+  .rules li::before {
+    content: counter(rule);
+    font: 600 0.8125rem/1.9 var(--font-sans);
+    color: var(--atlas-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tiers {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .tier {
+    --tone: var(--atlas-phys);
+    display: grid;
+    grid-template-columns: 3rem minmax(10rem, 16rem) 1fr auto;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--atlas-rule);
+    border-left: 4px solid var(--tone);
+    border-radius: 0.5rem;
+    background: var(--atlas-surface);
+    font-size: 0.9rem;
+  }
+  .place-server { --tone: var(--atlas-arch); }
+  .place-offline { --tone: var(--atlas-lit); }
+  .tier-id {
+    font: 700 0.9375rem var(--font-mono);
+    color: var(--tone);
+  }
+  .tier-where {
+    font-weight: 600;
+  }
+  .tier-what {
+    color: var(--atlas-ink-muted);
+  }
+  @media (max-width: 48rem) {
+    .tier {
+      grid-template-columns: 3rem 1fr;
+    }
+    .tier-what,
+    .tier-label {
+      grid-column: 2;
+    }
+  }
+  .tier-key {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-muted);
+  }
+  .k::before {
+    content: '';
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-right: 0.4rem;
+    vertical-align: -0.1rem;
+    border-radius: 2px;
+    background: var(--c);
+  }
+  .k.browser { --c: var(--atlas-phys); }
+  .k.server { --c: var(--atlas-arch); }
+  .k.offline { --c: var(--atlas-lit); }
+
+  .units {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  .units th,
+  .units td {
+    text-align: left;
+    padding: 0.55rem 0.75rem 0.55rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .units thead th {
+    font: 600 0.75rem var(--font-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--atlas-ink-faint);
+  }
+  .units td:nth-child(2) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  .units td:nth-child(3) {
+    color: var(--atlas-ink-muted);
+  }
+
+  .checklist {
+    display: grid;
+    gap: 0.45rem;
+  }
+  .checklist li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    font-size: 0.9375rem;
+    color: var(--atlas-ink-muted);
+  }
+  .checklist li.done {
+    color: var(--atlas-ink);
+  }
+  .tick {
+    display: inline-grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 0.3rem;
+    border: 1.5px solid var(--atlas-rule-strong);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--atlas-surface);
+    flex: none;
+  }
+  .done .tick {
+    background: var(--atlas-verified);
+    border-color: var(--atlas-verified);
+  }
+</style>

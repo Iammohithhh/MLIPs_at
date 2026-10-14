@@ -14,7 +14,7 @@ The full product vision and plan is in [MLIP_Atlas_Vision.md](MLIP_Atlas_Vision.
 - Ask before outward-facing actions (publishing, making the repo public, deploying).
 
 ## Stack
-- `atlas/` — Astro 6 site (TypeScript strict) with React islands.
+- `atlas/` — Astro 7 site (TypeScript strict) with React islands. (The vision says Astro 6; 7 is used because 6.x has unpatched critical/XSS advisories. Markdown uses the `unified` processor from `@astrojs/markdown-remark` for remark-math/rehype-katex; `compressHTML: true` because Astro 7's default JSX whitespace rules eat spaces in prose.)
 - 3D: Three.js + React Three Fiber + drei (WebGPU where available, WebGL fallback); atoms as impostor spheres, instanced.
 - Math: KaTeX (build-time via remark-math/rehype-katex). Plots: Observable Plot / D3. Animation: GSAP. State: Zustand.
 - Later: Python (ASE, TorchSim, MACE/UMA/PET-MAD) for precompute and a CPU inference API.
@@ -29,4 +29,7 @@ The full product vision and plan is in [MLIP_Atlas_Vision.md](MLIP_Atlas_Vision.
 
 ## Working conventions
 - Commit and push small, working steps so desktop and mobile/cloud sessions stay in sync.
-- Commands: `cd atlas && npm install`, `npm run dev`, `npm run build`, `npm run check`.
+- Commands: `cd atlas && npm install`, `npm run dev`, `npm run build`, `npm run check`, `npm test` (Vitest: physics numerics, contrast, TeX guards).
+- In `.astro` files pass TeX as ``tex={String.raw`...`}`` — quoted attributes process escapes (`\v`, `\b`); `assertTexIntact` fails the build if this happens.
+- Linked symbols: `\sym{key}{tex}` in TeX ↔ `data-sym="key"` on SVG/HTML ↔ `useLinkedSymbol()` in islands.
+- Elements created by client scripts don't get Astro scoped-style attributes; style them with `:global()`.

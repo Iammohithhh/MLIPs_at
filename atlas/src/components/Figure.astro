@@ -1,0 +1,109 @@
+---
+// Every Atlas figure: numbered title, labels in view, the visual, a caption,
+// optional assumptions and a source line. Slots: default (visual), "caption",
+// "assumptions", "source".
+import Badge from './Badge.astro';
+import type { LabelKey } from '~/lib/labels';
+import { typesetInline } from '~/lib/typeset';
+
+interface Props {
+  title: string;
+  labels: LabelKey[];
+  number?: string | number;
+  id?: string;
+  width?: 'prose' | 'wide' | 'full';
+  /** Draw the visual on a framed surface (default) or bare on the canvas. */
+  framed?: boolean;
+}
+
+const { title, labels, number, id, width = 'wide', framed = true } = Astro.props;
+const hasCaption = Astro.slots.has('caption');
+const hasAssumptions = Astro.slots.has('assumptions');
+const hasSource = Astro.slots.has('source');
+---
+
+<figure class:list={['atlas-figure', width]} id={id}>
+  <header class="fig-head">
+    <p class="fig-title">
+      {number !== undefined && <span class="fig-number">Fig. {number}</span>}
+      <span set:html={typesetInline(title)} />
+    </p>
+    <div class="fig-labels">{labels.map((l) => <Badge label={l} />)}</div>
+  </header>
+  <div class:list={['fig-body', { framed }]}>
+    <slot />
+  </div>
+  {
+    (hasCaption || hasAssumptions || hasSource) && (
+      <figcaption>
+        {hasCaption && (
+          <div class="fig-caption">
+            <slot name="caption" />
+          </div>
+        )}
+        {hasAssumptions && (
+          <div class="fig-assumptions">
+            <slot name="assumptions" />
+          </div>
+        )}
+        {hasSource && (
+          <p class="fig-source">
+            <span class="eyebrow">Source</span> <slot name="source" />
+          </p>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .atlas-figure {
+    margin-block: 2rem 2.5rem;
+  }
+  .fig-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.6rem;
+  }
+  .fig-title {
+    font: 600 0.9375rem/1.35 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .fig-number {
+    color: var(--atlas-ink-faint);
+    margin-right: 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .fig-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .fig-body.framed {
+    background: var(--atlas-surface);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  figcaption {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.75rem;
+    font: 0.9rem/1.55 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .fig-caption :global(strong) {
+    color: var(--atlas-ink);
+    font-weight: 600;
+  }
+  .fig-source {
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-faint);
+  }
+  .fig-source :global(a) {
+    color: var(--atlas-lit);
+  }
+</style>

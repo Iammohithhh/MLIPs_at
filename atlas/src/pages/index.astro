@@ -1,0 +1,402 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Badge from '~/components/Badge.astro';
+import ReceptiveFieldFigure from '~/components/ReceptiveFieldFigure.astro';
+import { DESTINATIONS } from '~/lib/destinations';
+import { labelsInGroup, LABELS } from '~/lib/labels';
+
+const statusLabels = labelsInGroup('status');
+
+// "Architecture ≠ checkpoint ≠ dataset ≠ result" — one concrete, sourced chain.
+const chain = [
+  {
+    kind: 'Architecture',
+    tone: 'arch',
+    name: 'MACE',
+    what: 'A recipe: equivariant message passing with higher body-order messages. No weights, no numbers.',
+    source: { text: 'Batatia et al., NeurIPS 2022', href: 'https://arxiv.org/abs/2206.07697' },
+    edge: 'trained into',
+  },
+  {
+    kind: 'Checkpoint',
+    tone: 'phys',
+    name: 'MACE-MP-0',
+    what: 'One specific set of trained weights, with a version, size and licence. The same architecture yields many checkpoints.',
+    source: { text: 'Batatia et al., arXiv:2401.00096', href: 'https://arxiv.org/abs/2401.00096' },
+    edge: 'trained on',
+  },
+  {
+    kind: 'Dataset',
+    tone: 'neutral',
+    name: 'MPtrj',
+    what: 'Materials Project relaxation trajectories at the PBE/PBE+U level of theory. Its functional and sampling shape what the checkpoint can know.',
+    source: { text: 'Deng et al., Nat. Mach. Intell. 2023', href: 'https://arxiv.org/abs/2302.14231' },
+    edge: 'evaluated as',
+  },
+  {
+    kind: 'Benchmark result',
+    tone: 'lit',
+    name: 'A number under a protocol',
+    what: 'e.g. a Matbench Discovery metric for one checkpoint, on one test set, under one protocol, on one date. Not a property of “MACE”.',
+    source: { text: 'Riebesell et al., arXiv:2308.14920', href: 'https://arxiv.org/abs/2308.14920' },
+    edge: null,
+  },
+] as const;
+---
+
+<BaseLayout
+  title="MLIP Atlas — the science of machine-learned interatomic potentials"
+  description="An interactive, evidence-first atlas of machine-learning interatomic potentials: physics you can manipulate, models you can inspect, evidence you can check."
+  bareTitle
+>
+  <section class="hero page-grid">
+    <div class="wide hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">An evidence-first atlas</p>
+        <h1 class="h-display">Mapping the science of machine-learned atomistic modelling</h1>
+        <p class="lede">
+          Explore the models. Understand the physics. Discover the limitations. Every figure here is either computed,
+          sourced or labelled as a toy — and you can see which.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/method/">How evidence is checked →</a>
+          <a class="btn" href="#destinations">Where to go</a>
+        </div>
+        <p class="hero-hint">
+          <strong>Try the figure.</strong> Click any atom to make it atom <i>i</i>, step the message-passing layers, then
+          switch to long range. Hover <i>r</i><sub>c</sub> in the formula to find it in the picture.
+        </p>
+      </div>
+      <div class="hero-figure">
+        <p class="fig-kicker">Fig. 1 · Which atoms can influence atom <i>i</i>?</p>
+        <ReceptiveFieldFigure />
+      </div>
+    </div>
+  </section>
+
+  <section class="page-grid section" aria-labelledby="four">
+    <div class="wide">
+      <p class="eyebrow">The Atlas's core rule</p>
+      <h2 id="four" class="h-section">Four things that are never the same thing</h2>
+      <p class="section-lede">
+        “Model X scores Y” hides four different objects. The Atlas gives each its own record and never lets one stand
+        in for another.
+      </p>
+      <ol class="chain">
+        {
+          chain.map((c) => (
+            <li class={`chain-item tone-${c.tone}`}>
+              <div class="chain-card">
+                <p class="chain-kind">{c.kind}</p>
+                <p class="chain-name">{c.name}</p>
+                <p class="chain-what">{c.what}</p>
+                <a class="chain-src" href={c.source.href}>
+                  {c.source.text}
+                </a>
+              </div>
+              {c.edge && (
+                <div class="chain-edge" aria-hidden="true">
+                  <span>{c.edge}</span>
+                  <svg viewBox="0 0 40 12" width="40" height="12">
+                    <path d="M0 6h36M31 1.5 37 6l-6 4.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </div>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="chain-note">
+        Checkpoints trained at different levels of theory are not directly comparable, and benchmark numbers from
+        different protocols are never merged into one ranking.
+      </p>
+    </div>
+  </section>
+
+  <section class="page-grid section" id="destinations" aria-labelledby="dest-h">
+    <div class="wide">
+      <p class="eyebrow">Destinations</p>
+      <h2 id="dest-h" class="h-section">Where the Atlas is going</h2>
+      <p class="section-lede">
+        Each destination opens only when it has real content behind it — no catalogue entries. Build phases follow
+        dependencies: foundations first, then the Physics Lab, the knowledge base, live science, and electrochemistry.
+      </p>
+      <ul class="dest-grid">
+        {
+          DESTINATIONS.map((d) => (
+            <li class={`dest tone-${d.tone}`}>
+              <div class="dest-top">
+                <h3 class="h-sub">{d.title}</h3>
+                {d.href ? <span class="dest-open">Open</span> : <span class="dest-phase">Phase {d.phase}</span>}
+              </div>
+              <p class="dest-q">{d.question}</p>
+              <p class="dest-sig">{d.signature}</p>
+              {d.href && (
+                <a class="dest-link" href={d.href} aria-label={`Open ${d.title}`}>
+                  <span />
+                </a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="page-grid section" aria-labelledby="labels-h">
+    <div class="wide labels-band">
+      <div>
+        <p class="eyebrow">Provenance in view</p>
+        <h2 id="labels-h" class="h-section">Every result says how it was made</h2>
+        <p class="section-lede">
+          No number appears without its label, and no label is decorative: it tells you whether you are looking at a
+          toy, a live run, a stored run, a published figure, or something the Atlas re-ran and matched.
+        </p>
+        <a class="btn" href="/method/#labels">All labels and evidence grades →</a>
+      </div>
+      <dl class="label-list">
+        {
+          statusLabels.map((k) => (
+            <div>
+              <dt>
+                <Badge label={k} size="md" />
+              </dt>
+              <dd>{LABELS[k].definition}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(2rem, 5vw, 4.5rem) clamp(2.5rem, 5vw, 4rem);
+    background:
+      radial-gradient(60rem 30rem at 85% 0%, color-mix(in oklab, var(--atlas-phys) 7%, transparent), transparent 70%),
+      radial-gradient(40rem 24rem at 0% 100%, color-mix(in oklab, var(--atlas-arch) 6%, transparent), transparent 70%);
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (max-width: 64rem) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+  .hero-text h1 {
+    margin-block: 0.75rem 1.25rem;
+    font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+    text-wrap: balance;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 34rem;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-block: 1.75rem 1.5rem;
+  }
+  .hero-hint {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--atlas-ink-muted);
+    max-width: 30rem;
+    padding-left: 0.85rem;
+    border-left: 2px solid var(--atlas-phys);
+  }
+  .hero-hint strong {
+    color: var(--atlas-ink);
+  }
+  .hero-hint i,
+  .fig-kicker i {
+    font-family: var(--font-serif);
+  }
+  .fig-kicker {
+    font: 600 0.875rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .section {
+    padding-block: clamp(3rem, 6vw, 5rem) 0;
+  }
+  .section h2 {
+    margin-block: 0.5rem 0.75rem;
+  }
+  .section-lede {
+    font: 1.0625rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+    margin-bottom: 2rem;
+  }
+
+  /* four-object chain */
+  .chain {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+  }
+  .chain-item {
+    display: flex;
+    align-items: stretch;
+  }
+  .chain-card {
+    flex: 1;
+    padding: 1.1rem 1.1rem 1rem;
+    background: var(--atlas-surface);
+    border: 1px solid var(--atlas-rule);
+    border-top: 3px solid var(--tone);
+    border-radius: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .chain-kind {
+    font: 650 0.75rem var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tone);
+  }
+  .chain-name {
+    font: 600 1.25rem/1.25 var(--font-serif);
+  }
+  .chain-what {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--atlas-ink-muted);
+    flex: 1;
+  }
+  .chain-src {
+    font-size: 0.75rem;
+    color: var(--atlas-lit);
+    text-decoration: none;
+  }
+  .chain-src:hover {
+    text-decoration: underline;
+  }
+  .chain-edge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    width: 3.25rem;
+    flex: none;
+    color: var(--atlas-ink-faint);
+    font: italic 0.6875rem/1.1 var(--font-serif);
+    text-align: center;
+  }
+  .chain-note {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--atlas-ink-faint);
+  }
+  @media (max-width: 64rem) {
+    .chain {
+      grid-template-columns: 1fr;
+      max-width: 34rem;
+    }
+    .chain-item {
+      flex-direction: column;
+    }
+    .chain-edge {
+      width: auto;
+      flex-direction: row;
+      padding-block: 0.4rem;
+    }
+    .chain-edge svg {
+      transform: rotate(90deg);
+    }
+  }
+  .tone-arch { --tone: var(--atlas-arch); }
+  .tone-phys { --tone: var(--atlas-phys); }
+  .tone-lit { --tone: var(--atlas-lit); }
+  .tone-fail { --tone: var(--atlas-fail); }
+  .tone-caveat { --tone: var(--atlas-caveat); }
+  .tone-neutral { --tone: var(--atlas-neutral); }
+
+  /* destinations */
+  .dest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 0.9rem;
+  }
+  .dest {
+    position: relative;
+    padding: 1rem 1.1rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.7rem;
+    background: var(--atlas-surface);
+    box-shadow: inset 3px 0 0 var(--tone);
+  }
+  .dest-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .dest-phase,
+  .dest-open {
+    font: 600 0.6875rem var(--font-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--atlas-ink-faint);
+    white-space: nowrap;
+  }
+  .dest-open {
+    color: var(--atlas-verified);
+  }
+  .dest-q {
+    font: italic 1rem/1.4 var(--font-serif);
+    margin-block: 0.4rem;
+  }
+  .dest-sig {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--atlas-ink-muted);
+  }
+  .dest-link span {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .dest:has(.dest-link):hover {
+    border-color: var(--atlas-rule-strong);
+  }
+
+  /* labels band */
+  .labels-band {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 2rem 3rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.9rem;
+    background: var(--atlas-surface);
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  @media (max-width: 56rem) {
+    .labels-band {
+      grid-template-columns: 1fr;
+    }
+  }
+  .label-list {
+    display: grid;
+    gap: 1rem;
+  }
+  .label-list dd {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--atlas-ink-muted);
+  }
+</style>

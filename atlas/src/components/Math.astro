@@ -1,0 +1,46 @@
+---
+// Build-time KaTeX. Use \sym{key}{tex} for linked symbols.
+import katex from 'katex';
+import { assertTexIntact, katexOptions } from '~/lib/katex-options.mjs';
+
+interface Props {
+  tex: string;
+  display?: boolean;
+  /** Equation number shown at the right of display equations, e.g. "1". */
+  number?: string | number;
+  id?: string;
+}
+
+const { tex, display = false, number, id } = Astro.props;
+assertTexIntact(tex);
+const html = katex.renderToString(tex, { ...katexOptions, displayMode: display });
+---
+
+{
+  display ? (
+    <div class="equation-row" id={id}>
+      <div class="equation" set:html={html} />
+      {number !== undefined && <span class="eq-number">({number})</span>}
+    </div>
+  ) : (
+    <span set:html={html} />
+  )
+}
+
+<style>
+  .equation-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-block: 1rem;
+  }
+  .equation {
+    flex: 1;
+    min-width: 0;
+  }
+  .eq-number {
+    font: 0.875rem var(--font-sans);
+    color: var(--atlas-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

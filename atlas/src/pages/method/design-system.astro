@@ -1,0 +1,309 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Badge from '~/components/Badge.astro';
+import Callout from '~/components/Callout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Math from '~/components/Math.astro';
+import SymbolLegend from '~/components/SymbolLegend.astro';
+import CutoffExplorer from '~/islands/CutoffExplorer';
+import { LABEL_KEYS } from '~/lib/labels';
+import { contrastRatio, parseThemeTokens } from '~/lib/contrast';
+import globalCss from '~/styles/global.css?raw';
+
+const themes = parseThemeTokens(globalCss);
+
+const swatches = [
+  { token: 'canvas', role: 'Page background' },
+  { token: 'surface', role: 'Cards, figures' },
+  { token: 'ink', role: 'Body text' },
+  { token: 'ink-muted', role: 'Secondary text' },
+  { token: 'arch', role: 'Architecture' },
+  { token: 'phys', role: 'Physics' },
+  { token: 'lit', role: 'Literature' },
+  { token: 'caveat', role: 'Uncertainty, caveat' },
+  { token: 'fail', role: 'Documented failure only' },
+  { token: 'verified', role: 'Reproduced' },
+];
+const ratio = (theme: 'light' | 'dark', token: string) =>
+  contrastRatio(themes[theme][token]!, themes[theme]['canvas']!).toFixed(1);
+const isBackground = (t: string) => t === 'canvas' || t === 'surface';
+
+const cosineTex = String.raw`\sym{fc}{f_c}(r) = \begin{cases} \tfrac12\left[\cos\!\left(\dfrac{\pi r}{\sym{rc}{r_c}}\right) + 1\right], & r < \sym{rc}{r_c} \\[4pt] 0, & r \ge \sym{rc}{r_c} \end{cases}`;
+const envelopeTex = String.raw`\sym{u}{u}(d) = 1 - \frac{(\sym{p}{p}+1)(\sym{p}{p}+2)}{2}\, d^{\sym{p}{p}} + \sym{p}{p}(\sym{p}{p}+2)\, d^{\sym{p}{p}+1} - \frac{\sym{p}{p}(\sym{p}{p}+1)}{2}\, d^{\sym{p}{p}+2}, \qquad d = \frac{r}{\sym{rc}{r_c}}`;
+const jumpTex = String.raw`\lim_{r \to \sym{rc}{r_c}^-} \sym{fc}{f_c}''(r) = -\frac{\pi^2}{2\sym{rc}{r_c}^2}\cos\pi = \frac{\pi^2}{2\sym{rc}{r_c}^2} \neq 0 = \sym{fc}{f_c}''(r > \sym{rc}{r_c})`;
+const envDerivTex = String.raw`\sym{u}{u}'(d) = -K\, d^{\sym{p}{p}-1}(1-d)^2, \quad \sym{u}{u}''(d) = -K\, d^{\sym{p}{p}-2}(1-d)\big[(\sym{p}{p}-1) - (\sym{p}{p}+1)d\big], \quad K = \tfrac{\sym{p}{p}(\sym{p}{p}+1)(\sym{p}{p}+2)}{2}`;
+---
+
+<BaseLayout
+  title="Design system"
+  description="The MLIP Atlas design system: colour tokens with contrast checks, type, labels, figures, linked-symbol equations and callouts."
+>
+  <article class="page-grid ds">
+    <header class="wide head">
+      <p class="eyebrow">Method · Design system</p>
+      <h1 class="h-display">The pieces every page is built from</h1>
+      <p class="lede">
+        Science first, visual quality second — both at the highest level. Colour carries meaning, figures carry their
+        provenance, and every symbol in an equation can be found in the picture.
+      </p>
+    </header>
+
+    <section class="wide block" aria-labelledby="colour-h">
+      <h2 id="colour-h" class="h-section">Colour</h2>
+      <p class="note">
+        Accents are semantic, never decorative. Red is reserved for documented failures. Ratios are WCAG contrast
+        against the page canvas, computed at build time from the CSS tokens; a unit test fails the build if any text
+        colour drops below 4.5:1 in either theme.
+      </p>
+      <ul class="swatches">
+        {
+          swatches.map((s) => (
+            <li>
+              <div class="chip">
+                <span class="half light" style={`background:${themes.light[s.token]}`} />
+                <span class="half dark" style={`background:${themes.dark[s.token]}`} />
+              </div>
+              <p class="sw-name">--atlas-{s.token}</p>
+              <p class="sw-role">{s.role}</p>
+              {!isBackground(s.token) && (
+                <p class="sw-ratio">
+                  <span>light {ratio('light', s.token)}:1</span>
+                  <span>dark {ratio('dark', s.token)}:1</span>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wide block" aria-labelledby="type-h">
+      <h2 id="type-h" class="h-section">Type</h2>
+      <div class="type-grid">
+        <div class="type-card">
+          <p class="eyebrow">Reading · Source Serif 4</p>
+          <p class="spec-serif">
+            Message passing lets information travel one cutoff radius per layer, so the receptive field of a deep model
+            is far larger than its cutoff suggests.
+          </p>
+        </div>
+        <div class="type-card">
+          <p class="eyebrow">Interface · Inter</p>
+          <p class="spec-sans">Checkpoint · Dataset · Benchmark result</p>
+          <p class="spec-sans small">Labels, controls, captions and navigation.</p>
+        </div>
+        <div class="type-card">
+          <p class="eyebrow">Code &amp; tensor shapes · JetBrains Mono</p>
+          <pre class="spec-mono">node_feats: [n_atoms, 128x0e + 128x1o]
+forces = -grad(E, positions)</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="wide block" aria-labelledby="labels-h">
+      <h2 id="labels-h" class="h-section">Labels</h2>
+      <p class="note">
+        Filled circle = result status, diamond = evidence grade, dashed ring = provenance marker. Each links to its
+        definition.
+      </p>
+      <div class="badge-row">{LABEL_KEYS.map((k) => <Badge label={k} size="md" />)}</div>
+    </section>
+
+    <section class="block" aria-labelledby="fig-h">
+      <h2 id="fig-h" class="h-section">Figures and linked symbols</h2>
+      <p class="note">
+        A figure states its labels in its header, then gives the visual, a caption, its assumptions and its source.
+        Equations are typeset at build time; hover any coloured symbol — in an equation, in the legend or in the plot —
+        and its counterparts light up everywhere on the page. Keyboard users can tab through the legend chips.
+      </p>
+
+      <Math display number="1" tex={cosineTex} />
+      <Math display number="2" tex={envelopeTex} />
+      <SymbolLegend
+        items={[
+          { sym: 'fc', tex: 'f_c', meaning: 'cosine cutoff function', units: '1' },
+          { sym: 'u', tex: 'u', meaning: 'polynomial envelope', units: '1' },
+          { sym: 'rc', tex: 'r_c', meaning: 'cutoff radius', units: 'Å' },
+          { sym: 'p', tex: 'p', meaning: 'envelope order (integer)', units: '1' },
+        ]}
+      />
+    </section>
+
+    <Figure
+      number="1"
+      title="Which derivatives of a smooth cutoff are continuous at r_c?"
+      labels={['toy-model', 'theory']}
+      id="fig-cutoff"
+    >
+      <CutoffExplorer client:visible />
+      <Fragment slot="caption">
+        <p>
+          <strong>Both functions switch a pair interaction off smoothly at the cutoff, but not equally smoothly.</strong>
+          The cosine cutoff (1) and its slope reach zero at <i>r</i><sub>c</sub>, so pair forces — first derivatives
+          of the energy — are continuous. Its curvature does not reach zero: it jumps by π²/(2<i>r</i><sub>c</sub>²) at
+          the cutoff. The polynomial envelope (2) is continuous through the second derivative for every order
+          <i>p</i>, which moves the discontinuity to the third derivative. Second derivatives enter force constants
+          (the Hessian), so with the cosine form these can change abruptly as a neighbour crosses <i>r</i><sub>c</sub>.
+        </p>
+      </Fragment>
+      <Fragment slot="assumptions">
+        <Assumptions
+          items={[
+            { term: 'Domain', value: 'Pair distance r from 0 to 8 Å; both functions are defined as 0 for r ≥ r_c.' },
+            { term: 'Parameters', value: 'r_c and p are free choices here; the defaults (5 Å, p = 6) are illustrative.' },
+            { term: 'Role in a model', value: 'Each multiplies a radial basis or descriptor term, so every pair contribution vanishes at r_c.' },
+            { term: 'Verification', value: 'Continuity orders are derived below and checked against finite differences in the unit tests.' },
+          ]}
+        />
+      </Fragment>
+      <Fragment slot="source">
+        Cosine cutoff: J. Behler, J. Chem. Phys. 134, 074106 (2011),
+        <a href="https://doi.org/10.1063/1.3553717">doi:10.1063/1.3553717</a>. Polynomial envelope: J. Gasteiger
+        (Klicpera), J. Groß, S. Günnemann, DimeNet, ICLR 2020, <a href="https://arxiv.org/abs/2003.03123"
+          >arXiv:2003.03123</a
+        >. Curves evaluated in your browser from the definitions above.
+      </Fragment>
+    </Figure>
+
+    <section class="block" aria-labelledby="deriv-h">
+      <h3 id="deriv-h" class="h-sub">Derivation shown on the page</h3>
+      <Callout kind="derivation" title="Why the cosine curvature jumps">
+        <p>Differentiating (1) twice for r &lt; r<sub>c</sub> and taking the limit at the cutoff:</p>
+        <Math display tex={jumpTex} />
+        <p>For the envelope (2), factorising the derivatives shows a double root and a single root at d = 1:</p>
+        <Math display tex={envDerivTex} />
+        <p>so u(1) = u′(1) = u″(1) = 0, while the third derivative, −2K/r<sub>c</sub>³, does not vanish.</p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="callouts-h">
+      <h2 id="callouts-h" class="h-section">Callouts</h2>
+      <Callout kind="note">
+        <p>Context that helps reading but carries no claim.</p>
+      </Callout>
+      <Callout kind="definition">
+        <p>A statement true by construction — no external source needed.</p>
+      </Callout>
+      <Callout kind="caveat">
+        <p>The limits of a toy, a protocol mismatch, or an unverified secondary source.</p>
+      </Callout>
+      <Callout kind="failure">
+        <p>Reserved for documented failures with evidence attached; never for speculation.</p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="controls-h">
+      <h2 id="controls-h" class="h-section">Controls</h2>
+      <div class="controls-demo">
+        <a class="btn btn-primary" href="#controls-h">Primary action</a>
+        <a class="btn" href="#controls-h">Secondary</a>
+        <div class="seg" role="group" aria-label="Example segmented control">
+          <button type="button" aria-pressed="true">Local</button>
+          <button type="button" aria-pressed="false">Message passing</button>
+          <button type="button" aria-pressed="false">Long range</button>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .ds {
+    padding-block: clamp(2rem, 5vw, 4rem) 4rem;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .block {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  .block h2 {
+    margin-bottom: 0.75rem;
+  }
+  .note {
+    font: 1rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    gap: 1rem;
+  }
+  .chip {
+    display: flex;
+    height: 3.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--atlas-rule);
+  }
+  .half {
+    flex: 1;
+  }
+  .sw-name {
+    margin-top: 0.5rem;
+    font: 0.75rem var(--font-mono);
+  }
+  .sw-role {
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-muted);
+  }
+  .sw-ratio {
+    display: flex;
+    gap: 0.6rem;
+    font: 0.6875rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+    margin-top: 0.15rem;
+  }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1rem;
+  }
+  .type-card {
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.7rem;
+    background: var(--atlas-surface);
+  }
+  .spec-serif {
+    margin-top: 0.6rem;
+    font: 1.1875rem/1.55 var(--font-serif);
+  }
+  .spec-sans {
+    margin-top: 0.6rem;
+    font: 600 1.25rem/1.3 var(--font-sans);
+  }
+  .spec-sans.small {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--atlas-ink-muted);
+  }
+  .spec-mono {
+    margin-top: 0.6rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .controls-demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+</style>

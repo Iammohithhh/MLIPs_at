@@ -1,0 +1,454 @@
+---
+// Homepage figure: which atoms can influence atom i under a local cutoff, after
+// T message-passing layers, and through long-range Coulomb terms. The graph is
+// computed (cutoff graph + breadth-first hops), not drawn by hand.
+import Badge from './Badge.astro';
+import Math from './Math.astro';
+import { RF, labelOnCircle, rfModel, rfReadout, rfReadoutHtml, rfState, type RFMode } from '~/lib/receptive-field-figure';
+import { nearestAtom } from '~/lib/toy-lattice';
+
+const model = rfModel();
+const center = nearestAtom(model.atoms, RF.width / 2, RF.height / 2);
+const mode: RFMode = 'mp';
+const T = 2;
+const state = rfState(model, center, mode, T);
+const c = model.atoms[center]!;
+const rcLabel = labelOnCircle(c.x, c.y, model.rc);
+const ballLabel = labelOnCircle(c.x, c.y, T * model.rc);
+const readout = rfReadout(state, mode, model.atoms.length);
+const layers = Array.from({ length: RF.maxLayers }, (_, k) => k + 1);
+---
+
+<figure class="rf" data-rf-figure data-mode={mode} data-t={T} data-center={center}>
+  <div class="rf-controls">
+    <div class="seg" role="group" aria-label="What can influence atom i">
+      <button type="button" data-set-mode="local" aria-pressed="false">Local cutoff</button>
+      <button type="button" data-set-mode="mp" aria-pressed="true">Message passing</button>
+      <button type="button" data-set-mode="long" aria-pressed="false">Long range</button>
+    </div>
+    <div class="seg layers" role="group" aria-label="Message-passing layers T">
+      <span class="seg-label" aria-hidden="true">T</span>
+      {layers.map((k) => <button type="button" data-set-t={k} aria-pressed={k === T ? 'true' : 'false'}>{k}</button>)}
+    </div>
+  </div>
+
+  <svg
+    viewBox={`0 0 ${RF.width} ${RF.height}`}
+    role="img"
+    aria-label="A two-dimensional toy ionic layer. Atom i is marked; atoms that can influence it are highlighted. Use the arrow keys to move atom i, or click an atom."
+    tabindex="0"
+  >
+    <g class="lr">
+      {
+        state.longRange.map((l) => {
+          const a = model.atoms[l.j]!;
+          return (
+            <line
+              x1={c.x}
+              y1={c.y}
+              x2={a.x}
+              y2={a.y}
+              class:list={{ rep: !l.attractive }}
+              stroke-opacity={l.opacity.toFixed(3)}
+            />
+          );
+        })
+      }
+    </g>
+    <circle class="ball" cx={c.x} cy={c.y} r={T * model.rc} data-sym="Trc"></circle>
+    <circle class="cutoff" cx={c.x} cy={c.y} r={model.rc} data-sym="rc"></circle>
+    <g class="flow">
+      {
+        state.flowEdges.map(([u, v]) => {
+          const a = model.atoms[u]!;
+          const b = model.atoms[v]!;
+          return <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />;
+        })
+      }
+    </g>
+    <g class="atoms">
+      {
+        model.atoms.map((a, i) => {
+          const h = state.hops[i]!;
+          return (
+            <circle
+              class="atom"
+              cx={a.x.toFixed(2)}
+              cy={a.y.toFixed(2)}
+              r={RF.atomRadius}
+              data-i={i}
+              data-q={a.q}
+              data-hop={Number.isFinite(h) ? h : 'inf'}
+              data-in={h <= state.layers ? '1' : '0'}
+            />
+          );
+        })
+      }
+    </g>
+    <g class="center-mark" transform={`translate(${c.x} ${c.y})`}>
+      <circle r={RF.atomRadius + 4}></circle>
+      <text y="4">i</text>
+    </g>
+    <text class="sym-label rc-label" x={rcLabel.x} y={rcLabel.y} data-sym="rc">r<tspan dy="4" font-size="0.72em">c</tspan></text>
+    <text class="sym-label ball-label" x={ballLabel.x} y={ballLabel.y} data-sym="Trc"><tspan class="t-num">{T}</tspan>·r<tspan dy="4" font-size="0.72em">c</tspan></text>
+  </svg>
+
+  <figcaption>
+    <p class="readout" aria-live="polite" set:html={rfReadoutHtml(readout)} />
+    <div class="legend" aria-hidden="true">
+      <span class="lg lg-center"><span>atom <i>i</i></span></span>
+      <span class="lg lg-in only-local-mp"><span>can influence <i>i</i> <em>(shade = hops)</em></span></span>
+      <span class="lg lg-out only-local-mp">cannot</span>
+      <span class="lg lg-pos only-long">+ ion</span>
+      <span class="lg lg-neg only-long">− ion</span>
+      <span class="lg lg-att only-long">attractive</span>
+      <span class="lg lg-rep only-long">repulsive (opacity ∝ 1/r)</span>
+      <span class="lg lg-rc"><span>cutoff <i>r</i><sub>c</sub></span></span>
+      <span class="lg lg-ball only-mp"><span><i>T</i>·<i>r</i><sub>c</sub> bound</span></span>
+    </div>
+    <div class="rf-foot">
+      <div class="badges">
+        <Badge label="toy-model" />
+        <span class="only-long"><Badge label="schematic" /></span>
+      </div>
+      <p class="math-note">
+        Receptive field after <Math tex={String.raw`\sym{T}{T}`} /> layers:&nbsp;
+        <Math tex={String.raw`\mathcal{R}_i^{(T)} = \{\, j : d_G(i,j) \le \sym{T}{T} \,\} \subseteq \{\, j : r_{ij} < \sym{Trc}{T\,r_c} \,\}`} />
+      </p>
+    </div>
+  </figcaption>
+</figure>
+
+<script>
+  import { RF, labelOnCircle, rfModel, rfReadout, rfReadoutHtml, rfState, type RFMode } from '~/lib/receptive-field-figure';
+  import { nearestAtom } from '~/lib/toy-lattice';
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function line(x1: number, y1: number, x2: number, y2: number): SVGLineElement {
+    const el = document.createElementNS(SVG_NS, 'line');
+    el.setAttribute('x1', x1.toFixed(2));
+    el.setAttribute('y1', y1.toFixed(2));
+    el.setAttribute('x2', x2.toFixed(2));
+    el.setAttribute('y2', y2.toFixed(2));
+    return el;
+  }
+
+  function init(root: HTMLElement) {
+    const model = rfModel();
+    let mode = (root.dataset.mode as RFMode) ?? 'mp';
+    let T = Number(root.dataset.t ?? 2);
+    let center = Number(root.dataset.center ?? 0);
+
+    const svg = root.querySelector('svg')!;
+    const atomEls = Array.from(svg.querySelectorAll<SVGCircleElement>('circle.atom'));
+    const flowG = svg.querySelector<SVGGElement>('.flow')!;
+    const lrG = svg.querySelector<SVGGElement>('.lr')!;
+    const ball = svg.querySelector<SVGCircleElement>('.ball')!;
+    const cutoff = svg.querySelector<SVGCircleElement>('.cutoff')!;
+    const mark = svg.querySelector<SVGGElement>('.center-mark')!;
+    const rcLabel = svg.querySelector<SVGTextElement>('.rc-label')!;
+    const ballLabel = svg.querySelector<SVGTextElement>('.ball-label')!;
+    const readout = root.querySelector<HTMLElement>('.readout')!;
+
+    function update() {
+      root.dataset.mode = mode;
+      root.dataset.t = String(T);
+      root.dataset.center = String(center);
+      const s = rfState(model, center, mode, T);
+      const c = model.atoms[center]!;
+
+      atomEls.forEach((el, i) => {
+        const h = s.hops[i]!;
+        el.dataset.hop = Number.isFinite(h) ? String(h) : 'inf';
+        el.dataset.in = h <= s.layers ? '1' : '0';
+      });
+
+      for (const el of [ball, cutoff]) {
+        el.setAttribute('cx', c.x.toFixed(2));
+        el.setAttribute('cy', c.y.toFixed(2));
+      }
+      cutoff.setAttribute('r', String(model.rc));
+      ball.setAttribute('r', String(T * model.rc));
+      mark.setAttribute('transform', `translate(${c.x.toFixed(2)} ${c.y.toFixed(2)})`);
+      const p1 = labelOnCircle(c.x, c.y, model.rc);
+      rcLabel.setAttribute('x', p1.x.toFixed(1));
+      rcLabel.setAttribute('y', p1.y.toFixed(1));
+      const p2 = labelOnCircle(c.x, c.y, T * model.rc);
+      ballLabel.setAttribute('x', p2.x.toFixed(1));
+      ballLabel.setAttribute('y', p2.y.toFixed(1));
+      ballLabel.querySelector('.t-num')!.textContent = String(T);
+
+      flowG.replaceChildren(
+        ...s.flowEdges.map(([u, v]) => {
+          const a = model.atoms[u]!;
+          const b = model.atoms[v]!;
+          return line(a.x, a.y, b.x, b.y);
+        }),
+      );
+      lrG.replaceChildren(
+        ...s.longRange.map((l) => {
+          const a = model.atoms[l.j]!;
+          const el = line(c.x, c.y, a.x, a.y);
+          if (!l.attractive) el.classList.add('rep');
+          el.setAttribute('stroke-opacity', l.opacity.toFixed(3));
+          return el;
+        }),
+      );
+
+      readout.innerHTML = rfReadoutHtml(rfReadout(s, mode, model.atoms.length));
+      root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) => {
+        b.setAttribute('aria-pressed', String(b.dataset.setMode === mode));
+      });
+      root.querySelectorAll<HTMLButtonElement>('[data-set-t]').forEach((b) => {
+        b.setAttribute('aria-pressed', String(Number(b.dataset.setT) === T));
+        b.disabled = mode !== 'mp';
+      });
+    }
+
+    // On narrow screens show a square crop around the middle so atoms stay legible.
+    const fit = () => {
+      const narrow = svg.clientWidth < 600;
+      const x0 = (RF.width - RF.height) / 2;
+      svg.setAttribute('viewBox', narrow ? `${x0} 0 ${RF.height} ${RF.height}` : `0 0 ${RF.width} ${RF.height}`);
+    };
+    new ResizeObserver(fit).observe(svg);
+    fit();
+
+    root.querySelectorAll<HTMLButtonElement>('[data-set-mode]').forEach((b) =>
+      b.addEventListener('click', () => {
+        mode = b.dataset.setMode as RFMode;
+        update();
+      }),
+    );
+    root.querySelectorAll<HTMLButtonElement>('[data-set-t]').forEach((b) =>
+      b.addEventListener('click', () => {
+        T = Number(b.dataset.setT);
+        mode = 'mp';
+        update();
+      }),
+    );
+
+    svg.addEventListener('click', (e) => {
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+      center = nearestAtom(model.atoms, p.x, p.y);
+      update();
+    });
+
+    svg.addEventListener('keydown', (e) => {
+      const col = center % RF.nx;
+      const row = Math.floor(center / RF.nx);
+      const moves: Record<string, [number, number]> = {
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        ArrowUp: [0, -1],
+        ArrowDown: [0, 1],
+      };
+      const m = moves[e.key];
+      if (!m) return;
+      e.preventDefault();
+      const nc = Math.min(RF.nx - 1, Math.max(0, col + m[0]));
+      const nr = Math.min(RF.ny - 1, Math.max(0, row + m[1]));
+      center = nr * RF.nx + nc;
+      update();
+    });
+
+    update();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-rf-figure]').forEach(init);
+</script>
+
+<style>
+  .rf {
+    --q-pos: #2f6bd9;
+    --q-neg: #c2620f;
+    background: var(--atlas-surface);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.9rem;
+    box-shadow: var(--atlas-shadow);
+    overflow: hidden;
+  }
+  :global([data-theme='dark']) .rf {
+    --q-pos: #7aa7ff;
+    --q-neg: #f0a35a;
+  }
+  .rf-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .layers {
+    align-items: center;
+  }
+  .seg-label {
+    font: italic 600 0.875rem var(--font-serif);
+    padding: 0 0.4rem 0 0.5rem;
+    color: var(--atlas-ink-muted);
+  }
+  .layers button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: crosshair;
+    touch-action: manipulation;
+  }
+  svg:focus-visible {
+    outline-offset: -3px;
+  }
+
+  /* atoms */
+  .atom {
+    fill: var(--atlas-fig-atom-dim);
+    stroke: none;
+    transition: fill 0.25s;
+  }
+  .rf:not([data-mode='long']) .atom[data-in='1'][data-hop='1'] { fill: color-mix(in oklab, var(--atlas-phys) 100%, var(--atlas-surface)); }
+  .rf:not([data-mode='long']) .atom[data-in='1'][data-hop='2'] { fill: color-mix(in oklab, var(--atlas-phys) 72%, var(--atlas-surface)); }
+  .rf:not([data-mode='long']) .atom[data-in='1'][data-hop='3'] { fill: color-mix(in oklab, var(--atlas-phys) 52%, var(--atlas-surface)); }
+  .rf:not([data-mode='long']) .atom[data-in='1'][data-hop='4'] { fill: color-mix(in oklab, var(--atlas-phys) 38%, var(--atlas-surface)); }
+  .rf[data-mode='long'] .atom[data-q='1'] { fill: var(--q-pos); }
+  .rf[data-mode='long'] .atom[data-q='-1'] { fill: var(--q-neg); }
+  .rf[data-mode='long'] .atom[data-in='1'] { stroke: var(--atlas-phys); stroke-width: 3; }
+
+  .center-mark circle {
+    fill: var(--atlas-fig-center);
+    stroke: var(--atlas-surface);
+    stroke-width: 2.5;
+  }
+  .center-mark text {
+    font: italic 700 13px var(--font-serif);
+    text-anchor: middle;
+    fill: var(--atlas-surface);
+    pointer-events: none;
+  }
+
+  /* shells */
+  .cutoff {
+    fill: color-mix(in oklab, var(--atlas-phys) 7%, transparent);
+    stroke: var(--atlas-phys);
+    stroke-width: 1.75;
+  }
+  .ball {
+    fill: none;
+    stroke: var(--atlas-ink-faint);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 6;
+    display: none;
+  }
+  .rf[data-mode='mp'] .ball,
+  .rf[data-mode='mp'] .ball-label {
+    display: inline;
+  }
+  .ball-label {
+    display: none;
+  }
+  .sym-label {
+    font: italic 600 15px var(--font-serif);
+    text-anchor: middle;
+    fill: var(--atlas-ink);
+    paint-order: stroke;
+    stroke: var(--atlas-surface);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+  .rc-label {
+    fill: var(--atlas-phys);
+  }
+
+  /* edges */
+  /* edges are (re)created by the script, so they need unscoped selectors */
+  .flow :global(line) {
+    stroke: var(--atlas-phys);
+    stroke-opacity: 0.45;
+    stroke-width: 1.4;
+  }
+  .rf[data-mode='long'] .flow {
+    display: none;
+  }
+  .lr :global(line) {
+    stroke: var(--atlas-ink);
+    stroke-width: 1.1;
+  }
+  .lr :global(line.rep) {
+    stroke-dasharray: 4 4;
+  }
+
+  figcaption {
+    padding: 0.85rem 1rem 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    display: grid;
+    gap: 0.7rem;
+    font: 0.875rem/1.5 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .readout {
+    color: var(--atlas-ink);
+    min-height: 3em;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    font-size: 0.8125rem;
+  }
+  .lg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .lg::before {
+    content: '';
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    flex: none;
+  }
+  .lg-center::before { background: var(--atlas-fig-center); }
+  .lg-in::before { background: linear-gradient(90deg, var(--atlas-phys) 50%, color-mix(in oklab, var(--atlas-phys) 45%, var(--atlas-surface)) 50%); }
+  .lg-out::before { background: var(--atlas-fig-atom-dim); }
+  .lg-pos::before { background: var(--q-pos); }
+  .lg-neg::before { background: var(--q-neg); }
+  .lg-att::before, .lg-rep::before { border-radius: 0; height: 0; width: 1.1rem; border-top: 1.5px solid var(--atlas-ink); }
+  .lg-rep::before { border-top-style: dashed; }
+  .lg-rc::before { background: color-mix(in oklab, var(--atlas-phys) 10%, transparent); border: 1.5px solid var(--atlas-phys); }
+  .lg-ball::before { border: 1.5px dashed var(--atlas-ink-faint); }
+  .lg em { font-style: normal; color: var(--atlas-ink-faint); }
+  .lg i { font-family: var(--font-serif); }
+
+  .only-long,
+  .only-mp {
+    display: none;
+  }
+  .rf[data-mode='long'] .only-long,
+  .rf[data-mode='mp'] .only-mp {
+    display: inline-flex;
+  }
+  .rf[data-mode='long'] .only-local-mp {
+    display: none;
+  }
+  .rf-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .badges {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .math-note {
+    font-size: 0.8125rem;
+    overflow-x: auto;
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" description="This page does not exist (yet).">
+  <section class="page-grid nf">
+    <div>
+      <p class="eyebrow">404</p>
+      <h1 class="h-display">Beyond the cutoff</h1>
+      <p class="lede">
+        Nothing here interacts with anything. This page does not exist — or its destination is still being built and
+        only opens once it has real content.
+      </p>
+      <p><a class="btn btn-primary" href="/">Back to the Atlas</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-block: clamp(3rem, 10vw, 8rem);
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    margin-block: 1rem 2rem;
+  }
+</style>

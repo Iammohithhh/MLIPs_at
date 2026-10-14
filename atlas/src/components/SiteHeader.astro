@@ -1,0 +1,194 @@
+---
+import BrandMark from './BrandMark.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { DESTINATIONS } from '~/lib/destinations';
+
+const path = Astro.url.pathname;
+const nav = DESTINATIONS.filter((d) => d.inNav);
+const isCurrent = (href?: string) => !!href && (path === href || path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="bar">
+    <a href="/" class="brand" aria-label="MLIP Atlas — home">
+      <BrandMark size={28} />
+      <span class="wordmark">MLIP <span>Atlas</span></span>
+    </a>
+
+    <nav aria-label="Primary" class="primary">
+      <ul>
+        {
+          nav.map((d) => (
+            <li>
+              {d.href ? (
+                <a href={d.href} aria-current={isCurrent(d.href) ? 'page' : undefined}>
+                  {d.navTitle}
+                </a>
+              ) : (
+                <span class="soon" title={`${d.title}: in development (build phase ${d.phase})`}>
+                  {d.navTitle}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <ThemeToggle />
+      <details class="mobile-menu">
+        <summary aria-label="Menu">
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"
+            ><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg
+          >
+        </summary>
+        <nav aria-label="All destinations" class="sheet">
+          <ul>
+            {
+              DESTINATIONS.map((d) => (
+                <li>
+                  {d.href ? (
+                    <a href={d.href}>{d.title}</a>
+                  ) : (
+                    <span class="soon">
+                      {d.title} <small>phase {d.phase}</small>
+                    </span>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in oklab, var(--atlas-canvas) 86%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 0.6rem clamp(1rem, 4vw, 2.5rem);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--atlas-ink);
+  }
+  .wordmark {
+    font: 700 0.9375rem/1 var(--font-sans);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .wordmark span {
+    font-weight: 450;
+  }
+  .primary {
+    flex: 1;
+  }
+  .primary ul {
+    display: flex;
+    gap: 0.15rem;
+  }
+  .primary a,
+  .primary .soon {
+    display: inline-block;
+    padding: 0.45rem 0.65rem;
+    border-radius: 0.45rem;
+    font: 500 0.875rem/1 var(--font-sans);
+    text-decoration: none;
+  }
+  .primary a {
+    color: var(--atlas-ink-muted);
+  }
+  .primary a:hover,
+  .primary a[aria-current='page'] {
+    color: var(--atlas-ink);
+    background: var(--atlas-surface-2);
+  }
+  .soon {
+    color: var(--atlas-ink-faint);
+    cursor: default;
+  }
+  .primary .soon::after {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-left: 0.3rem;
+    vertical-align: 0.2em;
+    border-radius: 50%;
+    background: var(--atlas-rule-strong);
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+  }
+  .mobile-menu {
+    display: none;
+    position: relative;
+  }
+  .mobile-menu summary {
+    list-style: none;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: var(--atlas-ink-muted);
+  }
+  .mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .sheet {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    min-width: 15rem;
+    padding: 0.5rem;
+    background: var(--atlas-surface);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+    box-shadow: var(--atlas-shadow);
+  }
+  .sheet a,
+  .sheet .soon {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.45rem;
+    font: 500 0.9375rem/1.2 var(--font-sans);
+    text-decoration: none;
+  }
+  .sheet a:hover {
+    background: var(--atlas-surface-2);
+  }
+  .sheet small {
+    font-size: 0.75rem;
+  }
+  @media (max-width: 60rem) {
+    .primary {
+      display: none;
+    }
+    .mobile-menu {
+      display: block;
+    }
+  }
+</style>

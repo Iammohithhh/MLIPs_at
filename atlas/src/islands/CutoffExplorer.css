@@ -1,0 +1,137 @@
+.cutoff-explorer {
+  --c-cos: var(--atlas-arch);
+  --c-poly: var(--atlas-phys);
+  font-family: var(--font-sans);
+}
+.ce-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  padding: 0.9rem 1rem 0.4rem;
+}
+.ce-controls label {
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 14rem) 4.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--atlas-ink-muted);
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.35rem;
+}
+.ce-controls label.sym-active {
+  background: var(--atlas-sym-bg);
+}
+.ce-controls i {
+  font-family: var(--font-serif);
+  font-size: 1.05em;
+}
+.ce-controls input[type='range'] {
+  accent-color: var(--atlas-phys);
+  width: 100%;
+}
+.ce-controls output {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+}
+.ce-plot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.ce-frame {
+  fill: none;
+  stroke: var(--atlas-rule);
+}
+.ce-zero {
+  stroke: var(--atlas-rule-strong);
+  stroke-width: 1;
+}
+.ce-one {
+  stroke-dasharray: 2 4;
+}
+.ce-axis {
+  font: italic 600 13px var(--font-serif);
+  fill: var(--atlas-ink);
+}
+.ce-units,
+.ce-tick {
+  font: 11px var(--font-mono);
+  fill: var(--atlas-ink-faint);
+}
+.ce-curve {
+  fill: none;
+  stroke-width: 2.25;
+  stroke-linejoin: round;
+  transition: stroke-width 0.12s;
+}
+.ce-cos {
+  stroke: var(--c-cos);
+}
+.ce-poly {
+  stroke: var(--c-poly);
+}
+.ce-curve.is-active {
+  stroke-width: 4;
+}
+.ce-rc {
+  stroke: var(--atlas-ink-muted);
+  stroke-width: 1.25;
+  stroke-dasharray: 5 4;
+}
+.ce-rc.is-active {
+  stroke: var(--atlas-phys);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+.ce-rc-label {
+  font: italic 600 14px var(--font-serif);
+  fill: var(--atlas-ink);
+}
+.ce-rc-label.is-active {
+  fill: var(--atlas-phys);
+}
+.ce-jump .open {
+  fill: var(--atlas-surface);
+  stroke: var(--c-cos);
+  stroke-width: 2;
+}
+.ce-jump .closed {
+  fill: var(--c-cos);
+}
+.ce-jump text {
+  font: 12px var(--font-mono);
+  fill: var(--c-cos);
+  paint-order: stroke;
+  stroke: var(--atlas-surface);
+  stroke-width: 4px;
+}
+.ce-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  padding: 0.25rem 1rem 0.9rem;
+  font-size: 0.8125rem;
+  color: var(--atlas-ink-muted);
+}
+.ce-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ce-legend li::before {
+  content: '';
+  width: 1.25rem;
+  border-top: 2.5px solid var(--c);
+}
+.ce-legend .cos {
+  --c: var(--c-cos);
+}
+.ce-legend .poly {
+  --c: var(--c-poly);
+}
+.ce-legend em {
+  font-family: var(--font-serif);
+}

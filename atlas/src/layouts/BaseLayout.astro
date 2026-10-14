@@ -1,0 +1,75 @@
+---
+// Weight-axis variable fonts only (the optical-size builds are ~2x larger).
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/source-serif-4/wght.css';
+import '@fontsource-variable/source-serif-4/wght-italic.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '~/styles/global.css';
+import SiteHeader from '~/components/SiteHeader.astro';
+import SiteFooter from '~/components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Use the bare title (homepage) instead of "Title · MLIP Atlas". */
+  bareTitle?: boolean;
+}
+
+const { title, description, bareTitle = false } = Astro.props;
+const fullTitle = bareTitle ? title : `${title} · MLIP Atlas`;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Set the theme before first paint to avoid a flash of the wrong theme. -->
+    <script is:inline>
+      (() => {
+        let pref = 'system';
+        try {
+          const v = localStorage.getItem('atlas-theme');
+          if (v === 'light' || v === 'dark') pref = v;
+        } catch {}
+        const dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themePref = pref;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+    <script>
+      import { installLinkedSymbols } from '~/lib/linked-symbols';
+      installLinkedSymbols();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 100;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.4rem;
+    background: var(--atlas-ink);
+    color: var(--atlas-canvas);
+    font: 600 0.875rem var(--font-sans);
+  }
+  .skip-link:focus {
+    top: 0.75rem;
+  }
+</style>

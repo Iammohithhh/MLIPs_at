@@ -1,0 +1,86 @@
+---
+// The "where" clause under an equation: every symbol with its meaning and units.
+// Chips are focusable buttons, so keyboard and screen-reader users get the same
+// linked-symbol highlighting that mouse users get by hovering the equation.
+import katex from 'katex';
+import { assertTexIntact, katexOptions } from '~/lib/katex-options.mjs';
+
+export interface SymbolItem {
+  /** Linked-symbol key, matching \sym{key}{…} in the equation. */
+  sym: string;
+  /** TeX for the symbol itself. */
+  tex: string;
+  meaning: string;
+  units?: string;
+}
+
+interface Props {
+  items: SymbolItem[];
+  title?: string;
+}
+
+const { items, title = 'where' } = Astro.props;
+items.forEach((it) => assertTexIntact(it.tex));
+const rendered = items.map((it) => ({
+  ...it,
+  html: katex.renderToString(it.tex, { ...katexOptions, displayMode: false }),
+}));
+---
+
+<div class="legend">
+  <span class="legend-title">{title}</span>
+  <ul>
+    {
+      rendered.map((it) => (
+        <li>
+          <button type="button" class="sym-chip" data-sym={it.sym} aria-label={`Highlight symbol: ${it.meaning}`}>
+            <span set:html={it.html} />
+          </button>
+          <span class="meaning">{it.meaning}</span>
+          {it.units && <span class="units">[{it.units}]</span>}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .legend {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.9rem;
+    font: 0.875rem/1.45 var(--font-sans);
+    color: var(--atlas-ink-muted);
+    margin-block: 0.25rem 1.25rem;
+  }
+  .legend-title {
+    font-style: italic;
+    padding-top: 0.3rem;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+  }
+  li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .sym-chip {
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.3rem;
+    border: 1px solid var(--atlas-rule);
+    background: var(--atlas-surface);
+    color: var(--atlas-ink);
+    cursor: default;
+  }
+  .sym-chip:hover {
+    border-color: var(--atlas-phys);
+  }
+  .units {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--atlas-ink-faint);
+  }
+</style>

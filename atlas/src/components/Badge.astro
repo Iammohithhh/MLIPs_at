@@ -1,0 +1,63 @@
+---
+// A label badge (TOY MODEL, PRECOMPUTED, …). Links to its definition on the
+// Method page unless `link={false}` (e.g. when already inside a link).
+import { LABELS, type LabelKey } from '~/lib/labels';
+
+interface Props {
+  label: LabelKey;
+  link?: boolean;
+  size?: 'sm' | 'md';
+}
+
+const { label, link = true, size = 'sm' } = Astro.props;
+const def = LABELS[label];
+const Tag = link ? 'a' : 'span';
+---
+
+<Tag
+  class:list={['badge', `tone-${def.tone}`, `size-${size}`, `group-${def.group}`]}
+  href={link ? `/method/#label-${label}` : undefined}
+  title={def.definition}
+  data-label={label}
+>
+  <svg aria-hidden="true" viewBox="0 0 10 10" width="8" height="8">
+    {def.group === 'status' && <circle cx="5" cy="5" r="4" fill="currentColor" />}
+    {def.group === 'evidence' && <rect x="1.5" y="1.5" width="7" height="7" transform="rotate(45 5 5)" fill="currentColor" />}
+    {def.group === 'provenance' && <circle cx="5" cy="5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6" />}
+  </svg>
+  {def.text}
+</Tag>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font: 650 0.6875rem/1 var(--font-sans);
+    letter-spacing: 0.07em;
+    padding: 0.38em 0.6em 0.36em;
+    border-radius: 0.3rem;
+    border: 1px solid color-mix(in oklab, var(--tone) 45%, transparent);
+    background: color-mix(in oklab, var(--tone) 9%, var(--atlas-surface));
+    color: var(--tone);
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .size-md {
+    font-size: 0.75rem;
+  }
+  a.badge:hover {
+    border-color: var(--tone);
+  }
+  .group-provenance {
+    border-style: dashed;
+  }
+  .tone-arch { --tone: var(--atlas-arch); }
+  .tone-phys { --tone: var(--atlas-phys); }
+  .tone-lit { --tone: var(--atlas-lit); }
+  .tone-caveat { --tone: var(--atlas-caveat); }
+  .tone-fail { --tone: var(--atlas-fail); }
+  .tone-verified { --tone: var(--atlas-verified); }
+  .tone-neutral { --tone: var(--atlas-neutral); }
+</style>

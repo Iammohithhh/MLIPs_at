@@ -1,0 +1,50 @@
+---
+// Editorial callouts. `caveat` (amber) for uncertainty and limits of a toy;
+// `failure` (red) only for documented failures; `definition`/`derivation` for
+// statements that are true by construction and need no external source.
+interface Props {
+  kind?: 'note' | 'caveat' | 'failure' | 'definition' | 'derivation';
+  title?: string;
+}
+
+const { kind = 'note', title } = Astro.props;
+const defaults: Record<NonNullable<Props['kind']>, string> = {
+  note: 'Note',
+  caveat: 'Caveat',
+  failure: 'Documented failure',
+  definition: 'Definition',
+  derivation: 'Derivation',
+};
+---
+
+<aside class:list={['callout', `kind-${kind}`]} role="note">
+  <p class="callout-title">{title ?? defaults[kind]}</p>
+  <div class="callout-body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    --tone: var(--atlas-neutral);
+    border: 1px solid color-mix(in oklab, var(--tone) 30%, var(--atlas-rule));
+    border-left: 3px solid var(--tone);
+    background: color-mix(in oklab, var(--tone) 6%, var(--atlas-surface));
+    border-radius: 0.5rem;
+    padding: 0.85rem 1.1rem;
+    margin-block: 1.25rem;
+    font: 0.9375rem/1.55 var(--font-sans);
+  }
+  .kind-caveat { --tone: var(--atlas-caveat); }
+  .kind-failure { --tone: var(--atlas-fail); }
+  .kind-definition { --tone: var(--atlas-arch); }
+  .kind-derivation { --tone: var(--atlas-phys); }
+  .callout-title {
+    font: 650 0.75rem/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tone);
+    margin-bottom: 0.45rem;
+  }
+  .callout-body :global(p + p) {
+    margin-top: 0.6em;
+  }
+</style>

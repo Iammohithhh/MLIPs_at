@@ -1,0 +1,340 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/* Theme switching is driven by [data-theme] on <html>, set before first paint. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* ------------------------------------------------------------------------- */
+/* Design tokens                                                              */
+/* Semantic accents (vision §9): blue = architecture, teal = physics,         */
+/* purple = literature, amber = uncertainty/caveat, red = documented failure. */
+/* Text-on-canvas contrast for every accent is ≥ 4.5:1 in both themes.        */
+/* ------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --atlas-canvas: #f9f9f7;
+  --atlas-surface: #ffffff;
+  --atlas-surface-2: #f1f2f0;
+  --atlas-ink: #0f172a;
+  --atlas-ink-muted: #475569;
+  --atlas-ink-faint: #5f6b7d;
+  --atlas-rule: #dde1e6;
+  --atlas-rule-strong: #b9c0ca;
+
+  --atlas-arch: #1d4ed8;
+  --atlas-phys: #0f766e;
+  --atlas-lit: #6a4c9c;
+  --atlas-caveat: #a14a07;
+  --atlas-fail: #b91c1c;
+  --atlas-verified: #047857;
+  --atlas-neutral: #475569;
+
+  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 18%, transparent);
+  --atlas-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 4px 16px rgb(15 23 42 / 0.05);
+
+  /* Figure palette (SVG/2D plots); tuned per theme. */
+  --atlas-fig-atom: #8b95a5;
+  --atlas-fig-atom-dim: #d3d8df;
+  --atlas-fig-bond: #c4cad3;
+  --atlas-fig-center: #0f172a;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --atlas-canvas: #0d1320;
+  --atlas-surface: #131b2b;
+  --atlas-surface-2: #1a2436;
+  --atlas-ink: #e3e8f0;
+  --atlas-ink-muted: #a6b2c4;
+  --atlas-ink-faint: #8794a8;
+  --atlas-rule: #263247;
+  --atlas-rule-strong: #3a4862;
+
+  --atlas-arch: #82a8ff;
+  --atlas-phys: #4fd1c1;
+  --atlas-lit: #bca6f2;
+  --atlas-caveat: #f2b54b;
+  --atlas-fail: #f58c8c;
+  --atlas-verified: #5fd3a0;
+  --atlas-neutral: #a6b2c4;
+
+  --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 26%, transparent);
+  --atlas-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 24px rgb(0 0 0 / 0.25);
+
+  --atlas-fig-atom: #7d8aa0;
+  --atlas-fig-atom-dim: #2b364a;
+  --atlas-fig-bond: #34415a;
+  --atlas-fig-center: #e3e8f0;
+}
+
+@theme inline {
+  --font-serif: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-canvas: var(--atlas-canvas);
+  --color-surface: var(--atlas-surface);
+  --color-surface-2: var(--atlas-surface-2);
+  --color-ink: var(--atlas-ink);
+  --color-ink-muted: var(--atlas-ink-muted);
+  --color-ink-faint: var(--atlas-ink-faint);
+  --color-rule: var(--atlas-rule);
+  --color-rule-strong: var(--atlas-rule-strong);
+  --color-arch: var(--atlas-arch);
+  --color-phys: var(--atlas-phys);
+  --color-lit: var(--atlas-lit);
+  --color-caveat: var(--atlas-caveat);
+  --color-fail: var(--atlas-fail);
+  --color-verified: var(--atlas-verified);
+  --color-neutral: var(--atlas-neutral);
+}
+
+/* ------------------------------------------------------------------------- */
+/* Base                                                                       */
+/* ------------------------------------------------------------------------- */
+@layer base {
+  html {
+    background: var(--atlas-canvas);
+    color: var(--atlas-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--atlas-arch) 25%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* Layout: a named-line grid with prose / wide / full tracks                  */
+/* ------------------------------------------------------------------------- */
+@layer components {
+  .page-grid {
+    --prose: 42rem;
+    --wide: 72rem;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(var(--gutter), 1fr)
+      [wide-start] minmax(0, calc((var(--wide) - var(--prose)) / 2))
+      [prose-start] min(var(--prose), 100% - 2 * var(--gutter))
+      [prose-end] minmax(0, calc((var(--wide) - var(--prose)) / 2))
+      [wide-end] minmax(var(--gutter), 1fr) [full-end];
+  }
+  .page-grid > * {
+    grid-column: prose;
+  }
+  .page-grid > .wide {
+    grid-column: wide;
+  }
+  .page-grid > .full {
+    grid-column: full;
+  }
+
+  /* Long-form reading */
+  .prose-atlas {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    line-height: 1.68;
+    font-optical-sizing: auto;
+  }
+  .prose-atlas p,
+  .prose-atlas ul,
+  .prose-atlas ol {
+    margin-block: 0 1.1em;
+  }
+  .prose-atlas ul {
+    list-style: disc;
+    padding-inline-start: 1.25em;
+  }
+  .prose-atlas ol {
+    list-style: decimal;
+    padding-inline-start: 1.4em;
+  }
+  .prose-atlas li + li {
+    margin-top: 0.3em;
+  }
+  .prose-atlas a {
+    color: var(--atlas-arch);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  .prose-atlas a:hover {
+    text-decoration-thickness: 2px;
+  }
+  .prose-atlas strong {
+    font-weight: 650;
+  }
+
+  .h-display {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(2.25rem, 5vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .h-section {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .h-sub {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--atlas-ink-faint);
+  }
+
+  .card {
+    background: var(--atlas-surface);
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 550;
+    border: 1px solid var(--atlas-rule-strong);
+    background: var(--atlas-surface);
+    color: var(--atlas-ink);
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:hover {
+    border-color: var(--atlas-ink-faint);
+  }
+  .btn-primary {
+    background: var(--atlas-ink);
+    border-color: var(--atlas-ink);
+    color: var(--atlas-canvas);
+  }
+  .btn-primary:hover {
+    background: color-mix(in oklab, var(--atlas-ink) 85%, var(--atlas-arch));
+  }
+
+  /* Segmented toggle used by figures and labs */
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    gap: 2px;
+    border-radius: 0.6rem;
+    background: var(--atlas-surface-2);
+    border: 1px solid var(--atlas-rule);
+  }
+  .seg button {
+    font: 550 0.8125rem/1 var(--font-sans);
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.45rem;
+    color: var(--atlas-ink-muted);
+    cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] {
+    background: var(--atlas-surface);
+    color: var(--atlas-ink);
+    box-shadow: var(--atlas-shadow);
+  }
+
+  /* Display equations */
+  .equation {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.25rem;
+  }
+  .katex {
+    font-size: 1.08em;
+  }
+  .katex-display {
+    margin: 0.6em 0;
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* Linked symbols: any element with data-sym is linked to every other element */
+/* carrying the same key (equations, legends, SVG marks, 3D scene objects).   */
+/* Unlayered, and !important on the highlight, so a figure's own scoped       */
+/* styles can never hide the active state.                                    */
+/* ------------------------------------------------------------------------- */
+/* KaTeX stacks fractions and scripts in .vlist spans that overlap their
+   neighbours and swallow the pointer; let hits fall through to symbols. */
+.katex .vlist-t {
+  pointer-events: none;
+}
+.katex [data-sym] {
+  pointer-events: auto;
+  border-radius: 3px;
+  cursor: default;
+  transition: background-color 0.12s, box-shadow 0.12s;
+}
+.katex [data-sym].sym-active,
+.sym-chip.sym-active {
+  background: var(--atlas-sym-bg) !important;
+  box-shadow: 0 0 0 2px var(--atlas-sym-bg) !important;
+}
+svg [data-sym] {
+  transition: stroke 0.12s, fill 0.12s, stroke-width 0.12s, opacity 0.12s;
+}
+svg [data-sym].sym-active {
+  stroke: var(--atlas-phys) !important;
+  stroke-width: 3 !important;
+  stroke-dasharray: none !important;
+}
+svg text[data-sym].sym-active {
+  stroke: var(--atlas-surface) !important;
+  stroke-width: 5px !important;
+  fill: var(--atlas-phys) !important;
+  font-weight: 700;
+}
