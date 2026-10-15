@@ -1,0 +1,10 @@
+statement: >-
+  With its published silicon parameters the Stillinger–Weber potential gives diamond silicon at a = 5.431 Å an energy
+  of −2ε = −4.3366 eV per atom, all from two-body terms: every bond angle is tetrahedral, so the three-body term is
+  exactly zero.
+grade: THEORY
+sources:
+  - { paper: stillinger1985sw }
+derivation: /physics-lab/body-order/#fig-body
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Atlas implementation checked against this value in stillinger-weber.test.ts using the ASE diamond cell.' }

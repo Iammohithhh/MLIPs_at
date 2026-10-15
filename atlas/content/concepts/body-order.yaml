@@ -1,0 +1,11 @@
+title: Body order
+summary: >-
+  The number of atoms a single energy term depends on at once: pairs (2-body), angles (3-body), dihedrals and beyond.
+  Pair potentials cannot encode bond angles; descriptor and message-passing MLIPs reach high body order, MACE and ACE
+  by taking products of atomic basis functions.
+relevant_to: [mace, behler-parrinello]
+demonstrated_by: [body-order-lab]
+related: [locality, smooth-cutoff, equivariance]
+papers: [stillinger1985sw, drautz2019ace, batatia2022mace]
+claims: [pair-models-angle-blind, sw-diamond-energy]
+review: { status: draft, last_checked: 2026-10-15 }

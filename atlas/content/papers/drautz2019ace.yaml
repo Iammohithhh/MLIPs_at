@@ -1,0 +1,11 @@
+title: Atomic cluster expansion for accurate and transferable interatomic potentials
+topic: descriptors-locality
+authors:
+  - 'Drautz, R.'
+year: 2019
+venue: Physical Review B 99, 014104
+type: article
+identifiers:
+  doi: 10.1103/PhysRevB.99.014104
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: Cited for the body-order expansion built from products of atomic-basis functions. }

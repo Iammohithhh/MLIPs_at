@@ -1,0 +1,13 @@
+title: Pairs, angles and smooth cutoffs
+question: What can a pairs-only energy not express, and how does a three-body term with a smooth cutoff fix it?
+kind: physics-lab
+module: P3
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/body-order/#fig-body
+assumptions:
+  - { term: Potential, value: 'Stillinger–Weber silicon, published parameters (LAMMPS Si.sw): ε = 2.1683 eV, σ = 2.0951 Å, a = 1.8, λ = 21, γ = 1.2.' }
+  - { term: Geometry, value: 'Three Si atoms in a plane; the centre atom at the origin; open boundaries.' }
+concepts: [body-order, smooth-cutoff]
+claims: [pair-models-angle-blind, sw-diamond-energy]
+review: { status: draft, last_checked: 2026-10-15 }

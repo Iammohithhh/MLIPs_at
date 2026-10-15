@@ -161,6 +161,7 @@
    "behler2007generalized",
    "deng2023chgnet",
    "deng2024softening",
+   "drautz2019ace",
    "riebesell2023matbench"
   ],
   "crossref": {
@@ -865,6 +866,7 @@
   ],
   "cites": [
    "behler2007generalized",
+   "drautz2019ace",
    "gasteiger2020dimenet"
   ],
   "crossref": {
@@ -1378,6 +1380,7 @@
    "batzner2022nequip",
    "behler2007generalized",
    "deng2023chgnet",
+   "drautz2019ace",
    "rappe1991qeq"
   ],
   "crossref": {
@@ -1826,6 +1829,132 @@
    ]
   }
  },
+ "drautz2019ace": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2019; fetched [2019]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Drautz, R.' vs fetched ['drautz']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "stillinger1985sw"
+  ],
+  "crossref": {
+   "article_number": "014104",
+   "authors": [
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.99.014104",
+   "issue": "1",
+   "page": null,
+   "title": "Atomic cluster expansion for accurate and transferable interatomic potentials",
+   "type": "journal-article",
+   "volume": "99",
+   "year": 2019
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 957,
+   "id": "W2910857709",
+   "publication_year": 2019,
+   "referenced_works": [
+    "W26088913",
+    "W285749399",
+    "W1520120563",
+    "W1549427706",
+    "W1965874261",
+    "W1981368803",
+    "W1985012653",
+    "W2001238335",
+    "W2004866300",
+    "W2006009797",
+    "W2024211806",
+    "W2024321290",
+    "W2024901770",
+    "W2025444507",
+    "W2026907619",
+    "W2029413789",
+    "W2033086537",
+    "W2033187512",
+    "W2036034530",
+    "W2037782625",
+    "W2037783202",
+    "W2039959185",
+    "W2040188171",
+    "W2044259472",
+    "W2046505730",
+    "W2049079467",
+    "W2051557041",
+    "W2052815382",
+    "W2055526416",
+    "W2057858097",
+    "W2063730997",
+    "W2065742525",
+    "W2067050455",
+    "W2067992007",
+    "W2068440797",
+    "W2070363169",
+    "W2074835632",
+    "W2074889196",
+    "W2075966481",
+    "W2083415705",
+    "W2087070363",
+    "W2090004196",
+    "W2092204065",
+    "W2104489082",
+    "W2123306226",
+    "W2148424525",
+    "W2157886206",
+    "W2160684505",
+    "W2197007850",
+    "W2230728100",
+    "W2256578114",
+    "W2259720556",
+    "W2316524229",
+    "W2326765705",
+    "W2333778265",
+    "W2510117937",
+    "W2585152223",
+    "W2650911154",
+    "W2728984672",
+    "W2742238014",
+    "W2755837508",
+    "W2765910566",
+    "W2774180927",
+    "W2786721297",
+    "W2792351009",
+    "W2807616984",
+    "W2889002363",
+    "W2895581627",
+    "W2964186609",
+    "W3099813870",
+    "W3100571530",
+    "W3101728438",
+    "W3103421232",
+    "W3104386565",
+    "W3121659139",
+    "W4249212414",
+    "W4297997644"
+   ]
+  }
+ },
  "evjen1932": {
   "arxiv": null,
   "checks": [
@@ -2092,6 +2221,7 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
+   "drautz2019ace",
    "geiger2022e3nn"
   ],
   "crossref": {
@@ -2370,7 +2500,8 @@
    "batzner2022nequip",
    "behler2007generalized",
    "deng2023chgnet",
-   "deng2024softening"
+   "deng2024softening",
+   "drautz2019ace"
   ],
   "crossref": {
    "article_number": null,
@@ -2505,6 +2636,70 @@
     "W6874042194",
     "W6893138734",
     "W6894249930"
+   ]
+  }
+ },
+ "stillinger1985sw": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1985; fetched [1985]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Stillinger, F. H.' vs fetched ['stillinger']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Stillinger",
+     "given": "Frank H."
+    },
+    {
+     "family": "Weber",
+     "given": "Thomas A."
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.31.5262",
+   "issue": "8",
+   "page": "5262-5271",
+   "title": "Computer simulation of local order in condensed phases of silicon",
+   "type": "journal-article",
+   "volume": "31",
+   "year": 1985
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 5303,
+   "id": "W2037782625",
+   "publication_year": 1985,
+   "referenced_works": [
+    "W2001019135",
+    "W2002316968",
+    "W2010793745",
+    "W2015488703",
+    "W2039158036",
+    "W2046013193",
+    "W2051114919",
+    "W2066901269",
+    "W2066929715",
+    "W2067001997",
+    "W2084507275",
+    "W2267496788",
+    "W2617055828",
+    "W4244833013"
    ]
   }
  },

@@ -1,0 +1,7 @@
+statement: >-
+  An energy built only from pair terms within a cutoff cannot distinguish bond angles once the outer pair is beyond the
+  cutoff: for three atoms with fixed bond lengths it is independent of the angle, so angular preferences (such as
+  tetrahedral bonding) require at least three-body terms.
+grade: THEORY
+derivation: /physics-lab/body-order/#angles
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: 'Follows from the definition; shown with the Stillinger–Weber pair term in stillinger-weber.test.ts.' }
