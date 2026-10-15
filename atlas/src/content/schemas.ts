@@ -144,6 +144,7 @@ export const PAPER_TOPICS = [
   'foundation-models-data',
   'benchmarks-failures',
   'force-fields-water',
+  'electrochemistry',
   'other',
 ] as const;
 

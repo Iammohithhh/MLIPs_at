@@ -11,6 +11,13 @@ import { ixModel } from '~/lib/scenes/interface-scene';
 // TOY MODEL: tilt the dipoles of the first water layer on Au(111) and watch the
 // planar-averaged charge density and electrostatic potential respond.
 
+// PUBLISHED RESULT (claim ag-water-h-down): peaks of the water-dipole angle distribution for interfacial
+// water at Ag(111) from MLIP-driven MD. Used only to set the toy's single tilt angle.
+const PUBLISHED = [
+  { theta: 55, label: '≈55° at zero charge' },
+  { theta: 135, label: '≈135° at −1.5 V vs SHE' },
+];
+
 export default function WaterDipoleLab() {
   const theme = useSceneTheme();
   const ids = useId();
@@ -38,6 +45,14 @@ export default function WaterDipoleLab() {
             <input id={`${ids}-t`} type="range" min={0} max={180} step={1} value={theta} onChange={(e) => setTheta(Number(e.target.value))} />
             <output>{theta}°</output>
           </label>
+          <div className="presets" role="group" aria-label="Published peak orientations">
+            <span className="seg-label">Peak angle at Ag(111)/water, Tian et al. 2025:</span>
+            {PUBLISHED.map((p) => (
+              <button key={p.theta} type="button" className="lab-btn" aria-pressed={theta === p.theta} onClick={() => setTheta(p.theta)}>
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
         <dl className="lab-readout" aria-live="polite">
           <div>

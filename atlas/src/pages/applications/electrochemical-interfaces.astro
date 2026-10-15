@@ -115,10 +115,27 @@ const lotoAssumptions = [
         </Fragment>
         <Assumptions slot="assumptions" items={waterAssumptions} />
         <Fragment slot="source">
-          SPC/E charges: <Cite id="berendsen1987spce" />. The 1D Poisson treatment matches the <a href="/physics-lab/periodic-slab/">periodic-slab lab</a>. Computed in your browser.
+          SPC/E charges: <Cite id="berendsen1987spce" />. Preset angles: <Cite id="tian2025agwater" /> (Fig. 2b). The 1D Poisson treatment matches the <a href="/physics-lab/periodic-slab/">periodic-slab lab</a>. Computed in your browser.
         </Fragment>
       </Figure>
     </div>
+
+    <section class="block" aria-labelledby="sign-h">
+      <h2 id="sign-h" class="h-section">Reading the signs</h2>
+      <p>
+        With hydrogens pointing away from the metal the layer’s positive end is on top, its dipole points along +<i>z</i>
+        and the potential rises across it; pointing the hydrogens at the metal lowers it. The toy’s numbers are large —
+        a perfectly aligned layer moves the potential by several volts — because nothing here screens: real first layers
+        are only partly ordered, the water above responds, and the metal’s electrons spill out and polarise. The toy
+        shows the direction and the mechanism, not the size.
+      </p>
+      <Callout kind="caveat" title="What an MLIP must get right here">
+        The orientation of the first water layer is a short-range, chemistry-driven property that a local model can
+        learn. The potential step it produces is not local: it is a sum over the whole film. A model that predicts
+        energies and forces well can still orient the layer wrongly by a few degrees; in this unscreened toy that alone shifts the step by about
+        0.2 V, an error that need not show in force metrics but matters directly for the electrode potential.
+      </Callout>
+    </section>
 
     <section class="block" id="loto" aria-labelledby="lo-h">
       <h2 id="lo-h" class="h-section">3 · LO–TO splitting</h2>
@@ -155,20 +172,47 @@ const lotoAssumptions = [
       </Figure>
     </div>
 
-    <section class="block" aria-labelledby="sign-h">
-      <h2 id="sign-h" class="h-section">Reading the signs</h2>
+    <section class="block" id="potential" aria-labelledby="cp-h">
+      <h2 id="cp-h" class="h-section">4 · Holding the electrode potential</h2>
       <p>
-        With hydrogens pointing away from the metal the layer’s positive end is on top, its dipole points along +<i>z</i>
-        and the potential rises across it; pointing the hydrogens at the metal lowers it. The toy’s numbers are large —
-        a perfectly aligned layer moves the potential by several volts — because nothing here screens: real first layers
-        are only partly ordered, the water above responds, and the metal’s electrons spill out and polarise. The toy
-        shows the direction and the mechanism, not the size.
+        An electrode is held at a potential, not at a fixed number of electrons. In grand-canonical DFT the electron count
+        changes until the Fermi level matches the target, so the same atoms have different energies and forces at
+        different potentials. A potential that maps positions to energy has no input for this. Three published
+        strategies supply it:
       </p>
-      <Callout kind="caveat" title="What an MLIP must get right here">
-        The orientation of the first water layer is a short-range, chemistry-driven property that a local model can
-        learn. The potential step it produces is not local: it is a sum over the whole film. A model that predicts
-        energies and forces well can still orient the layer wrongly by a few degrees; in this unscreened toy that alone shifts the step by about
-        0.2 V, an error that need not show in force metrics but matters directly for the electrode potential.
+      <div class="strategies">
+        <article class="strategy">
+          <h3>One model per potential</h3>
+          <p>
+            Fit a separate potential to grand-canonical DFT at each electrode potential of interest. Tian et al. trained
+            separate MACE models at the potential of zero charge and at −1.5 V vs SHE for CO₂ reduction on Ag(111)
+            <Cite id="tian2025agwater" />.
+          </p>
+          <p class="trade">Simple and accurate at the chosen potentials; nothing in between.</p>
+        </article>
+        <article class="strategy">
+          <h3>Electron count as an input</h3>
+          <p>
+            Give the model the number of electrons and have it predict the Fermi level as well as the energy, then adjust
+            the count during dynamics to hold the potential. Wang et al. built this into MACE and applied it to CO₂
+            reduction at Ni–N–C <Cite id="wang2025cpmlff" />.
+          </p>
+          <p class="trade">One model for a continuous potential range; it needs electronic outputs in the training data.</p>
+        </article>
+        <article class="strategy">
+          <h3>Transfer learning</h3>
+          <p>
+            Start from general-purpose and domain-specific models and fine-tune on a small grand-canonical set. TRECI
+            reports accurate Cu(111)/water dynamics over a wide potential range from about a thousand configurations
+            <Cite id="bianchi2025treci" />.
+          </p>
+          <p class="trade">Cuts the cost of expensive reference data, so better functionals become affordable.</p>
+        </article>
+      </div>
+      <Callout kind="caveat" title="Electronic outputs are not MLIP outputs by default">
+        A Fermi level, density of states or band alignment shown alongside an MLIP trajectory comes from electronic
+        structure on that snapshot unless the model was built to predict it, like the electron-count models above. The
+        Atlas labels the two separately.
       </Callout>
     </section>
 
@@ -208,6 +252,32 @@ const lotoAssumptions = [
   }
   .block p {
     margin-block: 0 1rem;
+  }
+  .strategies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .strategy {
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--atlas-rule);
+    border-top: 3px solid var(--atlas-phys);
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+    font: 0.95rem/1.55 var(--font-sans);
+  }
+  .strategy h3 {
+    margin: 0 0 0.5rem;
+    font: 600 1.1rem/1.3 var(--font-serif);
+  }
+  .strategy p {
+    margin: 0 0 0.6rem;
+  }
+  .strategy .trade {
+    margin: 0;
+    color: var(--atlas-ink-muted);
+    font-style: italic;
   }
   .todo {
     margin: 0;

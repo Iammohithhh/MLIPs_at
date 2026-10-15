@@ -1,0 +1,9 @@
+statement: >-
+  In MLIP-driven simulations of Ag(111)/water, the angle between the water bisector (dipole) and the surface normal for
+  interfacial water (within 5 Å of Ag) peaks near 55° at the potential of zero charge and near 135° at −1.5 V vs SHE,
+  where interfacial water turns "H-down" towards the negatively charged surface.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: tian2025agwater, locator: 'Results, "Ag(111)/H2O interface response to the applied potential"; Fig. 2b' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Angles read from the text ("~55°", "~135°"); 6 × 6 Ag(111) slab, 180 waters, 2.5 ns.' }

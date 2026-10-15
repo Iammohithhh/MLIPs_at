@@ -1,0 +1,16 @@
+title: 'Electrochemical Interfaces at Constant Potential: Data-Efficient Transfer Learning for Machine-Learning-Based Molecular Dynamics'
+topic: electrochemistry
+authors:
+  - 'Bianchi, M. G.'
+  - 'Re Fiorentin, M.'
+  - 'Risplendi, F.'
+  - 'Pirri, C. F.'
+  - 'Parrinello, M.'
+  - 'Bonati, L.'
+  - 'Cicero, G.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2511.19338'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'arXiv abstract: TRECI, transfer learning from general-purpose and domain-specific models for electronically grand-canonical MD; Cu(111)/water with about one thousand configurations; meta-GGA.' }

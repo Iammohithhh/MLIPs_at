@@ -1,0 +1,10 @@
+statement: >-
+  For CO2 reduction at Ag(111)/water, Tian et al. trained two separate sets of MACE (v0.3.4) potentials, one at the
+  potential of zero charge and one at a constant potential of −1.5 V vs SHE, each reproducing grand-canonical DFT
+  (r2SCAN + rVV10, implicit-solvent charging) energies and forces at that potential; they describe fitting one model per
+  electrode potential as a practical strategy and a model spanning a continuous potential range as desirable.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: tian2025agwater, locator: 'Methods, "Machine learning interatomic potentials" and "DFT single-point calculations"; Results, opening paragraph' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read via Europe PMC PMC12660881.' }

@@ -1330,6 +1330,50 @@
    ]
   }
  },
+ "bianchi2025treci": {
+  "arxiv": {
+   "authors": [
+    "Michele Giovanni Bianchi",
+    "Michele Re Fiorentin",
+    "Francesca Risplendi",
+    "Candido Fabrizio Pirri",
+    "Michele Parrinello",
+    "Luigi Bonati",
+    "Giancarlo Cicero"
+   ],
+   "id": "2511.19338v1",
+   "primary_category": "physics.comp-ph",
+   "published": "2025-11-24",
+   "title": "Electrochemical Interfaces at Constant Potential: Data-Efficient Transfer Learning for Machine-Learning-Based Molecular Dynamics",
+   "updated": "2025-11-24"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bianchi, M. G.' vs fetched ['bianchi']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 1,
+   "id": "W7106756152",
+   "publication_year": 2025,
+   "referenced_works": []
+  }
+ },
  "borwein1985madelung": {
   "arxiv": null,
   "checks": [
@@ -3591,6 +3635,254 @@
    "id": "W7203617361",
    "publication_year": 2026,
    "referenced_works": []
+  }
+ },
+ "tian2025agwater": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Tian, Y.' vs fetched ['tian']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "wang2025cpmlff"
+  ],
+  "crossref": {
+   "article_number": "10636",
+   "authors": [
+    {
+     "family": "Tian",
+     "given": "Xiongwei"
+    },
+    {
+     "family": "Tosello Gardini",
+     "given": "Axel"
+    },
+    {
+     "family": "Raucci",
+     "given": "Umberto"
+    },
+    {
+     "family": "Xiao",
+     "given": "Hai"
+    },
+    {
+     "family": "Zhuo",
+     "given": "Yuqun"
+    },
+    {
+     "family": "Parrinello",
+     "given": "Michele"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-025-65630-1",
+   "issue": "1",
+   "page": null,
+   "title": "Electrochemical potential-driven water dynamics control CO2 electroreduction at the Ag/H2O interface",
+   "type": "journal-article",
+   "volume": "16",
+   "year": 2025
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 49,
+   "id": "W4416758824",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W30582382",
+    "W1970127494",
+    "W1979544533",
+    "W2007395042",
+    "W2025444507",
+    "W2045754884",
+    "W2057477511",
+    "W2083222334",
+    "W2084628727",
+    "W2115234257",
+    "W2146411229",
+    "W2153954238",
+    "W2227166172",
+    "W2318989366",
+    "W2336141886",
+    "W2522135447",
+    "W2742127985",
+    "W2896915676",
+    "W2941953180",
+    "W2944826525",
+    "W2953798946",
+    "W2972593701",
+    "W2981578248",
+    "W2982328204",
+    "W3004021778",
+    "W3010816669",
+    "W3082215798",
+    "W3091919773",
+    "W3155117372",
+    "W3157629312",
+    "W3183385567",
+    "W3197442339",
+    "W3201073812",
+    "W3204928543",
+    "W3208931166",
+    "W3211109746",
+    "W3214190811",
+    "W3217556568",
+    "W4210334874",
+    "W4211220677",
+    "W4233518334",
+    "W4292775000",
+    "W4297996546",
+    "W4307582142",
+    "W4315631574",
+    "W4322494962",
+    "W4324122635",
+    "W4361004120",
+    "W4380086722",
+    "W4382931171",
+    "W4383873129",
+    "W4385406529",
+    "W4386216378",
+    "W4388626419",
+    "W4389429977",
+    "W4390544187",
+    "W4390703617",
+    "W4391308687",
+    "W4393379673",
+    "W4394822392",
+    "W4396592409",
+    "W4402612927",
+    "W4403879378",
+    "W4404227466",
+    "W4406405186",
+    "W4407814679",
+    "W4408357411",
+    "W4410218814",
+    "W4411749094",
+    "W4412687597",
+    "W4413342768"
+   ]
+  }
+ },
+ "wang2025cpmlff": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Wang, R.' vs fetched ['wang']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Wang",
+     "given": "Ruoyu"
+    },
+    {
+     "family": "Fang",
+     "given": "Shaoheng"
+    },
+    {
+     "family": "Huang",
+     "given": "Qixing"
+    },
+    {
+     "family": "Liu",
+     "given": "Yuanyue"
+    }
+   ],
+   "container": "Journal of Chemical Theory and Computation",
+   "doi": "10.1021/acs.jctc.5c00784",
+   "issue": "15",
+   "page": "7628-7635",
+   "title": "Constant-Potential Machine Learning Force Field for the Electrochemical Interface",
+   "type": "journal-article",
+   "volume": "21",
+   "year": 2025
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 35,
+   "id": "W4412687597",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W1583837637",
+    "W1986977956",
+    "W1992591486",
+    "W1997216543",
+    "W2016366655",
+    "W2098747335",
+    "W2167035995",
+    "W2313251290",
+    "W2530960271",
+    "W2565767854",
+    "W2573377826",
+    "W2574987849",
+    "W2581493313",
+    "W2761427375",
+    "W2775708988",
+    "W2778051509",
+    "W2794350593",
+    "W2795261916",
+    "W2808101813",
+    "W2908961493",
+    "W2914559412",
+    "W2949095042",
+    "W2953069305",
+    "W2953681697",
+    "W2990138404",
+    "W2994454543",
+    "W3009385115",
+    "W3019287016",
+    "W3081327581",
+    "W3084562712",
+    "W3093149769",
+    "W3104644561",
+    "W3119115251",
+    "W3150477610",
+    "W3169129413",
+    "W3181704805",
+    "W4210642185",
+    "W4225405705",
+    "W4280547362",
+    "W4376139656",
+    "W4382931171",
+    "W4388626419",
+    "W4389489295",
+    "W4400533521",
+    "W4402734131",
+    "W4406405186",
+    "W4408821548",
+    "W4409452381"
+   ]
   }
  },
  "yeh1999slab": {

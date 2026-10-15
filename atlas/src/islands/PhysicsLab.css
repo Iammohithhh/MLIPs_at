@@ -708,3 +708,13 @@
   font: 0.8125rem var(--font-sans);
   color: var(--atlas-ink-muted);
 }
+.lab .presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.lab .presets .seg-label {
+  padding-left: 0;
+}

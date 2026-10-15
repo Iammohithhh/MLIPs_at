@@ -10,5 +10,5 @@ assumptions:
   - { term: Charges, value: 'SPC/E partial charges, ions ±1 e; Au uncharged, no electronic response of the metal.' }
   - { term: Electrostatics, value: 'Gaussian-smeared (0.45 Å) planar average; d²φ̄/dz² = −ρ̄/ε₀ with zero field and φ̄ = 0 at the metal surface.' }
 concepts: [long-range-electrostatics, periodic-boundaries]
-claims: [interfacial-dipole-potential-step]
+claims: [interfacial-dipole-potential-step, ag-water-h-down]
 review: { status: draft, last_checked: 2026-10-15 }

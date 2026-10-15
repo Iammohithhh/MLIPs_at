@@ -1,0 +1,14 @@
+title: Constant-Potential Machine Learning Force Field for the Electrochemical Interface
+topic: electrochemistry
+authors:
+  - 'Wang, R.'
+  - 'Fang, S.'
+  - 'Huang, Q.'
+  - 'Liu, Y.'
+year: 2025
+venue: Journal of Chemical Theory and Computation 21, 7628–7635
+type: article
+identifiers:
+  doi: 10.1021/acs.jctc.5c00784
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'PubMed 40717429 abstract: MACE-based CP-MLFF takes the number of electrons as input and predicts the Fermi level; CO2 reduction on Ni–N–C.' }

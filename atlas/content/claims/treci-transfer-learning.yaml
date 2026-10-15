@@ -1,0 +1,9 @@
+statement: >-
+  TRECI builds constant-potential (electronically grand-canonical) MLIPs by transfer learning from general-purpose and
+  domain-specific models; for Cu(111)/water, models trained on about one thousand configurations gave accurate
+  molecular dynamics across a wide potential range at meta-GGA level.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bianchi2025treci, locator: Abstract }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract only; per-potential errors and the charging scheme to be added from the full text.' }

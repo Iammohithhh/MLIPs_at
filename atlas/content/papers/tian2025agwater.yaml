@@ -1,0 +1,16 @@
+title: 'Electrochemical potential-driven water dynamics control CO2 electroreduction at the Ag/H2O interface'
+topic: electrochemistry
+authors:
+  - 'Tian, Y.'
+  - 'Tosello Gardini, A.'
+  - 'Raucci, U.'
+  - 'Xiao, H.'
+  - 'Zhuo, Y.'
+  - 'Parrinello, M.'
+year: 2025
+venue: Nature Communications 16, 10636
+type: article
+identifiers:
+  doi: 10.1038/s41467-025-65630-1
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read via Europe PMC (PMC12660881). Two separate MACE 0.3.4 MLIP sets at PZC and −1.5 V vs SHE; r2SCAN+rVV10 with VASPsol grand-canonical DFT.' }

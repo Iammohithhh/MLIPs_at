@@ -1,0 +1,9 @@
+statement: >-
+  A constant-potential machine-learning force field built into MACE takes the number of electrons as an input and
+  predicts the Fermi level, so that the electrode potential can be held fixed during molecular dynamics; it was
+  demonstrated on CO2 reduction at a Ni–N–C catalyst.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wang2025cpmlff, locator: Abstract }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract only; check the architecture details in the full text before publication.' }

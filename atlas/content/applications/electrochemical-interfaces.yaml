@@ -8,6 +8,6 @@ requirements:
   - Long-range electrostatics or an explicit argument why it is unnecessary
   - A strategy for the electrode potential (separate models per potential, electron-count conditioning, …)
   - Validation against electrostatic phenomenology, not only energy/force errors
-papers: [sumic2026ephect, gonze1997dfpt, lyddane1941lst, kellermann1940nacl, fennell2006dsf]
-claims: [ephect-energy-force-insufficient, image-charge-energy, local-model-no-image-tail, interfacial-dipole-potential-step, loto-splitting-long-range]
-review: { status: draft, last_checked: 2026-10-15 }
+papers: [sumic2026ephect, gonze1997dfpt, lyddane1941lst, kellermann1940nacl, fennell2006dsf, tian2025agwater, wang2025cpmlff, bianchi2025treci]
+claims: [ephect-energy-force-insufficient, image-charge-energy, local-model-no-image-tail, interfacial-dipole-potential-step, loto-splitting-long-range, ag-water-separate-mlips, ag-water-h-down, cp-mlff-electron-count, treci-transfer-learning]
+review: { status: draft, last_checked: 2026-10-16 }
