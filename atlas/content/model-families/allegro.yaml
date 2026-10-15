@@ -10,5 +10,5 @@ symmetry: equivariant
 reuses_mechanism:
   - { family: nequip, mechanism: E(3)-equivariant tensor-product features }
 implementations: [allegro]
-claims: [allegro-strictly-local]
+claims: [allegro-strictly-local, allegro-pair-features, allegro-scaling]
 review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,9 @@
+statement: >-
+  Allegro's cost scales linearly with the number of atoms; the paper reports molecular dynamics of a 100,640,512-atom
+  silver system on 128 GPUs with its LAMMPS implementation.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: musaelian2023allegro, locator: 'Sec. II.8; Table 4' }
+scope: { model_families: [allegro] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read from the arXiv HTML rendering (ar5iv).' }

@@ -1,0 +1,10 @@
+statement: >-
+  Allegro carries invariant and equivariant features on ordered pairs ij; each layer updates them with a tensor
+  product of the pair features and the spherical harmonics of every neighbour k of i (summed into one embedded
+  environment), weighted by learned functions of earlier scalar pair features; the energy is a sum of pair energies.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: musaelian2023allegro, locator: 'Sec. II.1–II.2; Eqs. (10)–(22)' }
+scope: { model_families: [allegro] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read from the arXiv HTML rendering (ar5iv).' }
