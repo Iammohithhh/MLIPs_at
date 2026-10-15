@@ -1,0 +1,13 @@
+title: "Particle mesh Ewald: An N·log(N) method for Ewald sums in large systems"
+topic: electrostatics
+authors:
+  - 'Darden, T.'
+  - 'York, D.'
+  - 'Pedersen, L.'
+year: 1993
+venue: The Journal of Chemical Physics 98, 10089–10092
+type: article
+identifiers:
+  doi: 10.1063/1.464397
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: Cited for the N log N scaling of mesh-based Ewald methods. }

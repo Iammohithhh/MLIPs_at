@@ -1391,6 +1391,79 @@
    ]
   }
  },
+ "darden1993pme": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 0.79 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1993; fetched [1993]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Darden, T.' vs fetched ['darden']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Darden",
+     "given": "Tom"
+    },
+    {
+     "family": "York",
+     "given": "Darrin"
+    },
+    {
+     "family": "Pedersen",
+     "given": "Lee"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.464397",
+   "issue": "12",
+   "page": "10089-10092",
+   "title": "Particle mesh Ewald: An\n                    <i>N</i>\n                    ⋅log(\n                    <i>N</i>\n                    ) method for Ewald sums in large systems",
+   "type": "journal-article",
+   "volume": "98",
+   "year": 1993
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 30553,
+   "id": "W2067174909",
+   "publication_year": 1993,
+   "referenced_works": [
+    "W1672666614",
+    "W1972662369",
+    "W1982680156",
+    "W1988519401",
+    "W2017164460",
+    "W2025521218",
+    "W2043995349",
+    "W2080887797",
+    "W2083206954",
+    "W2085478435",
+    "W2086741044",
+    "W2090446375",
+    "W2113489785",
+    "W2152561142",
+    "W2155524113",
+    "W2157081197",
+    "W2162166182",
+    "W2165732545",
+    "W2611591252"
+   ]
+  }
+ },
  "deng2023chgnet": {
   "arxiv": {
    "authors": [

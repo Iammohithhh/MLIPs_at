@@ -1,0 +1,123 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import EwaldLab from '~/islands/EwaldLab';
+
+const assumptions = [
+  { term: 'System', value: 'Ideal rock salt of point charges ±1 e, nearest-neighbour distance r₀ = 2.82 Å; conventional cubic cell (edge 2r₀, 4 Na⁺ + 4 Cl⁻), reference ion the Na⁺ at the cell origin.' },
+  { term: 'Gaussians', value: 'Screening charge density ∝ exp(−α²r²); drawn as spheres of radius 1.5/α, which enclose most of each cloud.' },
+  { term: 'Sums', value: 'Real space: all images with r < r_cut. Reciprocal space: k = 2πm/L with |m| ≤ m_max. Self term: −2α/√π. Lengths in r₀, potential in e/r₀ (multiply by k_e e/r₀ = 5.106 eV for NaCl).' },
+  { term: 'Precision', value: 'erfc is evaluated to about 10⁻⁷ relative error, so differences below ~10⁻⁸ in M are not resolved.' },
+];
+---
+
+<BaseLayout
+  title="Ewald Lab"
+  description="Physics Lab P6: split every Coulomb interaction into a short-ranged screened part and a smooth part, sum each where it converges fast, and watch the splitting parameter trade work between them without changing the answer."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/physics-lab/">Physics Lab</a> · P6</p>
+      <h1 class="h-display">Ewald Lab</h1>
+      <p class="lede">
+        In <a href="/physics-lab/beyond-the-cutoff/#madelung">P1</a> the Coulomb sum of a crystal refused to converge over
+        spheres. Ewald’s 1921 trick fixes it by splitting each charge in two. Here you control the split and both
+        cutoffs, and see exactly where the work goes.
+      </p>
+      <div class="head-badges">
+        <Badge label="live-calculation" />
+        <Badge label="theory" />
+      </div>
+    </header>
+
+    <section class="block" aria-labelledby="idea-h">
+      <h2 id="idea-h" class="h-section">The idea</h2>
+      <p>
+        Put a Gaussian cloud of opposite charge on every ion. Point charge plus cloud is neutral beyond a distance of
+        about 1/<Math tex={String.raw`\sym{ewa}{\alpha}`} />, so its interactions die off fast and can be summed directly
+        in real space. To keep the physics unchanged, add back the same Gaussians with the original sign. Those are smooth,
+        so their sum converges fast in reciprocal space. Finally remove each ion’s interaction with its own cloud:
+      </p>
+      <Math display number="1" tex={String.raw`\frac{1}{r} = \underbrace{\frac{\operatorname{erfc}(\sym{ewa}{\alpha} r)}{r}}_{\text{screened}} + \underbrace{\frac{\operatorname{erf}(\sym{ewa}{\alpha} r)}{r}}_{\text{smooth}}, \qquad \varphi_i = \varphi^{\text{real}}_i + \varphi^{\text{recip}}_i - \frac{2\sym{ewa}{\alpha}}{\sqrt\pi}\,q_i`} />
+      <p>
+        Nothing in (1) depends on α except how the total is shared out. That is the experiment: move α and watch the
+        green total stay flat while the parts swing.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Ewald summation of the rock-salt Madelung sum" labels={['live-calculation', 'theory']} number={1} id="fig-ewald" framed={false}>
+        <EwaldLab client:visible />
+        <Fragment slot="caption">
+          Left: the conventional cell with its neighbours; switch between the bare point charges, the screened charges
+          (opposite-sign clouds) summed in real space, and the smooth clouds summed in reciprocal space. The teal sphere
+          is the real-space cutoff. Right: the radial split at the current α; how the three contributions vary with α
+          (their total is flat); and the error on a log scale against each cutoff.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">Method: <Cite id="ewald1921" />. Computed in your browser; the total is checked against M = 1.747565 in the Atlas test suite.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="trade-h">
+      <h2 id="trade-h" class="h-section">The trade-off α controls</h2>
+      <p>
+        Wide Gaussians (small α) make the reciprocal part converge after a handful of <b>k</b> vectors but leave long
+        real-space tails; narrow Gaussians (large α) do the opposite. Choosing α to balance the two costs makes the
+        classic Ewald sum scale as about <i>N</i><sup>3/2</sup> in the number of atoms. Mesh methods put the smooth part on
+        a grid and use fast Fourier transforms, bringing the cost down to <i>N</i> log <i>N</i>
+        <Cite id="darden1993pme" />.
+      </p>
+      <Callout kind="note" title="Why this matters for MLIPs">
+        Long-range MLIPs predict charges, or charge-like latent variables, from local environments and pass them to
+        exactly this machinery, for example latent Ewald summation <Cite id="cheng2025les" />. The local network decides
+        <em>what</em> the charges are; Ewald decides how they interact at every distance, periodic images included.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .lede a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+</style>

@@ -105,42 +105,69 @@ export function erfc(x: number): number {
   return x >= 0 ? r : 2 - r;
 }
 
-/**
- * Madelung constant by Ewald summation on the conventional cubic cell (edge 2·r0,
- * 4 Na⁺ + 4 Cl⁻). Splitting parameter α in units of 1/r0.
- */
-export function madelungEwald(alpha = 1.2, realImages = 3, kMax = 8): number {
-  const L = 2;
+export interface EwaldParts {
+  /** Σ q erfc(αr)/r over images within the real-space cutoff (units e/r0). */
+  real: number;
+  /** (4π/V) Σ_k e^(−k²/4α²)/k² Σ q cos(k·r) over |m| ≤ kCut. */
+  recip: number;
+  /** −2α q_i/√π: removes the reference ion's own Gaussian. */
+  self: number;
+  /** real + recip + self = potential φ at the reference Na⁺; M = −φ. */
+  total: number;
+  /** Number of real-space pair terms and of reciprocal vectors used. */
+  nReal: number;
+  nK: number;
+}
+
+const CELL_IONS: Array<[number, number, number, number]> = (() => {
   const ions: Array<[number, number, number, number]> = [];
   for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) for (let k = 0; k < 2; k++) ions.push([i, j, k, sign(i, j, k)]);
+  return ions;
+})();
+
+/**
+ * Ewald summation for the potential at the Na⁺ at the origin of rock salt, on the
+ * conventional cubic cell (edge L = 2 r0, 4 Na⁺ + 4 Cl⁻), all lengths in units of r0.
+ * Spherical cutoffs: real-space terms with r < rCut, reciprocal vectors k = 2πm/L
+ * with |m| ≤ kCut.
+ */
+export function ewaldParts(alpha = 1.2, rCut = 6, kCut = 8): EwaldParts {
+  const L = 2;
+  const n = Math.ceil(rCut / L) + 1;
   let real = 0;
-  for (const [x, y, z, q] of ions)
-    for (let a = -realImages; a <= realImages; a++)
-      for (let b = -realImages; b <= realImages; b++)
-        for (let c = -realImages; c <= realImages; c++) {
-          const rx = x + a * L;
-          const ry = y + b * L;
-          const rz = z + c * L;
-          const r = Math.hypot(rx, ry, rz);
-          if (r === 0) continue;
+  let nReal = 0;
+  for (const [x, y, z, q] of CELL_IONS)
+    for (let a = -n; a <= n; a++)
+      for (let b = -n; b <= n; b++)
+        for (let c = -n; c <= n; c++) {
+          const r = Math.hypot(x + a * L, y + b * L, z + c * L);
+          if (r === 0 || r >= rCut) continue;
           real += (q * erfc(alpha * r)) / r;
+          nReal++;
         }
   let recip = 0;
+  let nK = 0;
   const V = L ** 3;
-  for (let a = -kMax; a <= kMax; a++)
-    for (let b = -kMax; b <= kMax; b++)
-      for (let c = -kMax; c <= kMax; c++) {
-        if (a === 0 && b === 0 && c === 0) continue;
+  const K = Math.floor(kCut);
+  for (let a = -K; a <= K; a++)
+    for (let b = -K; b <= K; b++)
+      for (let c = -K; c <= K; c++) {
+        if ((a === 0 && b === 0 && c === 0) || a * a + b * b + c * c > kCut * kCut) continue;
         const kx = (2 * Math.PI * a) / L;
         const ky = (2 * Math.PI * b) / L;
         const kz = (2 * Math.PI * c) / L;
         const k2 = kx * kx + ky * ky + kz * kz;
         let s = 0;
-        for (const [x, y, z, q] of ions) s += q * Math.cos(kx * x + ky * y + kz * z);
+        for (const [x, y, z, q] of CELL_IONS) s += q * Math.cos(kx * x + ky * y + kz * z);
         recip += (Math.exp(-k2 / (4 * alpha * alpha)) / k2) * s;
+        nK++;
       }
   recip *= (4 * Math.PI) / V;
   const self = (-2 * alpha) / Math.sqrt(Math.PI);
-  const phi = real + recip + self; // potential at the Na⁺ at the origin
-  return -phi;
+  return { real, recip, self, total: real + recip + self, nReal, nK };
+}
+
+/** Madelung constant by Ewald summation (α in units of 1/r0). */
+export function madelungEwald(alpha = 1.2, rCut = 7, kCut = 8): number {
+  return -ewaldParts(alpha, rCut, kCut).total;
 }

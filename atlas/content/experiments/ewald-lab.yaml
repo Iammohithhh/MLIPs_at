@@ -1,0 +1,14 @@
+title: Ewald Lab
+question: How does splitting 1/r into a short-ranged and a smooth part make the rock-salt lattice sum converge, and what does α trade off?
+kind: physics-lab
+module: P6
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/ewald/#fig-ewald
+assumptions:
+  - { term: System, value: 'Ideal rock salt, point charges ±1 e, nearest-neighbour distance r0 = 2.82 Å; conventional cubic cell (4 Na⁺ + 4 Cl⁻).' }
+  - { term: Sums, value: 'Real space over images with r < r_cut; reciprocal space over k = 2πm/L with |m| ≤ m_max; self term −2α/√π.' }
+  - { term: Precision, value: 'erfc to ~1e-7 relative; errors below ~1e-8 are not resolved.' }
+concepts: [ewald-summation]
+claims: [ewald-alpha-independence]
+review: { status: draft, last_checked: 2026-10-15 }

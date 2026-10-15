@@ -59,3 +59,24 @@ describe('pair toy', () => {
     expect(Math.abs(shortRangeToy(9, 1, -1, 5))).toBe(0);
   });
 });
+
+import { ewaldParts } from './madelung';
+
+describe('Ewald parts', () => {
+  it('the total is independent of α while the parts move', () => {
+    const a = ewaldParts(0.9, 8, 10);
+    const b = ewaldParts(1.8, 8, 10);
+    expect(-a.total).toBeCloseTo(MADELUNG_NACL, 6);
+    expect(-b.total).toBeCloseTo(MADELUNG_NACL, 6);
+    expect(Math.abs(a.real - b.real)).toBeGreaterThan(0.1);
+    expect(Math.abs(a.recip - b.recip)).toBeGreaterThan(0.1);
+  });
+  it('converges as the cutoffs grow', () => {
+    const err = (r: number, k: number) => Math.abs(-ewaldParts(1.2, r, k).total - MADELUNG_NACL);
+    expect(err(1.5, 8)).toBeGreaterThan(1e-3);
+    expect(err(2.5, 8)).toBeLessThan(err(1.5, 8));
+    expect(err(4, 8)).toBeLessThan(1e-6); // converged to erfc precision
+    expect(err(8, 1)).toBeGreaterThan(err(8, 2));
+    expect(err(8, 4)).toBeLessThan(1e-6);
+  });
+});

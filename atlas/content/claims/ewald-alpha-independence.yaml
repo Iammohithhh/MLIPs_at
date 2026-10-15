@@ -1,0 +1,10 @@
+statement: >-
+  In Ewald summation the splitting parameter α only moves weight between the real-space sum, the reciprocal-space
+  sum and the self term; with converged cutoffs their total is independent of α (for rock salt it reproduces
+  M = 1.747565 for α from 0.5 to 3 per r0).
+grade: THEORY
+sources:
+  - { paper: ewald1921 }
+derivation: /physics-lab/ewald/#fig-ewald
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Identity 1/r = erfc(αr)/r + erf(αr)/r; checked numerically in physics.test.ts.' }

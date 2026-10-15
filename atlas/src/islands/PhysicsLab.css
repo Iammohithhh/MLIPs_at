@@ -625,3 +625,40 @@
   letter-spacing: 0;
   font: italic 0.8rem var(--font-serif);
 }
+
+/* P6 Ewald */
+.lab-plot .ew-bare {
+  stroke: var(--atlas-ink-faint);
+  stroke-dasharray: 3 3;
+}
+.lab-plot .ew-real {
+  stroke: var(--atlas-phys);
+}
+.lab-plot .ew-recip {
+  stroke: var(--atlas-arch);
+}
+.lab-plot .ew-self {
+  stroke: var(--atlas-caveat);
+}
+.lab-plot .ew-total {
+  stroke: var(--atlas-verified);
+  stroke-width: 3;
+}
+.lab-plot .pt-recip {
+  fill: var(--atlas-arch);
+}
+.lab-legend .swatch.ew-bare {
+  background: repeating-linear-gradient(90deg, var(--atlas-ink-faint) 0 3px, transparent 3px 6px);
+}
+.lab-legend .swatch.ew-real {
+  background: var(--atlas-phys);
+}
+.lab-legend .swatch.ew-recip {
+  background: var(--atlas-arch);
+}
+.lab-legend .swatch.ew-self {
+  background: var(--atlas-caveat);
+}
+.lab-legend .swatch.ew-total {
+  background: var(--atlas-verified);
+}
