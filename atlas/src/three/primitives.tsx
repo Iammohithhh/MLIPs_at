@@ -599,3 +599,66 @@ export function linear(css: string): [number, number, number] {
 export function mixRGB(a: [number, number, number], b: [number, number, number], t: number): [number, number, number] {
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 }
+
+// ---------------------------------------------------------------------------
+// Shaded surfaces with per-vertex colour (e.g. spherical-harmonic lobes)
+// ---------------------------------------------------------------------------
+
+const SURFACE_VERT = /* glsl */ `
+attribute vec3 color;
+varying vec3 vN;
+varying vec3 vV;
+varying vec3 vCol;
+void main() {
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vN = normalize(normalMatrix * normal);
+  vV = -mv.xyz;
+  vCol = color;
+  gl_Position = projectionMatrix * mv;
+}
+`;
+
+const SURFACE_FRAG = /* glsl */ `
+${SHADING_UNIFORMS}
+varying vec3 vN;
+varying vec3 vV;
+varying vec3 vCol;
+${SHADING_GLSL}
+void main() {
+  vec3 n = normalize(vN);
+  vec3 v = normalize(vV);
+  if (!gl_FrontFacing) n = -n;
+  vec3 col = atlasShade(vCol, n, v, 0.0, 1.0);
+  col = atlasFog(col, length(vV));
+  gl_FragColor = vec4(col, 1.0);
+  #include <colorspace_fragment>
+}
+`;
+
+export interface SurfaceData {
+  positions: Float32Array;
+  /** Linear RGB per vertex. */
+  colors: Float32Array;
+  indices: Uint32Array;
+}
+
+export function ShadedSurface({ data, uniforms }: { data: SurfaceData; uniforms: ShadingUniforms }) {
+  const invalidate = useThree((s) => s.invalidate);
+  const geometry = useMemo(() => {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(data.colors, 3));
+    g.setIndex(new THREE.BufferAttribute(data.indices, 1));
+    g.computeVertexNormals();
+    return g;
+  }, [data]);
+  const material = useMemo(
+    () => new THREE.ShaderMaterial({ vertexShader: SURFACE_VERT, fragmentShader: SURFACE_FRAG, uniforms, side: THREE.DoubleSide }),
+    [uniforms],
+  );
+  useEffect(() => {
+    invalidate();
+    return () => geometry.dispose();
+  }, [geometry, invalidate]);
+  return <mesh geometry={geometry} material={material} />;
+}

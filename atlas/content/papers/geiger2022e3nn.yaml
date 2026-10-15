@@ -1,0 +1,11 @@
+title: 'e3nn: Euclidean Neural Networks'
+topic: equivariant-message-passing
+authors:
+  - 'Geiger, M.'
+  - 'Smidt, T.'
+year: 2022
+type: preprint
+identifiers:
+  arxiv: '2207.09453'
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: Library paper for E(3)-equivariant networks built from irreps, spherical harmonics and tensor products; metadata from arXiv listing. }

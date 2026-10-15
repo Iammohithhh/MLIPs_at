@@ -1,0 +1,13 @@
+title: Spherical harmonics and feature blocks
+question: How does a neighbour direction become a rotation-equivariant feature, and what stays invariant?
+kind: physics-lab
+module: P5
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/harmonics/#fig-harmonics
+assumptions:
+  - { term: Convention, value: 'Real, orthonormal spherical harmonics without the Condon–Shortley phase; libraries differ in sign and order.' }
+  - { term: Range, value: 'l = 0–3, evaluated exactly in the browser.' }
+concepts: [equivariance]
+claims: [sh-addition-theorem]
+review: { status: draft, last_checked: 2026-10-15 }

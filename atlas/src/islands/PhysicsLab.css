@@ -469,3 +469,159 @@
   background: color-mix(in oklab, var(--atlas-phys) 12%, var(--atlas-surface));
   border-color: var(--atlas-phys);
 }
+
+/* P5 harmonics + tensor products */
+.lab .seg-label {
+  font: italic 0.85rem var(--font-serif);
+  color: var(--atlas-ink-faint);
+  padding: 0 0.35rem 0 0.4rem;
+  align-self: center;
+}
+.lab-plot .bar.pos {
+  fill: color-mix(in oklab, var(--atlas-phys) 55%, transparent);
+}
+.lab-plot .bar.neg {
+  fill: color-mix(in oklab, var(--atlas-caveat) 55%, transparent);
+}
+.lab-plot .bar.is-active.pos {
+  fill: var(--atlas-phys);
+}
+.lab-plot .bar.is-active.neg {
+  fill: var(--atlas-caveat);
+}
+.lab-plot .tick.strong {
+  fill: var(--atlas-ink);
+  font-weight: 600;
+}
+.norm-meter {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  font: 0.78rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.norm-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--atlas-surface-2);
+  overflow: hidden;
+}
+.norm-fill {
+  display: block;
+  height: 100%;
+  background: var(--atlas-verified);
+  transition: width 0.15s;
+}
+.norm-val {
+  font: 600 0.8rem var(--font-mono);
+  color: var(--atlas-verified);
+  font-variant-numeric: tabular-nums;
+}
+
+.tp {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.25rem;
+}
+.tp-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+}
+.tp-input {
+  display: grid;
+  gap: 0.6rem;
+}
+.tp-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.tp-name {
+  font: 0.8rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.tp-cells {
+  display: inline-flex;
+  gap: 3px;
+}
+.tp-cells span {
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 3px;
+}
+.tp-cells.tone-arch span {
+  background: color-mix(in oklab, var(--atlas-arch) 70%, transparent);
+}
+.tp-cells.tone-phys span {
+  background: var(--atlas-phys);
+}
+.tp-cells.tone-caveat span {
+  background: repeating-linear-gradient(135deg, var(--atlas-caveat) 0 3px, color-mix(in oklab, var(--atlas-caveat) 45%, transparent) 3px 6px);
+}
+.tp-arrow {
+  font: 600 1.1rem var(--font-serif);
+  color: var(--atlas-ink-faint);
+  letter-spacing: 0.3em;
+}
+.tp-outputs {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-outputs li {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.5rem;
+  background: var(--atlas-canvas);
+}
+.tp-outputs li.pseudo {
+  border-color: color-mix(in oklab, var(--atlas-caveat) 40%, var(--atlas-rule));
+}
+.tp-l {
+  display: grid;
+  font: 600 0.9rem var(--font-mono);
+  color: var(--atlas-ink);
+}
+.tp-l small {
+  font: 0.7rem var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-faint);
+}
+.tp-outputs li.pseudo .tp-l small {
+  color: var(--atlas-caveat);
+}
+.tp-count {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.6rem;
+  align-items: baseline;
+  font: 0.9rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.tp-count .num {
+  font: 600 0.95rem var(--font-mono);
+  color: var(--atlas-ink);
+}
+.tp-check {
+  font-size: 0.8rem;
+  color: var(--atlas-verified);
+}
+.tp-note {
+  padding: 0;
+}
+.lab-readout dt.math {
+  text-transform: none;
+  letter-spacing: 0;
+  font: italic 0.8rem var(--font-serif);
+}

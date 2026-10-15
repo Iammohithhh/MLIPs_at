@@ -1,0 +1,13 @@
+title: Tensor-product selection rules
+question: Which feature blocks can two blocks l₁ and l₂ combine into, and which come out as pseudo-quantities?
+kind: physics-lab
+module: P5
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/harmonics/#fig-tensor
+assumptions:
+  - { term: Inputs, value: 'Blocks with natural parity (−1)^l, as produced by spherical harmonics of bond directions.' }
+  - { term: Group, value: 'O(3): rotations and inversion.' }
+concepts: [equivariance]
+claims: [tensor-product-selection-rules]
+review: { status: draft, last_checked: 2026-10-15 }

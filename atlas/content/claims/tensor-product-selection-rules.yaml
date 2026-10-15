@@ -1,0 +1,6 @@
+statement: >-
+  The tensor product of blocks of degree l₁ and l₂ decomposes into blocks of degree |l₁ − l₂| … l₁ + l₂, each once,
+  with parity (−1)^(l₁+l₂); dimensions add up, (2l₁+1)(2l₂+1) = Σ(2l+1).
+grade: THEORY
+derivation: /physics-lab/harmonics/#fig-tensor
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: Clebsch–Gordan decomposition of SO(3) irreps; dimension count checked in spherical-harmonics.test.ts. }

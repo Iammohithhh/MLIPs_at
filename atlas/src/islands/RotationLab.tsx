@@ -166,7 +166,7 @@ export default function RotationLab() {
         </div>
         <dl className="lab-readout" aria-live="polite">
           <div data-sym="E">
-            <dt>Energy E(QR)</dt>
+            <dt className="math">Energy E(QR)</dt>
             <dd>{E.toFixed(4)} eV</dd>
           </div>
           <div className={invariant ? 'is-good' : 'is-alert'}>
@@ -177,7 +177,7 @@ export default function RotationLab() {
             </dd>
           </div>
           <div className={equivariant ? 'is-good' : 'is-alert'} data-sym="F">
-            <dt>max |F(QR) − Q·F(R)|</dt>
+            <dt className="math">max |F(QR) − Q·F(R)|</dt>
             <dd>{err < 1e-9 ? '0' : err.toFixed(3)} eV/Å</dd>
           </div>
         </dl>

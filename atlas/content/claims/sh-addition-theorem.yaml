@@ -1,0 +1,6 @@
+statement: >-
+  For real orthonormal spherical harmonics, Σ_m Y_lm(r̂)² = (2l+1)/(4π) for every unit vector r̂; a rotation mixes
+  the 2l+1 components of the l-th block among themselves (by an orthogonal matrix) and never mixes different l.
+grade: THEORY
+derivation: /physics-lab/harmonics/#fig-harmonics
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: Standard result (addition theorem); checked numerically in spherical-harmonics.test.ts together with orthonormality and parity. }

@@ -4,8 +4,8 @@ summary: >-
   vectors with it (equivariance). Invariant models build features only from distances and angles; equivariant models
   also carry vector and tensor features that co-rotate.
 relevant_to: [nequip, mace, allegro]
-demonstrated_by: [rotation-equivariance]
+demonstrated_by: [rotation-equivariance, spherical-harmonics, tensor-products]
 related: [locality]
-papers: [batzner2022nequip, batatia2022mace]
-claims: [invariant-energy-equivariant-forces]
+papers: [batzner2022nequip, batatia2022mace, geiger2022e3nn]
+claims: [invariant-energy-equivariant-forces, sh-addition-theorem, tensor-product-selection-rules]
 review: { status: draft, last_checked: 2026-10-15 }

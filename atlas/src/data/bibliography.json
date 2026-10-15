@@ -1849,6 +1849,45 @@
    "referenced_works": []
   }
  },
+ "geiger2022e3nn": {
+  "arxiv": {
+   "authors": [
+    "Mario Geiger",
+    "Tess Smidt"
+   ],
+   "id": "2207.09453v1",
+   "primary_category": "cs.LG",
+   "published": "2022-07-18",
+   "title": "e3nn: Euclidean Neural Networks",
+   "updated": "2022-07-18"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Geiger, M.' vs fetched ['geiger']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 98,
+   "id": "W4286588524",
+   "publication_year": 2022,
+   "referenced_works": []
+  }
+ },
  "grasselli2026longrange": {
   "arxiv": {
    "authors": [
@@ -1926,7 +1965,8 @@
   ],
   "cites": [
    "batzner2022nequip",
-   "behler2007generalized"
+   "behler2007generalized",
+   "geiger2022e3nn"
   ],
   "crossref": {
    "article_number": "579",
