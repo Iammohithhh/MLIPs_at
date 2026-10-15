@@ -1,0 +1,14 @@
+title: LO–TO splitting with and without the long-range field
+question: How do the optical phonons of a rigid-ion rock-salt crystal differ between an exact Coulomb treatment and a model that sees the Coulomb force constants only inside a cutoff?
+kind: physics-lab
+status: LIVE_CALCULATION
+tier: T0
+page: /applications/electrochemical-interfaces/#fig-loto
+assumptions:
+  - { term: Model, value: 'Rigid ions ±1 e on rock salt, r₀ = 2.82 Å; nearest-neighbour Born–Mayer repulsion with range ρ, slope fixed by equilibrium with the Madelung energy.' }
+  - { term: Exact Coulomb, value: 'Ewald-summed force constants with the non-analytic G = 0 term.' }
+  - { term: Local model, value: 'Damped shifted force Coulomb (α = 0.2 Å⁻¹), zero beyond r_c; radial repulsion refitted so the Γ optical frequency equals the exact TO one.' }
+  - { term: Not included, value: 'Electronic polarisability (ε∞ = 1), second-neighbour repulsion; frequencies are of the toy, not of NaCl.' }
+concepts: [long-range-electrostatics, ewald-summation, locality]
+claims: [loto-splitting-long-range]
+review: { status: draft, last_checked: 2026-10-16 }

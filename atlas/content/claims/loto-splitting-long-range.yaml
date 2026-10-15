@@ -1,0 +1,12 @@
+statement: >-
+  In a polar crystal the long-range macroscopic field adds a non-analytic term to the dynamical matrix as q → 0, which
+  separates longitudinal from transverse optical modes at Γ, ω_LO² − ω_TO² = 4πk(Z*)²/(Ωμε∞) for a diatomic cubic
+  crystal; force constants of finite range give a dynamical matrix analytic at Γ, so in a cubic crystal a strictly local
+  model has LO = TO at Γ for any cutoff.
+grade: THEORY
+sources:
+  - { paper: gonze1997dfpt }
+  - { paper: lyddane1941lst }
+derivation: /applications/electrochemical-interfaces/#loto
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Checked numerically in lattice-dynamics.test.ts: Ewald η-independence, acoustic sum rule, TO with the Lorentz field, the splitting in three directions, and no splitting for truncated force constants.' }

@@ -1,0 +1,11 @@
+title: Theory of the vibrations of the sodium chloride lattice
+topic: electrostatics
+authors:
+  - 'Kellermann, E. W.'
+year: 1940
+venue: Philosophical Transactions of the Royal Society A 238, 513–548
+type: article
+identifiers:
+  doi: 10.1098/rsta.1940.0005
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Rigid-ion lattice dynamics of NaCl with Ewald-summed Coulomb coefficients and nearest-neighbour repulsion. Metadata from standard citations; check against Crossref.' }

@@ -8,6 +8,7 @@ import Badge from '~/components/Badge.astro';
 import Cite from '~/components/Cite.astro';
 import ImageChargeLab from '~/islands/ImageChargeLab';
 import WaterDipoleLab from '~/islands/WaterDipoleLab';
+import LotoLab from '~/islands/LotoLab';
 
 const imageAssumptions = [
   { term: 'Electrode', value: 'An ideal flat conductor at z = 0; the Au(111) slab (ASE fcc111, a = 4.078 Å) is drawn for orientation only.' },
@@ -20,6 +21,13 @@ const waterAssumptions = [
   { term: 'First layer', value: 'Waters whose oxygen lies within 3.6 Å of the top Au layer. All of them are given the same tilt θ of their dipole from the surface normal; azimuths are spread by the golden angle.' },
   { term: 'Charges', value: 'SPC/E partial charges (O −0.8476 e, H +0.4238 e), ions ±1 e, Au uncharged: the metal’s electronic response is not modelled.' },
   { term: 'Electrostatics', value: 'Charges smeared by 0.45 Å Gaussians and averaged over the cell area; d²φ̄/dz² = −ρ̄/ε₀ integrated upward from the metal surface with zero field and φ̄ = 0 there. ε₀ = 5.5263 × 10⁻³ e/(V·Å).' },
+];
+
+const lotoAssumptions = [
+  { term: 'Model', value: 'Rigid point ions ±1 e on the rock-salt lattice, r₀ = 2.82 Å; Na⁺–Cl⁻ nearest-neighbour repulsion of Born–Mayer form with range ρ. Its slope is fixed by equilibrium with the Madelung energy, B = φ′(r₀)/r₀ = −αkZ²/(6r₀³), and its curvature is A = −B r₀/ρ.' },
+  { term: 'Exact Coulomb', value: 'Ewald sums for the Coulomb force constants (η = 0.55 Å⁻¹), including the non-analytic G = 0 term that depends on the direction in which q approaches Γ.' },
+  { term: 'Local model', value: 'Damped shifted force Coulomb (α = 0.2 Å⁻¹), which goes smoothly to zero force at r_c, with the radial repulsion refitted so the Γ optical frequency equals the exact TO one, as training on periodic Γ-point data (zero macroscopic field) would give. Damping also removes a smooth long-range part, so the branches differ somewhat away from Γ too; a trained model would absorb some of that into its short-range terms.' },
+  { term: 'Not included', value: 'Electronic polarisability (ε∞ = 1 here), so the splitting is larger than in a real crystal; no second-neighbour repulsion; frequencies are of the toy, not of NaCl.' },
 ];
 ---
 
@@ -49,7 +57,7 @@ const waterAssumptions = [
         The EPhEct benchmarks probe four electrostatic phenomena at electrodes: the image-charge attraction of an ion,
         the LO–TO splitting of a polar crystal, the dipole of interfacial water, and Fermi-level pinning during ion
         discharge <Cite id="sumic2026ephect" />. Their point is that models with similar energy and force errors can
-        differ qualitatively on all four. This lab builds the first two as calculations you can change; the
+        differ qualitatively on all four. This lab builds the first three as calculations you can change; the
         <a href="/failures/electrostatics-at-electrodes/">Failure Atlas case</a> collects the evidence.
       </p>
     </section>
@@ -112,6 +120,41 @@ const waterAssumptions = [
       </Figure>
     </div>
 
+    <section class="block" id="loto" aria-labelledby="lo-h">
+      <h2 id="lo-h" class="h-section">3 · LO–TO splitting</h2>
+      <p>
+        In an ionic crystal the optical vibration in which the two sublattices move against each other comes in two
+        kinds. If the ions move across the wavevector (TO), nothing macroscopic happens. If they move along it (LO), planes
+        of positive and negative charge open up, and the field between them pushes back on every ion in the crystal.
+        As <i>q</i> → 0 this adds a term to the dynamical matrix that depends on the direction of approach but not on
+        |<i>q</i>| <Cite id="gonze1997dfpt" />:
+      </p>
+      <Math display number="3" tex={String.raw`\omega_{\mathrm{LO}}^2 - \omega_{\mathrm{TO}}^2 = \frac{4\pi k\,(Z^{*})^2}{\Omega\,\mu\,\varepsilon_\infty}, \qquad \frac{\omega_{\mathrm{LO}}^2}{\omega_{\mathrm{TO}}^2} = \frac{\varepsilon(0)}{\varepsilon_\infty}`} />
+      <p>
+        Here μ is the reduced mass of the ion pair and Ω the volume per pair; the second form is the Lyddane–Sachs–Teller
+        relation <Cite id="lyddane1941lst" />. The lab solves Kellermann’s rigid-ion model of rock salt <Cite id="kellermann1940nacl" />,
+        where <i>Z</i>* = 1 and ε∞ = 1, once with the Coulomb sum done exactly and once in a standard local form, damped and shifted so that it vanishes
+        beyond <i>r</i><sub>c</sub> <Cite id="fennell2006dsf" />.
+        Force constants of finite range give a dynamical matrix that is smooth at Γ; in a cubic crystal that forces the
+        three optical modes to be degenerate there, so the splitting is absent for any cutoff.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="LO–TO splitting needs the long-range field" labels={['toy-model', 'live-calculation']} number={3} id="fig-loto" framed={false}>
+        <LotoLab client:visible />
+        <Fragment slot="caption">
+          Left: a rock-salt block vibrating in the chosen mode at the chosen wavevector (grey arrows: displacement
+          amplitude; black arrow: q). Right: phonon frequencies along X–Γ–L for exact Coulomb (solid) and the local model
+          (dashed). Near Γ only the exact model separates LO from TO.
+        </Fragment>
+        <Assumptions slot="assumptions" items={lotoAssumptions} />
+        <Fragment slot="source">
+          Rigid-ion model: <Cite id="kellermann1940nacl" />. Non-analytic term: <Cite id="gonze1997dfpt" />. Damped shifted force: <Cite id="fennell2006dsf" />. Computed in your browser (6 × 6 dynamical matrices, Ewald sums).
+        </Fragment>
+      </Figure>
+    </div>
+
     <section class="block" aria-labelledby="sign-h">
       <h2 id="sign-h" class="h-section">Reading the signs</h2>
       <p>
@@ -132,7 +175,6 @@ const waterAssumptions = [
     <section class="block" aria-labelledby="next-h">
       <h2 id="next-h" class="h-section">Still to build in this lab</h2>
       <ul class="todo">
-        <li><b>LO–TO splitting</b> in a polar crystal, with and without long-range electrostatics (precomputed phonons).</li>
         <li><b>Fermi-level pinning</b> during ion discharge — an electronic-structure result on a named snapshot, labelled as such, never as MLIP output.</li>
         <li><b>Constant potential</b> strategies: a separate model per electrode potential, electron-count-conditioned models, transfer learning.</li>
       </ul>

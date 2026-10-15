@@ -1,0 +1,12 @@
+title: 'Dynamical matrices, Born effective charges, dielectric permittivity tensors, and interatomic force constants from density-functional perturbation theory'
+topic: electrostatics
+authors:
+  - 'Gonze, X.'
+  - 'Lee, C.'
+year: 1997
+venue: Physical Review B 55, 10355–10368
+type: article
+identifiers:
+  doi: 10.1103/PhysRevB.55.10355
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Non-analytic q → 0 term of the dynamical matrix from Born effective charges and ε∞; dipole–dipole Ewald treatment of interatomic force constants. Metadata from standard citations; check against Crossref.' }

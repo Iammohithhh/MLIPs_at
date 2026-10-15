@@ -1,0 +1,12 @@
+title: 'Is the Ewald summation still necessary? Pairwise alternatives to the accepted standard for long-range electrostatics'
+topic: electrostatics
+authors:
+  - 'Fennell, C. J.'
+  - 'Gezelter, J. D.'
+year: 2006
+venue: The Journal of Chemical Physics 124, 234104
+type: article
+identifiers:
+  doi: 10.1063/1.2206581
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Damped shifted force (DSF) pairwise Coulomb. Metadata from standard citations; check against Crossref.' }

@@ -2396,6 +2396,113 @@
    ]
   }
  },
+ "fennell2006dsf": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2006; fetched [2006]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Fennell, C. J.' vs fetched ['fennell']"
+   }
+  ],
+  "cites": [
+   "berendsen1987spce",
+   "darden1993pme",
+   "ewald1921",
+   "yeh1999slab"
+  ],
+  "crossref": {
+   "article_number": "234104",
+   "authors": [
+    {
+     "family": "Fennell",
+     "given": "Christopher J."
+    },
+    {
+     "family": "Gezelter",
+     "given": "J. Daniel"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.2206581",
+   "issue": "23",
+   "page": null,
+   "title": "Is the Ewald summation still necessary? Pairwise alternatives to the accepted standard for long-range electrostatics",
+   "type": "journal-article",
+   "volume": "124",
+   "year": 2006
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 667,
+   "id": "W2068644111",
+   "publication_year": 2006,
+   "referenced_works": [
+    "W27727037",
+    "W1964531032",
+    "W1972872586",
+    "W1975945758",
+    "W1977083651",
+    "W1982115588",
+    "W1983793204",
+    "W1992865572",
+    "W1992882086",
+    "W2001062582",
+    "W2001676859",
+    "W2002506550",
+    "W2005247657",
+    "W2017417570",
+    "W2019194317",
+    "W2028053014",
+    "W2032134086",
+    "W2032592119",
+    "W2034031073",
+    "W2035687084",
+    "W2036903029",
+    "W2041902442",
+    "W2043672534",
+    "W2046825516",
+    "W2049475242",
+    "W2056760934",
+    "W2057794532",
+    "W2058287541",
+    "W2058887643",
+    "W2062974703",
+    "W2064800995",
+    "W2067174909",
+    "W2067597831",
+    "W2073613958",
+    "W2078823941",
+    "W2081743831",
+    "W2084005259",
+    "W2085478435",
+    "W2104090745",
+    "W2112991075",
+    "W2113489785",
+    "W2117092343",
+    "W2128172847",
+    "W2128276019",
+    "W2136278162",
+    "W2139741484",
+    "W2155858732",
+    "W2157081197",
+    "W2326203395",
+    "W3048087219",
+    "W3099812449",
+    "W4230299717"
+   ]
+  }
+ },
  "gasteiger2020dimenet": {
   "arxiv": {
    "authors": [
@@ -2473,6 +2580,107 @@
    "id": "W4286588524",
    "publication_year": 2022,
    "referenced_works": []
+  }
+ },
+ "gonze1997dfpt": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1997; fetched [1997]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gonze, X.' vs fetched ['gonze']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Gonze",
+     "given": "Xavier"
+    },
+    {
+     "family": "Lee",
+     "given": "Changyol"
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.55.10355",
+   "issue": "16",
+   "page": "10355-10368",
+   "title": "Dynamical matrices, Born effective charges, dielectric permittivity tensors, and interatomic force constants from density-functional perturbation theory",
+   "type": "journal-article",
+   "volume": "55",
+   "year": 1997
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 3413,
+   "id": "W2067328332",
+   "publication_year": 1997,
+   "referenced_works": [
+    "W285749399",
+    "W1971593006",
+    "W1972009988",
+    "W1976008838",
+    "W1981619846",
+    "W1985285635",
+    "W1988187231",
+    "W1988447684",
+    "W1990228267",
+    "W1996728110",
+    "W2001930367",
+    "W2002170370",
+    "W2012111359",
+    "W2012817868",
+    "W2012837807",
+    "W2014015953",
+    "W2016700390",
+    "W2018781939",
+    "W2024340271",
+    "W2030582590",
+    "W2030625313",
+    "W2030963333",
+    "W2031641116",
+    "W2032975107",
+    "W2033396722",
+    "W2036113194",
+    "W2045163543",
+    "W2048276293",
+    "W2055259893",
+    "W2055640329",
+    "W2055772520",
+    "W2069351540",
+    "W2070754767",
+    "W2074950413",
+    "W2076258130",
+    "W2076449945",
+    "W2077906711",
+    "W2078330402",
+    "W2082050320",
+    "W2084357496",
+    "W2084421514",
+    "W2087996341",
+    "W2111470213",
+    "W2135887622",
+    "W2139897329",
+    "W2149572182",
+    "W2151895170",
+    "W2230728100",
+    "W2315843238",
+    "W2334188465",
+    "W2595603767"
+   ]
   }
  },
  "grasselli2026longrange": {
@@ -2562,6 +2770,53 @@
    "referenced_works": []
   }
  },
+ "kellermann1940nacl": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1940; fetched [1940]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kellermann, E. W.' vs fetched ['kellermann']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Kellermann",
+     "given": "E. W."
+    }
+   ],
+   "container": "Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences",
+   "doi": "10.1098/rsta.1940.0005",
+   "issue": "798",
+   "page": "513-548",
+   "title": "Theory of the vibrations of the sodium chloride lattice",
+   "type": "journal-article",
+   "volume": "238",
+   "year": 1940
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 735,
+   "id": "W2030005880",
+   "publication_year": 1940,
+   "referenced_works": [
+    "W2318568284"
+   ]
+  }
+ },
  "levine2025omol25": {
   "arxiv": {
    "authors": [
@@ -2620,6 +2875,63 @@
    "id": "W6891811738",
    "publication_year": 2025,
    "referenced_works": []
+  }
+ },
+ "lyddane1941lst": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1941; fetched [1941]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Lyddane, R. H.' vs fetched ['lyddane']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Lyddane",
+     "given": "R. H."
+    },
+    {
+     "family": "Sachs",
+     "given": "R. G."
+    },
+    {
+     "family": "Teller",
+     "given": "E."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.59.673",
+   "issue": "8",
+   "page": "673-676",
+   "title": "On the Polar Vibrations of Alkali Halides",
+   "type": "journal-article",
+   "volume": "59",
+   "year": 1941
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 1051,
+   "id": "W1969955850",
+   "publication_year": 1941,
+   "referenced_works": [
+    "W2002860774",
+    "W2007041954",
+    "W2059140979"
+   ]
   }
  },
  "musaelian2023allegro": {
