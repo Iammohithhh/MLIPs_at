@@ -117,7 +117,12 @@ export function validateRecords(raws: RawRecord[]): { records: Map<string, Loade
 export function pageExists(pagesRoot: string, sitePath: string): boolean {
   const path = sitePath.split('#')[0]!.replace(/^\/+|\/+$/g, '');
   const candidates = path === '' ? ['index'] : [path, join(path, 'index')];
-  return candidates.some((c) => ['.astro', '.md', '.mdx'].some((ext) => existsSync(join(pagesRoot, c + ext))));
+  if (candidates.some((c) => ['.astro', '.md', '.mdx'].some((ext) => existsSync(join(pagesRoot, c + ext))))) return true;
+  // Dynamic route one level deep, e.g. /failures/<id>/ served by pages/failures/[id].astro.
+  const parts = path.split('/');
+  if (parts.length < 2) return false;
+  const dir = join(pagesRoot, ...parts.slice(0, -1));
+  return existsSync(dir) && readdirSync(dir).some((f) => /^\[[^\]]+\]\.(astro|md|mdx)$/.test(f));
 }
 
 export function checkIntegrity(records: Map<string, LoadedRecord>, pagesRoot?: string): Problem[] {

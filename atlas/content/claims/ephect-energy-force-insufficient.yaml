@@ -1,0 +1,10 @@
+statement: >-
+  Aggregate energy and force errors are not enough to establish whether an MLIP is physically correct for
+  electrochemistry: they can miss qualitatively wrong image-charge attraction, dielectric screening or charge transfer.
+  The EPhEct tests probe image-charge attraction at a metal electrode, LO–TO phonon splitting, the dipole of
+  interfacial water and Fermi-level pinning during ion discharge.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: sumic2026ephect, locator: Abstract }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read from the arXiv abstract; per-model results not yet recorded.' }

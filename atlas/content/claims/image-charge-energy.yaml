@@ -1,0 +1,6 @@
+statement: >-
+  A point charge q at distance z from a flat, ideal conductor feels an attraction with energy
+  E(z) = −q²/(16πε₀z) = −k q²/(4z), decaying only as 1/z (method of images).
+grade: THEORY
+derivation: /failures/electrostatics-at-electrodes/#derivation
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: 'Textbook electrostatics; derived on the page.' }

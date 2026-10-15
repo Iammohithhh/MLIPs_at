@@ -3233,6 +3233,54 @@
    ]
   }
  },
+ "sumic2026ephect": {
+  "arxiv": {
+   "authors": [
+    "Barbara Sumić",
+    "Ria Vasdev",
+    "Sudheesh Kumar Ethirajan",
+    "Jing Yang",
+    "Clotilde S. Cucinotta",
+    "Richard G. Hennig",
+    "Karsten Reuter",
+    "Stefan Ringe",
+    "Mira Todorova",
+    "Christoph Freysoldt",
+    "Jörg Neugebauer"
+   ],
+   "id": "2608.14153v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2026-08-14",
+   "title": "Electrostatic Phenomenology Benchmarks for Machine-Learned Interatomic Potentials in Electrochemistry: Beyond the Energy-Force Metric",
+   "updated": "2026-08-14"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Sumić, B.' vs fetched ['sumic']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 0,
+   "id": "W7203617361",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "yeh1999slab": {
   "arxiv": null,
   "checks": [

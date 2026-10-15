@@ -388,12 +388,15 @@ export function Shell({
   color,
   opacity = 0.5,
   grid = false,
+  overlay = false,
 }: {
   center: [number, number, number];
   radius: number;
   color: string;
   opacity?: number;
   grid?: boolean;
+  /** Draw through other objects (no depth test). */
+  overlay?: boolean;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const material = useMemo(
@@ -404,10 +407,11 @@ export function Shell({
         uniforms: { uColor: { value: new THREE.Color(color) }, uOpacity: { value: opacity }, uGrid: { value: grid ? 1 : 0 } },
         transparent: true,
         depthWrite: false,
+        depthTest: !overlay,
         side: THREE.DoubleSide,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [overlay],
   );
   useEffect(() => {
     material.uniforms.uColor!.value.set(color);
@@ -416,7 +420,7 @@ export function Shell({
     invalidate();
   }, [material, color, opacity, grid, invalidate]);
   return (
-    <mesh position={center} scale={radius} material={material} renderOrder={10}>
+    <mesh position={center} scale={radius} material={material} renderOrder={overlay ? 40 : 10}>
       <sphereGeometry args={[1, 72, 48]} />
     </mesh>
   );

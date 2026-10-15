@@ -1,0 +1,19 @@
+title: 'Electrostatics at electrodes: what energy and force errors miss'
+claim: ephect-energy-force-insufficient
+grade: PUBLISHED_RESULT
+evidence: [ephect-energy-force-insufficient]
+mechanisms:
+  - { description: 'A strictly local energy has no term for the electrode''s long-range induced charge, so image attraction beyond the receptive field is absent.', grade: THEORY, claim: local-model-no-image-tail }
+  - { description: 'Errors averaged over training-like configurations are dominated by short-range interactions, so small but qualitatively wrong electrostatics barely moves energy and force error metrics.', grade: HYPOTHESIS }
+diagnostics:
+  - 'Image-charge attraction: energy of an ion against its distance from a metal electrode, compared with the 1/z image law at large distance.'
+  - 'LO–TO splitting of a polar crystal, which requires long-range electrostatics and Born effective charges.'
+  - 'The dipole of interfacial water at the electrode compared with the electronic-structure reference.'
+  - 'Fermi-level pinning during ion discharge (an electronic-structure property; an energy-only MLIP cannot output it).'
+responses:
+  - { description: 'Add explicit long-range electrostatics: latent or predicted charges with an Ewald-type sum (see the Physics Lab, P6) or charge equilibration (P8).' }
+  - { description: 'Condition on the electrode potential or electron count (constant-potential MLIPs), or train separate models per potential.' }
+open_questions:
+  - 'Which current long-range MLIPs pass all four EPhEct tests, and how do they rank against energy and force errors?'
+  - 'How large must the training cell be for interfacial dipoles and potential drops to transfer to bigger cells?'
+review: { status: draft, last_checked: 2026-10-15, notes: 'Evidence from the EPhEct abstract; per-model results to be added from the full text.' }

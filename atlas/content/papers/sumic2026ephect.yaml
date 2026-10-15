@@ -1,0 +1,16 @@
+title: 'Electrostatic Phenomenology Benchmarks for Machine-Learned Interatomic Potentials in Electrochemistry: Beyond the Energy-Force Metric'
+topic: benchmarks-failures
+authors:
+  - 'Sumić, B.'
+  - 'Vasdev, R.'
+  - 'Ethirajan, S. K.'
+  - 'Yang, J.'
+  - 'Cucinotta, C. S.'
+  - 'Hennig, R. G.'
+et_al: true
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2608.14153'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Abstract: the EPhEct tests (image-charge attraction at a metal electrode, LO–TO splitting, interfacial-water dipole, Fermi-level pinning during ion discharge); energy/force errors can miss qualitatively wrong electrostatics.' }

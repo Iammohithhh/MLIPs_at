@@ -208,3 +208,14 @@ describe('integrity rules', () => {
     expect(problemsFor([{ ...r, id: 'Bad_Name' }])).toEqual(['papers/p1.yaml: file name "Bad_Name" is not a kebab-case id']);
   });
 });
+
+import { pageExists as pageExistsForRoutes } from './integrity';
+
+describe('page lookup', () => {
+  it('resolves static pages, index pages and one-level dynamic routes', () => {
+    expect(pageExistsForRoutes('src/pages', '/')).toBe(true);
+    expect(pageExistsForRoutes('src/pages', '/physics-lab/ewald/#fig-ewald')).toBe(true);
+    expect(pageExistsForRoutes('src/pages', '/failures/pes-softening/')).toBe(true);
+    expect(pageExistsForRoutes('src/pages', '/no-such-section/page/')).toBe(false);
+  });
+});

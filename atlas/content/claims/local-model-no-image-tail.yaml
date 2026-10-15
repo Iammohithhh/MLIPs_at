@@ -1,0 +1,7 @@
+statement: >-
+  An energy built only from local terms within a finite receptive field has no term that produces the slowly decaying
+  −1/(4z) image attraction once the ion is farther from the electrode than that receptive field; any image physics it
+  shows inside the receptive field is learned implicitly from its training data.
+grade: THEORY
+derivation: /failures/electrostatics-at-electrodes/#derivation
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: 'Follows from locality (see the receptive-field claim); shown with a toy on the page.' }

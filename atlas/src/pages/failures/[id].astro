@@ -8,6 +8,8 @@ import Badge from '~/components/Badge.astro';
 import Cite from '~/components/Cite.astro';
 import Callout from '~/components/Callout.astro';
 import SofteningLab from '~/islands/SofteningLab';
+import ImageChargeLab from '~/islands/ImageChargeLab';
+import Math from '~/components/Math.astro';
 import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
 import type { LabelKey } from '~/lib/labels';
 
@@ -31,7 +33,7 @@ const gradeLabel: Record<string, LabelKey> = {
   HYPOTHESIS: 'hypothesis',
 };
 const main = claims.get(data.claim)!;
-const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab };
+const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab };
 const hasScene = id in scenes;
 ---
 
@@ -54,9 +56,29 @@ const hasScene = id in scenes;
         <div class="wide fig-wrap">
           <Figure title="What the failure looks like" labels={['toy-model']} number={1} id="fig-scene" framed={false}>
             {id === 'pes-softening' && <SofteningLab client:visible />}
+            {id === 'electrostatics-at-electrodes' && <ImageChargeLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
           </Figure>
         </div>
+      )
+    }
+
+    {
+      id === 'electrostatics-at-electrodes' && (
+        <section class="block" id="derivation" aria-labelledby="der-h">
+          <h2 id="der-h" class="h-sub">The image law, and why locality misses it</h2>
+          <p>
+            A flat ideal conductor at potential zero responds to a charge <i>q</i> at height <i>z</i> exactly as if a charge
+            −<i>q</i> sat at depth −<i>z</i> (the method of images). The ion feels the attraction to that image at distance
+            2<i>z</i>, and the energy is half the pair energy because the image moves with the ion:
+          </p>
+          <Math display number="1" tex={String.raw`E(z) = \frac{1}{2}\,\frac{q\,(-q)}{4\pi\varepsilon_0\,(2z)} = -\frac{q^2}{16\pi\varepsilon_0 z} = -\frac{k\,q^2}{4z}`} />
+          <p>
+            The attraction decays as 1/<i>z</i>. A model whose energy is a sum of local terms with a finite receptive field has
+            nothing that produces this tail once the ion is farther away than that field; inside it, the model can only learn
+            what its training data contained.
+          </p>
+        </section>
       )
     }
 
