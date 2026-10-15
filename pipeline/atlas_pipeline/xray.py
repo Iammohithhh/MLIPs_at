@@ -368,7 +368,11 @@ def main(argv: list[str]) -> int:
                 "positions": _r(rot.positions, 7),
                 "energy": r["energy"],
                 "forces": r["forces"],
-                "layers": [{"h": {"l0": L["h"]["l0"], "l1": L["h"]["l1"]}, "A": {"l1": L["A"]["l1"]}} for L in r["layers"]],
+                "nodeEnergy": r["nodeEnergy"],
+                "layers": [
+                    {"h": {"l0": L["h"]["l0"], "l1": L["h"]["l1"]}, "A": {"norms": L["A"]["norms"], "l1": L["A"]["l1"]}, "siteEnergy": L["siteEnergy"]}
+                    for L in r["layers"]
+                ],
             }
         systems.append(entry)
 

@@ -1,0 +1,355 @@
+---
+import katex from 'katex';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import XrayExplorer, { type XrayStep } from '~/islands/XrayExplorer';
+import { katexOptions } from '~/lib/katex-options.mjs';
+import raw from '~/data/xray/mace-mp-0a-medium.json';
+import { energyParts, rotationCheck, type XrayDoc } from '~/lib/models/xray';
+
+const tex = (s: string) => katex.renderToString(s, { ...katexOptions, displayMode: true });
+const doc = raw as unknown as XrayDoc;
+const hp = doc.model.hyperparameters;
+const prov = doc.provenance as Record<string, string> & { rotation: { axis: number[]; angleDeg: number } };
+const sys = (id: string) => doc.systems.find((s) => s.id === id)!;
+const ethanol = sys('ethanol');
+const si = sys('si-diamond');
+const rot = rotationCheck(ethanol)!;
+const vanishPeak = globalThis.Math.max(...doc.systems.flatMap((s) => s.layers[1]!.A.peak.slice(1)));
+const siSymPeak = globalThis.Math.max(si.layers[0]!.A.peak[1]!, si.layers[0]!.A.peak[2]!);
+const siL3Peak = si.layers[0]!.A.peak[3]!;
+const ethParts = energyParts(doc, ethanol);
+const sup = (x: number) => {
+  const [m, e] = x.toExponential(0).split('e');
+  return { m, e: e!.replace('-', '−') };
+};
+const vp = sup(vanishPeak);
+const sp = sup(siSymPeak);
+
+const steps: XrayStep[] = [
+  {
+    id: 'embed',
+    title: 'Element embedding h⁽⁰⁾',
+    eq: tex(String.raw`h^{(0)}_{i,k} = \sum_{z} W_{kz}\,\delta_{z z_i}`),
+    what: 'A learned vector per element: every carbon starts identical, whatever its surroundings. Only l = 0 channels exist here.',
+    code: 'model.node_embedding',
+  },
+  {
+    id: 'radial',
+    title: 'Radial features',
+    eq: tex(String.raw`\sqrt{\tfrac{2}{r_c}}\;\frac{\sin(n\pi r_{ji}/r_c)}{r_{ji}}\;f_{\mathrm{cut}}(r_{ji}),\qquad n = 1,\dots,${hp.num_bessel},\ r_c = ${hp.r_max}\,\text{\AA}`),
+    what: `Bessel functions times a polynomial cutoff (p = ${hp.num_polynomial_cutoff}) for every edge; an MLP of widths [${hp.radial_MLP.join(', ')}] then turns them into the radial weights R of Eq. (8). Bars: the selected function on each edge into the centre atom.`,
+    code: 'model.radial_embedding',
+  },
+  {
+    id: 'sh',
+    title: 'Spherical harmonics',
+    eq: tex(String.raw`Y_l^m(\hat{\mathbf r}_{ji}),\qquad l \le ${hp.max_ell}`),
+    what: 'The direction of each edge as 16 numbers that rotate in a controlled way. Colour: the selected component on each neighbour.',
+    code: 'model.spherical_harmonics',
+  },
+  {
+    id: 'A1',
+    title: 'Layer 1 message A⁽¹⁾',
+    eq: tex(String.raw`A^{(1)}_{i,kl_1m_1} = \sum_{j \in \mathcal N(i)} R^{(1)}_{kl_1}(r_{ji})\,Y_{l_1}^{m_1}(\hat{\mathbf r}_{ji})\,W^{(1)}_{kz_j}`),
+    what: `Eq. (9): one sum over neighbours. In the code the sum is mixed by a linear layer and divided by the average neighbour count stored in the checkpoint (${hp.avg_num_neighbors.toFixed(2)}). The l = 1 block of a channel is a vector: the arrows.`,
+    code: 'model.interactions[0] (first output)',
+  },
+  {
+    id: 'h1',
+    title: 'Layer 1 features h⁽¹⁾',
+    eq: tex(String.raw`h^{(1)}_{i,kLM} = \sum_{\tilde k} W_{kL,\tilde k}\, m^{(1)}_{i,\tilde kLM} + \sum_{\tilde k} W_{z_i kL,\tilde k}\, h^{(0)}_{i,\tilde kLM},\quad m^{(1)}_{i} = \sum_{\nu \le ${hp.correlation}} \sum_{\eta_\nu} W_{z_i,\eta_\nu} B^{(1)}_{i,\eta_\nu}`),
+    what: `Eqs. (10)–(12): symmetric products of A up to ν = ${hp.correlation} (four-body), a learned element-dependent message, and a residual update. Hidden irreps ${hp.hidden_irreps}: 128 invariant and 128 vector channels per atom.`,
+    code: 'model.products[0]',
+  },
+  {
+    id: 'A2',
+    title: 'Layer 2 message A⁽²⁾',
+    eq: tex(String.raw`A^{(2)}_{i,kl_3m_3} = \sum_{l_1m_1,l_2m_2} C^{l_3m_3}_{l_1m_1,l_2m_2} \sum_{j \in \mathcal N(i)} R^{(2)}_{kl_1l_2l_3}(r_{ji})\,Y_{l_1}^{m_1}(\hat{\mathbf r}_{ji}) \sum_{\tilde k} W^{(2)}_{k\tilde kl_2} h^{(1)}_{j,\tilde kl_2m_2}`),
+    what: 'Eq. (8): neighbours now send their own equivariant features, coupled to the bond direction with Clebsch–Gordan coefficients. In this checkpoint only the l = 0 block survives (see below).',
+    code: 'model.interactions[1] (first output)',
+  },
+  {
+    id: 'h2',
+    title: 'Layer 2 features h⁽²⁾',
+    eq: tex(String.raw`h^{(2)}_{i,k00} = \sum_{\tilde k} W_{k0,\tilde k}\, m^{(2)}_{i,\tilde k00} + \sum_{\tilde k} W_{z_i k0,\tilde k}\, h^{(1)}_{i,\tilde k00}`),
+    what: 'The last layer computes only what the energy needs: 128 invariant channels.',
+    code: 'model.products[1]',
+  },
+  {
+    id: 'energy',
+    title: 'Site energies and forces',
+    eq: tex(String.raw`E_i = E_0(z_i) + s\,\big(\mathcal R_1(h^{(1)}_{i,k00}) + \mathcal R_2(h^{(2)}_{i,k00})\big) + \mu,\qquad \mathbf F_i = -\nabla_{\mathbf r_i} \textstyle\sum_j E_j`),
+    what: `Eq. (13) plus the checkpoint’s per-element reference energies E₀ and a fixed scale s = ${hp.atomic_inter_scale.toFixed(4)} and shift μ = ${hp.atomic_inter_shift.toFixed(4)} eV. Arrows: forces from autograd.`,
+    code: 'model.readouts[0], model.readouts[1], model.scale_shift',
+  },
+];
+
+const assumptions = [
+  { term: 'Model', value: `MACE-MP-0a medium, file ${doc.model.file} (MIT), SHA-256 ${doc.model.sha256.slice(0, 12)}…; hyperparameters read from the checkpoint.` },
+  { term: 'Run', value: `One forward pass per structure on CPU in float64 with mace-torch ${prov['mace-torch']}, e3nn ${prov.e3nn}, PyTorch ${prov.torch}; tensors captured with forward hooks.` },
+  { term: 'Structures', value: 'Gallery geometries, not relaxed: ethanol (G2, isolated), ZnO wurtzite and Si diamond (periodic). r_c = 6 Å.' },
+  { term: 'Stored', value: 'Norms of every irrep block, full l = 1 vectors, l = 0 values; 4 significant figures. |x| < 10⁻¹² is written as 0.' },
+  { term: 'Units', value: 'Energies in eV, forces in eV/Å; feature channels are dimensionless network activations.' },
+];
+---
+
+<BaseLayout
+  title="Architecture X-ray"
+  description="The real intermediate tensors of one MACE-MP-0a forward pass on ethanol, ZnO and silicon: embeddings, radial and angular features, messages, equivariant features, site energies and forces, with a rotation test from two real runs."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · <a href="/models/mace/">MACE</a> · X-ray</p>
+      <h1 class="h-display">Architecture X-ray</h1>
+      <p class="lede">
+        Real internals, not boxes and arrows. Three structures were passed through a released MACE checkpoint and every
+        intermediate tensor was recorded. Pick a step of the forward pass and see what the network actually computed for
+        each atom.
+      </p>
+      <dl class="glance">
+        <div><dt>Architecture</dt><dd><a href="/models/mace/">MACE</a> <Cite id="batatia2022mace" /></dd></div>
+        <div><dt>Checkpoint</dt><dd><a href="/models/checkpoints/">MACE-MP-0a medium</a> <Cite id="batatia2023foundation" /></dd></div>
+        <div><dt>Layers · channels</dt><dd>{hp.num_interactions} · {hp.hidden_irreps}</dd></div>
+        <div><dt>Body order</dt><dd>ν ≤ {hp.correlation} per layer (four-body)</dd></div>
+        <div><dt>Cutoff</dt><dd>{hp.r_max} Å, {hp.num_bessel} Bessel functions</dd></div>
+        <div><dt>Compute</dt><dd>CPU, float64, offline</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="precomputed" /> Numbers come from the checkpoint’s weights. They describe this <strong>checkpoint</strong>
+        on these structures; another checkpoint of the same architecture has different internals.
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="Inside one MACE-MP-0a forward pass" labels={['precomputed']} number={1} id="fig-xray" framed={false}>
+        <XrayExplorer client:visible steps={steps} />
+        <Fragment slot="caption">
+          Left: the structure, coloured by the selected channel of the selected tensor (blue: magnitude or positive value,
+          brown: negative), with l = 1 vectors as arrows; click an atom to centre it. Right: the dataflow with each
+          tensor’s real shape [atoms or edges, …], and its equation. Below: the whole tensor as atoms × 128 channels (click a
+          cell). For ethanol, “Rotated” switches to a second forward pass on the rotated molecule.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          Equations (8)–(13) of <Cite id="batatia2022mace" locator="Sec. 3, Eqs. 8–13" />; checkpoint from
+          <Cite id="batatia2023foundation" />; tensors computed by <code>pipeline/atlas_pipeline/xray.py</code>.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="see-h">
+      <h2 id="see-h" class="h-section">Three things the X-ray shows</h2>
+
+      <h3 class="h-sub">1. Symmetry is exact in the trained network, not approximately learned</h3>
+      <p>
+        Rotating ethanol by {prov.rotation.angleDeg}° and running the network again changes the energy by
+        {rot.dE.toExponential(0)} eV (floating-point round-off). Every invariant feature is unchanged and every l = 1 feature
+        turns with the molecule, h′ = R h, to the precision the file stores. This is built into the architecture: the
+        spherical harmonics and Clebsch–Gordan couplings fix how each block transforms
+        (<a href="/physics-lab/harmonics/">P5</a>, <a href="/physics-lab/rotation/">P4</a>), whatever the weights.
+      </p>
+
+      <h3 class="h-sub">2. Crystal symmetry zeros survive into the network</h3>
+      <p>
+        In diamond silicon every atom sits at a site of tetrahedral symmetry. The l = 1 and l = 2 blocks of the first
+        message are then zero for every channel (largest stored magnitude {sp.m} × 10<sup>{sp.e}</sup>, round-off) while the
+        l = 3 block is not ({siL3Peak.toFixed(2)}). All eight atoms carry identical invariant features and the forces
+        vanish. The trained weights cannot break a symmetry that the input has: the same zeros appear with unit weights
+        on the <a href="/models/mace/">MACE page</a>.
+      </p>
+
+      <h3 class="h-sub">3. In this checkpoint, the second message carries only invariants</h3>
+      <p>
+        The second interaction computes l = 1, 2, 3 blocks, but in MACE-MP-0a medium they are numerically zero for all three
+        structures (largest entry {vp.m} × 10<sup>{vp.e}</sup>): the weights of those output paths are of the same tiny size.
+        Why this can happen follows from the architecture. The last layer needs only an L = 0 output, and an invariant
+        built by Eq. (10) cannot contain a single l &gt; 0 factor of A — those factors only appear in pairs or more:
+      </p>
+      <Math display tex={String.raw`C^{00}_{\eta_\nu,\boldsymbol{lm}} \neq 0 \;\Rightarrow\; \#\{\xi : l_\xi > 0\} \neq 1 \quad\Longrightarrow\quad \left.\frac{\partial E}{\partial A^{(2)}_{i,klm}}\right|_{A^{(2)}_{l>0}=0} = 0 \quad (l > 0)`} />
+      <p>
+        So zero is a fixed point: once these weights are small their gradient is small too, and nothing pulls them back.
+        Which part of training drove them to zero (weight decay is one candidate) is not established here. The l = 1
+        features of layer 1 still matter: they enter the second message through the 1 ⊗ 1 → 0 coupling, whose weights are
+        not small. <Badge label="theory" /> for the derivation; the magnitudes are <Badge label="precomputed" />.
+      </p>
+      <Callout kind="caveat" title="Architecture ≠ checkpoint">
+        Finding 3 is a property of one set of trained weights. It does not mean MACE’s second layer cannot carry
+        equivariant messages, and other checkpoints may differ.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="energy-h">
+      <h2 id="energy-h" class="h-section">Where the energy comes from</h2>
+      <p>
+        The total energy is a sum of site energies. Most of each is the element’s reference energy E₀, a per-element
+        constant stored in the checkpoint; what the network learns is the rest. For ethanol (isolated molecule, G2
+        geometry) the model gives E = {ethanol.energy.toFixed(3)} eV, of which the learned part is
+        {ethParts.reduce((a, p) => a + p.interaction, 0).toFixed(3)} eV. Read the per-atom split in Fig. 1 under
+        “Site energies and forces”. These site energies are a bookkeeping device of the model: they are not observable and
+        another model would partition the same total differently.
+      </p>
+      <p>
+        MACE-MP-0 was trained on periodic inorganic crystals (MPtrj, PBE/PBE+U) <Cite id="batatia2023foundation" />. The
+        ethanol run is shown because a molecule makes the rotation test clean, not as a claim about the checkpoint’s
+        accuracy for molecules.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="how-h">
+      <h2 id="how-h" class="h-section">How the tensors were obtained</h2>
+      <ul class="facts">
+        <li>
+          <strong>Safe loading.</strong> The released file is a pickled PyTorch module; parts of it store Python source that a
+          normal <code>torch.load</code> would execute. The pipeline instead reads it with a restricted unpickler that returns
+          only tensors, checks the file’s SHA-256, builds a fresh model with mace-torch and loads the tensors into it. Every
+          tensor shape matches; the only values the fresh model supplies itself are fixed Wigner-3j constants.
+        </li>
+        <li>
+          <strong>Hooks.</strong> Forward hooks on the embedding, radial and angular blocks, both interactions, both product
+          blocks and both readouts record their outputs during one ordinary forward pass with forces.
+        </li>
+        <li>
+          <strong>Checks.</strong> Pipeline tests rerun the rotation test, reassemble site energies into the total and check
+          the diamond symmetry zeros; site tests repeat these checks on the stored file.
+        </li>
+        <li>
+          <strong>Paper versus checkpoint.</strong> The MACE paper used 8 Bessel functions and 5 Å for molecules
+          <Cite id="batatia2022mace" locator="App. A.5.1" />; this checkpoint uses {hp.num_bessel} and {hp.r_max} Å. The
+          code divides each message by the average neighbour count ({hp.avg_num_neighbors.toFixed(2)}), which Eq. (8) leaves
+          implicit.
+        </li>
+      </ul>
+      <div class="table-wrap">
+        <table class="ck prov">
+          <tbody>
+            <tr><th>Checkpoint file</th><td><a href={doc.model.url}>{doc.model.file}</a></td></tr>
+            <tr><th>SHA-256</th><td><code>{doc.model.sha256}</code></td></tr>
+            <tr><th>Software</th><td>mace-torch {prov['mace-torch']} · e3nn {prov.e3nn} · PyTorch {prov.torch} · ASE {prov.ase}</td></tr>
+            <tr><th>Precision · device</th><td>{prov.dtype} · {prov.device}</td></tr>
+            <tr><th>Stored precision</th><td>{prov.rounding}</td></tr>
+            <tr><th>Script</th><td><code>{prov.script}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="lim-h">
+      <h2 id="lim-h" class="h-section">What this page is not</h2>
+      <p>
+        Not an interpretation of individual channels: a channel is a learned basis direction with no assigned meaning, and
+        any rotation of the 128-dimensional channel space with compensating weights gives the same model. Not a measure of
+        accuracy: no reference calculation is shown. And not a live run: the tensors were computed once, offline, for these
+        three geometries. Next on this page: NequIP and models with long-range terms.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block h3 {
+    margin-block: 1.5rem 0.5rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .prov {
+    border-collapse: collapse;
+    font: 0.84rem/1.45 var(--font-sans);
+    width: 100%;
+  }
+  .prov th,
+  .prov td {
+    text-align: left;
+    padding: 0.45rem 1rem 0.45rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    vertical-align: top;
+  }
+  .prov th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+    white-space: nowrap;
+  }
+  .prov code {
+    overflow-wrap: anywhere;
+  }
+</style>

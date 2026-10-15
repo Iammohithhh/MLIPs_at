@@ -1,0 +1,114 @@
+.xr-loading {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  font: 0.9rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.xr .lab-panel.xr-panel {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem 1.1rem;
+}
+.xr .seg button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.xr-code {
+  margin: 0;
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-faint);
+  overflow-wrap: anywhere;
+}
+.xr-code code {
+  font: 0.75rem var(--font-mono);
+  color: var(--atlas-ink-muted);
+}
+.xr-strip {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.xr-strip figcaption {
+  font: 0.8rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.xr-strip svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.xr-cell {
+  cursor: pointer;
+}
+.xr-cell.pos {
+  fill: var(--atlas-arch);
+}
+.xr-cell.neg {
+  fill: var(--atlas-caveat);
+}
+.xr-sel {
+  fill: none;
+  stroke: var(--atlas-ink);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.xr-rowlab {
+  font: 10px var(--font-sans);
+  fill: var(--atlas-ink-muted);
+}
+.xr-edges .mw-bar {
+  grid-template-columns: 7.5rem minmax(0, 1fr) 6.5rem;
+}
+.xr-track {
+  position: relative;
+}
+.xr-track .mw-fill {
+  background: var(--atlas-phys);
+}
+.xr-track .mw-fill.neg {
+  background: var(--atlas-caveat);
+}
+.xr-cur .mw-bl {
+  color: var(--atlas-ink);
+  font-weight: 600;
+}
+.xr-readout {
+  margin: 0;
+  font: 0.85rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+  overflow-wrap: anywhere;
+}
+.xr-readout b {
+  font-family: var(--font-mono);
+  color: var(--atlas-ink);
+}
+.xr-rot {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.6rem;
+  overflow-x: auto;
+}
+.xr-rot.on {
+  border-color: var(--atlas-verified);
+}
+.xr-note {
+  margin: 0;
+  font: 0.75rem/1.45 var(--font-sans);
+  color: var(--atlas-ink-faint);
+}
+@media (max-width: 640px) {
+  .xr-edges .mw-bar {
+    grid-template-columns: 6rem minmax(0, 1fr) 5rem;
+  }
+}
+@media (max-width: 860px) {
+  .xr.mw .lab-stage {
+    min-height: 380px;
+    border-right: 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+}

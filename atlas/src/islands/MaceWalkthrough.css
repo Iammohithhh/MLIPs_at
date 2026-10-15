@@ -156,6 +156,9 @@
   font-family: var(--font-mono);
 }
 @media (max-width: 860px) {
+  .mw .lab-split--wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .mw .lab-stage {
     min-height: 0;
   }
