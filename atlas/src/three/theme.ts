@@ -16,6 +16,7 @@ export interface SceneTheme {
   lit: string;
   caveat: string;
   fail: string;
+  verified: string;
 }
 
 const FALLBACK: SceneTheme = {
@@ -31,6 +32,7 @@ const FALLBACK: SceneTheme = {
   lit: '#6b5a8c',
   caveat: '#8c5f25',
   fail: '#9f4740',
+  verified: '#3f7a5c',
 };
 
 function read(): SceneTheme {
@@ -50,6 +52,7 @@ function read(): SceneTheme {
     lit: v('--atlas-lit', FALLBACK.lit),
     caveat: v('--atlas-caveat', FALLBACK.caveat),
     fail: v('--atlas-fail', FALLBACK.fail),
+    verified: v('--atlas-verified', FALLBACK.verified),
   };
 }
 

@@ -1326,7 +1326,8 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
-   "deng2023chgnet"
+   "deng2023chgnet",
+   "rappe1991qeq"
   ],
   "crossref": {
    "article_number": "80",
@@ -1499,7 +1500,8 @@
    }
   ],
   "cites": [
-   "batzner2022nequip"
+   "batzner2022nequip",
+   "rappe1991qeq"
   ],
   "crossref": {
    "article_number": null,
@@ -2224,6 +2226,55 @@
     "W2112930989",
     "W2230728100"
    ]
+  }
+ },
+ "rappe1991qeq": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1991; fetched [1991]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Rappé, A. K.' vs fetched ['rappe']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Rappe",
+     "given": "Anthony K."
+    },
+    {
+     "family": "Goddard",
+     "given": "William A."
+    }
+   ],
+   "container": "The Journal of Physical Chemistry",
+   "doi": "10.1021/j100161a070",
+   "issue": "8",
+   "page": "3358-3363",
+   "title": "Charge equilibration for molecular dynamics simulations",
+   "type": "journal-article",
+   "volume": "95",
+   "year": 1991
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 3466,
+   "id": "W2170006871",
+   "publication_year": 1991,
+   "referenced_works": []
   }
  },
  "riebesell2023matbench": {

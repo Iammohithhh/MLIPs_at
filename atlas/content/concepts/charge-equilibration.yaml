@@ -1,0 +1,11 @@
+title: Charge equilibration
+summary: >-
+  Assigns partial charges by letting charge flow until every atom has the same effective electronegativity, given
+  per-atom electronegativities, hardnesses and a Coulomb kernel. Used as a long-range layer in several MLIPs, with
+  environment-dependent parameters predicted by a network.
+explains: [coulomb-interaction]
+demonstrated_by: [charge-equilibration-lab]
+related: [long-range-electrostatics, ewald-summation]
+papers: [rappe1991qeq]
+claims: [qeq-equalises-electronegativity, qeq-dissociation-fractional-charge]
+review: { status: draft, last_checked: 2026-10-15 }

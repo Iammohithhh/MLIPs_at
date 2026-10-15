@@ -1,0 +1,14 @@
+title: Charge equilibration
+question: How do partial charges settle when charge flows to equalise electronegativity, and what goes wrong when two atoms separate?
+kind: physics-lab
+module: P8
+status: TOY_MODEL
+tier: T0
+page: /physics-lab/charge-equilibration/#fig-qeq
+assumptions:
+  - { term: Parameters, value: 'Toy χ and J (eV) ordered like real electronegativities; not fitted values.' }
+  - { term: Kernel, value: 'Shielded Coulomb γ = k/∛(r³ + a³), a = 1.6 Å, k = 14.3996 eV·Å.' }
+  - { term: Molecules, value: 'G2 geometries of water and ethanol from ASE; the Na–Cl pair along one axis.' }
+concepts: [charge-equilibration]
+claims: [qeq-equalises-electronegativity, qeq-dissociation-fractional-charge]
+review: { status: draft, last_checked: 2026-10-15 }

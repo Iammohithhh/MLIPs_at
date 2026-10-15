@@ -1,0 +1,12 @@
+title: Charge equilibration for molecular dynamics simulations
+topic: electrostatics
+authors:
+  - 'Rappé, A. K.'
+  - 'Goddard, W. A.'
+year: 1991
+venue: The Journal of Physical Chemistry 95, 3358–3363
+type: article
+identifiers:
+  doi: 10.1021/j100161a070
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: Original QEq method; cited for the equalisation condition. Parameters on the Atlas page are toy values, not this paper's table. }

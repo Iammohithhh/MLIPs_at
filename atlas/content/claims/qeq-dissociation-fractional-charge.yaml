@@ -1,0 +1,7 @@
+statement: >-
+  In plain charge equilibration a neutral A–B pair keeps charges ±(χ_B − χ_A)/(J_A + J_B) as the separation goes to
+  infinity, because the Coulomb kernel vanishes but the electronegativity difference does not; real atoms separate
+  neutral.
+grade: THEORY
+derivation: /physics-lab/charge-equilibration/#dissociation
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: 'Two-atom limit of the QEq equations, derived on the page; checked in qeq.test.ts.' }

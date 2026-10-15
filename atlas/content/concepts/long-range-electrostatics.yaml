@@ -4,6 +4,6 @@ summary: >-
   (Ewald, PME, charge equilibration) on top of a local model.
 explains: [coulomb-interaction]
 demonstrated_by: [receptive-field-figure, interface-receptive-field, pair-cutoff, madelung-sums]
-related: [locality, ewald-summation]
+related: [locality, ewald-summation, charge-equilibration]
 papers: [cheng2025les]
 review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,9 @@
+statement: >-
+  Minimising E(q) = Σ(χᵢqᵢ + ½Jᵢqᵢ²) + Σ γᵢⱼqᵢqⱼ at fixed total charge makes every atom's effective
+  electronegativity χᵢ + Jᵢqᵢ + Σⱼ γᵢⱼqⱼ equal to one Lagrange multiplier μ.
+grade: THEORY
+sources:
+  - { paper: rappe1991qeq }
+derivation: /physics-lab/charge-equilibration/#derivation
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Stationarity condition of a constrained quadratic; checked numerically in qeq.test.ts.' }
