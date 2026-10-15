@@ -1,0 +1,79 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import AtlasMap from '~/islands/AtlasMap';
+import { auditContent } from '~/content/integrity';
+import { buildAtlasMap, COLLECTION_TONES } from '~/lib/atlas-graph';
+
+const { records } = auditContent('content');
+const map = buildAtlasMap(records);
+const counts = new Map<string, number>();
+for (const n of map.nodes) counts.set(n.collection, (counts.get(n.collection) ?? 0) + 1);
+const kinds = Object.entries(COLLECTION_TONES)
+  .filter(([c]) => counts.has(c))
+  .map(([id, m]) => ({ id, label: m.label, tone: m.tone, count: counts.get(id)! }));
+const published = map.nodes.filter((n) => n.status === 'published').length;
+---
+
+<BaseLayout
+  title="Explore"
+  description="The whole MLIP Atlas as one map: every record — concepts, experiments, model families, checkpoints, datasets, levels of theory, benchmarks, claims and papers — and every reference between them."
+>
+  <article class="page-grid explore">
+    <header class="wide head">
+      <p class="eyebrow">Explore</p>
+      <h1 class="h-display">How the field is connected</h1>
+      <p class="lede">
+        Every record in the Atlas is a dot; every reference one record makes to another is a line. Concepts sit near the
+        experiments that demonstrate them, checkpoints near the data they learned from, claims between the papers and
+        records they connect. Select anything to see its neighbourhood and open it.
+      </p>
+      <p class="stats">
+        <span><strong>{map.nodes.length}</strong> records</span>
+        <span><strong>{map.edges.length}</strong> links</span>
+        <span><strong>{published}</strong> reviewed and published, the rest drafts in review</span>
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="The Atlas as a graph" labels={['schematic']} number={1} id="fig-map" framed={false}>
+        <AtlasMap client:visible nodes={map.nodes} edges={map.edges} kinds={kinds} />
+        <Fragment slot="caption">
+          Drag to pan, scroll or use the buttons to zoom, and filter by kind. Positions come from a force layout computed at
+          build time (seeded, so the map is stable between builds); distance on the map means “closely linked”, nothing more.
+        </Fragment>
+        <Fragment slot="source">Generated from the Atlas content records and the references declared in their schemas.</Fragment>
+      </Figure>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .explore {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    font: 0.9rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .stats strong {
+    font: 600 1.1rem var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .fig-wrap {
+    margin-top: 1.25rem;
+  }
+</style>

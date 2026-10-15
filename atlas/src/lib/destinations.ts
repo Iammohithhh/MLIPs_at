@@ -91,7 +91,8 @@ export const DESTINATIONS: Destination[] = [
     signature: '2D atlas map, timeline, ⌘K search',
     phase: 3,
     tone: 'neutral',
-    inNav: false,
+    href: '/explore/',
+    inNav: true,
   },
   {
     id: 'applications',
