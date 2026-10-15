@@ -1,0 +1,155 @@
+.bx {
+  --g-mptrj: var(--atlas-phys);
+  --g-oam: var(--atlas-arch);
+  --g-other: var(--atlas-lit);
+}
+.bx-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.2rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.bx-controls > label {
+  display: grid;
+  gap: 0.25rem;
+  font: 600 0.7rem var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-faint);
+}
+.bx-controls select {
+  font: 0.85rem var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--atlas-ink);
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.5rem;
+}
+.bx-groups {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  font: 0.82rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.bx-g {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.bx-sw {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+}
+.bx-g-mptrj .bx-sw {
+  background: var(--g-mptrj);
+}
+.bx-g-oam .bx-sw {
+  background: var(--g-oam);
+}
+.bx-g-other .bx-sw {
+  background: var(--g-other);
+}
+.bx-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+}
+.bx-plot {
+  border-right: 1px solid var(--atlas-rule);
+}
+.bx-pt {
+  fill-opacity: 0.78;
+  stroke: var(--atlas-surface);
+  stroke-width: 1.2;
+  cursor: pointer;
+  outline: none;
+}
+.bx-pt.bx-g-mptrj {
+  fill: var(--g-mptrj);
+}
+.bx-pt.bx-g-oam {
+  fill: var(--g-oam);
+}
+.bx-pt.bx-g-other {
+  fill: var(--g-other);
+}
+.bx-pt.is-sel,
+.bx-pt:focus-visible {
+  stroke: var(--atlas-ink);
+  stroke-width: 2.5;
+  fill-opacity: 1;
+}
+.bx-cap {
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-faint);
+}
+.bx-card {
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+  min-width: 0;
+}
+.bx-name {
+  margin: 0;
+  font: 600 1.15rem/1.25 var(--font-serif);
+  color: var(--atlas-ink);
+}
+.bx-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.6rem;
+  font: 0.72rem var(--font-mono);
+  color: var(--atlas-ink-faint);
+}
+.bx-card dl {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.bx-card dl div {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 0.4rem;
+  font: 0.8rem var(--font-sans);
+}
+.bx-card dt {
+  color: var(--atlas-ink-faint);
+}
+.bx-card dd {
+  margin: 0;
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.bx-links {
+  margin: 0;
+  display: flex;
+  gap: 0.8rem;
+  font: 600 0.82rem var(--font-sans);
+}
+.bx-links a,
+.bx-src a {
+  color: var(--atlas-arch);
+}
+.bx-src {
+  margin: 0;
+  font: 0.72rem var(--font-mono);
+  color: var(--atlas-ink-faint);
+}
+@media (max-width: 900px) {
+  .bx-body,
+  .bx-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bx-plot {
+    border-right: 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+}

@@ -1,0 +1,2788 @@
+{
+ "source": {
+  "repo": "https://github.com/janosh/matbench-discovery",
+  "commit": "6ffd8070e0a7133a795a9bd4b42ec8dd9e543a46",
+  "commit_date": "2026-10-03",
+  "fetched": "2026-10-15",
+  "files": "models/*/*.yml"
+ },
+ "models": [
+  {
+   "key": "m3gnet",
+   "name": "M3GNet",
+   "version": "v2022.9.20",
+   "family_dir": "m3gnet",
+   "added": "2022-09-20",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPF"
+   ],
+   "params": 227549.0,
+   "targets": "EFS_G",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2202.02450",
+   "repo": "https://github.com/materialsvirtuallab/m3gnet",
+   "checkpoint_url": "https://github.com/materialsvirtuallab/m3gnet/tree/3a8b14dfd5/pretrained/MP-2021.2.8-EFS",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.569,
+     "DAF": 2.882,
+     "Precision": 0.441,
+     "Recall": 0.803,
+     "Accuracy": 0.812,
+     "MAE": 0.075,
+     "RMSE": 0.118,
+     "R2": 0.585
+    },
+    "discovery_full": {
+     "F1": 0.576,
+     "DAF": 2.647,
+     "Precision": 0.454,
+     "Recall": 0.788,
+     "Accuracy": 0.801,
+     "MAE": 0.072,
+     "RMSE": 0.115,
+     "R2": 0.588
+    },
+    "rmsd": 0.1117,
+    "kappa_srme": 1.4094
+   }
+  },
+  {
+   "key": "megnet",
+   "name": "MEGNet",
+   "version": "v2022.9.20",
+   "family_dir": "megnet",
+   "added": "2022-11-14",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP Graphs"
+   ],
+   "params": 167761.0,
+   "targets": "E",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/1812.05055",
+   "repo": "https://github.com/materialsvirtuallab/megnet",
+   "checkpoint_url": "https://figshare.com/files/22291785",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.51,
+     "DAF": 2.959,
+     "Precision": 0.452,
+     "Recall": 0.585,
+     "Accuracy": 0.826,
+     "MAE": 0.13,
+     "RMSE": 0.206,
+     "R2": -0.248
+    },
+    "discovery_full": {
+     "F1": 0.513,
+     "DAF": 2.699,
+     "Precision": 0.463,
+     "Recall": 0.574,
+     "Accuracy": 0.813,
+     "MAE": 0.128,
+     "RMSE": 0.204,
+     "R2": -0.277
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "bowsr",
+   "name": "BOWSR",
+   "version": "2022.9.20",
+   "family_dir": "bowsr",
+   "added": "2022-11-17",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP Graphs"
+   ],
+   "params": 167761.0,
+   "targets": "E",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/2104.10242",
+   "repo": "https://github.com/materialsvirtuallab/maml",
+   "checkpoint_url": "https://github.com/materialsvirtuallab/maml/raw/43619d4fb/maml/apps/bowsr/model/model_files/megnet/formation_energy.hdf5",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.423,
+     "DAF": 1.964,
+     "Precision": 0.3,
+     "Recall": 0.718,
+     "Accuracy": 0.697,
+     "MAE": 0.118,
+     "RMSE": 0.167,
+     "R2": 0.151
+    },
+    "discovery_full": {
+     "F1": 0.437,
+     "DAF": 1.836,
+     "Precision": 0.315,
+     "Recall": 0.711,
+     "Accuracy": 0.685,
+     "MAE": 0.114,
+     "RMSE": 0.164,
+     "R2": 0.142
+    },
+    "rmsd": 0.195,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "voronoi-rf",
+   "name": "Voronoi RF",
+   "version": "v1.1.2",
+   "family_dir": "voronoi_rf",
+   "added": "2022-11-26",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 26243464.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://doi.org/10.1103/PhysRevB.96.024104",
+   "repo": "https://github.com/janosh/matbench-discovery",
+   "checkpoint_url": "https://api.wandb.ai/artifactsV2/default/janosh/matbench-discovery/voronoi_rf_model_IS2RE/QXJ0aWZhY3Q6MTYwNjgyOTk3NA%3D%3D/fb0cf7ce8454e5fbe1bcd49d42c0e49b/voronoi_rf_model.joblib",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.333,
+     "DAF": 1.579,
+     "Precision": 0.241,
+     "Recall": 0.535,
+     "Accuracy": 0.668,
+     "MAE": 0.148,
+     "RMSE": 0.212,
+     "R2": -0.329
+    },
+    "discovery_full": {
+     "F1": 0.344,
+     "DAF": 1.509,
+     "Precision": 0.259,
+     "Recall": 0.511,
+     "Accuracy": 0.665,
+     "MAE": 0.141,
+     "RMSE": 0.206,
+     "R2": -0.316
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "wrenformer",
+   "name": "Wrenformer",
+   "version": "v0.1.0",
+   "family_dir": "wrenformer",
+   "added": "2022-11-26",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 5166658.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2106.11132",
+   "repo": "https://github.com/CompRhys/aviary",
+   "checkpoint_url": "https://api.wandb.ai/files/janosh/matbench-discovery/2kozbp4q/checkpoint.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.466,
+     "DAF": 2.256,
+     "Precision": 0.345,
+     "Recall": 0.719,
+     "Accuracy": 0.745,
+     "MAE": 0.11,
+     "RMSE": 0.186,
+     "R2": -0.018
+    },
+    "discovery_full": {
+     "F1": 0.479,
+     "DAF": 2.13,
+     "Precision": 0.365,
+     "Recall": 0.693,
+     "Accuracy": 0.741,
+     "MAE": 0.105,
+     "RMSE": 0.182,
+     "R2": -0.02
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "cgcnn",
+   "name": "CGCNN",
+   "version": "v0.1.0",
+   "family_dir": "cgcnn",
+   "added": "2022-12-28",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 128450.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/1710.10324",
+   "repo": "https://github.com/CompRhys/aviary",
+   "checkpoint_url": "https://api.wandb.ai/files/janosh/matbench-discovery/cvrqqjf1/checkpoint.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.507,
+     "DAF": 2.855,
+     "Precision": 0.436,
+     "Recall": 0.605,
+     "Accuracy": 0.818,
+     "MAE": 0.138,
+     "RMSE": 0.233,
+     "R2": -0.603
+    },
+    "discovery_full": {
+     "F1": 0.51,
+     "DAF": 2.631,
+     "Precision": 0.451,
+     "Recall": 0.587,
+     "Accuracy": 0.807,
+     "MAE": 0.135,
+     "RMSE": 0.229,
+     "R2": -0.624
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "cgcnn-p",
+   "name": "CGCNN+P",
+   "version": "v0.1.0",
+   "family_dir": "cgcnn",
+   "added": "2023-02-03",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 128450.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2202.13947",
+   "repo": "https://github.com/JasonGibsonUfl/Augmented_CGCNN",
+   "checkpoint_url": "https://api.wandb.ai/files/janosh/matbench-discovery/tx6cepg6/checkpoint.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.5,
+     "DAF": 2.563,
+     "Precision": 0.392,
+     "Recall": 0.693,
+     "Accuracy": 0.786,
+     "MAE": 0.113,
+     "RMSE": 0.182,
+     "R2": 0.019
+    },
+    "discovery_full": {
+     "F1": 0.51,
+     "DAF": 2.398,
+     "Precision": 0.411,
+     "Recall": 0.67,
+     "Accuracy": 0.779,
+     "MAE": 0.108,
+     "RMSE": 0.178,
+     "R2": 0.027
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "chgnet-0.3.0",
+   "name": "CHGNet",
+   "version": "v0.3.0",
+   "family_dir": "chgnet",
+   "added": "2023-03-03",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 412525.0,
+   "targets": "EFS_GM",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/2302.14231",
+   "repo": "https://github.com/CederGroupHub/chgnet",
+   "checkpoint_url": "https://github.com/CederGroupHub/chgnet/raw/refs/heads/main/chgnet/pretrained/0.3.0/chgnet_0.3.0_e29f68s314m37.pth.tar",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.613,
+     "DAF": 3.361,
+     "Precision": 0.514,
+     "Recall": 0.758,
+     "Accuracy": 0.851,
+     "MAE": 0.063,
+     "RMSE": 0.103,
+     "R2": 0.689
+    },
+    "discovery_full": {
+     "F1": 0.612,
+     "DAF": 3.038,
+     "Precision": 0.521,
+     "Recall": 0.74,
+     "Accuracy": 0.839,
+     "MAE": 0.061,
+     "RMSE": 0.1,
+     "R2": 0.69
+    },
+    "rmsd": 0.0949,
+    "kappa_srme": 1.7167
+   }
+  },
+  {
+   "key": "alignn",
+   "name": "ALIGNN",
+   "version": "2023.01.10",
+   "family_dir": "alignn",
+   "added": "2023-06-02",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 4026753.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2106.01829",
+   "repo": "https://github.com/usnistgov/alignn",
+   "checkpoint_url": "https://figshare.com/files/40344436",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.567,
+     "DAF": 3.206,
+     "Precision": 0.49,
+     "Recall": 0.672,
+     "Accuracy": 0.841,
+     "MAE": 0.093,
+     "RMSE": 0.154,
+     "R2": 0.297
+    },
+    "discovery_full": {
+     "F1": 0.565,
+     "DAF": 2.921,
+     "Precision": 0.501,
+     "Recall": 0.649,
+     "Accuracy": 0.829,
+     "MAE": 0.092,
+     "RMSE": 0.154,
+     "R2": 0.274
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "mace-mp-0",
+   "name": "MACE-MP-0",
+   "version": "v0.3.5",
+   "family_dir": "mace",
+   "added": "2023-07-14",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 4688656.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2401.00096",
+   "repo": "https://github.com/ACEsuit/mace",
+   "checkpoint_url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mp_0/2023-12-03-mace-128-L1_epoch-199.model",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.669,
+     "DAF": 3.777,
+     "Precision": 0.577,
+     "Recall": 0.796,
+     "Accuracy": 0.878,
+     "MAE": 0.057,
+     "RMSE": 0.101,
+     "R2": 0.697
+    },
+    "discovery_full": {
+     "F1": 0.668,
+     "DAF": 3.4,
+     "Precision": 0.583,
+     "Recall": 0.781,
+     "Accuracy": 0.867,
+     "MAE": 0.055,
+     "RMSE": 0.099,
+     "R2": 0.698
+    },
+    "rmsd": 0.0915,
+    "kappa_srme": 0.6823
+   }
+  },
+  {
+   "key": "gnome",
+   "name": "NequIP-GNoME",
+   "version": null,
+   "family_dir": "gnome",
+   "added": "2024-02-03",
+   "openness": "OSCD",
+   "training_sets": [
+    "GNoME"
+   ],
+   "params": 16240000.0,
+   "targets": "EF_G",
+   "licence_code": "Apache-2.0",
+   "licence_checkpoint": "unreleased",
+   "paper": "https://nature.com/articles/s41586-023-06735-9",
+   "repo": "https://github.com/google-deepmind/materials_discovery",
+   "checkpoint_url": null,
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.829,
+     "DAF": 5.523,
+     "Precision": 0.844,
+     "Recall": 0.814,
+     "Accuracy": 0.948,
+     "MAE": 0.035,
+     "RMSE": 0.085,
+     "R2": 0.785
+    },
+    "discovery_full": {
+     "F1": 0.81,
+     "DAF": 4.81,
+     "Precision": 0.825,
+     "Recall": 0.796,
+     "Accuracy": 0.936,
+     "MAE": 0.034,
+     "RMSE": 0.083,
+     "R2": 0.786
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "sevennet-0",
+   "name": "SevenNet-0",
+   "version": "v0.9.1_w_cutoff",
+   "family_dir": "sevennet",
+   "added": "2024-07-13",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 842440.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "GPL-3.0",
+   "paper": "https://arxiv.org/abs/2402.03789",
+   "repo": "https://github.com/MDIL-SNU/SevenNet",
+   "checkpoint_url": "https://raw.githubusercontent.com/MDIL-SNU/SevenNet/dff008ac9c53d3/sevenn/pretrained_potentials/SevenNet_0__11Jul2024/checkpoint_sevennet_0.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.724,
+     "DAF": 4.252,
+     "Precision": 0.65,
+     "Recall": 0.818,
+     "Accuracy": 0.904,
+     "MAE": 0.048,
+     "RMSE": 0.092,
+     "R2": 0.75
+    },
+    "discovery_full": {
+     "F1": 0.719,
+     "DAF": 3.804,
+     "Precision": 0.653,
+     "Recall": 0.8,
+     "Accuracy": 0.893,
+     "MAE": 0.046,
+     "RMSE": 0.09,
+     "R2": 0.75
+    },
+    "rmsd": 0.0193,
+    "kappa_srme": 0.762
+   }
+  },
+  {
+   "key": "orb-v2",
+   "name": "ORB v2 MPA",
+   "version": "v2",
+   "family_dir": "orb",
+   "added": "2024-10-11",
+   "openness": "OSCD",
+   "training_sets": [
+    "MPtrj",
+    "Alex"
+   ],
+   "params": 25161727.0,
+   "targets": "EFS_D",
+   "licence_code": "Apache-2.0",
+   "licence_checkpoint": "Apache-2.0",
+   "paper": "https://arxiv.org/abs/2410.22570",
+   "repo": "https://github.com/orbital-materials/orb-models",
+   "checkpoint_url": "https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/forcefields/orb-v2-20241011.ckpt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.88,
+     "DAF": 6.041,
+     "Precision": 0.924,
+     "Recall": 0.841,
+     "Accuracy": 0.965,
+     "MAE": 0.028,
+     "RMSE": 0.077,
+     "R2": 0.824
+    },
+    "discovery_full": {
+     "F1": 0.858,
+     "DAF": 5.281,
+     "Precision": 0.906,
+     "Recall": 0.815,
+     "Accuracy": 0.954,
+     "MAE": 0.028,
+     "RMSE": 0.078,
+     "R2": 0.814
+    },
+    "rmsd": 0.0973,
+    "kappa_srme": 1.7338
+   }
+  },
+  {
+   "key": "orb-v2-mptrj",
+   "name": "ORB v2 MPtrj",
+   "version": "v2",
+   "family_dir": "orb",
+   "added": "2024-10-14",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 25161727.0,
+   "targets": "EFS_D",
+   "licence_code": "Apache-2.0",
+   "licence_checkpoint": "Apache-2.0",
+   "paper": "https://arxiv.org/abs/2410.22570",
+   "repo": "https://github.com/orbital-materials/orb-models",
+   "checkpoint_url": "https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/forcefields/orb-mptraj-only-v2-20241014.ckpt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.765,
+     "DAF": 4.702,
+     "Precision": 0.719,
+     "Recall": 0.817,
+     "Accuracy": 0.922,
+     "MAE": 0.045,
+     "RMSE": 0.091,
+     "R2": 0.756
+    },
+    "discovery_full": {
+     "F1": 0.755,
+     "DAF": 4.188,
+     "Precision": 0.719,
+     "Recall": 0.795,
+     "Accuracy": 0.911,
+     "MAE": 0.043,
+     "RMSE": 0.09,
+     "R2": 0.752
+    },
+    "rmsd": 0.1007,
+    "kappa_srme": 1.7255
+   }
+  },
+  {
+   "key": "eqv2-m-omat-salex-mp",
+   "name": "eqV2 M",
+   "version": "v2024.10.18",
+   "family_dir": "eqv2",
+   "added": "2024-10-18",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24"
+   ],
+   "params": 86589068.0,
+   "targets": "EFS_D",
+   "licence_code": "MIT",
+   "licence_checkpoint": "Meta Research",
+   "paper": "https://arxiv.org/abs/2410.12771",
+   "repo": "https://github.com/FAIR-Chem/fairchem",
+   "checkpoint_url": "https://huggingface.co/fairchem/OMAT24/resolve/main/eqV2_86M_omat_mp_salex.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.917,
+     "DAF": 6.047,
+     "Precision": 0.924,
+     "Recall": 0.91,
+     "Accuracy": 0.975,
+     "MAE": 0.02,
+     "RMSE": 0.072,
+     "R2": 0.848
+    },
+    "discovery_full": {
+     "F1": 0.896,
+     "DAF": 5.243,
+     "Precision": 0.9,
+     "Recall": 0.893,
+     "Accuracy": 0.965,
+     "MAE": 0.02,
+     "RMSE": 0.071,
+     "R2": 0.842
+    },
+    "rmsd": 0.0691,
+    "kappa_srme": 1.7707
+   }
+  },
+  {
+   "key": "eqv2-s-dens-mp",
+   "name": "eqV2 S DeNS",
+   "version": "v2024.10.18",
+   "family_dir": "eqv2",
+   "added": "2024-10-18",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 31207434.0,
+   "targets": "EFS_D",
+   "licence_code": "MIT",
+   "licence_checkpoint": "Meta Research",
+   "paper": "https://arxiv.org/abs/2410.12771",
+   "repo": "https://github.com/FAIR-Chem/fairchem",
+   "checkpoint_url": "https://huggingface.co/fairchem/OMAT24/resolve/main/eqV2_dens_31M_mp.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.815,
+     "DAF": 5.042,
+     "Precision": 0.771,
+     "Recall": 0.864,
+     "Accuracy": 0.939,
+     "MAE": 0.036,
+     "RMSE": 0.085,
+     "R2": 0.788
+    },
+    "discovery_full": {
+     "F1": 0.798,
+     "DAF": 4.362,
+     "Precision": 0.748,
+     "Recall": 0.855,
+     "Accuracy": 0.926,
+     "MAE": 0.035,
+     "RMSE": 0.084,
+     "R2": 0.785
+    },
+    "rmsd": 0.0757,
+    "kappa_srme": 1.6763
+   }
+  },
+  {
+   "key": "grace-2l-mptrj",
+   "name": "GRACE-2L-MPtrj",
+   "version": "0.4.4",
+   "family_dir": "grace",
+   "added": "2024-11-21",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 15346704.0,
+   "targets": "EFS_G",
+   "licence_code": "ASL",
+   "licence_checkpoint": "ASL",
+   "paper": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.14.021036",
+   "repo": "https://github.com/ICAMS/grace-tensorpotential",
+   "checkpoint_url": "https://ruhr-uni-bochum.sciebo.de/s/42Ivgi3eaLCynwC",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.691,
+     "DAF": 4.163,
+     "Precision": 0.636,
+     "Recall": 0.757,
+     "Accuracy": 0.895,
+     "MAE": 0.052,
+     "RMSE": 0.094,
+     "R2": 0.741
+    },
+    "discovery_full": {
+     "F1": 0.687,
+     "DAF": 3.714,
+     "Precision": 0.637,
+     "Recall": 0.746,
+     "Accuracy": 0.884,
+     "MAE": 0.05,
+     "RMSE": 0.092,
+     "R2": 0.74
+    },
+    "rmsd": 0.0897,
+    "kappa_srme": 0.5255
+   }
+  },
+  {
+   "key": "mace-mpa-0",
+   "name": "MACE-MPA-0",
+   "version": "v0.3.9",
+   "family_dir": "mace",
+   "added": "2024-12-09",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "sAlex"
+   ],
+   "params": 9063204.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2401.00096",
+   "repo": "https://github.com/ACEsuit/mace",
+   "checkpoint_url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mpa_0/mace-mpa-0-medium.model",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.852,
+     "DAF": 5.582,
+     "Precision": 0.853,
+     "Recall": 0.851,
+     "Accuracy": 0.954,
+     "MAE": 0.028,
+     "RMSE": 0.073,
+     "R2": 0.842
+    },
+    "discovery_full": {
+     "F1": 0.836,
+     "DAF": 4.869,
+     "Precision": 0.836,
+     "Recall": 0.836,
+     "Accuracy": 0.944,
+     "MAE": 0.028,
+     "RMSE": 0.073,
+     "R2": 0.837
+    },
+    "rmsd": 0.0731,
+    "kappa_srme": 0.4123
+   }
+  },
+  {
+   "key": "sevennet-l3i5",
+   "name": "SevenNet-l3i5",
+   "version": "v0.10.3",
+   "family_dir": "sevennet",
+   "added": "2024-12-10",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 1171144.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "GPL-3.0",
+   "paper": "https://arxiv.org/abs/2402.03789",
+   "repo": "https://github.com/MDIL-SNU/SevenNet",
+   "checkpoint_url": "https://raw.githubusercontent.com/MDIL-SNU/SevenNet/dff008ac9c5/sevenn/pretrained_potentials/SevenNet_l3i5/checkpoint_l3i5.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.76,
+     "DAF": 4.629,
+     "Precision": 0.708,
+     "Recall": 0.821,
+     "Accuracy": 0.92,
+     "MAE": 0.044,
+     "RMSE": 0.087,
+     "R2": 0.776
+    },
+    "discovery_full": {
+     "F1": 0.751,
+     "DAF": 4.112,
+     "Precision": 0.706,
+     "Recall": 0.803,
+     "Accuracy": 0.909,
+     "MAE": 0.042,
+     "RMSE": 0.086,
+     "R2": 0.773
+    },
+    "rmsd": 0.0847,
+    "kappa_srme": 0.5496
+   }
+  },
+  {
+   "key": "mattersim-v1-5m",
+   "name": "MatterSim v1 5M",
+   "version": "v1.0.0",
+   "family_dir": "mattersim",
+   "added": "2024-12-16",
+   "openness": "OSCD",
+   "training_sets": [
+    "MatterSim"
+   ],
+   "params": 4549142.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2405.04967",
+   "repo": "https://github.com/microsoft/mattersim",
+   "checkpoint_url": "https://github.com/microsoft/mattersim/raw/refs/heads/main/pretrained_models/mattersim-v1.0.0-5M.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.862,
+     "DAF": 5.852,
+     "Precision": 0.895,
+     "Recall": 0.831,
+     "Accuracy": 0.959,
+     "MAE": 0.024,
+     "RMSE": 0.068,
+     "R2": 0.863
+    },
+    "discovery_full": {
+     "F1": 0.838,
+     "DAF": 5.123,
+     "Precision": 0.879,
+     "Recall": 0.801,
+     "Accuracy": 0.947,
+     "MAE": 0.024,
+     "RMSE": 0.069,
+     "R2": 0.854
+    },
+    "rmsd": 0.0733,
+    "kappa_srme": 0.5745
+   }
+  },
+  {
+   "key": "alchembert",
+   "name": "AlchemBERT",
+   "version": "v2024.12.25",
+   "family_dir": "alchembert",
+   "added": "2024-12-25",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 110000000.0,
+   "targets": "E",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://chemrxiv.org/engage/chemrxiv/article-details/67540a28085116a133a62b85",
+   "repo": "https://gitee.com/liuxiaotong15/alchemBERT",
+   "checkpoint_url": "https://figshare.com/files/53298683",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.421,
+     "DAF": 2.001,
+     "Precision": 0.306,
+     "Recall": 0.673,
+     "Accuracy": 0.713,
+     "MAE": 0.117,
+     "RMSE": 0.175,
+     "R2": 0.096
+    },
+    "discovery_full": {
+     "F1": 0.436,
+     "DAF": 1.9,
+     "Precision": 0.326,
+     "Recall": 0.656,
+     "Accuracy": 0.708,
+     "MAE": 0.111,
+     "RMSE": 0.171,
+     "R2": 0.102
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "dpa3-v1-mptrj",
+   "name": "DPA3-v1-MPtrj",
+   "version": "v0.1",
+   "family_dir": "deepmd",
+   "added": "2025-01-10",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 3374647.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit/tree/dpa3-alpha",
+   "checkpoint_url": "https://bohrium-api.dp.tech/ds-dl/matbench-submit-DPA3mptraj-ictz-v2.zip",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.765,
+     "DAF": 4.654,
+     "Precision": 0.711,
+     "Recall": 0.828,
+     "Accuracy": 0.921,
+     "MAE": 0.042,
+     "RMSE": 0.083,
+     "R2": 0.798
+    },
+    "discovery_full": {
+     "F1": 0.757,
+     "DAF": 4.13,
+     "Precision": 0.709,
+     "Recall": 0.812,
+     "Accuracy": 0.911,
+     "MAE": 0.04,
+     "RMSE": 0.082,
+     "R2": 0.793
+    },
+    "rmsd": 0.0172,
+    "kappa_srme": 0.9647
+   }
+  },
+  {
+   "key": "dpa3-v1-openlam",
+   "name": "DPA3-v1-OpenLAM",
+   "version": "v0.1",
+   "family_dir": "deepmd",
+   "added": "2025-01-10",
+   "openness": "OSCD",
+   "training_sets": [
+    "OpenLAM"
+   ],
+   "params": 8184608.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit/tree/dpa3-alpha",
+   "checkpoint_url": "https://bohrium-api.dp.tech/ds-dl/dpa3openlam-74ng-v3.zip",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.883,
+     "DAF": 5.754,
+     "Precision": 0.88,
+     "Recall": 0.885,
+     "Accuracy": 0.963,
+     "MAE": 0.023,
+     "RMSE": 0.067,
+     "R2": 0.869
+    },
+    "discovery_full": {
+     "F1": 0.862,
+     "DAF": 5.013,
+     "Precision": 0.86,
+     "Recall": 0.865,
+     "Accuracy": 0.953,
+     "MAE": 0.023,
+     "RMSE": 0.067,
+     "R2": 0.863
+    },
+    "rmsd": 0.0128,
+    "kappa_srme": 0.7407
+   }
+  },
+  {
+   "key": "grace-1l-oam",
+   "name": "GRACE-1L-OAM",
+   "version": "0.4.5",
+   "family_dir": "grace",
+   "added": "2025-02-06",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 3447148.0,
+   "targets": "EFS_G",
+   "licence_code": "ASL",
+   "licence_checkpoint": "ASL",
+   "paper": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.14.021036",
+   "repo": "https://github.com/ICAMS/grace-tensorpotential",
+   "checkpoint_url": "https://ruhr-uni-bochum.sciebo.de/s/gFAv8pX2DJbk1kb",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.824,
+     "DAF": 5.255,
+     "Precision": 0.803,
+     "Recall": 0.846,
+     "Accuracy": 0.944,
+     "MAE": 0.031,
+     "RMSE": 0.073,
+     "R2": 0.842
+    },
+    "discovery_full": {
+     "F1": 0.808,
+     "DAF": 4.617,
+     "Precision": 0.792,
+     "Recall": 0.824,
+     "Accuracy": 0.933,
+     "MAE": 0.03,
+     "RMSE": 0.073,
+     "R2": 0.836
+    },
+    "rmsd": 0.0721,
+    "kappa_srme": 0.5166
+   }
+  },
+  {
+   "key": "grace-2l-oam",
+   "name": "GRACE-2L-OAM",
+   "version": "0.4.5",
+   "family_dir": "grace",
+   "added": "2025-02-06",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 12597516.0,
+   "targets": "EFS_G",
+   "licence_code": "ASL",
+   "licence_checkpoint": "ASL",
+   "paper": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.14.021036",
+   "repo": "https://github.com/ICAMS/grace-tensorpotential",
+   "checkpoint_url": "https://ruhr-uni-bochum.sciebo.de/s/4zVTfzxornWfS4T",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.88,
+     "DAF": 5.774,
+     "Precision": 0.883,
+     "Recall": 0.878,
+     "Accuracy": 0.963,
+     "MAE": 0.023,
+     "RMSE": 0.068,
+     "R2": 0.862
+    },
+    "discovery_full": {
+     "F1": 0.861,
+     "DAF": 5.046,
+     "Precision": 0.866,
+     "Recall": 0.856,
+     "Accuracy": 0.953,
+     "MAE": 0.023,
+     "RMSE": 0.068,
+     "R2": 0.856
+    },
+    "rmsd": 0.0666,
+    "kappa_srme": 0.2943
+   }
+  },
+  {
+   "key": "alphanet-v1-mptrj",
+   "name": "AlphaNet-v1-MPtrj",
+   "version": "v1",
+   "family_dir": "alphanet",
+   "added": "2025-03-05",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 16234332.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2501.07155",
+   "repo": "https://github.com/zmyybc/AlphaNet",
+   "checkpoint_url": "https://figshare.com/files/52870784",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.799,
+     "DAF": 4.863,
+     "Precision": 0.743,
+     "Recall": 0.864,
+     "Accuracy": 0.933,
+     "MAE": 0.041,
+     "RMSE": 0.093,
+     "R2": 0.745
+    },
+    "discovery_full": {
+     "F1": 0.789,
+     "DAF": 4.312,
+     "Precision": 0.74,
+     "Recall": 0.846,
+     "Accuracy": 0.923,
+     "MAE": 0.04,
+     "RMSE": 0.091,
+     "R2": 0.747
+    },
+    "rmsd": 0.1067,
+    "kappa_srme": 1.3046
+   }
+  },
+  {
+   "key": "matris-v050-mptrj",
+   "name": "MatRIS v0.5.0 MPtrj",
+   "version": "v0.5.0",
+   "family_dir": "matris",
+   "added": "2025-03-13",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 5825620.0,
+   "targets": "EFS_GM",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/2603.02002",
+   "repo": "https://github.com/HPC-AI-Team/MatRIS",
+   "checkpoint_url": "https://figshare.com/files/59143058",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.809,
+     "DAF": 5.049,
+     "Precision": 0.772,
+     "Recall": 0.85,
+     "Accuracy": 0.938,
+     "MAE": 0.037,
+     "RMSE": 0.082,
+     "R2": 0.803
+    },
+    "discovery_full": {
+     "F1": 0.798,
+     "DAF": 4.456,
+     "Precision": 0.765,
+     "Recall": 0.834,
+     "Accuracy": 0.927,
+     "MAE": 0.035,
+     "RMSE": 0.08,
+     "R2": 0.8
+    },
+    "rmsd": 0.0773,
+    "kappa_srme": 0.8651
+   }
+  },
+  {
+   "key": "sevennet-mf-ompa",
+   "name": "SevenNet-MF-ompa",
+   "version": "v0.11.0",
+   "family_dir": "sevennet",
+   "added": "2025-03-13",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 25734966.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "GPL-3.0",
+   "paper": "https://arxiv.org/abs/2409.07947",
+   "repo": "https://github.com/MDIL-SNU/SevenNet",
+   "checkpoint_url": "https://figshare.com/files/53029859",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.901,
+     "DAF": 5.825,
+     "Precision": 0.89,
+     "Recall": 0.911,
+     "Accuracy": 0.969,
+     "MAE": 0.021,
+     "RMSE": 0.067,
+     "R2": 0.867
+    },
+    "discovery_full": {
+     "F1": 0.884,
+     "DAF": 5.082,
+     "Precision": 0.872,
+     "Recall": 0.895,
+     "Accuracy": 0.96,
+     "MAE": 0.021,
+     "RMSE": 0.067,
+     "R2": 0.861
+    },
+    "rmsd": 0.0639,
+    "kappa_srme": 0.3171
+   }
+  },
+  {
+   "key": "dpa3-v2-mptrj",
+   "name": "DPA3-v2-MPtrj",
+   "version": "v0.2",
+   "family_dir": "deepmd",
+   "added": "2025-03-14",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 4923959.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/52989056",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.786,
+     "DAF": 4.822,
+     "Precision": 0.737,
+     "Recall": 0.841,
+     "Accuracy": 0.929,
+     "MAE": 0.039,
+     "RMSE": 0.081,
+     "R2": 0.804
+    },
+    "discovery_full": {
+     "F1": 0.774,
+     "DAF": 4.249,
+     "Precision": 0.729,
+     "Recall": 0.825,
+     "Accuracy": 0.917,
+     "MAE": 0.038,
+     "RMSE": 0.08,
+     "R2": 0.801
+    },
+    "rmsd": 0.0823,
+    "kappa_srme": 0.9595
+   }
+  },
+  {
+   "key": "dpa3-v2-openlam",
+   "name": "DPA3-v2-OpenLAM",
+   "version": "v0.2",
+   "family_dir": "deepmd",
+   "added": "2025-03-14",
+   "openness": "OSCD",
+   "training_sets": [
+    "OpenLAM"
+   ],
+   "params": 7021990.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/52989059",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.89,
+     "DAF": 5.747,
+     "Precision": 0.879,
+     "Recall": 0.902,
+     "Accuracy": 0.966,
+     "MAE": 0.022,
+     "RMSE": 0.067,
+     "R2": 0.869
+    },
+    "discovery_full": {
+     "F1": 0.869,
+     "DAF": 4.977,
+     "Precision": 0.854,
+     "Recall": 0.885,
+     "Accuracy": 0.954,
+     "MAE": 0.022,
+     "RMSE": 0.067,
+     "R2": 0.863
+    },
+    "rmsd": 0.0679,
+    "kappa_srme": 0.688
+   }
+  },
+  {
+   "key": "esen-30m-mp",
+   "name": "eSEN-30M-MP",
+   "version": "v2025.03.17",
+   "family_dir": "esen",
+   "added": "2025-03-17",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 30085121.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "Meta Research",
+   "paper": "https://arxiv.org/abs/2502.12147",
+   "repo": "https://github.com/FAIR-Chem/fairchem",
+   "checkpoint_url": "https://huggingface.co/fairchem/OMAT24/resolve/main/esen_30m_mptrj.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.831,
+     "DAF": 5.26,
+     "Precision": 0.804,
+     "Recall": 0.861,
+     "Accuracy": 0.946,
+     "MAE": 0.033,
+     "RMSE": 0.078,
+     "R2": 0.822
+    },
+    "discovery_full": {
+     "F1": 0.819,
+     "DAF": 4.616,
+     "Precision": 0.792,
+     "Recall": 0.849,
+     "Accuracy": 0.936,
+     "MAE": 0.032,
+     "RMSE": 0.077,
+     "R2": 0.818
+    },
+    "rmsd": 0.0752,
+    "kappa_srme": 0.3398
+   }
+  },
+  {
+   "key": "esen-30m-oam",
+   "name": "eSEN-30M-OAM",
+   "version": "fairchem_core-1.10.0",
+   "family_dir": "esen",
+   "added": "2025-03-17",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 30161153.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "Meta Research",
+   "paper": "https://arxiv.org/abs/2502.12147",
+   "repo": "https://github.com/FAIR-Chem/fairchem",
+   "checkpoint_url": "https://huggingface.co/fairchem/OMAT24/resolve/main/esen_30m_oam.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.925,
+     "DAF": 6.069,
+     "Precision": 0.928,
+     "Recall": 0.923,
+     "Accuracy": 0.977,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.866
+    },
+    "discovery_full": {
+     "F1": 0.902,
+     "DAF": 5.281,
+     "Precision": 0.906,
+     "Recall": 0.899,
+     "Accuracy": 0.967,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.86
+    },
+    "rmsd": 0.0608,
+    "kappa_srme": 0.1704
+   }
+  },
+  {
+   "key": "orb-v3",
+   "name": "ORB v3",
+   "version": "v0.5.5",
+   "family_dir": "orb",
+   "added": "2025-04-05",
+   "openness": "OSCD",
+   "training_sets": [
+    "MPtrj",
+    "Alex",
+    "OMat24"
+   ],
+   "params": 25510582.0,
+   "targets": "EFS_G",
+   "licence_code": "Apache-2.0",
+   "licence_checkpoint": "Apache-2.0",
+   "paper": "https://arxiv.org/abs/2504.06231",
+   "repo": "https://github.com/orbital-materials/orb-models",
+   "checkpoint_url": "https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/forcefields/orb-v3/orb-v3-conservative-inf-mpa-20250404.ckpt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.905,
+     "DAF": 5.912,
+     "Precision": 0.904,
+     "Recall": 0.907,
+     "Accuracy": 0.971,
+     "MAE": 0.024,
+     "RMSE": 0.078,
+     "R2": 0.821
+    },
+    "discovery_full": {
+     "F1": 0.887,
+     "DAF": 5.159,
+     "Precision": 0.885,
+     "Recall": 0.888,
+     "Accuracy": 0.961,
+     "MAE": 0.023,
+     "RMSE": 0.076,
+     "R2": 0.82
+    },
+    "rmsd": 0.075,
+    "kappa_srme": 0.2102
+   }
+  },
+  {
+   "key": "alphanet-v1-oam",
+   "name": "AlphaNet-v1-OAM",
+   "version": "v1",
+   "family_dir": "alphanet",
+   "added": "2025-05-12",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 4653577.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "GPL-3.0",
+   "paper": "https://arxiv.org/abs/2501.07155",
+   "repo": "https://github.com/zmyybc/AlphaNet",
+   "checkpoint_url": "https://figshare.com/files/53851139",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.901,
+     "DAF": 5.747,
+     "Precision": 0.879,
+     "Recall": 0.924,
+     "Accuracy": 0.968,
+     "MAE": 0.024,
+     "RMSE": 0.076,
+     "R2": 0.831
+    },
+    "discovery_full": {
+     "F1": 0.883,
+     "DAF": 5.0,
+     "Precision": 0.858,
+     "Recall": 0.91,
+     "Accuracy": 0.959,
+     "MAE": 0.023,
+     "RMSE": 0.075,
+     "R2": 0.827
+    },
+    "rmsd": 0.0793,
+    "kappa_srme": 0.6435
+   }
+  },
+  {
+   "key": "eqnorm-mptrj",
+   "name": "Eqnorm MPtrj",
+   "version": "0.1.0",
+   "family_dir": "eqnorm",
+   "added": "2025-05-26",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 1310024.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": null,
+   "repo": "https://github.com/yzchen08/eqnorm",
+   "checkpoint_url": "https://figshare.com/files/55429685",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.786,
+     "DAF": 4.844,
+     "Precision": 0.741,
+     "Recall": 0.838,
+     "Accuracy": 0.929,
+     "MAE": 0.04,
+     "RMSE": 0.083,
+     "R2": 0.799
+    },
+    "discovery_full": {
+     "F1": 0.779,
+     "DAF": 4.296,
+     "Precision": 0.737,
+     "Recall": 0.825,
+     "Accuracy": 0.919,
+     "MAE": 0.038,
+     "RMSE": 0.081,
+     "R2": 0.796
+    },
+    "rmsd": 0.0837,
+    "kappa_srme": 0.4079
+   }
+  },
+  {
+   "key": "dpa-3.1-3m-ft",
+   "name": "DPA-3.1-3M-FT",
+   "version": "v0.3",
+   "family_dir": "deepmd",
+   "added": "2025-06-05",
+   "openness": "OSCD",
+   "training_sets": [
+    "OpenLAM"
+   ],
+   "params": 3268838.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/55141895",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.884,
+     "DAF": 5.667,
+     "Precision": 0.866,
+     "Recall": 0.903,
+     "Accuracy": 0.963,
+     "MAE": 0.023,
+     "RMSE": 0.067,
+     "R2": 0.869
+    },
+    "discovery_full": {
+     "F1": 0.864,
+     "DAF": 4.912,
+     "Precision": 0.843,
+     "Recall": 0.887,
+     "Accuracy": 0.952,
+     "MAE": 0.022,
+     "RMSE": 0.067,
+     "R2": 0.862
+    },
+    "rmsd": 0.0693,
+    "kappa_srme": 0.4695
+   }
+  },
+  {
+   "key": "dpa-3.1-mptrj",
+   "name": "DPA-3.1-MPtrj",
+   "version": "v0.3",
+   "family_dir": "deepmd",
+   "added": "2025-06-05",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 4810679.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "LGPL-3.0",
+   "paper": "https://arxiv.org/abs/2506.01686",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/55141124",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.803,
+     "DAF": 5.024,
+     "Precision": 0.768,
+     "Recall": 0.841,
+     "Accuracy": 0.936,
+     "MAE": 0.037,
+     "RMSE": 0.08,
+     "R2": 0.812
+    },
+    "discovery_full": {
+     "F1": 0.789,
+     "DAF": 4.419,
+     "Precision": 0.758,
+     "Recall": 0.822,
+     "Accuracy": 0.924,
+     "MAE": 0.036,
+     "RMSE": 0.079,
+     "R2": 0.809
+    },
+    "rmsd": 0.0801,
+    "kappa_srme": 0.6503
+   }
+  },
+  {
+   "key": "esnet",
+   "name": "ESNet",
+   "version": "2025.03.14",
+   "family_dir": "esnet",
+   "added": "2025-06-20",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 5429033.0,
+   "targets": "E",
+   "licence_code": "Apache-2.0",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://www.researchsquare.com/article/rs-5979703/v1",
+   "repo": "https://github.com/zzz-sl/ESNet",
+   "checkpoint_url": "https://figshare.com/files/55540055",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.572,
+     "DAF": 3.498,
+     "Precision": 0.535,
+     "Recall": 0.614,
+     "Accuracy": 0.857,
+     "MAE": 0.109,
+     "RMSE": 0.194,
+     "R2": -0.114
+    },
+    "discovery_full": {
+     "F1": 0.568,
+     "DAF": 3.151,
+     "Precision": 0.541,
+     "Recall": 0.597,
+     "Accuracy": 0.844,
+     "MAE": 0.107,
+     "RMSE": 0.193,
+     "R2": -0.148
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "equflash-29m-oam",
+   "name": "EquFlash",
+   "version": "v2025.06.23",
+   "family_dir": "equflash",
+   "added": "2025-06-23",
+   "openness": "CSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 28741188.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://proceedings.mlr.press/v267/lee25l.html",
+   "repo": "https://github.com/SamsungDS/GGNN",
+   "checkpoint_url": "https://figshare.com/ndownloader/files/65435004",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.919,
+     "DAF": 5.983,
+     "Precision": 0.915,
+     "Recall": 0.922,
+     "Accuracy": 0.975,
+     "MAE": 0.019,
+     "RMSE": 0.066,
+     "R2": 0.871
+    },
+    "discovery_full": {
+     "F1": 0.9,
+     "DAF": 5.214,
+     "Precision": 0.895,
+     "Recall": 0.906,
+     "Accuracy": 0.966,
+     "MAE": 0.019,
+     "RMSE": 0.066,
+     "R2": 0.864
+    },
+    "rmsd": 0.0602,
+    "kappa_srme": 0.1583
+   }
+  },
+  {
+   "key": "hienet",
+   "name": "HIENet",
+   "version": "v1.0.1",
+   "family_dir": "hienet",
+   "added": "2025-07-01",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 7510280.0,
+   "targets": "EFS_G",
+   "licence_code": "GPL-3.0",
+   "licence_checkpoint": "GPL-3.0",
+   "paper": "https://arxiv.org/pdf/2503.05771",
+   "repo": "https://github.com/divelab/AIRS/tree/main/OpenMat/HIENet",
+   "checkpoint_url": "https://raw.githubusercontent.com/divelab/AIRS/main/OpenMat/HIENet/checkpoints/HIENet-V3.pth",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.777,
+     "DAF": 4.932,
+     "Precision": 0.754,
+     "Recall": 0.801,
+     "Accuracy": 0.929,
+     "MAE": 0.041,
+     "RMSE": 0.084,
+     "R2": 0.793
+    },
+    "discovery_full": {
+     "F1": 0.766,
+     "DAF": 4.361,
+     "Precision": 0.748,
+     "Recall": 0.784,
+     "Accuracy": 0.918,
+     "MAE": 0.039,
+     "RMSE": 0.082,
+     "R2": 0.791
+    },
+    "rmsd": 0.0795,
+    "kappa_srme": 0.6423
+   }
+  },
+  {
+   "key": "nequix-mp-1",
+   "name": "Nequix MP",
+   "version": "0.1.0",
+   "family_dir": "nequix",
+   "added": "2025-08-17",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 707658.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2508.16067",
+   "repo": "https://github.com/atomicarchitects/nequix",
+   "checkpoint_url": "https://figshare.com/files/57245573",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.751,
+     "DAF": 4.455,
+     "Precision": 0.681,
+     "Recall": 0.836,
+     "Accuracy": 0.914,
+     "MAE": 0.044,
+     "RMSE": 0.086,
+     "R2": 0.782
+    },
+    "discovery_full": {
+     "F1": 0.744,
+     "DAF": 3.95,
+     "Precision": 0.678,
+     "Recall": 0.825,
+     "Accuracy": 0.903,
+     "MAE": 0.042,
+     "RMSE": 0.084,
+     "R2": 0.78
+    },
+    "rmsd": 0.0853,
+    "kappa_srme": 0.4461
+   }
+  },
+  {
+   "key": "allegro-mp-l-0.1",
+   "name": "Allegro-MP-L",
+   "version": "0.1",
+   "family_dir": "allegro",
+   "added": "2025-09-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 18700000.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2504.16068",
+   "repo": "https://github.com/mir-group/allegro",
+   "checkpoint_url": "https://www.nequip.net/models/mir-group/Allegro-MP-L:0.1",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.751,
+     "DAF": 4.516,
+     "Precision": 0.69,
+     "Recall": 0.823,
+     "Accuracy": 0.915,
+     "MAE": 0.044,
+     "RMSE": 0.087,
+     "R2": 0.778
+    },
+    "discovery_full": {
+     "F1": 0.742,
+     "DAF": 3.998,
+     "Precision": 0.686,
+     "Recall": 0.809,
+     "Accuracy": 0.904,
+     "MAE": 0.042,
+     "RMSE": 0.085,
+     "R2": 0.775
+    },
+    "rmsd": 0.0816,
+    "kappa_srme": 0.5039
+   }
+  },
+  {
+   "key": "allegro-oam-l-0.1",
+   "name": "Allegro-OAM-L",
+   "version": "0.1",
+   "family_dir": "allegro",
+   "added": "2025-09-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 9700000.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2504.16068",
+   "repo": "https://github.com/mir-group/allegro",
+   "checkpoint_url": "https://www.nequip.net/models/mir-group/Allegro-OAM-L:0.1",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.895,
+     "DAF": 5.674,
+     "Precision": 0.867,
+     "Recall": 0.923,
+     "Accuracy": 0.966,
+     "MAE": 0.022,
+     "RMSE": 0.067,
+     "R2": 0.868
+    },
+    "discovery_full": {
+     "F1": 0.873,
+     "DAF": 4.876,
+     "Precision": 0.837,
+     "Recall": 0.912,
+     "Accuracy": 0.954,
+     "MAE": 0.021,
+     "RMSE": 0.067,
+     "R2": 0.861
+    },
+    "rmsd": 0.0651,
+    "kappa_srme": 0.3186
+   }
+  },
+  {
+   "key": "nequip-mp-l-0.1",
+   "name": "Nequip-MP-L",
+   "version": "0.1",
+   "family_dir": "nequip",
+   "added": "2025-09-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 9600000.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2504.16068",
+   "repo": "https://github.com/mir-group/nequip",
+   "checkpoint_url": "https://www.nequip.net/models/mir-group/NequIP-MP-L:0.1",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.761,
+     "DAF": 4.704,
+     "Precision": 0.719,
+     "Recall": 0.809,
+     "Accuracy": 0.921,
+     "MAE": 0.043,
+     "RMSE": 0.084,
+     "R2": 0.791
+    },
+    "discovery_full": {
+     "F1": 0.752,
+     "DAF": 4.136,
+     "Precision": 0.71,
+     "Recall": 0.8,
+     "Accuracy": 0.909,
+     "MAE": 0.041,
+     "RMSE": 0.083,
+     "R2": 0.787
+    },
+    "rmsd": 0.0856,
+    "kappa_srme": 0.4659
+   }
+  },
+  {
+   "key": "nequip-oam-l-0.1",
+   "name": "Nequip-OAM-L",
+   "version": "0.1",
+   "family_dir": "nequip",
+   "added": "2025-09-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 9600000.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2504.16068",
+   "repo": "https://github.com/mir-group/nequip",
+   "checkpoint_url": "https://www.nequip.net/models/mir-group/NequIP-OAM-L:0.1",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.893,
+     "DAF": 5.823,
+     "Precision": 0.89,
+     "Recall": 0.895,
+     "Accuracy": 0.967,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.865
+    },
+    "discovery_full": {
+     "F1": 0.87,
+     "DAF": 5.06,
+     "Precision": 0.868,
+     "Recall": 0.872,
+     "Accuracy": 0.955,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.858
+    },
+    "rmsd": 0.0647,
+    "kappa_srme": 0.1657
+   }
+  },
+  {
+   "key": "grace-2l-oam-l",
+   "name": "GRACE-2L-OAM-L",
+   "version": "0.5.2",
+   "family_dir": "grace",
+   "added": "2025-09-09",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 26394284.0,
+   "targets": "EFS_G",
+   "licence_code": "ASL",
+   "licence_checkpoint": "ASL",
+   "paper": "https://arxiv.org/abs/2508.17936",
+   "repo": "https://github.com/ICAMS/grace-tensorpotential",
+   "checkpoint_url": "https://ruhr-uni-bochum.sciebo.de/s/s6YrAAk9aTjQBd8",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.883,
+     "DAF": 5.84,
+     "Precision": 0.893,
+     "Recall": 0.874,
+     "Accuracy": 0.964,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.862
+    },
+    "discovery_full": {
+     "F1": 0.862,
+     "DAF": 5.093,
+     "Precision": 0.874,
+     "Recall": 0.851,
+     "Accuracy": 0.953,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.856
+    },
+    "rmsd": 0.0639,
+    "kappa_srme": 0.1688
+   }
+  },
+  {
+   "key": "matris-10m-mp",
+   "name": "MatRIS-10M-MP",
+   "version": "v1",
+   "family_dir": "matris",
+   "added": "2025-10-29",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 10443505.0,
+   "targets": "EFS_GM",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/2603.02002",
+   "repo": "https://github.com/HPC-AI-Team/MatRIS",
+   "checkpoint_url": "https://figshare.com/files/59143058",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.847,
+     "DAF": 5.422,
+     "Precision": 0.829,
+     "Recall": 0.865,
+     "Accuracy": 0.951,
+     "MAE": 0.031,
+     "RMSE": 0.077,
+     "R2": 0.824
+    },
+    "discovery_full": {
+     "F1": 0.832,
+     "DAF": 4.744,
+     "Precision": 0.814,
+     "Recall": 0.852,
+     "Accuracy": 0.941,
+     "MAE": 0.03,
+     "RMSE": 0.076,
+     "R2": 0.821
+    },
+    "rmsd": 0.0717,
+    "kappa_srme": 0.4892
+   }
+  },
+  {
+   "key": "matris-10m-oam",
+   "name": "MatRIS-10M-OAM",
+   "version": "v1",
+   "family_dir": "matris",
+   "added": "2025-10-29",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 10443505.0,
+   "targets": "EFS_GM",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://arxiv.org/abs/2603.02002",
+   "repo": "https://github.com/HPC-AI-Team/MatRIS",
+   "checkpoint_url": "https://figshare.com/files/59142728",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.921,
+     "DAF": 6.039,
+     "Precision": 0.923,
+     "Recall": 0.918,
+     "Accuracy": 0.976,
+     "MAE": 0.019,
+     "RMSE": 0.066,
+     "R2": 0.871
+    },
+    "discovery_full": {
+     "F1": 0.903,
+     "DAF": 5.275,
+     "Precision": 0.905,
+     "Recall": 0.901,
+     "Accuracy": 0.967,
+     "MAE": 0.019,
+     "RMSE": 0.066,
+     "R2": 0.864
+    },
+    "rmsd": 0.0601,
+    "kappa_srme": 0.2183
+   }
+  },
+  {
+   "key": "nequip-oam-xl-0.1",
+   "name": "Nequip-OAM-XL",
+   "version": "0.1",
+   "family_dir": "nequip",
+   "added": "2025-11-30",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 32100000.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2504.16068",
+   "repo": "https://github.com/mir-group/nequip",
+   "checkpoint_url": "https://www.nequip.net/models/mir-group/NequIP-OAM-XL:0.1",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.906,
+     "DAF": 5.869,
+     "Precision": 0.897,
+     "Recall": 0.915,
+     "Accuracy": 0.971,
+     "MAE": 0.02,
+     "RMSE": 0.066,
+     "R2": 0.872
+    },
+    "discovery_full": {
+     "F1": 0.885,
+     "DAF": 5.098,
+     "Precision": 0.875,
+     "Recall": 0.895,
+     "Accuracy": 0.96,
+     "MAE": 0.02,
+     "RMSE": 0.066,
+     "R2": 0.866
+    },
+    "rmsd": 0.063,
+    "kappa_srme": 0.1252
+   }
+  },
+  {
+   "key": "tace-v1-oam-m",
+   "name": "TACE-v1-OAM-M",
+   "version": "0.1.0",
+   "family_dir": "tace",
+   "added": "2026-01-06",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 18779248.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2509.14961",
+   "repo": "https://github.com/xvzemin/tace",
+   "checkpoint_url": "https://huggingface.co/xvzemin/tace-foundations/resolve/main/TACE-v1-OAM-M.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.889,
+     "DAF": 5.749,
+     "Precision": 0.879,
+     "Recall": 0.9,
+     "Accuracy": 0.965,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.865
+    },
+    "discovery_full": {
+     "F1": 0.868,
+     "DAF": 4.986,
+     "Precision": 0.855,
+     "Recall": 0.881,
+     "Accuracy": 0.954,
+     "MAE": 0.022,
+     "RMSE": 0.068,
+     "R2": 0.859
+    },
+    "rmsd": 0.0651,
+    "kappa_srme": 0.1729
+   }
+  },
+  {
+   "key": "nequix-mp-1-pft",
+   "name": "Nequix MP PFT",
+   "version": "0.1.0",
+   "family_dir": "nequix",
+   "added": "2026-01-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "MDR-MP PBE ω_q"
+   ],
+   "params": 707658.0,
+   "targets": "EFSH_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2601.07742",
+   "repo": "https://github.com/atomicarchitects/nequix",
+   "checkpoint_url": "https://figshare.com/files/60965527",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.748,
+     "DAF": 4.479,
+     "Precision": 0.685,
+     "Recall": 0.825,
+     "Accuracy": 0.914,
+     "MAE": 0.044,
+     "RMSE": 0.085,
+     "R2": 0.784
+    },
+    "discovery_full": {
+     "F1": 0.74,
+     "DAF": 3.963,
+     "Precision": 0.68,
+     "Recall": 0.811,
+     "Accuracy": 0.902,
+     "MAE": 0.042,
+     "RMSE": 0.084,
+     "R2": 0.783
+    },
+    "rmsd": 0.0866,
+    "kappa_srme": 0.3066
+   }
+  },
+  {
+   "key": "pet-oam-xl-1.0.0",
+   "name": "PET-OAM-XL",
+   "version": "1.0.0",
+   "family_dir": "pet",
+   "added": "2026-01-10",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 730000000.0,
+   "targets": "EFS_G",
+   "licence_code": "BSD-3-Clause",
+   "licence_checkpoint": "BSD-3-Clause",
+   "paper": "https://www.nature.com/articles/s41467-025-65662-7",
+   "repo": "https://github.com/lab-cosmo/upet",
+   "checkpoint_url": "https://huggingface.co/lab-cosmo/upet/resolve/main/models/pet-oam-xl-v1.0.0.ckpt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.924,
+     "DAF": 6.075,
+     "Precision": 0.929,
+     "Recall": 0.92,
+     "Accuracy": 0.977,
+     "MAE": 0.019,
+     "RMSE": 0.068,
+     "R2": 0.864
+    },
+    "discovery_full": {
+     "F1": 0.904,
+     "DAF": 5.312,
+     "Precision": 0.912,
+     "Recall": 0.897,
+     "Accuracy": 0.967,
+     "MAE": 0.018,
+     "RMSE": 0.068,
+     "R2": 0.859
+    },
+    "rmsd": 0.0596,
+    "kappa_srme": 0.1192
+   }
+  },
+  {
+   "key": "sevennet-omni-i12",
+   "name": "SevenNet-Omni-i12",
+   "version": "v0.12.0",
+   "family_dir": "sevennet",
+   "added": "2026-01-12",
+   "openness": "OSOD",
+   "training_sets": [
+    "COSMOSDataset"
+   ],
+   "params": 54921363.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2510.11241",
+   "repo": "https://github.com/MDIL-SNU/SevenNet",
+   "checkpoint_url": "https://figshare.com/files/60977863",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.906,
+     "DAF": 5.954,
+     "Precision": 0.91,
+     "Recall": 0.901,
+     "Accuracy": 0.971,
+     "MAE": 0.021,
+     "RMSE": 0.067,
+     "R2": 0.868
+    },
+    "discovery_full": {
+     "F1": 0.887,
+     "DAF": 5.203,
+     "Precision": 0.893,
+     "Recall": 0.882,
+     "Accuracy": 0.962,
+     "MAE": 0.02,
+     "RMSE": 0.067,
+     "R2": 0.862
+    },
+    "rmsd": 0.0618,
+    "kappa_srme": 0.1917
+   }
+  },
+  {
+   "key": "equiformer-v3-mp",
+   "name": "EquiformerV3+DeNS-MP",
+   "version": "v2026.04.07",
+   "family_dir": "equiformer_v3",
+   "added": "2026-04-07",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 30278113.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2604.09130",
+   "repo": "https://github.com/atomicarchitects/equiformer_v3",
+   "checkpoint_url": "https://github.com/atomicarchitects/equiformer_v3",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.863,
+     "DAF": 5.479,
+     "Precision": 0.838,
+     "Recall": 0.89,
+     "Accuracy": 0.956,
+     "MAE": 0.029,
+     "RMSE": 0.074,
+     "R2": 0.84
+    },
+    "discovery_full": {
+     "F1": 0.848,
+     "DAF": 4.778,
+     "Precision": 0.82,
+     "Recall": 0.878,
+     "Accuracy": 0.946,
+     "MAE": 0.028,
+     "RMSE": 0.073,
+     "R2": 0.836
+    },
+    "rmsd": 0.0701,
+    "kappa_srme": 0.2753
+   }
+  },
+  {
+   "key": "equiformer-v3-oam",
+   "name": "EquiformerV3+DeNS-OAM",
+   "version": "v2026.04.07",
+   "family_dir": "equiformer_v3",
+   "added": "2026-04-07",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 30333409.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2604.09130",
+   "repo": "https://github.com/atomicarchitects/equiformer_v3",
+   "checkpoint_url": "https://github.com/atomicarchitects/equiformer_v3",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.931,
+     "DAF": 6.074,
+     "Precision": 0.928,
+     "Recall": 0.933,
+     "Accuracy": 0.978,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.868
+    },
+    "discovery_full": {
+     "F1": 0.912,
+     "DAF": 5.298,
+     "Precision": 0.909,
+     "Recall": 0.916,
+     "Accuracy": 0.97,
+     "MAE": 0.017,
+     "RMSE": 0.067,
+     "R2": 0.862
+    },
+    "rmsd": 0.0595,
+    "kappa_srme": 0.1178
+   }
+  },
+  {
+   "key": "tace-oam-l",
+   "name": "TACE-OAM-L",
+   "version": "0.2.0",
+   "family_dir": "tace",
+   "added": "2026-04-09",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 82899905.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2509.14961",
+   "repo": "https://github.com/xvzemin/tace",
+   "checkpoint_url": "https://huggingface.co/xvzemin/tace-foundations/resolve/main/TACE-OAM-L.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.91,
+     "DAF": 5.898,
+     "Precision": 0.902,
+     "Recall": 0.919,
+     "Accuracy": 0.972,
+     "MAE": 0.02,
+     "RMSE": 0.067,
+     "R2": 0.868
+    },
+    "discovery_full": {
+     "F1": 0.892,
+     "DAF": 5.127,
+     "Precision": 0.88,
+     "Recall": 0.904,
+     "Accuracy": 0.962,
+     "MAE": 0.02,
+     "RMSE": 0.067,
+     "R2": 0.862
+    },
+    "rmsd": 0.0606,
+    "kappa_srme": 0.126
+   }
+  },
+  {
+   "key": "dpa-4.0-pro-mptrj",
+   "name": "DPA-4.0-Pro-MPtrj",
+   "version": "v2026.05.20",
+   "family_dir": "deepmd",
+   "added": "2026-05-20",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 32724908.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2606.02419",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/64733586",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.85,
+     "DAF": 5.628,
+     "Precision": 0.86,
+     "Recall": 0.841,
+     "Accuracy": 0.954,
+     "MAE": 0.03,
+     "RMSE": 0.078,
+     "R2": 0.823
+    },
+    "discovery_full": {
+     "F1": 0.832,
+     "DAF": 4.943,
+     "Precision": 0.848,
+     "Recall": 0.816,
+     "Accuracy": 0.943,
+     "MAE": 0.029,
+     "RMSE": 0.076,
+     "R2": 0.82
+    },
+    "rmsd": 0.0694,
+    "kappa_srme": 0.2414
+   }
+  },
+  {
+   "key": "dpa-4.0.1-pro-mptrj",
+   "name": "DPA-4.0.1-Pro-MPtrj",
+   "version": "v2026.06.05",
+   "family_dir": "deepmd",
+   "added": "2026-06-11",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 22808191.0,
+   "targets": "EFS_G",
+   "licence_code": "LGPL-3.0",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2606.02419",
+   "repo": "https://github.com/deepmodeling/deepmd-kit",
+   "checkpoint_url": "https://figshare.com/files/65469204",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.857,
+     "DAF": 5.609,
+     "Precision": 0.857,
+     "Recall": 0.856,
+     "Accuracy": 0.956,
+     "MAE": 0.029,
+     "RMSE": 0.074,
+     "R2": 0.836
+    },
+    "discovery_full": {
+     "F1": 0.837,
+     "DAF": 4.874,
+     "Precision": 0.836,
+     "Recall": 0.838,
+     "Accuracy": 0.944,
+     "MAE": 0.028,
+     "RMSE": 0.074,
+     "R2": 0.833
+    },
+    "rmsd": 0.0687,
+    "kappa_srme": 0.2114
+   }
+  },
+  {
+   "key": "equflashv2-45m-oam",
+   "name": "EquFlashV2",
+   "version": "v2026.06.11",
+   "family_dir": "equflash",
+   "added": "2026-06-11",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 44890492.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://proceedings.mlr.press/v267/lee25l.html",
+   "repo": "https://github.com/SamsungDS/GGNN",
+   "checkpoint_url": "https://figshare.com/ndownloader/files/65435007",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.929,
+     "DAF": 6.069,
+     "Precision": 0.928,
+     "Recall": 0.93,
+     "Accuracy": 0.978,
+     "MAE": 0.018,
+     "RMSE": 0.066,
+     "R2": 0.873
+    },
+    "discovery_full": {
+     "F1": 0.91,
+     "DAF": 5.291,
+     "Precision": 0.908,
+     "Recall": 0.913,
+     "Accuracy": 0.969,
+     "MAE": 0.018,
+     "RMSE": 0.066,
+     "R2": 0.866
+    },
+    "rmsd": 0.0577,
+    "kappa_srme": 0.0941
+   }
+  },
+  {
+   "key": "tace-oam-rra-preview",
+   "name": "TACE-OAM-RRA-Preview",
+   "version": "0.2.0",
+   "family_dir": "tace",
+   "added": "2026-06-27",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 213690158.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2607.10664",
+   "repo": "https://github.com/xvzemin/tace",
+   "checkpoint_url": "https://huggingface.co/xvzemin/tace-foundations/resolve/main/TACE-OAM-RRA-Preview.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.928,
+     "DAF": 6.07,
+     "Precision": 0.928,
+     "Recall": 0.929,
+     "Accuracy": 0.978,
+     "MAE": 0.018,
+     "RMSE": 0.068,
+     "R2": 0.866
+    },
+    "discovery_full": {
+     "F1": 0.909,
+     "DAF": 5.295,
+     "Precision": 0.909,
+     "Recall": 0.91,
+     "Accuracy": 0.969,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.859
+    },
+    "rmsd": 0.0576,
+    "kappa_srme": 0.1009
+   }
+  },
+  {
+   "key": "grace-3l-oam-l",
+   "name": "GRACE-3L-OAM-L",
+   "version": "1",
+   "family_dir": "grace",
+   "added": "2026-07-02",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 42112223.0,
+   "targets": "EFS_G",
+   "licence_code": "ASL",
+   "licence_checkpoint": "ASL",
+   "paper": "https://doi.org/10.1038/s41524-026-01979-1",
+   "repo": "https://github.com/ICAMS/grace-tensorpotential",
+   "checkpoint_url": "https://huggingface.co/AMS-ICAMS-RUB/grace-foundation-models/resolve/main/models/GRACE-3L-OMAT-large-ft-AM-model.tar.gz",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.925,
+     "DAF": 6.041,
+     "Precision": 0.923,
+     "Recall": 0.926,
+     "Accuracy": 0.977,
+     "MAE": 0.018,
+     "RMSE": 0.065,
+     "R2": 0.875
+    },
+    "discovery_full": {
+     "F1": 0.905,
+     "DAF": 5.259,
+     "Precision": 0.902,
+     "Recall": 0.908,
+     "Accuracy": 0.967,
+     "MAE": 0.018,
+     "RMSE": 0.065,
+     "R2": 0.869
+    },
+    "rmsd": 0.0575,
+    "kappa_srme": 0.1211
+   }
+  },
+  {
+   "key": "tece-oam-rra-1.0",
+   "name": "TECE-OAM-RRA-1.0",
+   "version": "v2026.07.05",
+   "family_dir": "tace",
+   "added": "2026-07-05",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex"
+   ],
+   "params": 221853358.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://arxiv.org/abs/2607.10664",
+   "repo": "https://github.com/xvzemin/tace",
+   "checkpoint_url": "https://huggingface.co/xvzemin/tace-foundations/resolve/main/TECE-OAM-RRA-1.0.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.929,
+     "DAF": 6.073,
+     "Precision": 0.928,
+     "Recall": 0.93,
+     "Accuracy": 0.978,
+     "MAE": 0.018,
+     "RMSE": 0.066,
+     "R2": 0.871
+    },
+    "discovery_full": {
+     "F1": 0.91,
+     "DAF": 5.3,
+     "Precision": 0.909,
+     "Recall": 0.911,
+     "Accuracy": 0.969,
+     "MAE": 0.017,
+     "RMSE": 0.066,
+     "R2": 0.865
+    },
+    "rmsd": 0.0575,
+    "kappa_srme": 0.0927
+   }
+  },
+  {
+   "key": "bam-mp-core",
+   "name": "BAM-MP-core",
+   "version": "1.0.0",
+   "family_dir": "bam",
+   "added": "2026-07-16",
+   "openness": "OSOD",
+   "training_sets": [
+    "MPtrj"
+   ],
+   "params": 17023365.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "MIT",
+   "paper": "https://arxiv.org/abs/2510.03046",
+   "repo": "https://github.com/myung-group/BAM-torch",
+   "checkpoint_url": "https://figshare.com/files/65859867",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.623,
+     "DAF": 3.682,
+     "Precision": 0.563,
+     "Recall": 0.698,
+     "Accuracy": 0.869,
+     "MAE": 0.06,
+     "RMSE": 0.099,
+     "R2": 0.712
+    },
+    "discovery_full": {
+     "F1": 0.618,
+     "DAF": 3.268,
+     "Precision": 0.561,
+     "Recall": 0.687,
+     "Accuracy": 0.854,
+     "MAE": 0.058,
+     "RMSE": 0.097,
+     "R2": 0.711
+    },
+    "rmsd": 0.0863,
+    "kappa_srme": 0.8475
+   }
+  },
+  {
+   "key": "ema-gnn",
+   "name": "EMA-GNN",
+   "version": "v0.1.0",
+   "family_dir": "ema_gnn",
+   "added": "2026-08-08",
+   "openness": "OSOD",
+   "training_sets": [
+    "MP 2022"
+   ],
+   "params": 2209793.0,
+   "targets": "E",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": null,
+   "repo": "https://github.com/submerged-in-matrix/gnome-repro-structural",
+   "checkpoint_url": "https://figshare.com/files/67085774",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.558,
+     "DAF": 2.753,
+     "Precision": 0.421,
+     "Recall": 0.826,
+     "Accuracy": 0.797,
+     "MAE": 0.086,
+     "RMSE": 0.141,
+     "R2": 0.412
+    },
+    "discovery_full": {
+     "F1": 0.566,
+     "DAF": 2.522,
+     "Precision": 0.433,
+     "Recall": 0.818,
+     "Accuracy": 0.785,
+     "MAE": 0.084,
+     "RMSE": 0.141,
+     "R2": 0.387
+    },
+    "rmsd": null,
+    "kappa_srme": null
+   }
+  },
+  {
+   "key": "prophet-oame-mbd",
+   "name": "Prophet-OAME-MBD",
+   "version": "v1.0.0",
+   "family_dir": "prophet",
+   "added": "2026-09-13",
+   "openness": "OSCD",
+   "training_sets": [
+    "MPtrj",
+    "OMat24",
+    "sAlex",
+    "ELEMENTA"
+   ],
+   "params": 62296064.0,
+   "targets": "EFS_G",
+   "licence_code": "MIT",
+   "licence_checkpoint": "CC-BY-4.0",
+   "paper": "https://www.kairosmaterials.com/papers/Prophet.pdf",
+   "repo": "https://github.com/kairosmaterial/prophet",
+   "checkpoint_url": "https://huggingface.co/kairosmaterial/prophet/resolve/f9a54df874ba52b8b35e7d3f7f348b46e0135563/prophet-oame-mbd.pt",
+   "metrics": {
+    "discovery_unique": {
+     "F1": 0.928,
+     "DAF": 6.065,
+     "Precision": 0.927,
+     "Recall": 0.928,
+     "Accuracy": 0.978,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.869
+    },
+    "discovery_full": {
+     "F1": 0.91,
+     "DAF": 5.286,
+     "Precision": 0.907,
+     "Recall": 0.913,
+     "Accuracy": 0.969,
+     "MAE": 0.018,
+     "RMSE": 0.067,
+     "R2": 0.862
+    },
+    "rmsd": 0.0591,
+    "kappa_srme": 0.0648
+   }
+  }
+ ]
+}

@@ -2825,6 +2825,47 @@
    ]
   }
  },
+ "pota2024kappa": {
+  "arxiv": {
+   "authors": [
+    "Balázs Póta",
+    "Paramvir Ahlawat",
+    "Gábor Csányi",
+    "Michele Simoncelli"
+   ],
+   "id": "2408.00755v5",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-08-01",
+   "title": "Thermal Conductivity Predictions with Foundation Atomistic Models",
+   "updated": "2025-07-10"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Póta, B.' vs fetched ['pota']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 16,
+   "id": "W4401307762",
+   "publication_year": 2024,
+   "referenced_works": []
+  }
+ },
  "prodan2005nearsightedness": {
   "arxiv": null,
   "checks": [

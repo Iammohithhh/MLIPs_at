@@ -36,6 +36,7 @@ const QUICK: Hit[] = [
   { url: '/physics-lab/', title: 'Physics Lab', meta: 'destination', group: 'Go to' },
   { url: '/models/', title: 'Models', meta: 'destination', group: 'Go to' },
   { url: '/data/', title: 'Data', meta: 'destination', group: 'Go to' },
+  { url: '/benchmarks/', title: 'Benchmarks', meta: 'destination', group: 'Go to' },
   { url: '/models/mace/', title: 'MACE', meta: 'model family', group: 'Go to' },
   { url: '/papers/', title: 'Papers', meta: 'destination', group: 'Go to' },
   { url: '/method/', title: 'How the Atlas is verified', meta: 'method', group: 'Go to' },

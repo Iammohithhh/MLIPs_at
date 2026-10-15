@@ -70,6 +70,7 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Protocol-aware result explorer — never a universal ranking',
     phase: 3,
     tone: 'lit',
+    href: '/benchmarks/',
     inNav: true,
   },
   {

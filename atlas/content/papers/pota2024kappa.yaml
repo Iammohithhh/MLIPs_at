@@ -1,0 +1,11 @@
+title: Thermal Conductivity Predictions with Foundation Atomistic Models
+topic: benchmarks-failures
+authors:
+  - 'Póta, B.'
+et_al: true
+year: 2024
+type: preprint
+identifiers:
+  arxiv: '2408.00755'
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Source of the κ_SRME thermal-conductivity metric used by Matbench Discovery (ref. 50 of Riebesell et al.).' }
