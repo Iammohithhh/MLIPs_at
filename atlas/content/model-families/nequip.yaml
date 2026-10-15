@@ -8,4 +8,5 @@ summary: >-
 locality: { kind: message-passing, note: Receptive field grows by one cutoff per interaction layer. }
 symmetry: equivariant
 implementations: [nequip]
+claims: [nequip-architecture, nequip-data-efficiency]
 review: { status: draft, last_checked: 2026-10-14 }

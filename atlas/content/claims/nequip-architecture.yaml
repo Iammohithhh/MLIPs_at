@@ -1,0 +1,11 @@
+statement: >-
+  A NequIP interaction block convolves equivariant node features with a filter F = R(r) Y(r̂), where R is a small MLP
+  on a trainable Bessel basis (8 functions, polynomial envelope p = 6), combines them by a Clebsch–Gordan tensor
+  product keeping orders up to l_max, mixes paths with per-species linear self-interactions and applies a gated
+  equivariant nonlinearity; the paper uses 5 blocks for molecules and 6 for periodic systems.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: batzner2022nequip, locator: 'Eqs. (4)–(8); Methods › Hyperparameters' }
+scope: { model_families: [nequip] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read from the arXiv HTML rendering (ar5iv).' }

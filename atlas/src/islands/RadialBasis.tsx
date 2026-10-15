@@ -6,7 +6,7 @@ import { useSceneTheme } from '~/three/theme';
 // MACE radial basis: 8 Bessel functions × polynomial envelope (p = 5), plotted as
 // r·R_n(r) so the oscillation is visible near r = 0.
 
-export default function RadialBasis() {
+export default function RadialBasis({ p = 5 }: { p?: number }) {
   const theme = useSceneTheme();
   const ids = useId();
   const [rc, setRc] = useState(5);
@@ -16,7 +16,7 @@ export default function RadialBasis() {
   const H = 260;
   const M = { l: 46, r: 14, t: 16, b: 34 };
   const rs = Array.from({ length: 300 }, (_, k) => 0.01 + (k * 6.5) / 299);
-  const f = (n: number, r: number) => r * (envelope ? radial(n, r, rc) : bessel(n, r, rc));
+  const f = (n: number, r: number) => r * (envelope ? radial(n, r, rc, p) : bessel(n, r, rc));
   const lim = Math.sqrt(2 / rc) * 1.08;
   const x = (r: number) => M.l + (r / 6.5) * (W - M.l - M.r);
   const y = (v: number) => M.t + ((lim - v) / (2 * lim)) * (H - M.t - M.b);
@@ -57,7 +57,7 @@ export default function RadialBasis() {
             <output>{rc.toFixed(1)} Å</output>
           </label>
           <label className="rb-check">
-            <input type="checkbox" checked={envelope} onChange={(e) => setEnvelope(e.target.checked)} /> apply the polynomial envelope (p = 5)
+            <input type="checkbox" checked={envelope} onChange={(e) => setEnvelope(e.target.checked)} /> apply the polynomial envelope (p = {p})
           </label>
         </div>
         <p className="lab-note">

@@ -1,0 +1,306 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import ReceptiveDepth, { type DepthData } from '~/islands/ReceptiveDepth';
+import RadialBasis from '~/islands/RadialBasis';
+import si from '~/data/structures/si-diamond.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { clusterAround, hopsFromCentre, reachByDepth } from '~/lib/models/receptive';
+
+// Receptive field in diamond Si, computed at build time on a cluster large enough
+// that no boundary is reached (6 layers × 6 Å).
+const MAX_T = 6;
+const DRAW = 13;
+const big = clusterAround(si as unknown as Structure, MAX_T * 6 + 1);
+const nDraw = big.findIndex((p) => globalThis.Math.hypot(p[0], p[1], p[2]) > DRAW);
+const drawn = big.slice(0, nDraw < 0 ? big.length : nDraw);
+const depth: DepthData[] = [4, 5, 6].map((rc) => {
+  const hops = hopsFromCentre(big, rc, MAX_T);
+  return { rc, hops: Array.from(hops.slice(0, drawn.length)), reach: reachByDepth(hops, MAX_T) };
+});
+
+const nequipCheckpoints = snapshot.models.filter((m) => m.family_dir === 'nequip');
+
+const depthAssumptions = [
+  { term: 'Structure', value: 'Diamond silicon, a = 5.431 Å (ASE); a periodic crystal carved into a 37 Å cluster around one atom, larger than any receptive field shown.' },
+  { term: 'Graph', value: 'An edge joins two atoms closer than r_c; one hop per interaction block. Counts are exact for this graph.' },
+  { term: 'Not shown', value: 'How strongly distant atoms matter: a trained model may weight them weakly. This counts which atoms can matter at all.' },
+];
+---
+
+<BaseLayout
+  title="NequIP"
+  description="NequIP, the E(3)-equivariant message-passing interatomic potential: its tensor-product convolution, gated nonlinearity and radial basis, the receptive field its depth creates in a real crystal, its checkpoints and its limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">NequIP</h1>
+      <p class="lede">
+        The model that made E(3)-equivariant message passing the default for interatomic potentials. Its features are
+        scalars, vectors and higher-order tensors that rotate correctly at every layer, and the paper reports matching
+        or beating earlier models with up to a thousand times less training data <Cite id="batzner2022nequip" locator="Abstract" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>E(3)-equivariant features (rotations, reflections, translations)</dd></div>
+        <div><dt>Locality</dt><dd>Message passing; 5–6 interaction blocks in the paper</dd></div>
+        <div><dt>Messages</dt><dd>Two-body per layer (tensor-product convolution)</dd></div>
+        <div><dt>Radial basis</dt><dd>8 trainable Bessel functions × envelope (p = 6)</dd></div>
+        <div><dt>Introduced</dt><dd>Nature Communications 2022</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/mir-group/nequip">mir-group/nequip</a></dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="block-h">
+      <h2 id="block-h" class="h-section">One interaction block</h2>
+      <p>
+        Every atom carries features of several rotation orders <i>l</i>. A block builds a filter from each neighbour’s
+        direction and distance, couples it to that neighbour’s features with a Clebsch–Gordan tensor product, sums over
+        neighbours, mixes the result linearly and applies an equivariant gate <Cite id="batzner2022nequip" locator="Eqs. 4–8" />:
+      </p>
+      <Math display number="1" tex={String.raw`F(\vec r_{ij}) = R(r_{ij})\,Y^{(l)}_m(\hat r_{ij}), \qquad R(r) = \mathrm{MLP}\big(B(r)\big), \qquad B_n(r) = \frac{2}{r_c}\,\frac{\sin(n\pi r/r_c)}{r}\, f_{\mathrm{env}}(r)`} />
+      <Math display number="2" tex={String.raw`V^{(l_o)}_{i} \;\propto\; \frac{1}{\sqrt{\bar N}} \sum_{j\in\mathcal N(i)} \sum_{l_f,\,l_i} C^{\,l_o}_{l_f\, l_i}\; F^{(l_f)}(\vec r_{ij}) \otimes V^{(l_i)}_{j}, \qquad |l_i - l_f| \le l_o \le \min(l_i + l_f,\, l_{\max})`} />
+      <p>
+        Parity follows the rule <i>p</i><sub>o</sub> = <i>p</i><sub>i</sub><i>p</i><sub>f</sub>, which is why outputs can be
+        pseudo-quantities exactly as in the <a href="/physics-lab/harmonics/#fig-tensor">tensor-product explorer</a>. After a
+        stack of blocks, scalar features are reduced to one energy per atom; forces are −∇<i>E</i>.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="How far a stack of message-passing layers reaches in a real crystal" labels={['live-calculation']} number={1} id="fig-depth" framed={false}>
+        <ReceptiveDepth client:visible positions={drawn} data={depth} maxT={MAX_T} drawRadius={DRAW} />
+        <Fragment slot="caption">
+          Left: diamond silicon around one atom, coloured by the number of hops at which each atom first enters the
+          receptive field. Right: how many atoms can influence the prediction after T blocks. The paper uses 6 blocks with
+          cutoffs of 4–6 Å for periodic systems; MACE reaches its body order in 2.
+        </Fragment>
+        <Assumptions slot="assumptions" items={depthAssumptions} />
+        <Fragment slot="source">Computed at build time from the Atlas silicon structure; depths and cutoffs from <Cite id="batzner2022nequip" locator="Methods › Hyperparameters" />.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="n-int" checked />
+        <label for="n-int">Intuition</label>
+        <input type="radio" name="depth" id="n-tech" />
+        <label for="n-tech">Technical</label>
+        <input type="radio" name="depth" id="n-res" />
+        <label for="n-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Give each atom not just numbers but little arrows and higher-order shapes. When atoms exchange messages, the
+            arrows are combined using the neighbour’s direction in a way that always turns correctly if the molecule
+            turns. Because the symmetry is built in, the network does not have to learn it from data, which is where much
+            of its data efficiency comes from.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Features are direct sums of irreducible representations of O(3), indexed by order <i>l</i> and parity. The
+            convolution (2) is a learned, distance-dependent Clebsch–Gordan contraction of neighbour features with
+            spherical harmonics of the bond; a per-species linear self-interaction mixes channels within each (<i>l</i>, <i>p</i>);
+            a gate multiplies non-scalar features by scalar activations so the nonlinearity stays equivariant. Messages are
+            two-body in each block; higher correlations come from stacking blocks.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            The radial network acts on a trainable Bessel basis with a polynomial envelope (p = 6); neighbour sums are
+            normalised by the square root of the average neighbour count; a ResNet-style update adds the self-interaction
+            of the previous features; per-species scale and shift are applied to atomic energies
+            <Cite id="batzner2022nequip" locator="Eqs. 5–10" />. The cost of the tensor products grows quickly with
+            <i>l</i><sub>max</sub>, and depth grows the receptive field: the trade-offs that Allegro (strict locality) and
+            MACE (many-body messages, fewer layers) were designed around.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="NequIP’s radial basis: eight Bessel functions with a p = 6 envelope" labels={['live-calculation']} number={2} id="fig-radial" framed={false}>
+        <RadialBasis client:visible p={6} />
+        <Fragment slot="source">Functional form as described in <Cite id="batzner2022nequip" locator="Eq. 6" />; envelope from <Cite id="gasteiger2020dimenet" />.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Interactions beyond the receptive field are invisible, and inside it the
+        model is still a sum of local messages: long-range electrostatics and charge transfer need an explicit extension
+        (<a href="/physics-lab/beyond-the-cutoff/">P1</a>, <a href="/physics-lab/ewald/">P6</a>). Deep stacks also make the
+        receptive field large, which limits parallel scaling to big systems.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> Errors from training data and level of theory belong to a specific set of
+        weights — check its training data on the <a href="/data/">Data</a> page and its measured results on
+        <a href="/benchmarks/">Benchmarks</a>.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints on Matbench Discovery</h2>
+      <p>Universal NequIP checkpoints submitted to Matbench Discovery (snapshot {snapshot.source.commit_date}); their results are on the <a href="/benchmarks/">Benchmarks</a> page.</p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Parameters</th><th>Weights licence</th><th>Added</th></tr></thead>
+          <tbody>
+            {
+              nequipCheckpoints.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(1)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td>{m.added}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <Callout kind="note" title="Related families">
+        Allegro keeps NequIP’s equivariant features but drops atom-to-atom message passing so the receptive field stays at
+        one cutoff <Cite id="musaelian2023allegro" />; <a href="/models/mace/">MACE</a> generalises NequIP’s two-body messages
+        to many-body ones <Cite id="batatia2022mace" />.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #n-int:checked ~ .depth-int,
+  #n-tech:checked ~ .depth-tech,
+  #n-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+</style>
