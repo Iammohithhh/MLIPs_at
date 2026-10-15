@@ -32,6 +32,7 @@ const localityLabel: Record<string, string> = {
         structures, states what it can and cannot represent, and lists its released checkpoints separately from it.
         Families open one at a time, when they meet that bar.
       </p>
+      <p class="cklink"><a href="/models/checkpoints/">Browse the released checkpoints →</a> trained weights, their data and licences</p>
     </header>
 
     <section class="wide" aria-labelledby="open-h">
@@ -95,6 +96,14 @@ const localityLabel: Record<string, string> = {
     font: 1.1875rem/1.6 var(--font-serif);
     color: var(--atlas-ink-muted);
     max-width: 46rem;
+  }
+  .cklink {
+    font: 0.95rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .cklink a {
+    font-weight: 600;
+    color: var(--atlas-arch);
   }
   .section-title {
     margin: clamp(2rem, 4vw, 3rem) 0 1rem;

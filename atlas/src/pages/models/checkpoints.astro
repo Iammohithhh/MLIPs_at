@@ -1,0 +1,295 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Callout from '~/components/Callout.astro';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import { modelPageUrl } from '~/lib/model-pages';
+
+type Licence = 'permissive' | 'copyleft' | 'restricted' | 'unreleased' | 'unknown';
+function licenceClass(l: string | null): Licence {
+  if (!l) return 'unknown';
+  const s = l.toLowerCase();
+  if (s.includes('unreleased')) return 'unreleased';
+  if (s.includes('gpl')) return 'copyleft';
+  if (/mit|bsd|apache|cc-by/.test(s)) return 'permissive';
+  return 'restricted';
+}
+const LICENCE_LABEL: Record<Licence, string> = {
+  permissive: 'Permissive (MIT, BSD, Apache, CC-BY)',
+  copyleft: 'Copyleft (GPL, LGPL)',
+  restricted: 'Restricted (e.g. academic or research-only)',
+  unreleased: 'Weights not released',
+  unknown: 'Not stated',
+};
+const DATASET_PAGE: Record<string, string> = { mptrj: 'mptrj', omat24: 'omat24' };
+
+const models = snapshot.models.map((m) => ({ ...m, lic: licenceClass(m.licence_checkpoint) }));
+const families = [...new Set(models.map((m) => m.family_dir))]
+  .map((f) => ({ id: f, models: models.filter((m) => m.family_dir === f).sort((a, b) => (a.added ?? '').localeCompare(b.added ?? '')) }))
+  .sort((a, b) => b.models.length - a.models.length || a.id.localeCompare(b.id));
+const famName = (f: string) => ({ deepmd: 'DeePMD / DPA', grace: 'GRACE', sevennet: 'SevenNet', tace: 'TACE', orb: 'Orb', matris: 'MatRIS', nequip: 'NequIP', mace: 'MACE', allegro: 'Allegro', eqv2: 'EquiformerV2', esen: 'eSEN', equiformer_v3: 'EquiformerV3', chgnet: 'CHGNet', m3gnet: 'M3GNet', mattersim: 'MatterSim', pet: 'PET' } as Record<string, string>)[f] ?? f.replace(/_/g, ' ');
+const counts = Object.fromEntries((Object.keys(LICENCE_LABEL) as Licence[]).map((l) => [l, models.filter((m) => m.lic === l).length]));
+const fmt = (v: number | undefined | null, d: number) => (typeof v === 'number' ? v.toFixed(d) : '—');
+---
+
+<BaseLayout
+  title="Checkpoints"
+  description="Released checkpoints of machine-learned interatomic potentials with their training data, size, licences and benchmark protocol, grouped by architecture — architecture and checkpoint kept apart."
+>
+  <article class="page-grid ckp">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Checkpoints</p>
+      <h1 class="h-display">Same recipe, different weights</h1>
+      <p class="lede">
+        A checkpoint is one trained set of weights: an architecture plus its training data, level of theory and licence.
+        These are the {models.length} checkpoints submitted to Matbench Discovery, grouped by architecture, with what each was
+        trained on and whether you may use it.
+      </p>
+      <p class="snap">
+        From <a href={`${snapshot.source.repo}/tree/${snapshot.source.commit}/models`}>janosh/matbench-discovery</a> at
+        <code>{snapshot.source.commit.slice(0, 10)}</code> ({snapshot.source.commit_date}). Metrics are on the
+        <a href="/benchmarks/">Benchmarks</a> page, each with its protocol.
+      </p>
+      <div class="filters" role="group" aria-label="Filter by weights licence">
+        {
+          (Object.keys(LICENCE_LABEL) as Licence[])
+            .filter((l) => counts[l])
+            .map((l) => (
+              <button type="button" class={`lf lic-${l}`} aria-pressed="true" data-lic={l}>
+                <span class="dot" /> {LICENCE_LABEL[l]} <small>{counts[l]}</small>
+              </button>
+            ))
+        }
+      </div>
+    </header>
+
+    {
+      families.map((f) => (
+        <section class="wide fam" aria-labelledby={`fam-${f.id}`}>
+          <h2 id={`fam-${f.id}`} class="fam-h">
+            {modelPageUrl(f.id) ? <a href={modelPageUrl(f.id)!}>{famName(f.id)}</a> : famName(f.id)}
+            <small>{f.models.length} checkpoint{f.models.length > 1 ? 's' : ''}</small>
+          </h2>
+          <ul class="cards">
+            {f.models.map((m) => (
+              <li class="card" data-lic={m.lic}>
+                <p class="c-name">{m.name}</p>
+                <p class="c-meta">
+                  {m.version && <span>{m.version}</span>}
+                  {m.added && <span>added {m.added}</span>}
+                  {m.params && <span>{(m.params / 1e6).toFixed(1)} M params</span>}
+                </p>
+                <p class="c-data">
+                  {m.training_sets.map((t) =>
+                    DATASET_PAGE[t.toLowerCase()] ? (
+                      <a class="ds" href={`/data/#ds-${DATASET_PAGE[t.toLowerCase()]}`}>{t}</a>
+                    ) : (
+                      <span class="ds">{t}</span>
+                    ),
+                  )}
+                </p>
+                <p class="c-lic">
+                  <span class={`lic lic-${m.lic}`}>weights: {m.licence_checkpoint ?? 'not stated'}</span>
+                  <span class="lic-code">code: {m.licence_code ?? '—'}</span>
+                </p>
+                <p class="c-metrics" title="Matbench Discovery, unique-prototype test set; κ_SRME on the phonon benchmark">
+                  F1 {fmt(m.metrics.discovery_unique['F1'], 3)} · κ_SRME {fmt(m.metrics.kappa_srme, 3)}
+                </p>
+                <p class="c-links">
+                  {m.paper && <a href={m.paper}>paper</a>}
+                  {m.repo && <a href={m.repo}>code</a>}
+                  {m.checkpoint_url && <a href={m.checkpoint_url}>weights</a>}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <section class="wide">
+      <Callout kind="caveat" title="Read the licence of the weights, not just the code">
+        Code and weights are often licensed differently. Several strong checkpoints are released for research or academic
+        use only; check the linked licence before using one in commercial work.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<script>
+  const active = new Set<string>();
+  document.querySelectorAll<HTMLButtonElement>('.lf').forEach((b) => active.add(b.dataset.lic!));
+  document.querySelectorAll<HTMLButtonElement>('.lf').forEach((b) =>
+    b.addEventListener('click', () => {
+      const l = b.dataset.lic!;
+      if (active.has(l) && active.size > 1) active.delete(l);
+      else active.add(l);
+      document.querySelectorAll<HTMLButtonElement>('.lf').forEach((x) => x.setAttribute('aria-pressed', String(active.has(x.dataset.lic!))));
+      document.querySelectorAll<HTMLElement>('.card').forEach((c) => (c.hidden = !active.has(c.dataset.lic!)));
+      document.querySelectorAll<HTMLElement>('.fam').forEach((s) => (s.hidden = !s.querySelector('.card:not([hidden])')));
+    }),
+  );
+</script>
+
+<style>
+  .ckp {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .snap {
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .snap a,
+  .fam-h a,
+  .c-links a,
+  a.ds {
+    color: var(--atlas-arch);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .lf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font: 0.8rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 999px;
+    background: var(--atlas-surface);
+    cursor: pointer;
+  }
+  .lf[aria-pressed='false'] {
+    opacity: 0.45;
+  }
+  .lf small {
+    font-family: var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--c);
+  }
+  .lic-permissive {
+    --c: var(--atlas-verified);
+  }
+  .lic-copyleft {
+    --c: var(--atlas-arch);
+  }
+  .lic-restricted {
+    --c: var(--atlas-caveat);
+  }
+  .lic-unreleased,
+  .lic-unknown {
+    --c: var(--atlas-ink-faint);
+  }
+  .fam {
+    margin-top: 2rem;
+  }
+  .fam-h {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    margin: 0 0 0.7rem;
+    font: 600 1.3rem var(--font-serif);
+  }
+  .fam-h small {
+    font: 0.75rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 0.7rem;
+  }
+  .card {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--atlas-rule);
+    border-left: 3px solid var(--c, var(--atlas-rule));
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+  }
+  .card[data-lic='permissive'] {
+    --c: var(--atlas-verified);
+  }
+  .card[data-lic='copyleft'] {
+    --c: var(--atlas-arch);
+  }
+  .card[data-lic='restricted'] {
+    --c: var(--atlas-caveat);
+  }
+  .card p {
+    margin: 0;
+  }
+  .c-name {
+    font: 600 1rem var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .c-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.6rem;
+    font: 0.72rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .c-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .ds {
+    font: 600 0.72rem var(--font-sans);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.3rem;
+    background: var(--atlas-surface-2);
+    color: var(--atlas-ink);
+    text-decoration: none;
+  }
+  .c-lic {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    font: 0.75rem var(--font-sans);
+  }
+  .lic {
+    font-weight: 600;
+    color: var(--c);
+  }
+  .lic-code {
+    color: var(--atlas-ink-faint);
+  }
+  .c-metrics {
+    font: 0.75rem var(--font-mono);
+    color: var(--atlas-ink-muted);
+  }
+  .c-links {
+    display: flex;
+    gap: 0.8rem;
+    font: 600 0.78rem var(--font-sans);
+  }
+</style>
