@@ -81,6 +81,7 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Evidence-graded case studies with diagnostics',
     phase: 5,
     tone: 'fail',
+    href: '/failures/',
     inNav: true,
   },
   {

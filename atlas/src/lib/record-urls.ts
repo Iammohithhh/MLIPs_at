@@ -7,5 +7,6 @@ export function recordUrl(c: CollectionName, id: string, d: Record<string, unkno
   if (c === 'experiments' && typeof d['page'] === 'string') return d['page'];
   if (c === 'model-families' && modelPageUrl(id)) return modelPageUrl(id)!;
   if (c === 'datasets') return `/data/#ds-${id}`;
+  if (c === 'failure-cases') return `/failures/${id}/`;
   return `/method/content-model/#rec-${c}-${id}`;
 }

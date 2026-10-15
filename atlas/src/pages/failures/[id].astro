@@ -1,0 +1,230 @@
+---
+// One Failure Atlas case, generated from its content record:
+// claim → scene → evidence → mechanisms → diagnostics → responses → open questions.
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import Callout from '~/components/Callout.astro';
+import SofteningLab from '~/islands/SofteningLab';
+import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
+import type { LabelKey } from '~/lib/labels';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('failure-cases');
+  return cases.map((e) => ({ params: { id: e.id }, props: { id: e.id, data: e.data as FailureCase } }));
+}
+
+interface Props {
+  id: string;
+  data: FailureCase;
+}
+const { id, data } = Astro.props;
+const claims = new Map((await getCollection('claims')).map((e) => [e.id, e.data as Claim]));
+const checkpoints = new Map((await getCollection('checkpoints')).map((e) => [e.id, e.data as Checkpoint]));
+const gradeLabel: Record<string, LabelKey> = {
+  THEORY: 'theory',
+  PUBLISHED_RESULT: 'published-result',
+  REPRODUCED: 'reproduced',
+  TOY_DEMO: 'toy-demo',
+  HYPOTHESIS: 'hypothesis',
+};
+const main = claims.get(data.claim)!;
+const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab };
+const hasScene = id in scenes;
+---
+
+<BaseLayout title={data.title} description={`Failure Atlas: ${data.title}. ${main.statement.slice(0, 150)}`}>
+  <article class="page-grid fc">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/failures/">Failure Atlas</a> · Case</p>
+      <h1 class="h-display">{data.title}</h1>
+      <div class="badges"><Badge label={gradeLabel[data.grade]!} /><span class="status">record {data.review.status} · checked {data.review.last_checked}</span></div>
+    </header>
+
+    <section class="block step" aria-labelledby="claim-h">
+      <h2 id="claim-h"><span class="n">1</span> Claim</h2>
+      <blockquote class="claim">{main.statement}</blockquote>
+      <p class="src">{main.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>
+    </section>
+
+    {
+      hasScene && (
+        <div class="wide fig-wrap">
+          <Figure title="What the failure looks like" labels={['toy-model']} number={1} id="fig-scene" framed={false}>
+            {id === 'pes-softening' && <SofteningLab client:visible />}
+            <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
+          </Figure>
+        </div>
+      )
+    }
+
+    <section class="block step" aria-labelledby="ev-h">
+      <h2 id="ev-h"><span class="n">2</span> Evidence</h2>
+      <ul class="items">
+        {data.evidence.map((c) => {
+          const cl = claims.get(c)!;
+          return (
+            <li>
+              <Badge label={gradeLabel[cl.grade]!} />
+              <p>{cl.statement}</p>
+              <p class="src">{cl.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="block step" aria-labelledby="mech-h">
+      <h2 id="mech-h"><span class="n">3</span> Mechanisms</h2>
+      <ul class="items">
+        {data.mechanisms.map((m) => (
+          <li>
+            <Badge label={gradeLabel[m.grade]!} />
+            <p>{m.description}</p>
+            {m.claim && claims.get(m.claim) && <p class="src">{claims.get(m.claim)!.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="block step" aria-labelledby="diag-h">
+      <h2 id="diag-h"><span class="n">4</span> Diagnostics</h2>
+      <ul class="plain">{data.diagnostics.map((d) => <li>{d}</li>)}</ul>
+    </section>
+
+    <section class="block step" aria-labelledby="resp-h">
+      <h2 id="resp-h"><span class="n">5</span> Modelling responses</h2>
+      <ul class="items">
+        {data.responses.map((r) => (
+          <li>
+            <p>{r.description}</p>
+            {r.claim && claims.get(r.claim) && (
+              <>
+                <p class="detail">{claims.get(r.claim)!.statement}</p>
+                <p class="src">{claims.get(r.claim)!.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="block step" aria-labelledby="open-h">
+      <h2 id="open-h"><span class="n">6</span> Open questions</h2>
+      <ul class="plain">{data.open_questions.map((q) => <li>{q}</li>)}</ul>
+    </section>
+
+    {
+      data.affected_checkpoints.length > 0 && (
+        <section class="block step" aria-labelledby="ck-h">
+          <h2 id="ck-h"><span class="n">7</span> Checkpoints in the evidence</h2>
+          <ul class="plain">
+            {data.affected_checkpoints.map((c) => (
+              <li>{checkpoints.get(c)?.name ?? c}</li>
+            ))}
+          </ul>
+          <Callout kind="caveat" title="Scope">
+            The evidence covers the checkpoints named in the source. Later checkpoints of the same architectures, trained on
+            different data, need their own evidence; see <a href="/benchmarks/">Benchmarks</a> (κ_SRME tracks phonon accuracy).
+          </Callout>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .fc {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 0.8rem;
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .status {
+    font: 0.75rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .block {
+    margin-top: clamp(1.8rem, 3.5vw, 2.6rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .step h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.8rem;
+    font: 600 1.35rem var(--font-serif);
+  }
+  .n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    font: 600 0.8rem var(--font-mono);
+    color: var(--atlas-fail);
+    border: 1.5px solid color-mix(in oklab, var(--atlas-fail) 55%, var(--atlas-rule));
+  }
+  .claim {
+    margin: 0;
+    padding: 1rem 1.2rem;
+    border-left: 3px solid var(--atlas-fail);
+    background: color-mix(in oklab, var(--atlas-fail) 5%, var(--atlas-surface));
+    border-radius: 0 0.6rem 0.6rem 0;
+    font: 1.1rem/1.6 var(--font-serif);
+  }
+  .src {
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font: 0.85rem var(--font-sans);
+  }
+  .items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .items li {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+  }
+  .items p {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+  }
+  .detail {
+    color: var(--atlas-ink-muted);
+    font-size: 0.95rem !important;
+  }
+  .plain {
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .block a {
+    color: var(--atlas-arch);
+  }
+</style>
