@@ -1,0 +1,180 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import RotationLab from '~/islands/RotationLab';
+
+const assumptions = [
+  { term: 'Structure', value: 'Ethanol (G2 geometry from ASE), displaced by a fixed pattern of at most 0.09 Å so that the forces are non-zero.' },
+  { term: 'Distance-only model', value: 'E = Σ ½k(r − r⁰)² over the 8 covalent bonds, k = 30 eV/Å², rest lengths from the G2 geometry. Toy parameters, not a force field.' },
+  { term: 'Raw-coordinate model', value: 'The same springs plus λ Σ (d·x̂)², λ = 0.6 eV/Å², where d is a bond vector and x̂ the fixed lab x axis.' },
+  { term: 'Rotation', value: 'Q rotates the molecule about its centroid in the lab frame. Dragging the view moves the camera only, which changes no physics.' },
+  { term: 'Units & signs', value: 'Energies in eV, forces in eV/Å, F = −∇E (arrows point downhill). Arrow length 0.3 Å per eV/Å.' },
+];
+
+const transforms = [
+  { q: 'Energy E', kind: 'scalar (l = 0)', rule: 'E → E' },
+  { q: 'Force on atom i, Fᵢ', kind: 'vector (l = 1)', rule: 'Fᵢ → Q Fᵢ' },
+  { q: 'Dipole moment μ', kind: 'vector (l = 1)', rule: 'μ → Q μ' },
+  { q: 'Stress σ, polarisability α', kind: 'rank-2 tensor (l = 0 ⊕ 1 ⊕ 2)', rule: 'σ → Q σ Qᵀ' },
+];
+---
+
+<BaseLayout
+  title="What changes under rotation?"
+  description="Physics Lab P4: rotate a molecule and see which predictions stay fixed (energy) and which must turn with it (forces) — invariance and equivariance, with a model that breaks both."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/physics-lab/">Physics Lab</a> · P4</p>
+      <h1 class="h-display">What changes under rotation?</h1>
+      <p class="lede">
+        Turn a molecule in empty space and nothing physical about it changes: same bonds, same energy. Its forces still
+        turn with it. A machine-learned potential has to respect both facts, and the easiest way to see why is to watch a
+        model that doesn’t.
+      </p>
+      <div class="head-badges">
+        <Badge label="toy-model" />
+        <Badge label="theory" />
+      </div>
+    </header>
+
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h" class="h-section">Two rules</h2>
+      <p>
+        For any rotation <Math tex={String.raw`\sym{Q}{Q}`} /> applied to all positions <b>R</b>, the energy must be
+        <em>invariant</em> and the force on every atom <em>equivariant</em>:
+      </p>
+      <Math display number="1" tex={String.raw`\sym{E}{E}(\sym{Q}{Q}\mathbf R) = \sym{E}{E}(\mathbf R), \qquad \sym{F}{\mathbf F_i}(\sym{Q}{Q}\mathbf R) = \sym{Q}{Q}\,\sym{F}{\mathbf F_i}(\mathbf R)`} />
+      <p>
+        Below, the same ethanol molecule is fed to two toy models. One sees only bond lengths. The other also reads each
+        bond vector’s component along the lab’s <i>x</i> axis, the kind of shortcut a neural network fed raw Cartesian
+        coordinates can learn from data that happens to share one orientation.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Rotating ethanol under an invariant and a raw-coordinate model" labels={['toy-model']} number={1} id="fig-rotation" framed={false}>
+        <RotationLab client:visible />
+        <Fragment slot="caption">
+          Teal arrows are the forces each model computes for the rotated molecule, <b>F</b>(<i>Q</i><b>R</b>); thin purple
+          arrows are the forces it computed before rotating, turned by <i>Q</i>. When the two coincide the model is equivariant.
+          The plots sweep the full turn about the chosen axis: the distance-only model is flat at zero in both panels.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">Geometry: ASE’s G2 set (<code>ase.build.molecule('CH3CH2OH')</code>). Models and parameters defined on this page.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" id="derivation" aria-labelledby="deriv-h">
+      <h2 id="deriv-h" class="h-section">Invariant energy, equivariant forces for free</h2>
+      <p>
+        Most MLIPs predict a single scalar energy and obtain forces by differentiation. That one design choice delivers the
+        second rule from the first.
+      </p>
+      <Callout kind="derivation" title="Why (1, left) implies (1, right)">
+        Differentiate <i>E</i>(<i>Q</i><b>R</b>) = <i>E</i>(<b>R</b>) with respect to the position of atom <i>i</i>. By the
+        chain rule the left side gives <i>Q</i><sup>T</sup>∇<sub><i>i</i></sub><i>E</i>(<i>Q</i><b>R</b>), so
+        <Math display tex={String.raw`Q^{\mathsf T}\,\nabla_i E(Q\mathbf R) = \nabla_i E(\mathbf R) \;\Longrightarrow\; \mathbf F_i(Q\mathbf R) = -\nabla_i E(Q\mathbf R) = Q\,\mathbf F_i(\mathbf R),`} />
+        using <i>Q</i><i>Q</i><sup>T</sup> = 1. The test suite checks this numerically for the distance-only model to 10⁻¹⁰ eV/Å.
+      </Callout>
+      <p>
+        The converse fails in practice: a model that predicts forces directly, without an energy, gets neither property
+        automatically and must be built or trained to have it.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="tensors-h">
+      <h2 id="tensors-h" class="h-section">Scalars, vectors, tensors</h2>
+      <p>Every physical output has a rule for how it turns. The rule is fixed by what the quantity is, not by the model:</p>
+      <div class="table-wrap">
+        <table class="tx">
+          <thead>
+            <tr><th>Quantity</th><th>Type</th><th>Under rotation Q</th></tr>
+          </thead>
+          <tbody>
+            {transforms.map((t) => (
+              <tr><td>{t.q}</td><td>{t.kind}</td><td><code>{t.rule}</code></td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <em>Invariant</em> networks build every internal feature from distances and angles, which never change, and stay
+        symmetric by construction. <em>Equivariant</em> networks also carry vector and higher-order features that rotate
+        like the rows above, which lets them pass directional information between atoms without breaking the rules — the
+        idea behind NequIP <Cite id="batzner2022nequip" /> and MACE <Cite id="batatia2022mace" />.
+      </p>
+      <Callout kind="note" title="Next">
+        How do you combine two directions into a new feature that still rotates correctly? That is what spherical
+        harmonics and tensor products do — Physics Lab P5.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1.25rem;
+  }
+  .tx {
+    border-collapse: collapse;
+    font: 0.9rem/1.45 var(--font-sans);
+    min-width: 30rem;
+  }
+  .tx th,
+  .tx td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .tx th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+</style>

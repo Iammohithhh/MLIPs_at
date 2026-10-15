@@ -1,0 +1,7 @@
+statement: >-
+  If a potential energy is invariant under rotations, E(QR) = E(R), then the forces F = −∇E are equivariant,
+  F_i(QR) = Q F_i(R): an energy-conserving model built from rotation-invariant energies gets rotation-equivariant
+  forces for free.
+grade: THEORY
+derivation: /physics-lab/rotation/#derivation
+review: { status: published, reviewers: [atlas-maintainers], last_checked: 2026-10-15, notes: Chain rule; derived on the page and checked numerically for the distance-only toy in rotation-toy.test.ts. }

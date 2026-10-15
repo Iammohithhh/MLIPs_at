@@ -419,3 +419,53 @@
     grid-template-columns: 6.5rem minmax(0, 1fr) auto;
   }
 }
+
+/* P4 rotation lab */
+.lab-plot .frame {
+  fill: none;
+  stroke: var(--atlas-rule);
+}
+.lab-plot .curve.sym {
+  stroke: color-mix(in oklab, var(--atlas-phys) 55%, transparent);
+}
+.lab-plot .curve.broken {
+  stroke: color-mix(in oklab, var(--atlas-caveat) 55%, transparent);
+}
+.lab-plot .curve.sym.is-active {
+  stroke: var(--atlas-phys);
+}
+.lab-plot .curve.broken.is-active {
+  stroke: var(--atlas-caveat);
+}
+.stage-legend .bar {
+  display: inline-block;
+  width: 1rem;
+  height: 0.25rem;
+  border-radius: 2px;
+}
+.stage-legend .bar.thin {
+  height: 0.12rem;
+}
+.lab-controls select {
+  grid-column: span 2;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.5rem;
+}
+.lab-btn {
+  justify-self: start;
+  font: 500 0.8125rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 0.45rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+.lab-btn[aria-pressed='true'] {
+  background: color-mix(in oklab, var(--atlas-phys) 12%, var(--atlas-surface));
+  border-color: var(--atlas-phys);
+}

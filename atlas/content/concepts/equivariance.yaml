@@ -1,0 +1,11 @@
+title: Invariance and equivariance
+summary: >-
+  Rotating a structure must leave its energy unchanged (invariance) and rotate its forces, dipoles and other
+  vectors with it (equivariance). Invariant models build features only from distances and angles; equivariant models
+  also carry vector and tensor features that co-rotate.
+relevant_to: [nequip, mace, allegro]
+demonstrated_by: [rotation-equivariance]
+related: [locality]
+papers: [batzner2022nequip, batatia2022mace]
+claims: [invariant-energy-equivariant-forces]
+review: { status: draft, last_checked: 2026-10-15 }

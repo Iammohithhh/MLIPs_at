@@ -1,0 +1,15 @@
+title: What changes under rotation?
+question: Under a rotation of the molecule, does the predicted energy stay the same and do the forces turn with it?
+kind: physics-lab
+module: P4
+status: TOY_MODEL
+tier: T0
+page: /physics-lab/rotation/#fig-rotation
+assumptions:
+  - { term: Structure, value: 'Ethanol, G2 geometry (ASE), displaced by a fixed pattern of ≤ 0.09 Å so forces are non-zero.' }
+  - { term: Distance-only model, value: 'E = Σ_bonds ½k(r − r⁰)², k = 30 eV/Å²; rest lengths from the G2 geometry.' }
+  - { term: Raw-coordinate model, value: 'Same springs + λ Σ_bonds (d·x̂)², λ = 0.6 eV/Å², with x̂ the fixed lab axis.' }
+  - { term: Rotation, value: 'About the molecular centroid; the camera is not part of the physics.' }
+concepts: [equivariance]
+claims: [invariant-energy-equivariant-forces]
+review: { status: draft, last_checked: 2026-10-15 }

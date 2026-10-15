@@ -486,7 +486,7 @@ export interface ColoredLine {
   rgba: [number, number, number, number];
 }
 
-export function Lines({ lines }: { lines: ColoredLine[] }) {
+export function Lines({ lines, overlay = false }: { lines: ColoredLine[]; /** Draw on top of everything (no depth test). */ overlay?: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
   const geometry = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -507,8 +507,8 @@ export function Lines({ lines }: { lines: ColoredLine[] }) {
     return () => geometry.dispose();
   }, [geometry, invalidate]);
   return (
-    <lineSegments geometry={geometry} renderOrder={5}>
-      <lineBasicMaterial vertexColors transparent depthWrite={false} />
+    <lineSegments geometry={geometry} renderOrder={overlay ? 30 : 5}>
+      <lineBasicMaterial vertexColors transparent depthWrite={false} depthTest={!overlay} />
     </lineSegments>
   );
 }
