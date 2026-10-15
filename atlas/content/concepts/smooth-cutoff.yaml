@@ -4,7 +4,7 @@ summary: >-
   cross the cutoff. How many derivatives vanish at r_c decides whether forces and force constants are continuous.
 explains: [forces-from-energy]
 relevant_to: [behler-parrinello, nequip, mace, allegro]
-demonstrated_by: [cutoff-explorer, body-order-lab]
+demonstrated_by: [cutoff-explorer, body-order-lab, dynamics-stability-lab]
 related: [locality]
 claims: [cosine-cutoff-curvature-jump, polynomial-envelope-c2]
 review: { status: draft, last_checked: 2026-10-14 }

@@ -1,0 +1,13 @@
+title: 'The dark side of the forces: assessing non-conservative force models for atomistic machine learning'
+topic: benchmarks-failures
+authors:
+  - 'Bigi, F.'
+  - 'Langer, M. F.'
+  - 'Ceriotti, M.'
+year: 2024
+venue: International Conference on Machine Learning (ICML) 2025; arXiv preprint 2024
+type: conference
+identifiers:
+  arxiv: '2412.11569'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read arXiv v6 (HTML), Secs. 4.4 and 4.8; ICML 2025 venue from DBLP.' }

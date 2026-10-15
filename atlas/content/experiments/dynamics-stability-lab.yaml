@@ -1,0 +1,17 @@
+title: Dynamics and stability
+question: >-
+  What do energy drift, the radial distribution function and the mean squared displacement reveal about a trajectory,
+  and how do the cutoff treatment and the time step change them?
+kind: physics-lab
+module: P12
+status: LIVE_CALCULATION
+tier: T2
+page: /physics-lab/dynamics/#fig-md
+assumptions:
+  - { term: Engine, value: 'LAMMPS compiled to WebAssembly (lammps.js 1.5.1), one instance per Web Worker; fix nve (velocity Verlet).' }
+  - { term: System, value: '256 atoms, fcc start at ρ = 0.8442 σ⁻³ with velocities drawn at T = 1.44 ε/k_B (the LAMMPS bench/in.lj state), cubic periodic box.' }
+  - { term: Potentials, value: '12-6 Lennard-Jones with r_c = 2.5σ: truncated, shifted (pair_modify shift yes) or multiplied by the p = 6 polynomial envelope (pair_style table spline, 4000 points).' }
+  - { term: Units, value: 'LAMMPS lj reduced units: σ, ε, m, τ = σ√(m/ε); energies per atom.' }
+concepts: [smooth-cutoff, periodic-boundaries]
+claims: [verlet-energy-error-h2, shift-keeps-force-jump]
+review: { status: draft, last_checked: 2026-10-15 }

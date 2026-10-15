@@ -1374,6 +1374,46 @@
    "referenced_works": []
   }
  },
+ "bigi2024darkside": {
+  "arxiv": {
+   "authors": [
+    "Filippo Bigi",
+    "Marcel Langer",
+    "Michele Ceriotti"
+   ],
+   "id": "2412.11569v6",
+   "primary_category": "physics.chem-ph",
+   "published": "2024-12-16",
+   "title": "The dark side of the forces: assessing non-conservative force models for atomistic machine learning",
+   "updated": "2025-10-25"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bigi, F.' vs fetched ['bigi']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 4,
+   "id": "W4405470127",
+   "publication_year": 2024,
+   "referenced_works": []
+  }
+ },
  "borwein1985madelung": {
   "arxiv": null,
   "checks": [
@@ -1824,6 +1864,7 @@
   ],
   "cites": [
    "batzner2022nequip",
+   "fu2022forces",
    "rappe1991qeq"
   ],
   "crossref": {
@@ -2547,6 +2588,50 @@
    ]
   }
  },
+ "fu2022forces": {
+  "arxiv": {
+   "authors": [
+    "Xiang Fu",
+    "Zhenghao Wu",
+    "Wujie Wang",
+    "Tian Xie",
+    "Sinan Keten",
+    "Rafael Gomez-Bombarelli",
+    "Tommi Jaakkola"
+   ],
+   "id": "2210.07237v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2022-10-13",
+   "title": "Forces are not Enough: Benchmark and Critical Evaluation for Machine Learning Force Fields with Molecular Simulations",
+   "updated": "2023-08-26"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Fu, X.' vs fetched ['fu']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 141,
+   "id": "W4306313211",
+   "publication_year": 2022,
+   "referenced_works": []
+  }
+ },
  "gasteiger2020dimenet": {
   "arxiv": {
    "authors": [
@@ -2766,6 +2851,98 @@
    "id": "W7128713787",
    "publication_year": 2026,
    "referenced_works": []
+  }
+ },
+ "hairer2003verlet": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2003; fetched [2003]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Hairer, E.' vs fetched ['hairer']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Hairer",
+     "given": "Ernst"
+    },
+    {
+     "family": "Lubich",
+     "given": "Christian"
+    },
+    {
+     "family": "Wanner",
+     "given": "Gerhard"
+    }
+   ],
+   "container": "Acta Numerica",
+   "doi": "10.1017/s0962492902000144",
+   "issue": null,
+   "page": "399-450",
+   "title": "Geometric numerical integration illustrated by the Störmer–Verlet method",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2003
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 653,
+   "id": "W2142274086",
+   "publication_year": 2003,
+   "referenced_works": [
+    "W54222547",
+    "W1524565983",
+    "W1977482735",
+    "W1981794678",
+    "W1986367849",
+    "W1993493326",
+    "W1994246733",
+    "W2001569514",
+    "W2003379874",
+    "W2005557780",
+    "W2011795318",
+    "W2023290656",
+    "W2030349522",
+    "W2032405498",
+    "W2034755641",
+    "W2040636650",
+    "W2042388195",
+    "W2043913140",
+    "W2045651569",
+    "W2046608570",
+    "W2049161806",
+    "W2050477987",
+    "W2050979556",
+    "W2056679333",
+    "W2058622906",
+    "W2058893615",
+    "W2059469074",
+    "W2059786425",
+    "W2061356302",
+    "W2061963840",
+    "W2063402902",
+    "W2067964076",
+    "W2084367325",
+    "W2106140689",
+    "W2148437017",
+    "W2170039048",
+    "W2323178299",
+    "W6921515571"
+   ]
   }
  },
  "kaplan2025matpes": {
@@ -3387,7 +3564,8 @@
    "chanussot2020oc20",
    "deng2023chgnet",
    "deng2024softening",
-   "drautz2019ace"
+   "drautz2019ace",
+   "fu2022forces"
   ],
   "crossref": {
    "article_number": null,
@@ -3635,6 +3813,93 @@
    "id": "W7203617361",
    "publication_year": 2026,
    "referenced_works": []
+  }
+ },
+ "swope1982verlet": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1982; fetched [1982]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Swope, W. C.' vs fetched ['swope']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Swope",
+     "given": "William C."
+    },
+    {
+     "family": "Andersen",
+     "given": "Hans C."
+    },
+    {
+     "family": "Berens",
+     "given": "Peter H."
+    },
+    {
+     "family": "Wilson",
+     "given": "Kent R."
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.442716",
+   "issue": "1",
+   "page": "637-649",
+   "title": "A computer simulation method for the calculation of equilibrium constants for the formation of physical clusters of molecules: Application to small water clusters",
+   "type": "journal-article",
+   "volume": "76",
+   "year": 1982
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 4051,
+   "id": "W2080131977",
+   "publication_year": 1982,
+   "referenced_works": [
+    "W598873327",
+    "W634960941",
+    "W1565555909",
+    "W1671860850",
+    "W1977204953",
+    "W1983321529",
+    "W1984879541",
+    "W1985550898",
+    "W2011019049",
+    "W2013318832",
+    "W2018803421",
+    "W2031406186",
+    "W2033278446",
+    "W2041268443",
+    "W2043242869",
+    "W2045336241",
+    "W2056737842",
+    "W2083732454",
+    "W2087624827",
+    "W2121203842",
+    "W2143752207",
+    "W2145884973",
+    "W2146462263",
+    "W2323178299",
+    "W2341059552",
+    "W2480093068",
+    "W2799905411",
+    "W3035637247",
+    "W4236416186"
+   ]
   }
  },
  "tian2025agwater": {

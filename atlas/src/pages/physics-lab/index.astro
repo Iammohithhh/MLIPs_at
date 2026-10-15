@@ -25,7 +25,7 @@ const modules: Module[] = [
   { id: 'P9', title: 'Periodic boundaries & finite size', question: 'What do periodic images do to a slab with a dipole?', manipulate: 'Vacuum thickness, surface dipole, dipole correction', tier: 'T0 · browser', href: '/physics-lab/periodic-slab/' },
   { id: 'P10', title: 'PES softening', question: 'Why do universal potentials systematically under-predict curvature, and how little data fixes it?', manipulate: 'Displace an atom along a phonon mode', tier: 'T5 · precomputed' },
   { id: 'P11', title: 'Transferability', question: 'How does error grow as configurations leave the training distribution?', manipulate: 'Morph from training-like to shifted structures', tier: 'T5 · precomputed' },
-  { id: 'P12', title: 'Dynamics & stability', question: 'What do energy drift, RDFs and diffusion reveal that force errors hide?', manipulate: 'Play two trajectories side by side', tier: 'T2 · lammps.js' },
+  { id: 'P12', title: 'Dynamics & stability', question: 'What do energy drift, RDFs and diffusion reveal that force errors hide?', manipulate: 'Cutoff treatment and time step of two synchronised LAMMPS runs', tier: 'T2 · lammps.js', href: '/physics-lab/dynamics/' },
 ];
 
 const open = modules.filter((m) => m.href);

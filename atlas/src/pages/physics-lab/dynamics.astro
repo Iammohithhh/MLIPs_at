@@ -1,0 +1,240 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import DynamicsLab from '~/islands/DynamicsLab';
+import { LJ_STATE, boxLength, cutoffJump, ljTimePs } from '~/lib/physics/md';
+
+// Every number below is computed by ~/lib/physics/md (tested in md.test.ts).
+const N = 4 * LJ_STATE.cells ** 3;
+const L = boxLength();
+// (The Math component shadows the global Math here, so no Math.* below.)
+const jumpE = -cutoffJump('truncated').e;
+const jumpF = -cutoffJump('shifted').f;
+const tauAr = ljTimePs(3.4, 120, 39.948);
+
+const assumptions = [
+  { term: 'Engine', value: 'LAMMPS compiled to WebAssembly (lammps.js 1.5.1), one instance per Web Worker in your browser. fix nve: velocity Verlet, constant N, V, E.' },
+  { term: 'System', value: `${N} atoms of one type in a cubic periodic box of edge ${L.toFixed(3)} σ: an fcc lattice at ρ = ${LJ_STATE.density} σ⁻³ with velocities drawn at T = ${LJ_STATE.temperature} ε/k_B (seed ${LJ_STATE.seed}), the state of the LAMMPS bench/in.lj input in a smaller box. The crystal melts within a few τ.` },
+  { term: 'Potentials', value: `12-6 Lennard-Jones, ε = σ = 1, r_c = ${LJ_STATE.rc} σ. Truncated: pair_style lj/cut. Shifted: the same with pair_modify shift yes. Smooth: LJ × polynomial envelope (p = ${LJ_STATE.p}) tabulated on 4000 points and read with pair_style table spline.` },
+  { term: 'Synchronisation', value: 'Both runs start from the identical state and are advanced by the same simulated time (0.1 τ per frame), sampled every 0.02 τ, whatever their time steps.' },
+  { term: 'Diagnostics', value: 'Computed on the main thread from the sampled thermo output and positions: drift and rms from a straight-line fit to E(t); g(r) from the last 30 frames after 5 τ; MSD from positions unwrapped across the periodic boundary; D from the slope of the later MSD.' },
+  { term: 'Units', value: 'LAMMPS lj reduced units: length σ, energy ε, mass m, time τ = σ√(m/ε), temperature ε/k_B. Energies are per atom.' },
+];
+---
+
+<BaseLayout
+  title="Dynamics and stability"
+  description="Physics Lab P12: two Lennard-Jones trajectories run by LAMMPS in your browser, side by side. How the cutoff treatment and the time step show up in energy drift, the radial distribution function and diffusion, and what that means for machine-learned potentials."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/physics-lab/">Physics Lab</a> · P12</p>
+      <h1 class="h-display">Dynamics and stability</h1>
+      <p class="lede">
+        A potential is used to run molecular dynamics, and a trajectory can go wrong in ways a force error on a test set
+        never shows. Here two real simulations run in your browser, in lock-step, so you can change one thing and watch
+        what it does to energy conservation, structure and diffusion.
+      </p>
+      <div class="head-badges">
+        <Badge label="live-calculation" />
+        <Badge label="theory" />
+        <Badge label="published-result" />
+      </div>
+    </header>
+
+    <section class="block" id="integrator" aria-labelledby="int-h">
+      <h2 id="int-h" class="h-section">What the integrator promises</h2>
+      <p>
+        Constant-energy MD in LAMMPS (<code>fix nve</code>) uses the velocity form of the Verlet algorithm
+        <Cite id="swope1982verlet" />. With forces <i>F</i> = −∇<i>E</i> and a step Δ<i>t</i>, one step is
+      </p>
+      <Math
+        display
+        number="1"
+        tex={String.raw`\mathbf v_{n+\frac12} = \mathbf v_n + \frac{\Delta t}{2m}\,\mathbf F(\mathbf r_n),\qquad
+\mathbf r_{n+1} = \mathbf r_n + \Delta t\,\mathbf v_{n+\frac12},\qquad
+\mathbf v_{n+1} = \mathbf v_{n+\frac12} + \frac{\Delta t}{2m}\,\mathbf F(\mathbf r_{n+1})`}
+      />
+      <p>
+        It does not conserve the energy <i>H</i> exactly. What it does is better for long runs: for a smooth
+        Hamiltonian the energy error stays bounded instead of accumulating <Cite id="hairer2003verlet" locator="Theorem 5.1" />,
+      </p>
+      <Math
+        display
+        number="2"
+        tex={String.raw`\bigl|H(\mathbf p_n,\mathbf q_n) - H(\mathbf p_0,\mathbf q_0)\bigr| \le C\,\Delta t^{2} + C_N\,\Delta t^{N}\,t \qquad (0 \le t = n\Delta t \le \Delta t^{-N})`}
+      />
+      <p>
+        for any positive integer <i>N</i>, where <i>C</i><sub>N</sub> depends on bounds of the derivatives of <i>H</i>
+        up to order <i>N</i> + 1. Two consequences drive this lab. Halving the time step should cut the energy fluctuation
+        by four, a slope of 2 on log-log axes. And the guarantee is only as good as the smoothness of the potential:
+        a potential whose energy or force jumps somewhere has no bounded derivatives there, and nothing stops the energy
+        from wandering.
+      </p>
+    </section>
+
+    <section class="block" id="treatments" aria-labelledby="tr-h">
+      <h2 id="tr-h" class="h-section">Three ways to stop at r<sub>c</sub></h2>
+      <p>Every short-ranged potential has to be switched off at a cutoff. Each run below uses one of three versions of the same Lennard-Jones pair:</p>
+      <Math
+        display
+        number="3"
+        tex={String.raw`V_{\text{trunc}}(r) = V_{\text{LJ}}(r),\qquad
+V_{\text{shift}}(r) = V_{\text{LJ}}(r) - V_{\text{LJ}}(r_c),\qquad
+V_{\text{smooth}}(r) = V_{\text{LJ}}(r)\,u(r/r_c)\qquad (r<r_c)`}
+      />
+      <p>
+        all zero beyond <i>r</i><sub>c</sub>. When a pair crosses the cutoff, the truncated potential’s energy jumps by
+        |<i>V</i><sub>LJ</sub>(<i>r</i><sub>c</sub>)| = {jumpE.toFixed(4)} ε and its force by
+        {' '}{jumpF.toFixed(4)} ε/σ. Shifting removes the energy jump but not the force jump, because a constant
+        added inside <i>r</i><sub>c</sub> has zero gradient; LAMMPS documents its <code>shift</code> option as affecting
+        energies only. The polynomial envelope <i>u</i>, introduced for DimeNet <Cite id="gasteiger2020dimenet" locator="Eq. (8)" />,
+        vanishes at <i>r</i><sub>c</sub> together with its first two derivatives, so energy, force and force derivative all
+        go continuously to zero (<a href="/method/design-system/#fig-cutoff">derivation</a>). It also changes the
+        potential slightly inside the cutoff, so the smooth liquid is a slightly different liquid.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Two NVE trajectories, run by LAMMPS in your browser" labels={['live-calculation']} number={1} id="fig-md" framed={false}>
+        <DynamicsLab client:visible />
+        <Fragment slot="caption">
+          Top: the two runs, atoms coloured from grey (still at the starting lattice site) to amber (moved one
+          nearest-neighbour distance or more). Change the cutoff treatment or time step of either run and both restart
+          from the same state. Middle: the four diagnostics, with run A in solid blue and run B in dashed violet. Bottom: a time-step
+          sweep over all three treatments.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          LAMMPS via lammps.js (WebAssembly), run in your browser. Integrator bound: <Cite id="hairer2003verlet" locator="Theorem 5.1" />.
+          Envelope: <Cite id="gasteiger2020dimenet" locator="Eq. (8)" />. Diagnostics and the smooth table from the
+          tested module <code>lib/physics/md</code>.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" id="diagnostics" aria-labelledby="dg-h">
+      <h2 id="dg-h" class="h-section">Reading the diagnostics</h2>
+      <p>
+        <b>Energy drift.</b> In NVE the total energy per atom should fluctuate around a constant. A straight-line fit
+        separates a steady drift (ε/τ) from the fluctuation about it (rms). A drift means energy is being created or
+        destroyed by the integration, so the temperature drifts with it and the trajectory no longer samples the ensemble
+        you think it does.
+      </p>
+      <p>
+        <b>Radial distribution function.</b> The structure of the liquid, averaged over the box:
+      </p>
+      <Math
+        display
+        number="4"
+        tex={String.raw`g(r) = \frac{V}{N(N-1)/2}\;\frac{\bigl\langle n_{\text{pairs}}(r, r+\delta r)\bigr\rangle}{\tfrac{4\pi}{3}\bigl[(r+\delta r)^3 - r^3\bigr]}`}
+      />
+      <p>
+        with pairs counted once under the minimum-image convention, so <i>g</i> → 1 for an uncorrelated gas and peaks at the
+        nearest-neighbour shell of a liquid. Two runs with the same potential at the same temperature should agree
+        within noise.
+      </p>
+      <p>
+        <b>Mean squared displacement and diffusion.</b> Positions are followed across the periodic boundary and
+      </p>
+      <Math
+        display
+        number="5"
+        tex={String.raw`\mathrm{MSD}(t) = \frac1N\sum_{i=1}^{N}\bigl|\mathbf r_i(t)-\mathbf r_i(0)\bigr|^2, \qquad D = \lim_{t\to\infty}\frac{\mathrm{MSD}(t)}{6t}`}
+      />
+      <p>
+        in three dimensions (the Einstein relation). In a crystal the MSD saturates; in a liquid it grows linearly. In a
+        box this small, finite-size effects on <i>D</i> are not corrected, so compare the two runs with each other, not with
+        experiment. For orientation only: with σ = 3.4 Å, ε/k<sub>B</sub> = 120 K and the mass of argon, often used
+        for liquid argon, one τ is {tauAr.toFixed(2)} ps.
+      </p>
+      <Callout kind="note" title="What to try">
+        Put truncated and smooth side by side at Δt = 0.005 τ and compare their energy traces; then give one run
+        Δt = 0.02 τ. Finally run the sweep and compare the fitted slopes with the Δt² line of Eq. (2). The numbers you see
+        are measured live in your browser; they are not stored anywhere.
+      </Callout>
+      <p>
+        When we ran the sweep while building this page (Chromium, lammps.js 1.5.1), the smooth and shifted potentials both
+        followed the Δt² line (fitted slopes 2.0), while the truncated potential sat on a flat floor near 2 × 10⁻³ ε
+        whatever the time step. That floor is the energy bookkeeping, not the integrator: every pair that crosses
+        r<sub>c</sub> adds or removes {jumpE.toFixed(4)} ε at once, and no time step makes that smaller. The shifted
+        potential’s force jump of {jumpF.toFixed(3)} ε/σ is small enough at r<sub>c</sub> = 2.5σ that it does not show in
+        4 τ runs; it is a slow, systematic error rather than a large one. Your own run may differ in the last digit.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="mlip-h">
+      <h2 id="mlip-h" class="h-section">Why this matters for MLIPs</h2>
+      <p>
+        A machine-learned potential has the same two obligations as Lennard-Jones here. Its energy has to be smooth in
+        the atomic positions, which is why descriptor and message-passing models multiply every pair contribution by a
+        cutoff function. The envelope used above is the one NequIP multiplies into its radial basis with p = 6
+        <Cite id="batzner2022nequip" locator="Eqs. (4)–(8)" />, and MACE uses the same form with p = 5 <Cite id="batatia2022mace" locator="App. A.5.1" />
+        (<a href="/models/nequip/">NequIP</a>, <a href="/models/mace/">MACE</a>); the cosine cutoff of Behler–Parrinello
+        descriptors keeps the force continuous but lets the curvature jump at <i>r</i><sub>c</sub>
+        (<a href="/method/design-system/#fig-cutoff">compare them</a>). And the forces have to be the gradient of that energy.
+      </p>
+      <p>
+        Models that predict forces directly, without an energy, break the second obligation. Bigi, Langer and Ceriotti
+        ran such models in constant-energy MD and found a large, steady rise of the kinetic temperature
+        <Cite id="bigi2024darkside" locator="Sec. 4.4, Fig. 2" />; using conservative forces every few steps (multiple
+        time stepping) or fine-tuning to a conservative head removed it <Cite id="bigi2024darkside" locator="Sec. 4.8" />.
+        The energy-drift panel above is the diagnostic that exposes this.
+      </p>
+      <p>
+        Even a conservative model can fail in MD where its test-set errors look excellent. In a benchmark of nine ML
+        force fields, Fu et al. found that the models with the lowest force errors were not necessarily stable: several
+        collapsed or left the reference equilibrium, which they detected by the deviation of <i>g</i>(<i>r</i>) or of
+        bond lengths from the reference <Cite id="fu2022forces" locator="Fig. 1; Sec. 5, Eqs. 4–5; Sec. 6" />. The RDF
+        panel above is the same kind of check.
+      </p>
+      <Callout kind="caveat" title="This lab is classical, not an MLIP">
+        Both runs use Lennard-Jones, a fixed analytic potential, because LAMMPS in WebAssembly can run it in your browser.
+        The lab shows the mechanisms (smoothness, conservation, time step) on a system where the reference behaviour is
+        known; the statements about ML models above are published results from the cited papers, not computed here.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+</style>

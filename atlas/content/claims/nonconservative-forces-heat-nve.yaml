@@ -1,0 +1,9 @@
+statement: >-
+  Models that predict forces directly instead of as −∇E are not energy-conserving: in constant-energy MD they show a
+  large, steady rise of the kinetic temperature; multiple time stepping with occasional conservative forces, or
+  conservative fine-tuning, removes the artefact.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bigi2024darkside, locator: 'Sec. 4.4 and Fig. 2 (NVE temperature drift); Sec. 4.8 (multiple time stepping, conservative fine-tuning)', quote: 'makes direct-force models entirely useless for constant-energy simulations' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15 }

@@ -1,0 +1,9 @@
+statement: >-
+  In a benchmark of nine ML force fields on MD17 molecules, alanine dipeptide, water and LiPS, models with the lowest
+  force errors were not necessarily stable in MD: several collapsed or drifted out of the reference equilibrium
+  (judged by RDF or bond-length deviation).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: fu2022forces, locator: 'Fig. 1; Sec. 5 "Quantifying simulation stability" (Eqs. 4–5); Sec. 6 key observations', quote: 'force prediction is not sufficient for evaluating ML FFs' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15 }

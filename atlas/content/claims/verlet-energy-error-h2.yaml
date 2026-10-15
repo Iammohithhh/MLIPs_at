@@ -1,0 +1,10 @@
+statement: >-
+  For a smooth Hamiltonian, the total energy along a Störmer–Verlet (velocity Verlet) trajectory with step h stays
+  within C·h² of its initial value over very long times; the constants depend on bounds of derivatives of the
+  Hamiltonian, so the guarantee needs a smooth potential.
+grade: THEORY
+sources:
+  - { paper: hairer2003verlet, locator: 'Theorem 5.1, Sec. 5.1', quote: '|H(pn, qn) − H(p0, q0)| ≤ Ch² + C_N h^N t for 0 ≤ t = nh ≤ h^−N' }
+derivation: /physics-lab/dynamics/#integrator
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15 }

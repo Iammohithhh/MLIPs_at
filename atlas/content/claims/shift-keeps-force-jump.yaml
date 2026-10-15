@@ -1,0 +1,7 @@
+statement: >-
+  Shifting a truncated pair potential by its value at r_c makes the energy continuous but leaves the force
+  discontinuous, because adding a constant inside r_c does not change −dV/dr; for 12-6 Lennard-Jones at r_c = 2.5σ the
+  force jumps by about 0.039 ε/σ.
+grade: THEORY
+derivation: /physics-lab/dynamics/#treatments
+review: { status: draft, last_checked: 2026-10-15 }

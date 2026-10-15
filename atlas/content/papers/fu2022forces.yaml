@@ -1,0 +1,19 @@
+title: >-
+  Forces are not Enough: Benchmark and Critical Evaluation for Machine Learning Force Fields with Molecular
+  Simulations
+topic: benchmarks-failures
+authors:
+  - 'Fu, X.'
+  - 'Wu, Z.'
+  - 'Wang, W.'
+  - 'Xie, T.'
+  - 'Keten, S.'
+  - 'Gomez-Bombarelli, R.'
+  - 'Jaakkola, T.'
+year: 2022
+venue: arXiv:2210.07237 (v2, reviewed on OpenReview)
+type: preprint
+identifiers:
+  arxiv: '2210.07237'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read arXiv v2 (HTML), Secs. 1, 5, 6; journal venue not confirmed.' }

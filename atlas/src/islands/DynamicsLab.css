@@ -1,0 +1,191 @@
+/* Physics Lab P12: two synchronised LAMMPS runs */
+.md-transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.md-lab .md-primary,
+.md-lab .md-secondary {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  font: 600 0.875rem/1.1 var(--font-sans);
+  padding: 0.55rem 0.95rem;
+  border-radius: 0.55rem;
+  cursor: pointer;
+}
+.md-lab .md-primary {
+  color: var(--atlas-surface);
+  background: var(--atlas-arch);
+  border: 1px solid var(--atlas-arch);
+}
+.md-lab .md-secondary {
+  color: var(--atlas-ink);
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule-strong);
+}
+.md-lab .md-primary small {
+  font-weight: 400;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+.md-lab button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.md-clock {
+  flex: 1 1 8rem;
+  height: 0.4rem;
+  border-radius: 1rem;
+  background: var(--atlas-rule);
+  overflow: hidden;
+}
+.md-clock span {
+  display: block;
+  height: 100%;
+  background: var(--atlas-arch);
+  transition: width 0.15s linear;
+}
+.md-status {
+  flex: 1 1 100%;
+  margin: 0;
+  font: 0.85rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+
+.md-sides {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.md-side {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+}
+.md-side + .md-side {
+  border-left: 1px solid var(--atlas-rule);
+}
+.md-side-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  padding: 0.65rem 1rem;
+}
+.md-side-head h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: 600 0.95rem var(--font-sans);
+  color: var(--atlas-ink);
+}
+.md-sub {
+  font: 0.8rem var(--font-mono);
+  color: var(--atlas-ink-muted);
+}
+.md-key {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.2rem;
+  flex: none;
+}
+.md-lab .md-stage {
+  min-height: 0;
+  height: 320px;
+  border-right: 0;
+  border-block: 1px solid var(--atlas-rule);
+}
+.md-side-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 0.25rem;
+}
+.md-lab .md-side-controls .seg button {
+  padding: 0.4rem 0.55rem;
+}
+.md-readout {
+  padding: 0.5rem 1rem 1rem;
+}
+.md-readout dd {
+  font-size: 0.9rem;
+}
+
+.md-plots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.md-plots .md-plot:nth-child(odd) {
+  border-right: 1px solid var(--atlas-rule);
+}
+.md-plots .md-plot:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.md-plot .md-ref {
+  stroke: var(--atlas-ink-faint);
+  stroke-dasharray: 4 3;
+  fill: none;
+}
+
+.md-sweep {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+}
+.md-sweep-text {
+  padding: 1rem 1.1rem;
+  font: 0.875rem/1.55 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.md-sweep-text h3 {
+  margin: 0 0 0.4rem;
+  font: 600 0.95rem var(--font-sans);
+  color: var(--atlas-ink);
+}
+.md-sweep-text p {
+  margin: 0 0 0.8rem;
+}
+.md-slopes {
+  list-style: none;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+  font: 0.82rem var(--font-mono);
+  color: var(--atlas-ink);
+}
+.md-slopes li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+@media (max-width: 860px) {
+  .md-sides,
+  .md-plots,
+  .md-sweep {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-side + .md-side {
+    border-left: 0;
+    border-top: 1px solid var(--atlas-rule);
+  }
+  .md-plots .md-plot:nth-child(odd) {
+    border-right: 0;
+  }
+  .md-plots .md-plot {
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .md-lab .md-stage {
+    height: clamp(260px, 50vh, 340px);
+  }
+}
