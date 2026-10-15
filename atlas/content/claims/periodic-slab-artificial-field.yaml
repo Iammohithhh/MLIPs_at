@@ -1,0 +1,11 @@
+statement: >-
+  Under fully periodic boundary conditions a slab carrying a surface dipole density p is accompanied by an artificial
+  uniform field p/(ε₀L_z) through the vacuum (and the slab), which decays only as 1/L_z with the cell length; a
+  dipole-layer correction removes it and leaves a potential step p/ε₀ across the dipole layer.
+grade: THEORY
+sources:
+  - { paper: bengtsson1999dipole }
+  - { paper: yeh1999slab }
+derivation: /physics-lab/periodic-slab/#derivation
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Planar-averaged Poisson equation with zero mean field; checked numerically in slab-dipole.test.ts.' }

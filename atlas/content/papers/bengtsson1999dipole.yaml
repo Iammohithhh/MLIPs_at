@@ -1,0 +1,11 @@
+title: Dipole correction for surface supercell calculations
+topic: electrostatics
+authors:
+  - 'Bengtsson, L.'
+year: 1999
+venue: Physical Review B 59, 12301–12304
+type: article
+identifiers:
+  doi: 10.1103/PhysRevB.59.12301
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Abstract: periodic boundary conditions give an artificial field for asymmetric slabs; a dipole-layer correction cancels it and enters the DFT total energy.' }

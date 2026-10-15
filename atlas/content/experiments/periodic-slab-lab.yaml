@@ -1,0 +1,14 @@
+title: A polar slab and its periodic images
+question: What field do periodic images impose on a slab with a surface dipole, how does it scale with the vacuum, and what does the dipole correction change?
+kind: physics-lab
+module: P9
+status: LIVE_CALCULATION
+tier: T0
+page: /physics-lab/periodic-slab/#fig-slab
+assumptions:
+  - { term: Structure, value: 'Au(111) slab, 4 layers, a = 4.078 Å (ASE fcc111), with an adsorbed cation layer drawn for illustration.' }
+  - { term: Charges, value: 'A planar dipole layer: −σ in the surface plane, +σ 1.6 Å above, σ = p/d, Gaussian-smoothed (0.35 Å).' }
+  - { term: Electrostatics, value: 'Planar-averaged 1D Poisson equation, periodic or dipole-corrected; ε₀ = 5.5263e-3 e/(V·Å).' }
+concepts: [periodic-boundaries]
+claims: [periodic-slab-artificial-field]
+review: { status: draft, last_checked: 2026-10-15 }

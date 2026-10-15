@@ -1175,6 +1175,57 @@
    ]
   }
  },
+ "bengtsson1999dipole": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1999; fetched [1999]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bengtsson, L.' vs fetched ['bengtsson']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Bengtsson",
+     "given": "Lennart"
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.59.12301",
+   "issue": "19",
+   "page": "12301-12304",
+   "title": "Dipole correction for surface supercell calculations",
+   "type": "journal-article",
+   "volume": "59",
+   "year": 1999
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 2052,
+   "id": "W2091135029",
+   "publication_year": 1999,
+   "referenced_works": [
+    "W2016632908",
+    "W2033757285",
+    "W2054299669",
+    "W2087585288",
+    "W2151800339"
+   ]
+  }
+ },
  "berendsen1987spce": {
   "arxiv": null,
   "checks": [
@@ -2454,6 +2505,102 @@
     "W6874042194",
     "W6893138734",
     "W6894249930"
+   ]
+  }
+ },
+ "yeh1999slab": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1999; fetched [1999]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Yeh, I.-C.' vs fetched ['yeh']"
+   }
+  ],
+  "cites": [
+   "berendsen1987spce"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Yeh",
+     "given": "In-Chul"
+    },
+    {
+     "family": "Berkowitz",
+     "given": "Max L."
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.479595",
+   "issue": "7",
+   "page": "3155-3162",
+   "title": "Ewald summation for systems with slab geometry",
+   "type": "journal-article",
+   "volume": "111",
+   "year": 1999
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 1457,
+   "id": "W1972872586",
+   "publication_year": 1999,
+   "referenced_works": [
+    "W1008895281",
+    "W1964531032",
+    "W1966609152",
+    "W1974076615",
+    "W1974395778",
+    "W1975769356",
+    "W1981045787",
+    "W1981438810",
+    "W1983793204",
+    "W1985307198",
+    "W1992782574",
+    "W1995886977",
+    "W2001062582",
+    "W2001093338",
+    "W2008716595",
+    "W2013905363",
+    "W2016218960",
+    "W2024035965",
+    "W2028053014",
+    "W2029940779",
+    "W2031317247",
+    "W2032134086",
+    "W2035266068",
+    "W2035687084",
+    "W2042006544",
+    "W2046001409",
+    "W2048402553",
+    "W2049475242",
+    "W2052996108",
+    "W2056049439",
+    "W2067223752",
+    "W2069962592",
+    "W2079179785",
+    "W2084005259",
+    "W2091355161",
+    "W2104090745",
+    "W2106303661",
+    "W2113489785",
+    "W2157081197",
+    "W2158455724",
+    "W2161682113",
+    "W3098864977",
+    "W4230299717",
+    "W4285719527"
    ]
   }
  }

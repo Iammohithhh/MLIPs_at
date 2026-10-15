@@ -1,0 +1,10 @@
+title: Periodic boundaries and finite size
+summary: >-
+  Simulation cells repeat in every periodic direction. For slabs and interfaces the images interact: a net dipole
+  produces an artificial field through the vacuum unless it is corrected, and errors shrink only slowly as the cell grows.
+explains: [coulomb-interaction]
+demonstrated_by: [periodic-slab-lab]
+related: [ewald-summation, long-range-electrostatics]
+papers: [bengtsson1999dipole, yeh1999slab]
+claims: [periodic-slab-artificial-field]
+review: { status: draft, last_checked: 2026-10-15 }

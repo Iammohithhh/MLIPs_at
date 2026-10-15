@@ -1,0 +1,12 @@
+title: Ewald summation for systems with slab geometry
+topic: electrostatics
+authors:
+  - 'Yeh, I.-C.'
+  - 'Berkowitz, M. L.'
+year: 1999
+venue: The Journal of Chemical Physics 111, 3155–3162
+type: article
+identifiers:
+  doi: 10.1063/1.479595
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Slab correction U = M_z²/(2ε₀V) as implemented in mdcraft/OpenMM docs; check the equation number in the full text.' }

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SlabDipoleLab from '~/islands/SlabDipoleLab';
+
+const assumptions = [
+  { term: 'Structure', value: 'Au(111) slab, 4 layers, a = 4.078 Å, built with ase.build.fcc111; the adsorbed cation layer is drawn for orientation only.' },
+  { term: 'Charges', value: 'A planar dipole layer of density p: a sheet −σ in the surface plane and +σ 1.6 Å above it, σ = p/d, each smoothed by a 0.35 Å Gaussian. The metal itself is neutral and not otherwise modelled.' },
+  { term: 'Electrostatics', value: 'Planar-averaged Poisson equation d²φ̄/dz² = −ρ̄/ε₀ on a grid of 1200 points per cell; periodic: zero mean field; corrected: zero field in the vacuum. ε₀ = 5.5263 × 10⁻³ e/(V·Å).' },
+  { term: 'Signs & units', value: 'p > 0 points from the image charge to the cations (+z). Potentials in V, fields in V/Å, energies in meV per surface cell of the drawn slab.' },
+];
+---
+
+<BaseLayout
+  title="Periodic boundaries and finite size"
+  description="Physics Lab P9: a slab with a surface dipole in a periodic cell, the artificial field its images force through the vacuum, how slowly it decays with the vacuum thickness, and what the dipole correction does."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/physics-lab/">Physics Lab</a> · P9</p>
+      <h1 class="h-display">Periodic boundaries and finite size</h1>
+      <p class="lede">
+        Surfaces and interfaces are simulated as slabs in a box that repeats in every direction, including the one that
+        should be open. When the slab carries a dipole, its copies talk to each other through the vacuum, and the
+        numbers depend on how much vacuum you paid for.
+      </p>
+      <div class="head-badges">
+        <Badge label="live-calculation" />
+        <Badge label="theory" />
+      </div>
+    </header>
+
+    <section class="block" id="derivation" aria-labelledby="d-h">
+      <h2 id="d-h" class="h-section">Where the artificial field comes from</h2>
+      <p>Average the charge over planes parallel to the surface. The potential then obeys a one-dimensional Poisson equation:</p>
+      <Math display number="1" tex={String.raw`\frac{\mathrm d^2\bar\varphi}{\mathrm dz^2} = -\frac{\bar\rho(z)}{\varepsilon_0}, \qquad p = \int z\,\bar\rho(z)\,\mathrm dz`} />
+      <p>
+        If the cell is periodic along <i>z</i>, φ̄ must return to its starting value after one cell, so the field averages
+        to zero over the cell. The dipole layer alone would make a potential step of <i>p</i>/ε₀; to undo it, periodicity
+        adds a uniform field everywhere:
+      </p>
+      <Math display number="2" tex={String.raw`E_{\text{vac}} = \frac{p}{\varepsilon_0 L_z}, \qquad \frac{U}{A} = \frac{p^2}{2\varepsilon_0 L_z}`} />
+      <p>
+        The second expression is the spurious energy per surface area, the slab correction of Yeh and Berkowitz written
+        per area <Cite id="yeh1999slab" />. Both fall only as 1/<i>L</i><sub>z</sub>. The dipole correction instead
+        demands zero field in the vacuum and places the compensating jump at the cell boundary, inside the vacuum
+        <Cite id="bengtsson1999dipole" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A polar slab in a periodic cell, with and without the dipole correction" labels={['live-calculation', 'theory']} number={1} id="fig-slab" framed={false}>
+        <SlabDipoleLab client:visible />
+        <Fragment slot="caption">
+          Left: the slab and its images above and below; red arrows show the artificial field in each vacuum gap, and the
+          green layer is the compensating dipole that replaces it when the correction is on. Right: the planar-averaged
+          potential over two cells, and the artificial field against vacuum thickness at the current dipole.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          Dipole correction: <Cite id="bengtsson1999dipole" />. Slab Ewald correction: <Cite id="yeh1999slab" />. Structure from ASE; electrostatics solved in your browser.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="mlip-h">
+      <h2 id="mlip-h" class="h-section">Why this matters for MLIPs</h2>
+      <p>
+        Training data for surfaces and electrochemical interfaces comes from periodic DFT. Whether a dipole correction
+        was used, and how much vacuum separated the images, changes the reference energies and forces a model learns.
+        A local MLIP cannot see the artificial field directly, but it can absorb its effects into short-range terms that
+        then fail to transfer to a different cell size.
+      </p>
+      <Callout kind="caveat" title="Check the reference settings">
+        When a model is trained or evaluated on slabs, the cell length, vacuum thickness and electrostatic boundary
+        condition belong in its provenance alongside the functional. The Atlas records them on dataset pages when the
+        source states them.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+</style>
