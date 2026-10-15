@@ -1,0 +1,185 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Cite from '~/components/Cite.astro';
+import { modelPageUrl } from '~/lib/model-pages';
+import type { ModelFamily } from '~/content/schemas';
+
+const families = (await getCollection('model-families'))
+  .map((e) => ({ id: e.id, data: e.data as ModelFamily }))
+  .sort((a, b) => a.data.year - b.data.year || a.data.name.localeCompare(b.data.name));
+const open = families.filter((f) => modelPageUrl(f.id));
+const stubs = families.filter((f) => !modelPageUrl(f.id));
+
+const localityLabel: Record<string, string> = {
+  'strictly-local': 'strictly local',
+  'message-passing': 'message passing',
+  'local-plus-long-range': 'local + long range',
+  global: 'global',
+};
+---
+
+<BaseLayout
+  title="Models"
+  description="Machine-learned interatomic potential families on the MLIP Atlas: each family page explains the architecture step by step on real structures, with its equations, evidence, failure modes and checkpoints."
+>
+  <article class="page-grid models">
+    <header class="wide head">
+      <p class="eyebrow">Models</p>
+      <h1 class="h-display">Model families</h1>
+      <p class="lede">
+        A model family is an architecture: a recipe with no weights and no numbers. Each open page takes one apart on real
+        structures, states what it can and cannot represent, and lists its released checkpoints separately from it.
+        Families open one at a time, when they meet that bar.
+      </p>
+    </header>
+
+    <section class="wide" aria-labelledby="open-h">
+      <h2 id="open-h" class="h-sub section-title">Open</h2>
+      <ul class="grid-open">
+        {
+          open.map((f) => (
+            <li class="card is-open">
+              <a class="card-link" href={modelPageUrl(f.id)!}>
+                <span class="year">{f.data.year}</span>
+                <span class="name">{f.data.name}</span>
+                <span class="summary">{f.data.summary}</span>
+                <span class="chips">
+                  <span class="chip">{f.data.symmetry}</span>
+                  <span class="chip">{localityLabel[f.data.locality.kind]}</span>
+                  {f.data.paradigms.map((p) => <span class="chip">{p.replace(/-/g, ' ')}</span>)}
+                </span>
+                <span class="go">Open the model page →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wide" aria-labelledby="stub-h">
+      <h2 id="stub-h" class="h-sub section-title">In review</h2>
+      <p class="note">Records exist and are sourced; the full pages are being built to the same standard.</p>
+      <ul class="grid-stub">
+        {
+          stubs.map((f) => (
+            <li class="card">
+              <span class="year">{f.data.year}</span>
+              <span class="name">{f.data.name}</span>
+              <span class="summary">{f.data.summary}</span>
+              <span class="chips">
+                <span class="chip">{f.data.symmetry}</span>
+                <span class="chip">{localityLabel[f.data.locality.kind]}</span>
+              </span>
+              <span class="src">
+                Introduced in <Cite id={f.data.introduced_in} />
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .models {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .section-title {
+    margin: clamp(2rem, 4vw, 3rem) 0 1rem;
+  }
+  .note {
+    margin: -0.5rem 0 1rem;
+    color: var(--atlas-ink-muted);
+    font-size: 0.9rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .grid-open {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+    gap: 1rem;
+  }
+  .grid-stub {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 0.75rem;
+  }
+  .card {
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+    background: var(--atlas-surface);
+  }
+  .card.is-open {
+    padding: 0;
+    border-color: color-mix(in oklab, var(--atlas-arch) 40%, var(--atlas-rule));
+    box-shadow: var(--atlas-shadow);
+  }
+  .card-link {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1.3rem 1.4rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: inherit;
+  }
+  .card-link:hover {
+    background: color-mix(in oklab, var(--atlas-arch) 5%, var(--atlas-surface));
+  }
+  .year {
+    font: 600 0.75rem var(--font-mono);
+    color: var(--atlas-arch);
+  }
+  .name {
+    font: 600 1.45rem/1.2 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .card:not(.is-open) .name {
+    font-size: 1.05rem;
+  }
+  .summary {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--atlas-ink-muted);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .chip {
+    font: 0.7rem var(--font-sans);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.3rem;
+    border: 1px solid var(--atlas-rule);
+    color: var(--atlas-ink-muted);
+  }
+  .src {
+    font-size: 0.78rem;
+    color: var(--atlas-ink-faint);
+  }
+  .go {
+    font: 600 0.875rem var(--font-sans);
+    color: var(--atlas-arch);
+  }
+</style>

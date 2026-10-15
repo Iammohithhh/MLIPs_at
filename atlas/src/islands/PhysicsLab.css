@@ -696,3 +696,15 @@
   background: color-mix(in oklab, var(--atlas-surface) 88%, transparent);
   cursor: pointer;
 }
+
+/* Radial basis explorer */
+.rb .lab-panel {
+  border-top: 1px solid var(--atlas-rule);
+}
+.rb-check {
+  display: flex !important;
+  gap: 0.5rem;
+  align-items: center;
+  font: 0.8125rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}

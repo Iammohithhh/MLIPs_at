@@ -11,4 +11,5 @@ body_order: Four-body messages (correlation order ν = 3) in the standard models
 reuses_mechanism:
   - { family: nequip, mechanism: Equivariant message passing with tensor products of spherical harmonics }
 implementations: [mace]
+claims: [mace-four-body-two-layers, mace-layer-equations, mace-paper-hyperparameters]
 review: { status: draft, last_checked: 2026-10-14 }

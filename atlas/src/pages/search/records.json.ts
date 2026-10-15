@@ -2,6 +2,7 @@
 // palette loads it lazily and searches it with Orama alongside Pagefind's
 // full-text index of the pages.
 import type { APIRoute } from 'astro';
+import { modelPageUrl } from '~/lib/model-pages';
 import { getCollection } from 'astro:content';
 import { COLLECTION_NAMES, type CollectionName } from '~/content/schemas';
 import { COLLECTION_META, recordTitle } from '~/content/meta';
@@ -27,6 +28,7 @@ function textOf(d: Record<string, unknown>): string {
 function urlOf(c: CollectionName, id: string, d: Record<string, unknown>): string {
   if (c === 'papers') return `/papers/#paper-${id}`;
   if (c === 'experiments' && typeof d['page'] === 'string') return d['page'];
+  if (c === 'model-families' && modelPageUrl(id)) return modelPageUrl(id)!;
   return `/method/content-model/#rec-${c}-${id}`;
 }
 

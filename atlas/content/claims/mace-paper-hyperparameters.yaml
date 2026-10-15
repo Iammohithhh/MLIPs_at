@@ -1,0 +1,10 @@
+statement: >-
+  The models in the MACE paper use two layers, spherical harmonics up to L_max = 3, eight Bessel radial basis functions
+  multiplied by a polynomial envelope with p = 5, and a cutoff of a few ångström; correlation orders ν from 1 to 3 are
+  compared.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: batatia2022mace, locator: 'App. A.5.1; Secs. 4–5' }
+scope: { model_families: [mace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'The appendix text renders the molecular cutoff as "55 Å", almost certainly 5.5 Å; confirm against the PDF before publishing an exact value.' }

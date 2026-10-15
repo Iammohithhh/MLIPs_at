@@ -48,6 +48,7 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Monographs, Architecture X-ray, checkpoint cards, side-by-side comparison',
     phase: 3,
     tone: 'arch',
+    href: '/models/',
     inNav: true,
   },
   {

@@ -1,0 +1,11 @@
+statement: >-
+  A MACE layer builds an atomic basis A_i = Σ_j R(r_ij) Y(r̂_ij) W h_j, forms symmetrised ν-fold products B_i of it
+  with generalised Clebsch–Gordan coefficients, takes a learned linear combination of B over correlation orders as the
+  message, updates the node features linearly with a residual connection, and reads site energies from the invariant
+  (L = 0) features of every layer.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: batatia2022mace, locator: 'Eqs. (8)–(13)' }
+scope: { model_families: [mace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-15, notes: 'Read from the arXiv v2 HTML rendering (ar5iv).' }

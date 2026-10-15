@@ -1,0 +1,415 @@
+---
+import katex from 'katex';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import MaceWalkthrough, { type WalkStep } from '~/islands/MaceWalkthrough';
+import RadialBasis from '~/islands/RadialBasis';
+import { katexOptions } from '~/lib/katex-options.mjs';
+
+const tex = (s: string) => katex.renderToString(s, { ...katexOptions, displayMode: true });
+
+const steps: WalkStep[] = [
+  {
+    id: 'embed',
+    title: 'Embed the elements',
+    eq: tex(String.raw`h^{(0)}_{i,k} = W_{k z_i}`),
+    shape: 'K scalars / atom',
+    intuition: 'Every atom starts with a learned vector that depends only on its element.',
+    technical: 'A linear embedding of the atomic number into K channels of invariant (l = 0) features; positions have not entered yet.',
+  },
+  {
+    id: 'radial',
+    title: 'Radial basis',
+    eq: tex(String.raw`R_n(r) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin(n\pi r/r_c)}{r}\; u(r/r_c), \quad n = 1,\dots,8`),
+    shape: '8 per edge',
+    intuition: 'Each neighbour distance is described by eight wave-like functions that all fade to zero at the cutoff.',
+    technical: 'Bessel functions times a polynomial envelope (p = 5); a small MLP maps them to the radial weights R_{k l₁ l₂ l₃}(r) of each path. Colour shows Rₙ for each neighbour.',
+  },
+  {
+    id: 'sh',
+    title: 'Spherical harmonics',
+    eq: tex(String.raw`Y_{l}^{m}(\hat{\mathbf r}_{ij}),\quad l = 0,\dots,L_{\max}`),
+    shape: '(L+1)² per edge',
+    intuition: 'Each bond direction becomes a set of numbers that rotate in a controlled way (Physics Lab P5).',
+    technical: 'Real spherical harmonics of the unit bond vector; up to L_max = 3 in the paper. Colour shows Y_lm for each neighbour direction.',
+  },
+  {
+    id: 'A',
+    title: 'Atomic basis A',
+    eq: tex(String.raw`A_{i,k l m} = \sum_{j \in \mathcal N(i)} R_{kl}(r_{ij})\, Y_l^m(\hat{\mathbf r}_{ij})\, W_{k z_j}`),
+    shape: 'K × (L+1)²',
+    intuition: 'Sum the neighbours’ radial-times-angular signals: a fingerprint of the whole neighbourhood, built with one sum.',
+    technical: 'First-layer form, Eq. (9) of the MACE paper. The arrow is the l = 1 block (a vector); its length and every P_l below are rotation-invariant.',
+  },
+  {
+    id: 'B',
+    title: 'Product basis B',
+    eq: tex(String.raw`B_{i,\eta_\nu k L M} = \sum_{\boldsymbol{lm}} \mathcal C^{LM}_{\eta_\nu,\boldsymbol{lm}} \prod_{\xi=1}^{\nu} \sum_{\tilde k} w_{k\tilde k l_\xi} A_{i,\tilde k l_\xi m_\xi}`),
+    shape: 'ν ≤ 3 → 4-body',
+    intuition: 'Multiply the fingerprint by itself up to three times: each product couples more neighbours at once, at no extra cost per neighbour.',
+    technical: 'Eq. (10): symmetrised ν-fold tensor products with generalised Clebsch–Gordan coefficients. ν = 2, L = 0 gives the power spectrum P_l; ν = 3 makes the message four-body.',
+  },
+  {
+    id: 'message',
+    title: 'Message, update, second layer',
+    eq: tex(String.raw`m_{i,kLM} = \sum_\nu \sum_{\eta_\nu} W_{z_i k L, \eta_\nu} B_{i,\eta_\nu k L M}, \qquad h^{(t+1)}_{i} = W\, m_i + W'\, h^{(t)}_i`),
+    shape: 'T = 2 layers',
+    intuition: 'The new features feed a second identical layer, which can see neighbours of neighbours: about twice the cutoff in total.',
+    technical: 'Eqs. (11)–(12): learned linear message over correlation orders and coupling paths, linear update with a residual connection. Two layers in the paper; the receptive field is bounded by T times the cutoff.',
+  },
+  {
+    id: 'readout',
+    title: 'Readout to energy',
+    eq: tex(String.raw`E = \sum_i \sum_{t=1}^{T} \mathcal R_t\!\left(h^{(t)}_{i,k00}\right), \qquad \mathbf F_i = -\nabla_i E`),
+    shape: '1 number / atom',
+    intuition: 'Only the rotation-invariant (L = 0) features are turned into site energies; forces come from differentiating their sum.',
+    technical: 'Eq. (13): a linear readout after the first layer and a small MLP after the last. Because E is invariant, F = −∇E is equivariant (Physics Lab P4).',
+  },
+];
+
+const checkpoints = [
+  { name: 'MACE-MP-0a', data: 'MPtrj · PBE/PBE+U', sizes: 'small, medium, large', licence: 'MIT', record: 'medium (2023-12-03) has an Atlas record' },
+  { name: 'MACE-MP-0b3', data: 'MPtrj · PBE/PBE+U', sizes: 'medium', licence: 'MIT', record: '—' },
+  { name: 'MACE-MPA-0', data: 'MPtrj + sAlex · PBE/PBE+U', sizes: 'medium', licence: 'MIT', record: '—' },
+  { name: 'MACE-OMAT-0', data: 'OMat24 · PBE/PBE+U', sizes: 'medium', licence: 'ASL', record: '—' },
+  { name: 'MACE-OFF23', data: 'SPICE v1 · ωB97M-D3 (organics, 10 elements)', sizes: 'small, medium, large', licence: 'ASL', record: '—' },
+  { name: 'MACE-MATPES-PBE-0 / r²SCAN-0', data: 'MatPES · PBE (no +U) / r²SCAN', sizes: 'medium', licence: 'ASL', record: '—' },
+  { name: 'MACE-OMOL-0', data: 'OMol25 · ωB97M-VV10', sizes: 'large', licence: 'ASL', record: '—' },
+  { name: 'MACE-MH-0 / MH-1', data: 'OMat/OMol/OC20/MatPES · multi-head', sizes: 'mh-0, mh-1', licence: 'ASL', record: '—' },
+];
+
+const walkAssumptions = [
+  { term: 'Weights', value: 'No trained weights are used: element weights are 1 and only the first radial channel is shown. Every quantity is computed from the structure and the published functional forms.' },
+  { term: 'Structures', value: 'Si diamond (a = 5.431 Å), ZnO wurtzite and ethanol from the Atlas structure pipeline (ASE); the central atom is atom 0 (ethanol: the CH₂ carbon).' },
+  { term: 'Invariants', value: 'P_l = Σ_m A_lm² is the ν = 2, L = 0 member of the product basis (the power spectrum); it is unchanged by rotating the environment.' },
+];
+---
+
+<BaseLayout
+  title="MACE"
+  description="MACE, an equivariant message-passing interatomic potential with four-body messages: the architecture step by step on real structures, its equations, radial basis, receptive field, checkpoints, evidence and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">MACE</h1>
+      <p class="lede">
+        An equivariant message-passing potential whose messages are many-body. By multiplying an atom’s neighbourhood
+        fingerprint with itself before passing it on, MACE reaches four-body interactions in every layer and needs only
+        two layers <Cite id="batatia2022mace" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>E(3)-equivariant features, invariant energy</dd></div>
+        <div><dt>Locality</dt><dd>Message passing, 2 layers → receptive field ≈ 2 r<sub>c</sub></dd></div>
+        <div><dt>Body order</dt><dd>4-body messages (ν = 3) per layer</dd></div>
+        <div><dt>Long range</dt><dd>None in the base architecture</dd></div>
+        <div><dt>Introduced</dt><dd>NeurIPS 2022</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/ACEsuit/mace">ACEsuit/mace</a> · MIT</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="schematic" /> This page describes the <strong>architecture</strong>. Trained <strong>checkpoints</strong>
+        and their <strong>benchmark results</strong> are separate objects, listed below.
+      </p>
+    </header>
+
+    <section class="block" aria-labelledby="why-h">
+      <h2 id="why-h" class="h-section">Why it was built</h2>
+      <p>
+        Equivariant message-passing networks were accurate but slow. Their messages were two-body, so the only way to
+        describe angles and higher correlations was to stack many layers, and every layer widens the receptive field,
+        which in a liquid or crystal can reach thousands of atoms and limits parallelism. MACE moves the many-body work
+        inside each layer, so two layers are enough and the receptive field stays near twice the cutoff
+        <Cite id="batatia2022mace" locator="Abstract" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="One MACE layer, step by step, on a real atomic environment" labels={['live-calculation', 'schematic']} number={1} id="fig-walk" framed={false}>
+        <MaceWalkthrough client:visible steps={steps} />
+        <Fragment slot="caption">
+          Pick a structure and a step. The scene shows the central atom’s neighbourhood inside the cutoff (and, at the
+          message step, the second layer’s reach). The invariants panel is computed live: switch to diamond silicon to
+          see symmetry force the l = 1 and l = 2 blocks to exactly zero.
+        </Fragment>
+        <Assumptions slot="assumptions" items={walkAssumptions} />
+        <Fragment slot="source">Equations (8)–(13) of <Cite id="batatia2022mace" />, typeset as in the paper; structures from the Atlas pipeline.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" id="maths" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="d-int" checked />
+        <label for="d-int">Intuition</label>
+        <input type="radio" name="depth" id="d-tech" />
+        <label for="d-tech">Technical</label>
+        <input type="radio" name="depth" id="d-res" />
+        <label for="d-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Describe each atom’s neighbourhood with one sum over neighbours: distances become wave-like radial functions,
+            directions become spherical harmonics. That fingerprint already “knows” every neighbour, but only one at a time.
+            Multiply the fingerprint by itself and each product term mixes two, three or four neighbours at once — the
+            angles and higher correlations that chemistry depends on. Pass the result to a second identical layer, then
+            turn the rotation-proof part of every atom’s features into an energy.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>A layer computes, for each atom <i>i</i>:</p>
+          <Math display number="1" tex={String.raw`A_{i,klm} = \sum_{j} R_{kl}(r_{ij})\,Y_l^m(\hat{\mathbf r}_{ij})\,W_{kz_j}, \qquad B_{i,\nu} = \mathrm{Sym}\big(A_i^{\otimes \nu}\big), \qquad m_i = \sum_{\nu\le 3} W_\nu B_{i,\nu}`} />
+          <p>
+            Products of ν copies of <i>A</i> are (ν+1)-body in the node states; computing them costs one neighbour sum plus
+            a contraction, not a sum over ν-tuples of neighbours, which is the atomic-cluster-expansion trick
+            <Cite id="drautz2019ace" />. Coupling to definite output degree <i>L</i> uses Clebsch–Gordan coefficients, so every
+            feature transforms under rotation as in <a href="/physics-lab/harmonics/">P5</a>. The energy is a sum of
+            site energies read from <i>L</i> = 0 features; forces are −∇<i>E</i>.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Equations (8)–(13) of the paper define the general layer: Eq. (8) couples neighbour features of degree
+            <i>l</i><sub>2</sub> with bond harmonics of degree <i>l</i><sub>1</sub> through learned radial weights
+            <i>R</i><sub><i>k l₁ l₂ l₃</i></sub>; Eq. (10) forms symmetrised products with generalised Clebsch–Gordan
+            coefficients indexed by coupling paths η<sub>ν</sub>; Eq. (11) mixes them with element-dependent weights; Eq. (12)
+            is a linear update with a residual; Eq. (13) sums layer-wise readouts.
+            <Cite id="batatia2022mace" locator="Eqs. 8–13" />
+          </p>
+          <p>
+            Open questions an Atlas reader should keep in view: how far the effective receptive field extends in practice
+            beyond the formal bound, how the choice of ν and L<sub>max</sub> trades accuracy for speed in condensed phases,
+            and how long-range electrostatics is best added (see <a href="/physics-lab/ewald/">P6</a> and
+            <a href="/physics-lab/charge-equilibration/">P8</a>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The radial basis: eight Bessel functions and a polynomial envelope" labels={['live-calculation']} number={2} id="fig-radial" framed={false}>
+        <RadialBasis client:visible />
+        <Fragment slot="source">Functional form as described in <Cite id="batatia2022mace" locator="App. A.5.1" />; envelope as in <Cite id="gasteiger2020dimenet" />.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">What it predicts</h2>
+      <ul class="facts">
+        <li><strong>Energy</strong> — a sum of per-atom contributions, invariant under rotation, translation and permutation of like atoms.</li>
+        <li><strong>Forces</strong> — exact negative gradients of the energy, so energy is conserved in molecular dynamics and forces are equivariant.</li>
+        <li><strong>Stress</strong> — from the derivative with respect to cell strain, for periodic systems.</li>
+        <li>
+          <strong>Not predicted</strong> by the base architecture: charges, dipoles, electronic structure. Quantities like a
+          density of states or a Fermi level are never MLIP outputs on the Atlas unless a model explicitly provides them.
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p><strong>From the architecture.</strong> Each layer is local, so after two layers nothing farther than about 2 <i>r</i><sub>c</sub> can influence an atom. Electrostatics, polarisation and charge transfer over longer distances are outside the base model (<a href="/physics-lab/beyond-the-cutoff/">P1</a>, <a href="/">homepage Fig. 1</a>).</p>
+      <p>
+        <strong>From a checkpoint.</strong> Systematic softening of the potential-energy surface — under-predicted phonon
+        frequencies and energies — has been reported for universal models including MACE-MP-0, and is a property of how
+        that checkpoint was trained, not of MACE as an architecture <Cite id="deng2024softening" />.
+      </p>
+    </section>
+
+    <section class="block wide-block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints: same architecture, different weights</h2>
+      <p>
+        These are released sets of weights, each with its own training data, level of theory and licence. Numbers measured
+        for one say nothing directly about another. List as published in the MACE README (checked 15 Oct 2026).
+      </p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead>
+            <tr><th>Checkpoint</th><th>Training data · level of theory</th><th>Sizes</th><th>Licence</th><th>Atlas record</th></tr>
+          </thead>
+          <tbody>
+            {checkpoints.map((c) => (
+              <tr>
+                <td>{c.name}</td>
+                <td>{c.data}</td>
+                <td>{c.sizes}</td>
+                <td><span class:list={['lic', { asl: c.licence === 'ASL' }]}>{c.licence}</span></td>
+                <td>{c.record}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Callout kind="caveat" title="Licences differ">
+        The MACE code and the MACE-MP models are MIT-licensed; several later foundation models are released under the
+        Academic Software Licence, which restricts commercial use. Check the licence of the specific checkpoint.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="rel-h">
+      <h2 id="rel-h" class="h-section">Related methods and resources</h2>
+      <ul class="facts">
+        <li><strong>NequIP</strong> — equivariant message passing with two-body messages, which MACE generalises <Cite id="batzner2022nequip" />.</li>
+        <li><strong>Allegro</strong> — strictly local equivariant model with no atom-centred message passing <Cite id="musaelian2023allegro" />.</li>
+        <li><strong>ACE</strong> — the body-ordered product basis MACE builds into each layer <Cite id="drautz2019ace" />.</li>
+        <li><strong>Foundation models</strong> — MACE-MP-0 and its successors <Cite id="batatia2023foundation" />.</li>
+        <li><strong>Code and docs</strong> — <a href="https://github.com/ACEsuit/mace">github.com/ACEsuit/mace</a>, <a href="https://mace-docs.readthedocs.io">mace-docs.readthedocs.io</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    gap: 0;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #d-int:checked ~ .depth-int,
+  #d-tech:checked ~ .depth-tech,
+  #d-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 40rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    vertical-align: top;
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+    color: var(--atlas-ink);
+  }
+  .lic {
+    font: 600 0.72rem var(--font-mono);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.3rem;
+    border: 1px solid color-mix(in oklab, var(--atlas-verified) 50%, var(--atlas-rule));
+    color: var(--atlas-verified);
+  }
+  .lic.asl {
+    border-color: color-mix(in oklab, var(--atlas-caveat) 50%, var(--atlas-rule));
+    color: var(--atlas-caveat);
+  }
+</style>

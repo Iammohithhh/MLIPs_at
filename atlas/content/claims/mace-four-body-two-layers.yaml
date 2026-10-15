@@ -1,0 +1,9 @@
+statement: >-
+  MACE uses higher body-order (four-body) messages, which reduces the number of message-passing iterations needed to
+  two; the authors report reaching or exceeding state-of-the-art accuracy on the rMD17, 3BPA and AcAc benchmarks.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: batatia2022mace, locator: Abstract }
+scope: { model_families: [mace] }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Abstract statement; benchmark numbers are not reproduced here (no hand-typed numbers).' }
