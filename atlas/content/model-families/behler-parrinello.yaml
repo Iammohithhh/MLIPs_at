@@ -8,4 +8,5 @@ summary: >-
   atom-centred symmetry functions describing the neighbourhood inside a smooth cutoff.
 locality: { kind: strictly-local, note: One cutoff; descriptors are fixed functions of neighbour geometry. }
 symmetry: invariant
+claims: [bp-symmetry-functions]
 review: { status: draft, last_checked: 2026-10-14 }

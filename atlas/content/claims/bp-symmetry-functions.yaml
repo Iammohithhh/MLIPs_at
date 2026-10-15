@@ -1,0 +1,12 @@
+statement: >-
+  In a Behler–Parrinello potential each atom's environment is encoded by radial symmetry functions
+  G² = Σ_j exp(−η(r_ij − r_s)²) f_c(r_ij) and angular functions G³ = 2^{1−ζ} Σ_{j<k} (1 + λ cos θ_ijk)^ζ
+  exp(−η(r_ij² + r_ik² + r_jk²)) f_c(r_ij) f_c(r_ik) f_c(r_jk), which are invariant to rotation, translation and the
+  ordering of neighbours; an element-specific neural network maps them to an atomic energy, and the energies are summed.
+grade: THEORY
+sources:
+  - { paper: behler2007generalized }
+  - { paper: behler2011symmetry }
+derivation: /models/behler-parrinello/#fig-fingerprint
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-15, notes: 'Function forms as documented by the n2p2 implementation (compphysvienna.github.io/n2p2); invariances checked in symmetry-functions.test.ts.' }

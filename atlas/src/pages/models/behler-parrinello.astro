@@ -1,0 +1,157 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SymmetryFingerprint from '~/islands/SymmetryFingerprint';
+
+const assumptions = [
+  { term: 'Functions', value: '6 radial G² (r_s = 0, η from 0.003 to 0.4 Å⁻²) and 6 angular G³ (η = 0.005 Å⁻², ζ = 1, 2, 4, λ = ±1): a small illustrative set, not a fitted one. Real potentials use tens of functions per element pair.' },
+  { term: 'Cutoff', value: 'Cosine cutoff f_c(r) = ½[cos(πr/r_c) + 1], r_c = 6 Å.' },
+  { term: 'Structures', value: 'Si diamond, ZnO wurtzite and ethanol (central O) from the Atlas pipeline; the distortion is a fixed, deterministic pattern, not a thermal sample.' },
+];
+---
+
+<BaseLayout
+  title="Behler–Parrinello neural network potentials"
+  description="The Behler–Parrinello high-dimensional neural network potential: atomic energies from fixed symmetry-function fingerprints of each atom's neighbourhood, with an interactive fingerprint you can rotate and distort."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">Behler–Parrinello</h1>
+      <p class="lede">
+        The 2007 idea underneath almost every machine-learned potential since: write the energy as a sum of atomic
+        energies, describe each atom’s neighbourhood with a fixed, symmetry-respecting fingerprint, and let a neural
+        network map fingerprint to energy <Cite id="behler2007generalized" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Invariant descriptors (distances and angles only)</dd></div>
+        <div><dt>Locality</dt><dd>Strictly local: one cutoff sphere per atom</dd></div>
+        <div><dt>Descriptor</dt><dd>Hand-designed symmetry functions G², G³</dd></div>
+        <div><dt>Regressor</dt><dd>One feed-forward network per element</dd></div>
+        <div><dt>Introduced</dt><dd>Physical Review Letters 2007</dd></div>
+        <div><dt>Also called</dt><dd>HDNNP, BPNN</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page describes the <strong>method</strong>; fitted potentials are specific to their systems and training data.</p>
+    </header>
+
+    <section class="block" aria-labelledby="idea-h">
+      <h2 id="idea-h" class="h-section">The idea</h2>
+      <Math display number="1" tex={String.raw`E = \sum_i E_{Z_i}\big(\mathbf G_i\big), \qquad \mathbf G_i = \big(G^2_{i,1}, \dots, G^3_{i,1}, \dots\big)`} />
+      <p>
+        Each atom <i>i</i> of element <i>Z</i><sub><i>i</i></sub> contributes an energy predicted by that element’s network
+        from a vector <b>G</b><sub><i>i</i></sub>. The vector is built from functions that depend only on distances and
+        angles inside a cutoff, so it is unchanged by rotating, translating or relabelling the neighbours:
+      </p>
+      <Math display number="2" tex={String.raw`G^2_i = \sum_{j\ne i} e^{-\eta (r_{ij}-r_s)^2} f_c(r_{ij}), \qquad G^3_i = 2^{1-\zeta}\!\!\sum_{j<k} \big(1+\lambda\cos\theta_{ijk}\big)^{\zeta} e^{-\eta(r_{ij}^2+r_{ik}^2+r_{jk}^2)} f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})`} />
+      <p>
+        Radial functions with different η and <i>r</i><sub>s</sub> probe shells at different distances; angular functions
+        with different ζ and λ probe how bond angles are distributed <Cite id="behler2011symmetry" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="An atom’s fingerprint: rotate it, distort it, and see what each function sees" labels={['live-calculation']} number={1} id="fig-fingerprint" framed={false}>
+        <SymmetryFingerprint client:visible />
+        <Fragment slot="caption">
+          Left: the neighbours of one atom within the cutoff, coloured and sized by their contribution to the selected
+          function. Right: all twelve functions relative to the undistorted structure. Rotation leaves every bar at
+          exactly 1; distortion does not.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">Function forms from <Cite id="behler2007generalized" /> and <Cite id="behler2011symmetry" />, as implemented in n2p2; evaluated in your browser.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="legacy-h">
+      <h2 id="legacy-h" class="h-section">What came after, and why</h2>
+      <ul class="facts">
+        <li><strong>Fixed vs learned descriptors.</strong> The fingerprint is chosen by hand, so its resolution is set before training. Message-passing models learn their features instead (<a href="/models/nequip/">NequIP</a>, <a href="/models/mace/">MACE</a>).</li>
+        <li><strong>Element pairs multiply.</strong> Functions are usually defined per pair or triplet of elements, so the descriptor grows quickly with the number of elements — one reason universal models moved to learned element embeddings.</li>
+        <li><strong>Body order.</strong> G³ already captures angles (three-body terms, see <a href="/physics-lab/body-order/">P3</a>); systematically complete expansions came later with the atomic cluster expansion <Cite id="drautz2019ace" />.</li>
+        <li><strong>Long range.</strong> The fourth-generation HDNNPs add environment-dependent charges and electrostatics on top of the local energy (<a href="/physics-lab/charge-equilibration/">P8</a>).</li>
+      </ul>
+      <Callout kind="caveat" title="A method, not a model">
+        A Behler–Parrinello potential is fitted for one chemical system from its own reference data. Accuracy claims belong
+        to a specific fitted potential and its training set, never to the method in general.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+</style>
