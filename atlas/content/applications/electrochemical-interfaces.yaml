@@ -8,4 +8,6 @@ requirements:
   - Long-range electrostatics or an explicit argument why it is unnecessary
   - A strategy for the electrode potential (separate models per potential, electron-count conditioning, …)
   - Validation against electrostatic phenomenology, not only energy/force errors
-review: { status: draft, last_checked: 2026-10-14 }
+papers: [sumic2026ephect]
+claims: [ephect-energy-force-insufficient, image-charge-energy, local-model-no-image-tail, interfacial-dipole-potential-step]
+review: { status: draft, last_checked: 2026-10-15 }

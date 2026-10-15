@@ -1,0 +1,14 @@
+title: The interfacial water dipole and the potential step
+question: How does the orientation of the first water layer on Au(111) change the planar-averaged charge density, the electrostatic potential and the step across the film?
+kind: physics-lab
+status: LIVE_CALCULATION
+tier: T0
+page: /applications/electrochemical-interfaces/#fig-water
+assumptions:
+  - { term: System, value: 'Illustrative Au(111) slab under a 13 Å SPC/E water film with one Na⁺ and one Cl⁻, placed by rule, not relaxed or simulated.' }
+  - { term: First layer, value: 'Waters with O within 3.6 Å of the top Au layer, all tilted by θ from the surface normal (golden-angle azimuths).' }
+  - { term: Charges, value: 'SPC/E partial charges, ions ±1 e; Au uncharged, no electronic response of the metal.' }
+  - { term: Electrostatics, value: 'Gaussian-smeared (0.45 Å) planar average; d²φ̄/dz² = −ρ̄/ε₀ with zero field and φ̄ = 0 at the metal surface.' }
+concepts: [long-range-electrostatics, periodic-boundaries]
+claims: [interfacial-dipole-potential-step]
+review: { status: draft, last_checked: 2026-10-15 }

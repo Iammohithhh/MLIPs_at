@@ -1,0 +1,181 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import ImageChargeLab from '~/islands/ImageChargeLab';
+import WaterDipoleLab from '~/islands/WaterDipoleLab';
+
+const imageAssumptions = [
+  { term: 'Electrode', value: 'An ideal flat conductor at z = 0; the Au(111) slab (ASE fcc111, a = 4.078 Å) is drawn for orientation only.' },
+  { term: 'Ion', value: 'A point charge +1 e in vacuum; no solvent, no electronic overlap with the metal.' },
+  { term: 'Local toy', value: 'The image law multiplied by a polynomial envelope (p = 6) that reaches zero at r_c: the most a model with that reach could represent.' },
+];
+
+const waterAssumptions = [
+  { term: 'System', value: 'Illustrative Au(111) slab under a 13 Å SPC/E water film with one Na⁺ and one Cl⁻, placed by rule (lattice and random sequential addition at liquid density), not relaxed or simulated.' },
+  { term: 'First layer', value: 'Waters whose oxygen lies within 3.6 Å of the top Au layer. All of them are given the same tilt θ of their dipole from the surface normal; azimuths are spread by the golden angle.' },
+  { term: 'Charges', value: 'SPC/E partial charges (O −0.8476 e, H +0.4238 e), ions ±1 e, Au uncharged: the metal’s electronic response is not modelled.' },
+  { term: 'Electrostatics', value: 'Charges smeared by 0.45 Å Gaussians and averaged over the cell area; d²φ̄/dz² = −ρ̄/ε₀ integrated upward from the metal surface with zero field and φ̄ = 0 there. ε₀ = 5.5263 × 10⁻³ e/(V·Å).' },
+];
+---
+
+<BaseLayout
+  title="Electrochemical interfaces"
+  description="Application lab: why metal/electrolyte interfaces stress machine-learning potentials — image charges beyond the cutoff, and the potential step set by how the first water layer orients."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow">Applications · Electrochemical Interface Lab</p>
+      <h1 class="h-display">Electrochemical interfaces</h1>
+      <p class="lede">
+        Where a metal meets an electrolyte, the physics that decides reactions is electrostatic and long-ranged: the
+        metal answers every charge with an image, and a single layer of water sets a potential step of volts. These
+        are exactly the effects a strictly local potential can miss while its energy and force errors look fine.
+      </p>
+      <div class="head-badges">
+        <Badge label="toy-model" />
+        <Badge label="live-calculation" />
+        <Badge label="theory" />
+      </div>
+    </header>
+
+    <section class="block" aria-labelledby="why-h">
+      <h2 id="why-h" class="h-section">Four tests, not one error bar</h2>
+      <p>
+        The EPhEct benchmarks probe four electrostatic phenomena at electrodes: the image-charge attraction of an ion,
+        the LO–TO splitting of a polar crystal, the dipole of interfacial water, and Fermi-level pinning during ion
+        discharge <Cite id="sumic2026ephect" />. Their point is that models with similar energy and force errors can
+        differ qualitatively on all four. This lab builds the first two as calculations you can change; the
+        <a href="/failures/electrostatics-at-electrodes/">Failure Atlas case</a> collects the evidence.
+      </p>
+    </section>
+
+    <section class="block" id="image" aria-labelledby="img-h">
+      <h2 id="img-h" class="h-section">1 · The image charge</h2>
+      <p>
+        A charge <i>q</i> at height <i>z</i> above an ideal conductor is attracted as if a charge −<i>q</i> sat at
+        −<i>z</i>, so the energy is half the Coulomb energy of that pair:
+      </p>
+      <Math display number="1" tex={String.raw`E(z) = -\frac{k\,q^2}{4z}`} />
+      <p>
+        At 6 Å this is still −0.6 eV for a monovalent ion. A model whose energy is a sum of contributions from within
+        <i>r</i><sub>c</sub> can only learn the part of this curve that lies inside its reach; beyond it, the force on
+        the ion is exactly zero.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="An ion above a metal and its image" labels={['toy-model', 'theory']} number={1} id="fig-image" framed={false}>
+        <ImageChargeLab client:visible />
+        <Fragment slot="caption">
+          Left: the ion, its mirror image below the surface and the sphere the local model can see. Right: the image law
+          and the same curve switched off at r<sub>c</sub>; drag the ion past the sphere to see the model lose it.
+        </Fragment>
+        <Assumptions slot="assumptions" items={imageAssumptions} />
+        <Fragment slot="source">
+          Method of images (textbook electrostatics); derivation on the <a href="/failures/electrostatics-at-electrodes/#derivation">failure case</a>. Computed in your browser.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" id="water" aria-labelledby="w-h">
+      <h2 id="w-h" class="h-section">2 · The interfacial water dipole</h2>
+      <p>
+        Average the charge over planes parallel to the electrode and the potential obeys a one-dimensional Poisson
+        equation. Starting from zero field at the metal surface and integrating through a neutral film, the potential
+        step across it is the film’s dipole per area:
+      </p>
+      <Math display number="2" tex={String.raw`\frac{\mathrm d^2\bar\varphi}{\mathrm dz^2} = -\frac{\bar\rho(z)}{\varepsilon_0} \quad\Longrightarrow\quad \Delta\bar\varphi = \frac{1}{\varepsilon_0}\int z\,\bar\rho(z)\,\mathrm dz = \frac{1}{\varepsilon_0 A}\sum_i q_i z_i`} />
+      <p>
+        Because only the total dipole enters, the step splits exactly into contributions from neutral groups — each water
+        molecule, the ion pair — and the lab shows them separately. Rotating the first water layer from hydrogens-up to
+        hydrogens-down reverses its dipole and moves the step by twice its contribution.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="How the first water layer sets the potential step" labels={['toy-model', 'live-calculation']} number={2} id="fig-water" framed={false}>
+        <WaterDipoleLab client:visible />
+        <Fragment slot="caption">
+          Left: the interface with first-layer waters in full colour and their dipoles as arrows (pointing from O towards
+          the hydrogens); the rest of the film is muted. Right: the planar-averaged charge density and the potential it
+          produces, recomputed as you change the tilt.
+        </Fragment>
+        <Assumptions slot="assumptions" items={waterAssumptions} />
+        <Fragment slot="source">
+          SPC/E charges: <Cite id="berendsen1987spce" />. The 1D Poisson treatment matches the <a href="/physics-lab/periodic-slab/">periodic-slab lab</a>. Computed in your browser.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="sign-h">
+      <h2 id="sign-h" class="h-section">Reading the signs</h2>
+      <p>
+        With hydrogens pointing away from the metal the layer’s positive end is on top, its dipole points along +<i>z</i>
+        and the potential rises across it; pointing the hydrogens at the metal lowers it. The toy’s numbers are large —
+        a perfectly aligned layer moves the potential by several volts — because nothing here screens: real first layers
+        are only partly ordered, the water above responds, and the metal’s electrons spill out and polarise. The toy
+        shows the direction and the mechanism, not the size.
+      </p>
+      <Callout kind="caveat" title="What an MLIP must get right here">
+        The orientation of the first water layer is a short-range, chemistry-driven property that a local model can
+        learn. The potential step it produces is not local: it is a sum over the whole film. A model that predicts
+        energies and forces well can still orient the layer wrongly by a few degrees; in this unscreened toy that alone shifts the step by about
+        0.2 V, an error that need not show in force metrics but matters directly for the electrode potential.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="next-h">
+      <h2 id="next-h" class="h-section">Still to build in this lab</h2>
+      <ul class="todo">
+        <li><b>LO–TO splitting</b> in a polar crystal, with and without long-range electrostatics (precomputed phonons).</li>
+        <li><b>Fermi-level pinning</b> during ion discharge — an electronic-structure result on a named snapshot, labelled as such, never as MLIP output.</li>
+        <li><b>Constant potential</b> strategies: a separate model per electrode potential, electron-count-conditioned models, transfer learning.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .todo {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--atlas-ink-muted);
+  }
+  .todo li {
+    margin-bottom: 0.4rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+</style>

@@ -103,7 +103,8 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Scroll-driven 3D research journeys, starting with electrochemical interfaces',
     phase: 5,
     tone: 'phys',
-    inNav: false,
+    href: '/applications/',
+    inNav: true,
   },
   {
     id: 'papers',

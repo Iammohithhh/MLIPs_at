@@ -1,0 +1,8 @@
+statement: >-
+  For a charge-neutral film on an electrode, with zero field at the electrode surface, the planar-averaged potential
+  step across the film is its dipole per area over ε₀, Δφ̄ = (1/ε₀A) Σᵢ qᵢ zᵢ; it therefore splits exactly into
+  contributions from neutral groups, and reversing the first water layer's orientation changes the step by twice that
+  layer's contribution.
+grade: THEORY
+derivation: /applications/electrochemical-interfaces/#water
+review: { status: draft, last_checked: 2026-10-15, notes: 'Integrating the 1D Poisson equation twice; checked numerically in interface-potential.test.ts (step = p/ε₀, group decomposition, H-up/H-down flip).' }

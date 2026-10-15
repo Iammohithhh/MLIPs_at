@@ -1,0 +1,13 @@
+title: An ion above a metal and its image
+question: How strongly does a metal electrode attract an ion at a given height, and how much of that attraction can a model with a finite reach represent?
+kind: physics-lab
+status: TOY_MODEL
+tier: T0
+page: /applications/electrochemical-interfaces/#fig-image
+assumptions:
+  - { term: Electrode, value: 'Ideal flat conductor at z = 0; the Au(111) slab is drawn for orientation only.' }
+  - { term: Ion, value: 'Point charge +1 e in vacuum.' }
+  - { term: Local toy, value: 'Image law times a polynomial envelope (p = 6) that vanishes at r_c.' }
+concepts: [long-range-electrostatics, locality, smooth-cutoff]
+claims: [image-charge-energy, local-model-no-image-tail]
+review: { status: draft, last_checked: 2026-10-15 }
