@@ -1,0 +1,11 @@
+title: The Open Catalyst 2020 (OC20) Dataset and Community Challenges
+topic: foundation-models-data
+authors:
+  - 'Chanussot, L.'
+et_al: true
+year: 2020
+type: preprint
+identifiers:
+  arxiv: '2010.09990'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: '1,281,040 DFT relaxations and ~264,890,000 single points; RPBE, VASP, no spin or dispersion (methods, via secondary summary).' }

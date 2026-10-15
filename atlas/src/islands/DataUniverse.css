@@ -1,0 +1,135 @@
+.du {
+  --rung-gga: var(--atlas-phys);
+  --rung-meta: var(--atlas-arch);
+  --rung-hybrid: var(--atlas-lit);
+}
+.du-top {
+  padding: 0.8rem 1rem 0;
+}
+.du .du-r .du-sw {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin-right: 0.25rem;
+  vertical-align: -0.05rem;
+}
+.du .du-r-GGA .du-sw {
+  background: var(--rung-gga);
+}
+.du .du-r-meta-GGA .du-sw {
+  background: var(--rung-meta);
+}
+.du .du-r-hybrid .du-sw {
+  background: var(--rung-hybrid);
+}
+.du-plot {
+  padding-top: 0.4rem;
+}
+.du-lane {
+  fill: transparent;
+}
+.du-lane.alt {
+  fill: color-mix(in oklab, var(--atlas-surface-2) 60%, transparent);
+}
+.du-lane-label {
+  font: 600 12px var(--font-sans);
+  fill: var(--atlas-ink-muted);
+}
+.du-pt {
+  cursor: pointer;
+  outline: none;
+}
+.du-pt circle {
+  fill-opacity: 0.85;
+  stroke: var(--atlas-surface);
+  stroke-width: 2;
+  transition: r 0.15s;
+}
+.du-pt.du-r-GGA circle {
+  fill: var(--rung-gga);
+}
+.du-pt.du-r-meta-GGA circle {
+  fill: var(--rung-meta);
+}
+.du-pt.du-r-hybrid circle {
+  fill: var(--rung-hybrid);
+}
+.du-pt.is-active circle,
+.du-pt:focus-visible circle {
+  stroke: var(--atlas-ink);
+  stroke-width: 2.5;
+}
+.du-pt.is-off {
+  opacity: 0.15;
+  pointer-events: none;
+}
+.du-name {
+  font: 600 12.5px var(--font-sans);
+  fill: var(--atlas-ink);
+}
+.du-size {
+  font: 11px var(--font-mono);
+  fill: var(--atlas-ink-faint);
+}
+.du-card {
+  padding: 0.9rem 1.2rem 1.1rem;
+  border-top: 1px solid var(--atlas-rule);
+  display: grid;
+  gap: 0.45rem;
+}
+.du-card-head {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font: 1.05rem var(--font-serif);
+}
+.du-chip {
+  font: 600 0.68rem var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.45rem;
+  border-radius: 0.3rem;
+  color: var(--atlas-surface);
+}
+.du-chip.du-r-GGA {
+  background: var(--rung-gga);
+}
+.du-chip.du-r-meta-GGA {
+  background: var(--rung-meta);
+}
+.du-chip.du-r-hybrid {
+  background: var(--rung-hybrid);
+}
+.du-year {
+  font: 0.8rem var(--font-mono);
+  color: var(--atlas-ink-faint);
+}
+.du-summary {
+  margin: 0;
+  font: 0.92rem/1.55 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  max-width: 62rem;
+}
+.du-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+}
+.du-facts dt {
+  font: 600 0.68rem var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-faint);
+}
+.du-facts dd {
+  margin: 0.15rem 0 0;
+  font: 0.86rem/1.45 var(--font-sans);
+  color: var(--atlas-ink);
+}
+.du-facts small {
+  color: var(--atlas-ink-faint);
+}

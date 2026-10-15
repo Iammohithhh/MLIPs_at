@@ -1,0 +1,10 @@
+name: PBE / PBE+U (OMat24 settings)
+method: DFT
+functional: PBE
+corrections: [Hubbard U on selected elements]
+basis: Plane waves with PAW pseudopotentials
+codes: [VASP]
+notes: >-
+  Described as PBE and PBE+U, Materials Project-compatible, in secondary sources and the MACE README; confirm the exact
+  settings (U values, VASP version, pseudopotentials) against the OMat24 methods section.
+review: { status: draft, last_checked: 2026-10-15 }

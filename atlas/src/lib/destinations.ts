@@ -59,6 +59,7 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Dataset atlas, element × level-of-theory coverage, lineage',
     phase: 3,
     tone: 'arch',
+    href: '/data/',
     inNav: true,
   },
   {

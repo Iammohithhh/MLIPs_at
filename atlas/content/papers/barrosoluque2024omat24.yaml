@@ -1,0 +1,16 @@
+title: Open Materials 2024 (OMat24) Inorganic Materials Dataset and Models
+topic: foundation-models-data
+authors:
+  - 'Barroso-Luque, L.'
+  - 'Shuaibi, M.'
+  - 'Fu, X.'
+  - 'Wood, B. M.'
+  - 'Dzamba, M.'
+  - 'Gao, M.'
+et_al: true
+year: 2024
+type: preprint
+identifiers:
+  arxiv: '2410.12771'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Abstract: over 110 million DFT calculations focused on structural and compositional diversity.' }

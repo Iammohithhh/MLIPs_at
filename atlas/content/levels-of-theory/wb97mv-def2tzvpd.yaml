@@ -1,0 +1,7 @@
+name: ωB97M-V / def2-TZVPD
+method: hybrid-DFT
+functional: ωB97M-V (range-separated meta-GGA hybrid with VV10 non-local correlation)
+basis: def2-TZVPD
+dispersion: VV10 (built into the functional)
+notes: OMol25 level of theory per its abstract.
+review: { status: draft, last_checked: 2026-10-15 }

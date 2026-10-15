@@ -1,0 +1,6 @@
+name: r²SCAN (MatPES)
+method: meta-GGA-DFT
+functional: r²SCAN
+basis: Plane waves with PAW pseudopotentials
+notes: Higher-fidelity meta-GGA labels; not directly comparable with PBE-trained checkpoints.
+review: { status: draft, last_checked: 2026-10-15 }

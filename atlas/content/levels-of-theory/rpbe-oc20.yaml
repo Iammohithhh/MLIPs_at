@@ -1,0 +1,7 @@
+name: RPBE (OC20 settings)
+method: DFT
+functional: RPBE
+basis: Plane waves (350 eV) with PAW pseudopotentials
+codes: [VASP]
+notes: No spin polarisation and no dispersion correction; RPBE chosen for adsorbate–surface bonding (OC20 methods, via secondary summary).
+review: { status: draft, last_checked: 2026-10-15 }

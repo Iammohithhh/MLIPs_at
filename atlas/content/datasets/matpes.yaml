@@ -1,0 +1,14 @@
+name: MatPES
+domain: [inorganic-materials]
+summary: >-
+  About 400,000 structures selected from 281 million molecular-dynamics snapshots, labelled at both PBE and the
+  higher-fidelity r²SCAN meta-GGA: small, curated, and multi-fidelity rather than large.
+introduced_in: kaplan2025matpes
+levels_of_theory: [pbe-matpes, r2scan-matpes]
+configuration_types: [md-sampled]
+size:
+  structures: 400000
+  approximate: true
+  source: { paper: kaplan2025matpes, locator: Abstract }
+url: https://matpes.ai
+review: { status: draft, last_checked: 2026-10-15 }

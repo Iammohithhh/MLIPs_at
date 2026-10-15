@@ -1,0 +1,13 @@
+name: SPICE
+domain: [molecules, biomolecular]
+summary: >-
+  Over 1.1 million conformations of drug-like small molecules, dimers, dipeptides and solvated amino acids, charged and
+  neutral, covering 15 elements, with energies and forces at a hybrid-DFT level.
+introduced_in: eastman2022spice
+levels_of_theory: [wb97md3bj-def2tzvppd]
+configuration_types: [other]
+size:
+  structures: 1100000
+  approximate: true
+  source: { paper: eastman2022spice, locator: Abstract }
+review: { status: draft, last_checked: 2026-10-15, notes: 'Later SPICE versions exist; this record is the original release.' }

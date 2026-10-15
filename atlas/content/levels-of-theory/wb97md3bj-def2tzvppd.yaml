@@ -1,0 +1,7 @@
+name: ωB97M-D3(BJ) / def2-TZVPPD
+method: hybrid-DFT
+functional: ωB97M-D3(BJ)
+basis: def2-TZVPPD
+dispersion: D3 with Becke–Johnson damping
+notes: SPICE level of theory per its abstract.
+review: { status: draft, last_checked: 2026-10-15 }

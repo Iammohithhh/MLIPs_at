@@ -1,0 +1,16 @@
+title: SPICE, A Dataset of Drug-like Molecules and Peptides for Training Machine Learning Potentials
+topic: foundation-models-data
+authors:
+  - 'Eastman, P.'
+  - 'Behara, P. K.'
+  - 'Dotson, D. L.'
+  - 'Galvelis, R.'
+  - 'Herr, J. E.'
+  - 'Horton, J. T.'
+et_al: true
+year: 2022
+type: preprint
+identifiers:
+  arxiv: '2209.10702'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'Over 1.1 million conformations at ωB97M-D3(BJ)/def2-TZVPPD; 15 elements.' }

@@ -1,0 +1,16 @@
+title: A Foundational Potential Energy Surface Dataset for Materials
+topic: foundation-models-data
+authors:
+  - 'Kaplan, A. D.'
+  - 'Liu, R.'
+  - 'Qi, J.'
+  - 'Ko, T. W.'
+  - 'Deng, B.'
+  - 'Riebesell, J.'
+et_al: true
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2503.04070'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'About 400,000 structures sampled from 281 million MD snapshots; r²SCAN (and PBE) labels.' }

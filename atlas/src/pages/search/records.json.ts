@@ -29,6 +29,7 @@ function urlOf(c: CollectionName, id: string, d: Record<string, unknown>): strin
   if (c === 'papers') return `/papers/#paper-${id}`;
   if (c === 'experiments' && typeof d['page'] === 'string') return d['page'];
   if (c === 'model-families' && modelPageUrl(id)) return modelPageUrl(id)!;
+  if (c === 'datasets') return `/data/#ds-${id}`;
   return `/method/content-model/#rec-${c}-${id}`;
 }
 

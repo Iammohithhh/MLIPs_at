@@ -1,0 +1,6 @@
+name: PBE without +U (MatPES)
+method: DFT
+functional: PBE
+basis: Plane waves with PAW pseudopotentials
+notes: MatPES PBE track; listed as "DFT (PBE), no +U correction" for the MACE-MATPES-PBE checkpoint in the MACE README.
+review: { status: draft, last_checked: 2026-10-15 }

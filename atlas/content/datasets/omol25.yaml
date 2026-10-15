@@ -1,0 +1,13 @@
+name: OMol25
+domain: [molecules, biomolecular]
+summary: >-
+  More than 100 million molecular DFT calculations at a range-separated hybrid level, spanning small molecules,
+  biomolecular fragments, metal complexes and electrolytes, with systems of up to a few hundred atoms.
+introduced_in: levine2025omol25
+levels_of_theory: [wb97mv-def2tzvpd]
+configuration_types: [single-point]
+size:
+  structures: 100000000
+  approximate: true
+  source: { paper: levine2025omol25, locator: Abstract }
+review: { status: draft, last_checked: 2026-10-15, notes: 'The v2 preprint reports ~40M further datapoints over the first release; scope list from secondary summaries.' }

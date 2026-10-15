@@ -1,0 +1,13 @@
+name: OMat24
+domain: [inorganic-materials]
+summary: >-
+  Over 110 million DFT calculations on inorganic bulk structures chosen for structural and compositional diversity,
+  much of it far from equilibrium (rattled and molecular-dynamics configurations), unlike relaxation-trajectory data.
+introduced_in: barrosoluque2024omat24
+levels_of_theory: [pbe-pbeu-omat24]
+configuration_types: [rattled, aimd]
+size:
+  structures: 110000000
+  approximate: true
+  source: { paper: barrosoluque2024omat24, locator: Abstract }
+review: { status: draft, last_checked: 2026-10-15, notes: 'Configuration types from secondary descriptions; bulk only (no surfaces or defects) per secondary sources.' }

@@ -1,0 +1,13 @@
+name: OC20
+domain: [catalysis]
+summary: >-
+  Adsorbates on catalyst surfaces: 1,281,040 DFT relaxations with about 265 million single-point evaluations along
+  them, computed with RPBE and no spin polarisation.
+introduced_in: chanussot2020oc20
+levels_of_theory: [rpbe-oc20]
+configuration_types: [relaxation-trajectory]
+size:
+  structures: 1281040
+  approximate: false
+  source: { paper: chanussot2020oc20, locator: 'Abstract (counts relaxations; ~264,890,000 single points)' }
+review: { status: draft, last_checked: 2026-10-15 }

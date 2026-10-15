@@ -1,0 +1,11 @@
+title: The Open Molecules 2025 (OMol25) Dataset, Evaluations, and Models
+topic: foundation-models-data
+authors:
+  - 'Levine, D. S.'
+et_al: true
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2505.08762'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-15, notes: 'More than 100 million DFT calculations at ωB97M-V/def2-TZVPD; v2 (March 2026) reports a further ~40M datapoints over the first release.' }

@@ -1,4 +1,50 @@
 {
+ "barrosoluque2024omat24": {
+  "arxiv": {
+   "authors": [
+    "Luis Barroso-Luque",
+    "Muhammed Shuaibi",
+    "Xiang Fu",
+    "Brandon M. Wood",
+    "Misko Dzamba",
+    "Meng Gao",
+    "Ammar Rizvi",
+    "C. Lawrence Zitnick",
+    "Zachary W. Ulissi"
+   ],
+   "id": "2410.12771v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-10-16",
+   "title": "Open Materials 2024 (OMat24) Inorganic Materials Dataset and Models",
+   "updated": "2026-05-20"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Barroso-Luque, L.' vs fetched ['barroso luque']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 97,
+   "id": "W4403582283",
+   "publication_year": 2024,
+   "referenced_works": []
+  }
+ },
  "batatia2022mace": {
   "arxiv": {
    "authors": [
@@ -159,6 +205,7 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
+   "chanussot2020oc20",
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
@@ -1348,6 +1395,184 @@
    ]
   }
  },
+ "chanussot2020oc20": {
+  "arxiv": {
+   "authors": [
+    "Lowik Chanussot",
+    "Abhishek Das",
+    "Siddharth Goyal",
+    "Thibaut Lavril",
+    "Muhammed Shuaibi",
+    "Morgane Riviere",
+    "Kevin Tran",
+    "Javier Heras-Domingo",
+    "Caleb Ho",
+    "Weihua Hu",
+    "Aini Palizhati",
+    "Anuroop Sriram",
+    "Brandon Wood",
+    "Junwoong Yoon",
+    "Devi Parikh",
+    "C. Lawrence Zitnick",
+    "Zachary Ulissi"
+   ],
+   "id": "2010.09990v5",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2020-10-20",
+   "title": "The Open Catalyst 2020 (OC20) Dataset and Community Challenges",
+   "updated": "2021-09-24"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2020; fetched [2020]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Chanussot, L.' vs fetched ['chanussot']"
+   }
+  ],
+  "cites": [
+   "gasteiger2020dimenet"
+  ],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 765,
+   "id": "W3093999435",
+   "publication_year": 2021,
+   "referenced_works": [
+    "W353526535",
+    "W569478347",
+    "W1494198834",
+    "W1499539831",
+    "W1597773817",
+    "W1933349210",
+    "W1970127494",
+    "W1973634181",
+    "W1979544533",
+    "W1981368803",
+    "W1991149034",
+    "W1992985800",
+    "W1995469798",
+    "W2002522774",
+    "W2007395042",
+    "W2010785223",
+    "W2015197254",
+    "W2022085321",
+    "W2036113194",
+    "W2051434435",
+    "W2080635178",
+    "W2083222334",
+    "W2083415705",
+    "W2087404659",
+    "W2087698390",
+    "W2108598243",
+    "W2117363206",
+    "W2119607070",
+    "W2119732183",
+    "W2120318938",
+    "W2150687058",
+    "W2154115947",
+    "W2194775991",
+    "W2278970271",
+    "W2322232911",
+    "W2410722695",
+    "W2485782400",
+    "W2515090858",
+    "W2547447472",
+    "W2573377826",
+    "W2583013368",
+    "W2584994763",
+    "W2593855134",
+    "W2601081289",
+    "W2760744264",
+    "W2765832510",
+    "W2766856748",
+    "W2788158835",
+    "W2793372905",
+    "W2797402103",
+    "W2799567665",
+    "W2799915630",
+    "W2802420383",
+    "W2807471255",
+    "W2808740881",
+    "W2885048850",
+    "W2890787646",
+    "W2890961624",
+    "W2897970024",
+    "W2902125701",
+    "W2904811049",
+    "W2909236073",
+    "W2915642253",
+    "W2917519917",
+    "W2918342466",
+    "W2921533983",
+    "W2943162653",
+    "W2944678844",
+    "W2945964866",
+    "W2947139271",
+    "W2947147416",
+    "W2950761309",
+    "W2952655500",
+    "W2961429249",
+    "W2963207368",
+    "W2963460103",
+    "W2968923792",
+    "W2970276291",
+    "W2970663744",
+    "W2970808434",
+    "W2970971581",
+    "W2971173396",
+    "W2973100519",
+    "W2977127463",
+    "W2979411997",
+    "W2984973432",
+    "W2989585264",
+    "W2995495731",
+    "W2996443485",
+    "W2996448308",
+    "W2997811423",
+    "W3001060390",
+    "W3003769243",
+    "W3011106738",
+    "W3011972584",
+    "W3020824294",
+    "W3023856540",
+    "W3034412283",
+    "W3041909131",
+    "W3048565185",
+    "W3048853375",
+    "W3073845700",
+    "W3080188558",
+    "W3081995825",
+    "W3088988053",
+    "W3102316735",
+    "W3103176605",
+    "W3105340300",
+    "W3196636585",
+    "W3197886297",
+    "W4230127735",
+    "W4237501038",
+    "W4248733893",
+    "W4255778230",
+    "W4285088373",
+    "W4287586570",
+    "W4287828570",
+    "W4288419263",
+    "W4293651439",
+    "W4295312788",
+    "W4300006503"
+   ]
+  }
+ },
  "cheng2025les": {
   "arxiv": {
    "authors": [
@@ -1713,6 +1938,7 @@
   ],
   "cites": [
    "batzner2022nequip",
+   "chanussot2020oc20",
    "deng2023chgnet"
   ],
   "crossref": {
@@ -1955,6 +2181,112 @@
    ]
   }
  },
+ "eastman2022spice": {
+  "arxiv": {
+   "authors": [
+    "Peter Eastman",
+    "Pavan Kumar Behara",
+    "David L. Dotson",
+    "Raimondas Galvelis",
+    "John E. Herr",
+    "Josh T. Horton",
+    "Yuezhi Mao",
+    "John D. Chodera",
+    "Benjamin P. Pritchard",
+    "Yuanqing Wang",
+    "Gianni De Fabritiis",
+    "Thomas E. Markland"
+   ],
+   "id": "2209.10702v2",
+   "primary_category": "physics.chem-ph",
+   "published": "2022-09-21",
+   "title": "SPICE, A Dataset of Drug-like Molecules and Peptides for Training Machine Learning Potentials",
+   "updated": "2022-11-23"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Eastman, P.' vs fetched ['eastman']"
+   }
+  ],
+  "cites": [
+   "batatia2022mace",
+   "batzner2022nequip"
+  ],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 200,
+   "id": "W4313545414",
+   "publication_year": 2023,
+   "referenced_works": [
+    "W1780364926",
+    "W1988037271",
+    "W1988091937",
+    "W2005220728",
+    "W2031881616",
+    "W2080635178",
+    "W2096864392",
+    "W2104489082",
+    "W2114704115",
+    "W2153693853",
+    "W2404280981",
+    "W2406709014",
+    "W2418973097",
+    "W2541404351",
+    "W2639728117",
+    "W2800168263",
+    "W2897973547",
+    "W2923693308",
+    "W2945577118",
+    "W2949223833",
+    "W2954088480",
+    "W3003009827",
+    "W3022256936",
+    "W3024385728",
+    "W3024538121",
+    "W3038008928",
+    "W3042508420",
+    "W3046216634",
+    "W3086372695",
+    "W3098862241",
+    "W3102797483",
+    "W3104142794",
+    "W3109230444",
+    "W3123322699",
+    "W3126732720",
+    "W3129086358",
+    "W3136625779",
+    "W3150113257",
+    "W3155265294",
+    "W3159653252",
+    "W3173540555",
+    "W3173611413",
+    "W3179394515",
+    "W3189651386",
+    "W3194649466",
+    "W3215353166",
+    "W4221165850",
+    "W4225405705",
+    "W4233037448",
+    "W4282053982",
+    "W4283021369",
+    "W4308653706",
+    "W4393703582"
+   ]
+  }
+ },
  "evjen1932": {
   "arxiv": null,
   "checks": [
@@ -2184,6 +2516,112 @@
    "referenced_works": []
   }
  },
+ "kaplan2025matpes": {
+  "arxiv": {
+   "authors": [
+    "Aaron D. Kaplan",
+    "Runze Liu",
+    "Ji Qi",
+    "Tsz Wai Ko",
+    "Bowen Deng",
+    "Janosh Riebesell",
+    "Gerbrand Ceder",
+    "Kristin A. Persson",
+    "Shyue Ping Ong"
+   ],
+   "id": "2503.04070v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-03-06",
+   "title": "A Foundational Potential Energy Surface Dataset for Materials",
+   "updated": "2025-03-06"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kaplan, A. D.' vs fetched ['kaplan']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 17,
+   "id": "W4416112469",
+   "publication_year": 2025,
+   "referenced_works": []
+  }
+ },
+ "levine2025omol25": {
+  "arxiv": {
+   "authors": [
+    "Daniel S. Levine",
+    "Muhammed Shuaibi",
+    "Evan Walter Clark Spotte-Smith",
+    "Michael G. Taylor",
+    "Muhammad R. Hasyim",
+    "Kyle Michel",
+    "Ilyes Batatia",
+    "Gábor Csányi",
+    "Misko Dzamba",
+    "Peter Eastman",
+    "Nathan C. Frey",
+    "Xiang Fu",
+    "Vahe Gharakhanyan",
+    "Aditi S. Krishnapriyan",
+    "Joshua A. Rackers",
+    "Sanjeev Raja",
+    "Ammar Rizvi",
+    "Andrew S. Rosen",
+    "Zachary Ulissi",
+    "Santiago Vargas",
+    "C. Lawrence Zitnick",
+    "Samuel M. Blau",
+    "Brandon M. Wood"
+   ],
+   "id": "2505.08762v2",
+   "primary_category": "physics.chem-ph",
+   "published": "2025-05-13",
+   "title": "The Open Molecules 2025 (OMol25) Dataset, Evaluations, and Models",
+   "updated": "2026-03-04"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Levine, D. S.' vs fetched ['levine']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 80,
+   "id": "W6891811738",
+   "publication_year": 2025,
+   "referenced_works": []
+  }
+ },
  "musaelian2023allegro": {
   "arxiv": {
    "authors": [
@@ -2335,6 +2773,55 @@
     "W4294316513",
     "W4301895638",
     "W6790192711"
+   ]
+  }
+ },
+ "perdew2001ladder": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 0.77 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2001; fetched [2001]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Perdew, J. P.' vs fetched ['perdew']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Perdew",
+     "given": "John P."
+    }
+   ],
+   "container": "AIP Conference Proceedings",
+   "doi": "10.1063/1.1390175",
+   "issue": null,
+   "page": "1-20",
+   "title": "Jacob’s ladder of density functional approximations for the exchange-correlation energy",
+   "type": "proceedings-article",
+   "volume": "577",
+   "year": 2001
+  },
+  "fetched": "2026-10-15",
+  "openalex": {
+   "cited_by_count": 1463,
+   "id": "W1614843501",
+   "publication_year": 2001,
+   "referenced_works": [
+    "W611878692",
+    "W631052280",
+    "W1550061415"
    ]
   }
  },
@@ -2496,9 +2983,11 @@
    }
   ],
   "cites": [
+   "barrosoluque2024omat24",
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",
+   "chanussot2020oc20",
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace"

@@ -1,0 +1,407 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Callout from '~/components/Callout.astro';
+import Cite from '~/components/Cite.astro';
+import DataUniverse, { type DatasetPoint, type Rung } from '~/islands/DataUniverse';
+import type { Dataset, LevelOfTheory, Paper } from '~/content/schemas';
+
+const datasets = (await getCollection('datasets')).map((e) => ({ id: e.id, data: e.data as Dataset }));
+const lots = new Map((await getCollection('levels-of-theory')).map((e) => [e.id, e.data as LevelOfTheory]));
+const papers = new Map((await getCollection('papers')).map((e) => [e.id, e.data as Paper]));
+
+const rungOf = (method: LevelOfTheory['method']): Rung => (method === 'hybrid-DFT' ? 'hybrid' : method === 'meta-GGA-DFT' ? 'meta-GGA' : 'GGA');
+
+// One point per (dataset, rung): MatPES appears on two rungs.
+const points: DatasetPoint[] = datasets
+  .filter((d) => d.data.size)
+  .flatMap((d) => {
+    const byRung = new Map<Rung, string[]>();
+    for (const l of d.data.levels_of_theory) {
+      const lot = lots.get(l)!;
+      const r = rungOf(lot.method);
+      byRung.set(r, [...(byRung.get(r) ?? []), lot.name]);
+    }
+    return [...byRung.entries()].map(([rung, levels]) => ({
+      id: `${d.id}-${rung}`,
+      name: byRung.size > 1 ? `${d.data.name} (${rung})` : d.data.name,
+      domain: d.data.domain[0]!,
+      size: d.data.size!.structures,
+      approximate: d.data.size!.approximate,
+      sizeSource: `${d.data.size!.source.locator ?? 'source'} of ${papers.get(d.data.size!.source.paper)?.authors[0]?.split(',')[0] ?? ''} ${papers.get(d.data.size!.source.paper)?.year ?? ''}`.trim(),
+      rung,
+      levels,
+      configs: d.data.configuration_types.map((c) => c.replace(/-/g, ' ')),
+      summary: d.data.summary,
+      year: papers.get(d.data.introduced_in)?.year ?? 0,
+    }));
+  })
+  .sort((a, b) => a.size - b.size);
+
+// Jacob's ladder: rungs with the datasets whose level of theory sits on each.
+const ladder: Array<{ rung: string; examples: string; ids: string[] }> = [
+  { rung: 'Hybrid', examples: 'mix in exact exchange (e.g. ωB97M-V)', ids: [] },
+  { rung: 'Meta-GGA', examples: 'adds the kinetic-energy density (e.g. r²SCAN)', ids: [] },
+  { rung: 'GGA', examples: 'density and its gradient (e.g. PBE, RPBE)', ids: [] },
+  { rung: 'LDA', examples: 'local density only', ids: [] },
+];
+for (const d of datasets)
+  for (const l of d.data.levels_of_theory) {
+    const r = rungOf(lots.get(l)!.method);
+    const row = ladder.find((x) => x.rung.toLowerCase() === r.toLowerCase())!;
+    if (!row.ids.includes(d.data.name)) row.ids.push(d.data.name);
+  }
+
+// Which MACE checkpoints learned from which data (MACE README, checked 2026-10-15).
+const links: Array<{ ckpt: string; data: string[] }> = [
+  { ckpt: 'MACE-MP-0a', data: ['MPtrj'] },
+  { ckpt: 'MACE-OMAT-0', data: ['OMat24'] },
+  { ckpt: 'MACE-OFF23', data: ['SPICE'] },
+  { ckpt: 'MACE-MATPES-r²SCAN-0', data: ['MatPES'] },
+  { ckpt: 'MACE-OMOL-0', data: ['OMol25'] },
+  { ckpt: 'MACE-MH-1', data: ['OMat24', 'OMol25', 'OC20', 'MatPES'] },
+];
+const dataNames = ['MPtrj', 'OMat24', 'MatPES', 'OC20', 'SPICE', 'OMol25'];
+const LW = 720;
+const rowH = 42;
+const LH = 30 + Math.max(dataNames.length, links.length) * rowH;
+const yData = (n: string) => 30 + dataNames.indexOf(n) * rowH + rowH / 2;
+const yCk = (k: number) => 30 + k * ((dataNames.length * rowH) / links.length) + rowH / 2;
+---
+
+<BaseLayout
+  title="Data"
+  description="What machine-learned interatomic potentials learned from: the major training datasets by size, domain and level of theory, where each sits on Jacob's ladder of density functionals, and which checkpoints were trained on which data."
+>
+  <article class="page-grid data-page">
+    <header class="wide head">
+      <p class="eyebrow">Data</p>
+      <h1 class="h-display">What did the models learn from?</h1>
+      <p class="lede">
+        A checkpoint can only be as good as its training data and the level of theory that labelled it. Two models trained
+        on different functionals are learning different potential-energy surfaces, so their numbers are not directly
+        comparable. This page maps the data.
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="The training-data universe" labels={['published-result']} number={1} id="fig-universe" framed={false}>
+        <DataUniverse client:visible points={points} />
+        <Fragment slot="caption">
+          Each dataset placed by its recorded size (log scale) and main domain, coloured by the rung of its level of
+          theory. Datasets labelled at two levels appear twice. Select a point for its sources and settings.
+        </Fragment>
+        <Fragment slot="source">
+          Sizes and levels of theory from the introducing papers: <Cite id="deng2023chgnet" />, <Cite id="barrosoluque2024omat24" />,
+          <Cite id="kaplan2025matpes" />, <Cite id="chanussot2020oc20" />, <Cite id="eastman2022spice" />, <Cite id="levine2025omol25" />.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="wide block-row" aria-labelledby="ladder-h">
+      <div class="ladder-text">
+        <h2 id="ladder-h" class="h-section">Rungs of theory</h2>
+        <p>
+          Density functionals are often arranged as rungs of a ladder <Cite id="perdew2001ladder" />: each rung uses more
+          information about the electrons and usually costs more. A model trained on GGA data learns the GGA energy
+          surface, including its known errors; one trained on a hybrid learns a different surface.
+        </p>
+        <Callout kind="caveat" title="Not interchangeable">
+          A higher rung is not automatically closer to experiment for every property, and energies from different rungs
+          (or codes, or correction schemes) have different reference points. Compare checkpoints only on data computed at
+          their own level of theory.
+        </Callout>
+      </div>
+      <figure class="ladder" aria-label="Jacob's ladder with the Atlas datasets on their rungs">
+        <ol>
+          {
+            ladder.map((r, k) => (
+              <li class:list={['rung', `rung-${k}`]}>
+                <span class="rung-name">{r.rung}</span>
+                <span class="rung-ex">{r.examples}</span>
+                <span class="rung-data">
+                  {r.ids.length ? r.ids.map((n) => <span class="dchip">{n}</span>) : <span class="none">no Atlas dataset yet</span>}
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+        <figcaption>Higher rung ↑ · more electronic information · higher cost</figcaption>
+      </figure>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Which MACE checkpoints learned from which data" labels={['published-result']} number={2} id="fig-links" framed={true}>
+        <div class="links-wrap">
+          <svg viewBox={`0 0 ${LW} ${LH}`} role="img" aria-label={links.map((l) => `${l.ckpt} trained on ${l.data.join(', ')}`).join('; ')}>
+            <text x={20} y={16} class="lk-h">Dataset</text>
+            <text x={LW - 20} y={16} text-anchor="end" class="lk-h">Checkpoint</text>
+            {
+              links.flatMap((l, k) =>
+                l.data.map((d) => (
+                  <path
+                    d={`M190,${yData(d)} C${LW / 2},${yData(d)} ${LW / 2},${yCk(k)} ${LW - 230},${yCk(k)}`}
+                    class:list={['lk', { multi: l.data.length > 1 }]}
+                  />
+                )),
+              )
+            }
+            {
+              dataNames.map((d) => (
+                <g>
+                  <rect x={20} y={yData(d) - 14} width={170} height={28} rx={6} class="lk-node data" />
+                  <text x={34} y={yData(d) + 4} class="lk-t">{d}</text>
+                </g>
+              ))
+            }
+            {
+              links.map((l, k) => (
+                <g>
+                  <rect x={LW - 230} y={yCk(k) - 14} width={210} height={28} rx={6} class="lk-node ck" />
+                  <text x={LW - 216} y={yCk(k) + 4} class="lk-t">{l.ckpt}</text>
+                </g>
+              ))
+            }
+          </svg>
+        </div>
+        <Fragment slot="caption">
+          One architecture, many training sets: each checkpoint inherits its data’s domain and level of theory. The
+          multi-head MACE-MH-1 draws on four datasets at different levels of theory, keeping a separate output head for each.
+        </Fragment>
+        <Fragment slot="source">MACE README, “Latest recommended foundation models” (github.com/ACEsuit/mace, checked 15 Oct 2026); <Cite id="batatia2023foundation" /> for MACE-MP-0.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="wide" aria-labelledby="cards-h">
+      <h2 id="cards-h" class="h-section">Datasets</h2>
+      <ul class="cards">
+        {
+          datasets
+            .sort((a, b) => (papers.get(a.data.introduced_in)?.year ?? 0) - (papers.get(b.data.introduced_in)?.year ?? 0))
+            .map((d) => (
+              <li class="card" id={`ds-${d.id}`}>
+                <p class="card-head">
+                  <span class="name">{d.data.name}</span>
+                  <span class="domains">{d.data.domain.map((x) => x.replace(/-/g, ' ')).join(' · ')}</span>
+                </p>
+                <p class="sum">{d.data.summary}</p>
+                <dl>
+                  <div><dt>Size</dt><dd>{d.data.size ? `${d.data.size.approximate ? '≈ ' : ''}${d.data.size.structures.toLocaleString('en-GB')}` : '—'}</dd></div>
+                  <div><dt>Level of theory</dt><dd>{d.data.levels_of_theory.map((l) => lots.get(l)!.name).join(' · ')}</dd></div>
+                  <div><dt>Introduced</dt><dd><Cite id={d.data.introduced_in} /></dd></div>
+                </dl>
+                <p class="status">Record {d.data.review.status} · checked {d.data.review.last_checked}</p>
+              </li>
+            ))
+        }
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .data-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .block-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .block-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .ladder-text p {
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .ladder {
+    margin: 0;
+  }
+  .ladder ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .rung {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    grid-template-areas: 'name ex' 'name data';
+    gap: 0.15rem 0.9rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--atlas-rule);
+    background: var(--atlas-surface);
+  }
+  .rung-0 {
+    margin-left: 0;
+    border-left: 4px solid var(--atlas-lit);
+  }
+  .rung-1 {
+    margin-left: 1.2rem;
+    border-left: 4px solid var(--atlas-arch);
+  }
+  .rung-2 {
+    margin-left: 2.4rem;
+    border-left: 4px solid var(--atlas-phys);
+  }
+  .rung-3 {
+    margin-left: 3.6rem;
+    border-left: 4px solid var(--atlas-rule-strong);
+  }
+  .rung-name {
+    grid-area: name;
+    font: 600 1rem var(--font-serif);
+    color: var(--atlas-ink);
+    align-self: center;
+  }
+  .rung-ex {
+    grid-area: ex;
+    font: 0.8rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .rung-data {
+    grid-area: data;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .dchip {
+    font: 600 0.72rem var(--font-sans);
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.3rem;
+    background: var(--atlas-surface-2);
+    color: var(--atlas-ink);
+  }
+  .none {
+    font: italic 0.75rem var(--font-sans);
+    color: var(--atlas-ink-faint);
+  }
+  .ladder figcaption {
+    margin-top: 0.6rem;
+    font: 0.75rem var(--font-sans);
+    color: var(--atlas-ink-faint);
+  }
+  .links-wrap {
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+  .links-wrap svg {
+    width: 100%;
+    min-width: 34rem;
+    height: auto;
+    display: block;
+  }
+  .lk {
+    fill: none;
+    stroke: color-mix(in oklab, var(--atlas-arch) 55%, transparent);
+    stroke-width: 2;
+  }
+  .lk.multi {
+    stroke: color-mix(in oklab, var(--atlas-lit) 60%, transparent);
+    stroke-dasharray: 5 3;
+  }
+  .lk-node {
+    stroke-width: 1;
+  }
+  .lk-node.data {
+    fill: var(--atlas-surface-2);
+    stroke: var(--atlas-rule-strong);
+  }
+  .lk-node.ck {
+    fill: color-mix(in oklab, var(--atlas-arch) 10%, var(--atlas-surface));
+    stroke: color-mix(in oklab, var(--atlas-arch) 50%, var(--atlas-rule));
+  }
+  .lk-t {
+    font: 600 12.5px var(--font-sans);
+    fill: var(--atlas-ink);
+  }
+  .lk-h {
+    font: 600 10.5px var(--font-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    fill: var(--atlas-ink-faint);
+  }
+  .cards {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+    gap: 0.85rem;
+  }
+  .card {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.75rem;
+    background: var(--atlas-surface);
+  }
+  .card-head {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.3rem 0.8rem;
+    align-items: baseline;
+  }
+  .name {
+    font: 600 1.15rem var(--font-serif);
+  }
+  .domains {
+    font: 0.72rem var(--font-sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--atlas-ink-faint);
+  }
+  .sum {
+    margin: 0;
+    font: 0.88rem/1.5 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .card dl {
+    display: grid;
+    gap: 0.3rem;
+    margin: 0;
+  }
+  .card dl div {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.5rem;
+    font: 0.82rem var(--font-sans);
+  }
+  .card dt {
+    color: var(--atlas-ink-faint);
+  }
+  .card dd {
+    margin: 0;
+    color: var(--atlas-ink);
+  }
+  .status {
+    margin: 0;
+    font: 0.72rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+</style>
