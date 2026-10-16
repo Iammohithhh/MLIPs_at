@@ -57,16 +57,6 @@ export default function PetAttention({ data }: { data: PetEnvironmentData }) {
 
   return (
     <div className="lab">
-      <div className="lab-toolbar">
-        <div className="seg" role="group" aria-label="Attention">
-          <button type="button" aria-pressed={mode === 'pet'} onClick={() => setMode('pet')}>
-            PET attention (× f<sub>c</sub>)
-          </button>
-          <button type="button" aria-pressed={mode === 'plain'} onClick={() => setMode('plain')}>
-            plain softmax
-          </button>
-        </div>
-      </div>
       <div className="lab-split lab-split--wide">
         <div className="lab-stage">
           <Stage
@@ -78,6 +68,16 @@ export default function PetAttention({ data }: { data: PetEnvironmentData }) {
           >
             <Scene theme={theme} env={probeEnv} tokens={now.tokens} attention={now.attention} probe={probeIdx} />
           </Stage>
+          <div className="lab-toolbar">
+            <div className="seg" role="group" aria-label="Attention">
+              <button type="button" aria-pressed={mode === 'pet'} onClick={() => setMode('pet')}>
+                PET attention (× f<sub>c</sub>)
+              </button>
+              <button type="button" aria-pressed={mode === 'plain'} onClick={() => setMode('plain')}>
+                plain softmax
+              </button>
+            </div>
+          </div>
           <ul className="stage-legend" aria-hidden="true">
             <li>
               <span className="bar" style={{ background: theme.arch }} /> centre token’s attention (opacity)

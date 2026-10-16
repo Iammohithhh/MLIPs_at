@@ -40,15 +40,6 @@ export default function ThreeBodyGraph({ crystals }: { crystals: ThreeBodyCrysta
 
   return (
     <div className="lab">
-      <div className="lab-toolbar">
-        <div className="seg" role="group" aria-label="Crystal">
-          {crystals.map((x, k) => (
-            <button key={x.id} type="button" aria-pressed={k === ci} onClick={() => setCi(k)}>
-              {x.label}
-            </button>
-          ))}
-        </div>
-      </div>
       <div className="lab-split lab-split--wide">
         <div className="lab-stage">
           <Stage
@@ -60,6 +51,15 @@ export default function ThreeBodyGraph({ crystals }: { crystals: ThreeBodyCrysta
           >
             <Scene theme={theme} c={c} r3={r3} />
           </Stage>
+          <div className="lab-toolbar">
+            <div className="seg" role="group" aria-label="Crystal">
+              {crystals.map((x, k) => (
+                <button key={x.id} type="button" aria-pressed={k === ci} onClick={() => setCi(k)}>
+                  {x.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <ul className="stage-legend" aria-hidden="true">
             <li>
               <span className="bar" style={{ background: theme.arch }} /> bonds inside r<sub>3</sub>
