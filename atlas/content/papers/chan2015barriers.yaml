@@ -1,0 +1,12 @@
+title: Electrochemical Barriers Made Simple
+topic: electrochemistry
+authors:
+  - 'Chan, K.'
+  - 'Nørskov, J. K.'
+year: 2015
+venue: The Journal of Physical Chemistry Letters 6, 2663–2668
+type: article
+identifiers:
+  doi: 10.1021/acs.jpclett.5b01043
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract (SUNCAT publication page): constant-charge simulations of charge transfer give large potential shifts along the reaction path; a charge-extrapolation method from one barrier calculation plus surface charges of initial, transition and final states.' }

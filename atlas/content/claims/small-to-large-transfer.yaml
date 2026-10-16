@@ -1,0 +1,6 @@
+statement: >-
+  MLIPs trained only on small periodic cells of solid–liquid interfaces may not transfer to larger cells, because the
+  training data encode the small cell's high minimum concentration, large minimum surface charge and coarse potential
+  steps (and, at fixed electron count, its shifting Fermi level), which a local model cannot separate from chemistry.
+grade: HYPOTHESIS
+review: { status: draft, last_checked: 2026-10-16, notes: 'Open investigation. Supporting mechanisms are theory; no published test of MLIP small→large transfer at an electrified interface has been recorded yet.' }

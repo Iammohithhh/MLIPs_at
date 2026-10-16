@@ -1,0 +1,20 @@
+title: 'Small cells, large conclusions: transfer at solid–liquid interfaces'
+claim: small-to-large-transfer
+grade: HYPOTHESIS
+evidence: [small-cell-granularity, constant-charge-fermi-shift, constant-charge-barrier-shift]
+mechanisms:
+  - { description: 'Whole ions and electrons make small cells sample high concentrations, large surface charges and coarse potential steps.', grade: THEORY, claim: small-cell-granularity }
+  - { description: 'At fixed electron count the electrode Fermi level moves with every transferred electron, by an amount that falls with cell area; training data inherit that cell-dependent shift.', grade: THEORY, claim: constant-charge-fermi-shift }
+  - { description: 'Periodic images of a polar interface add an artificial field that decays only as 1/L_z unless a dipole correction is used.', grade: THEORY, claim: periodic-slab-artificial-field }
+diagnostics:
+  - 'Train on small cells and test on a held-out larger cell of the same interface: compare interfacial water orientation, potential drop and ion distributions, not only energies and forces.'
+  - 'Record each training cell’s area, electrolyte thickness, electron count or potential, and dipole correction alongside the data.'
+  - 'Check whether errors on large cells correlate with quantities that scale with 1/A (surface charge per electron, concentration per ion).'
+responses:
+  - { description: 'Train with constant-potential (grand-canonical) data or condition the model on electrode potential or electron count.', claim: cp-mlff-electron-count }
+  - { description: 'Include cells of several sizes in training, or correct constant-charge data to constant potential (charge extrapolation).', claim: constant-charge-barrier-shift }
+open_questions:
+  - 'How large an interface cell does a given MLIP need in its training data to reproduce the potential drop and water structure of a much larger cell?'
+  - 'Do long-range or charge-equilibration models transfer across cell sizes better than strictly local ones at fixed training data?'
+applications: [electrochemical-interfaces]
+review: { status: draft, last_checked: 2026-10-16 }

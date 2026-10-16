@@ -1577,6 +1577,84 @@
    ]
   }
  },
+ "chan2015barriers": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2015; fetched [2015]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Chan, K.' vs fetched ['chan']"
+   }
+  ],
+  "cites": [
+   "bengtsson1999dipole"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Chan",
+     "given": "Karen"
+    },
+    {
+     "family": "Nørskov",
+     "given": "Jens K."
+    }
+   ],
+   "container": "The Journal of Physical Chemistry Letters",
+   "doi": "10.1021/acs.jpclett.5b01043",
+   "issue": "14",
+   "page": "2663-2668",
+   "title": "Electrochemical Barriers Made Simple",
+   "type": "journal-article",
+   "volume": "6",
+   "year": 2015
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 477,
+   "id": "W2225719359",
+   "publication_year": 2015,
+   "referenced_works": [
+    "W1591618069",
+    "W1967853451",
+    "W1975598154",
+    "W1979426155",
+    "W1981491642",
+    "W1986977956",
+    "W1995765480",
+    "W1996210588",
+    "W2000935529",
+    "W2004731257",
+    "W2016366655",
+    "W2020879209",
+    "W2022085321",
+    "W2048074758",
+    "W2051469879",
+    "W2060023027",
+    "W2066571978",
+    "W2074527904",
+    "W2081592476",
+    "W2084797580",
+    "W2091135029",
+    "W2098747335",
+    "W2100929361",
+    "W2122427541",
+    "W2158532118",
+    "W2167035995"
+   ]
+  }
+ },
  "chanussot2020oc20": {
   "arxiv": {
    "authors": [

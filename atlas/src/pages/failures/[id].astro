@@ -11,6 +11,7 @@ import SofteningLab from '~/islands/SofteningLab';
 import ImageChargeLab from '~/islands/ImageChargeLab';
 import CleavageLab from '~/islands/CleavageLab';
 import MigrationLab from '~/islands/MigrationLab';
+import SmallCellLab from '~/islands/SmallCellLab';
 import CleavageBenchmark from '~/islands/CleavageBenchmark';
 import cleavageData from '~/data/benchmarks/cleavage-mehdizadeh2025.json';
 import CatalysisHeatmap from '~/islands/CatalysisHeatmap';
@@ -50,7 +51,7 @@ const scenes: Record<string, unknown> = {
   'pes-softening': SofteningLab,
   'electrostatics-at-electrodes': ImageChargeLab,
   surfaces: CleavageLab,
-  'ion-migration': MigrationLab,
+  'ion-migration': MigrationLab, 'small-to-large-cell': SmallCellLab,
   'nonconservative-forces': NonConservativeLab,
   'experiment-vs-dft': ReferenceGapLab,
 };
@@ -92,6 +93,7 @@ const latTol = 100 * latticeFromDensity(-0.025);
             {id === 'electrostatics-at-electrodes' && <ImageChargeLab client:visible />}
             {id === 'surfaces' && <CleavageLab client:visible />}
             {id === 'ion-migration' && <MigrationLab client:visible />}
+            {id === 'small-to-large-cell' && <SmallCellLab client:visible />}
             {id === 'nonconservative-forces' && <NonConservativeLab client:visible />}
             {id === 'experiment-vs-dft' && <ReferenceGapLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
@@ -203,6 +205,26 @@ const latTol = 100 * latticeFromDensity(-0.025);
             The prefactor and lattice geometry cancel in the ratio, so this sensitivity holds for any single activated path.
             A mean absolute barrier error of 0.31 eV corresponds to a factor of about 10⁵ at room temperature if it falls in one
             direction; the evidence below shows both how large the errors are and which way they tend to go.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      id === 'small-to-large-cell' && (
+        <section class="block" id="derivation" aria-labelledby="der-h">
+          <h2 id="der-h" class="h-sub">Whole ions, whole electrons</h2>
+          <p>
+            A periodic cell of lateral area <i>A</i> = <i>L</i>² can only hold whole ions and whole electrons. With an
+            electrolyte slab of thickness <i>h</i>, the smallest non-zero concentration, electrode charge density and
+            potential step it can represent are
+          </p>
+          <Math display number="1" tex={String.raw`c_{\min} = \frac{1}{N_A\,A\,h}, \qquad \sigma_{\min} = \frac{e}{A}, \qquad \Delta U_{\min} = \frac{e\,d}{\varepsilon_0\varepsilon_r A}`} />
+          <p>
+            the last for one electron moved across a double layer of thickness <i>d</i> treated as a parallel-plate
+            capacitor. All three fall as 1/<i>L</i>², while the number of atoms grows as <i>L</i>² and the cost of
+            conventional DFT roughly as its cube. Whatever a model learns from small cells, it learns at these coarse
+            steps — the transfer hypothesis is that a strictly local model cannot tell those artefacts from chemistry.
           </p>
         </section>
       )

@@ -1,0 +1,13 @@
+title: What one ion and one electron mean in a small interface cell
+question: For an interface cell of a given size, what concentration, surface charge and potential step does a single ion pair or electron represent, and how large must the cell be to resolve a target?
+kind: figure
+status: LIVE_CALCULATION
+tier: T0
+page: /failures/small-to-large-cell/#fig-scene
+assumptions:
+  - { term: Cell, value: 'Au(111) slab (4 layers, a = 4.078 Å) under an electrolyte slab of thickness h; one ion pair per cell.' }
+  - { term: Double layer, value: 'Helmholtz capacitor, d = 3 Å, ε_r = 6.' }
+  - { term: Cost, value: 'Atom count from Au(111) areal density and water at 0.0334 molecules/Å³; DFT cost assumed ∝ N³.' }
+concepts: [periodic-boundaries, long-range-electrostatics]
+claims: [small-cell-granularity]
+review: { status: draft, last_checked: 2026-10-16 }

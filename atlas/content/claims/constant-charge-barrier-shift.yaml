@@ -1,0 +1,9 @@
+statement: >-
+  Simulating electrochemical charge-transfer barriers in cells with a fixed number of electrons gives large shifts of
+  the electrode potential along the reaction path; Chan and Nørskov obtain constant-potential energetics from a single
+  barrier calculation plus the surface charges of the initial, transition and final states.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: chan2015barriers, locator: Abstract }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract only; add the cell-size analysis from the full text before publication.' }

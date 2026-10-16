@@ -11,9 +11,7 @@ const gradeLabel: Record<string, LabelKey> = { THEORY: 'theory', PUBLISHED_RESUL
 
 // Cases under investigation (vision §6). Listed so readers know what is coming; each
 // opens only once its evidence is recorded with locators.
-const queued = [
-  'Transfer from small to large cells at solid–liquid interfaces (hypothesis-graded until supported)',
-];
+const queued: string[] = [];
 ---
 
 <BaseLayout
@@ -56,10 +54,14 @@ const queued = [
       </ul>
     </section>
 
-    <section class="wide" aria-labelledby="q-h">
-      <h2 id="q-h" class="h-sub sec">Under investigation</h2>
-      <ul class="queued">{queued.map((q) => <li>{q}</li>)}</ul>
-    </section>
+    {
+      queued.length > 0 && (
+        <section class="wide" aria-labelledby="q-h">
+          <h2 id="q-h" class="h-sub sec">Under investigation</h2>
+          <ul class="queued">{queued.map((q) => <li>{q}</li>)}</ul>
+        </section>
+      )
+    }
   </article>
 </BaseLayout>
 

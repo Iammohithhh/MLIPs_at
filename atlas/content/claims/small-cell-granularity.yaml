@@ -1,0 +1,8 @@
+statement: >-
+  In a periodic interface cell of lateral area A, charges come in whole units: one ion pair in an electrolyte slab of
+  thickness h is a concentration 1/(N_A·A·h), one electron on the electrode a surface charge e/A, and moving one
+  electron across a double layer of thickness d shifts the potential by e·d/(ε₀ε_r A). A 10 × 10 Å cell with 20 Å of
+  electrolyte cannot represent less than about 0.8 M or 16 μC/cm².
+grade: THEORY
+derivation: /failures/small-to-large-cell/#derivation
+review: { status: draft, last_checked: 2026-10-16, notes: 'Checked in finite-size.test.ts.' }
