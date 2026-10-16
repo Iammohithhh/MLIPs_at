@@ -1,0 +1,8 @@
+statement: >-
+  A model pre-trained with a direct-force head can be fine-tuned briefly to give conservative forces (as −∇E of its energy
+  head), recovering the accuracy and physical correctness of a conservative model at a fraction of its training time.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bigi2024darkside, locator: 'Sec. 4.8; Fig. 4 (PET-C, PET-NC, PET-M training curves)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

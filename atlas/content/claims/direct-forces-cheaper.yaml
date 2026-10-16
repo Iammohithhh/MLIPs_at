@@ -1,0 +1,8 @@
+statement: >-
+  Computing forces as −∇E by automatic differentiation costs extra compared with a direct force output head:
+  typically about 2–3× at inference and about 3× in training, which is the motivation for direct-force models.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bigi2024darkside, locator: 'Sec. 2.4', quote: 'differentiation incurs a computational overhead, typically' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

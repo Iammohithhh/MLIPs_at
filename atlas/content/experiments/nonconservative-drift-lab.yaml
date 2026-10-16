@@ -1,0 +1,15 @@
+title: Same force error, different fate
+question: >-
+  Two models miss the exact force by the same RMS amount; one error is a gradient, the other has a curl. What happens to
+  the energy in constant-energy dynamics?
+kind: physics-lab
+status: TOY_MODEL
+tier: T0
+page: /failures/nonconservative-forces/#fig-scene
+assumptions:
+  - { term: System, value: 'One particle of unit mass in the 2D well V = ½(x² + y²) + 0.05(x² + y²)², reduced units; launched from (1.2, 0) with velocity (0.25, ±0.9).' }
+  - { term: Errors, value: 'Gradient error −∇δV with δV ∝ cos 2x cos 2y; curl error ∝ (−y, x). Both scaled to the same RMS force error σ over the disc r ≤ 2.' }
+  - { term: Integrator, value: 'Velocity Verlet with time step h, run in the browser; energy scored as ½|v|² + V.' }
+concepts: []
+claims: [closed-loop-work-zero]
+review: { status: draft, last_checked: 2026-10-16 }

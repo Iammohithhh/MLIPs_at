@@ -1,0 +1,9 @@
+statement: >-
+  Among the Orb-v3 models only orb-v3-conservative-inf is truly energy-conserving in NVE dynamics: the direct-force
+  models are not gradients of a scalar (direct-inf has continuous forces), and orb-v3-direct-20, which is both
+  non-conservative and slightly discontinuous through its neighbour limit, shows the largest energy drift.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'Appendix E "Energy conservation"; Fig. 7', quote: 'Only orb-v3-conservative-inf is truly energy-conserving' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

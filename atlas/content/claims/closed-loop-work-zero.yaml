@@ -1,0 +1,9 @@
+statement: >-
+  If every force is the negative gradient of one energy, F = −∇E, the total work done by the forces around any closed
+  path in configuration space is zero; a non-zero closed-loop work proves the forces are not the gradient of any energy.
+grade: THEORY
+sources:
+  - { paper: bigi2024darkside, locator: 'Sec. 2.2, Eq. (5); Sec. 3.1', quote: 'W = ∮ Σⱼ fⱼ·drⱼ = 0' }
+derivation: /failures/nonconservative-forces/#derivation
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

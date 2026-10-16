@@ -3984,6 +3984,50 @@
    "referenced_works": []
   }
  },
+ "rhodes2025orbv3": {
+  "arxiv": {
+   "authors": [
+    "Benjamin Rhodes",
+    "Sander Vandenhaute",
+    "Vaidotas Šimkus",
+    "James Gin",
+    "Jonathan Godwin",
+    "Tim Duignan",
+    "Mark Neumann"
+   ],
+   "id": "2504.06231v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-04-08",
+   "title": "Orb-v3: atomistic simulation at scale",
+   "updated": "2025-04-10"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Rhodes, B.' vs fetched ['rhodes']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 31,
+   "id": "W4414791947",
+   "publication_year": 2025,
+   "referenced_works": []
+  }
+ },
  "riebesell2023matbench": {
   "arxiv": {
    "authors": [

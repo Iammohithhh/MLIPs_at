@@ -1,0 +1,9 @@
+statement: >-
+  Multiple time stepping — integrating with direct forces and applying a conservative-force correction every M steps —
+  gives NVE results essentially indistinguishable from fully conservative ones at M = 8, and reduces the cost of the
+  conservative trajectory from a factor F to 1 + (F − 1)/M relative to direct forces.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bigi2024darkside, locator: 'Sec. 4.8; Table 2; Fig. 2 (PET-M); Appendix I', quote: 'essentially indistinguishable from fully conservative ones' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

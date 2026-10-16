@@ -35,5 +35,7 @@ const title = `${authorList(p, b, 3)} — ${p.title}. ${venueLine(p, b)}`;
   }
   .loc {
     color: var(--atlas-ink-muted);
+    /* Long locators ("Appendix G.2, Table 8; …") may wrap; the author–year stays together. */
+    white-space: normal;
   }
 </style>

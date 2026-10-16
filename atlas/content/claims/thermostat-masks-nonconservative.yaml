@@ -1,0 +1,9 @@
+statement: >-
+  Thermostats hide but do not cure the artefacts of non-conservative forces: a global thermostat can hold the overall
+  kinetic temperature at its target while different species equilibrate at clearly different temperatures, and results
+  for direct-force models depend on the thermostatting scheme.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bigi2024darkside, locator: 'Appendix G.2, Table 8 (per-species temperatures under a global SVR thermostat); Appendix G.4; Appendix G.5, Fig. 13', quote: 'the difficulty in mitigating them using thermostats' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

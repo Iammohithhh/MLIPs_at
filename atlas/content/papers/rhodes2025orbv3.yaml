@@ -1,0 +1,18 @@
+title: 'Orb-v3: atomistic simulation at scale'
+topic: foundation-models-data
+authors:
+  - 'Rhodes, B.'
+  - 'Vandenhaute, S.'
+  - 'Šimkus, V.'
+  - 'Gin, J.'
+  - 'Godwin, J.'
+  - 'Duignan, T.'
+  - 'Neumann, M.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2504.06231'
+edges:
+  - { type: extends, target: neumann2024orb, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (HTML), Appendix E "Energy conservation" and Fig. 7.' }

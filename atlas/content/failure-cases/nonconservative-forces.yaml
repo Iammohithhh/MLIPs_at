@@ -1,0 +1,22 @@
+title: 'Non-conservative forces: energy that is not conserved'
+claim: nonconservative-forces-heat-nve
+grade: PUBLISHED_RESULT
+evidence: [nonconservative-forces-heat-nve, orb-v3-energy-drift, thermostat-masks-nonconservative]
+mechanisms:
+  - { description: 'Forces predicted by a separate output head are not the gradient of any energy, so they can do net work around a closed path; constant-energy dynamics then has no conserved energy.', grade: THEORY, claim: closed-loop-work-zero }
+  - { description: 'Direct forces are adopted for speed: differentiating the energy costs about 2–3× at inference.', grade: PUBLISHED_RESULT, claim: direct-forces-cheaper }
+  - { description: 'A force-error metric cannot see the difference: an error that is a gradient and an error with a curl can have the same size, but only the second breaks energy conservation (Fig. 1).', grade: TOY_DEMO }
+diagnostics:
+  - 'Closed-loop work: carry a structure round a closed path in configuration space and integrate F·dx; it must vanish for a conservative model (the Observatory test, Fig. 2).'
+  - 'Drift of the total energy, or of the kinetic temperature, in an NVE run, checked against a halved time step: drift that does not shrink as h² is not an integrator error.'
+  - 'Compare the direct forces with −∇E of the same model''s energy head, where it has one.'
+responses:
+  - { description: 'Compute forces as −∇E (conservative models), paying the differentiation cost.' }
+  - { description: 'Multiple time stepping: direct forces for the inner steps, conservative forces every M steps.', claim: mts-conservative-correction }
+  - { description: 'Pre-train with direct forces, then fine-tune briefly to conservative forces.', claim: conservative-finetuning }
+  - { description: 'A thermostat is not a fix: it removes the pumped-in energy globally, but per-species temperatures and other observables can still be wrong.', claim: thermostat-masks-nonconservative }
+open_questions:
+  - 'How large a non-conservative component can a thermostatted simulation tolerate before structural or dynamical observables move outside their reference uncertainty?'
+  - 'Can a cheap closed-loop or curl test on held-out structures predict the NVE drift of a direct-force model?'
+affected_checkpoints: []
+review: { status: draft, last_checked: 2026-10-16, notes: 'Evidence from full texts of Bigi et al. (Secs. 2.2, 2.4, 4.4, 4.8) and Orb-v3 (Appendix E). The Atlas''s own closed-loop numbers come from the Observatory (precomputed on CPU).' }

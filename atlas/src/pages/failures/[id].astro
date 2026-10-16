@@ -14,6 +14,8 @@ import MigrationLab from '~/islands/MigrationLab';
 import CleavageBenchmark from '~/islands/CleavageBenchmark';
 import cleavageData from '~/data/benchmarks/cleavage-mehdizadeh2025.json';
 import Assumptions from '~/components/Assumptions.astro';
+import NonConservativeLab from '~/islands/NonConservativeLab';
+import { ObservatoryTests } from '~/islands/ObservatoryScans';
 import Math from '~/components/Math.astro';
 import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
 import type { LabelKey } from '~/lib/labels';
@@ -38,7 +40,13 @@ const gradeLabel: Record<string, LabelKey> = {
   HYPOTHESIS: 'hypothesis',
 };
 const main = claims.get(data.claim)!;
-const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab, surfaces: CleavageLab, 'ion-migration': MigrationLab };
+const scenes: Record<string, unknown> = {
+  'pes-softening': SofteningLab,
+  'electrostatics-at-electrodes': ImageChargeLab,
+  surfaces: CleavageLab,
+  'ion-migration': MigrationLab,
+  'nonconservative-forces': NonConservativeLab,
+};
 const hasScene = id in scenes;
 const cleavageRetrieved = cleavageData.source.retrieved;
 ---
@@ -65,7 +73,18 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             {id === 'electrostatics-at-electrodes' && <ImageChargeLab client:visible />}
             {id === 'surfaces' && <CleavageLab client:visible />}
             {id === 'ion-migration' && <MigrationLab client:visible />}
+            {id === 'nonconservative-forces' && <NonConservativeLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
+            {id === 'nonconservative-forces' && (
+              <Assumptions
+                slot="assumptions"
+                items={[
+                  { term: 'System', value: 'One particle of unit mass in the 2D well V = ½(x² + y²) + 0.05(x² + y²)², reduced units, launched from (1.2, 0) with velocity (0.25, ±0.9).' },
+                  { term: 'Errors', value: 'Gradient error −∇δV with δV ∝ cos 2x cos 2y; curl error ∝ (−y, x). Both scaled to the same RMS force error σ over the disc r ≤ 2.' },
+                  { term: 'Integrator', value: 'Velocity Verlet with time step h; energy scored as ½|v|² + V. Computed in your browser by src/lib/physics/nonconservative.ts.' },
+                ]}
+              />
+            )}
             {id === 'surfaces' && (
               <Assumptions
                 slot="assumptions"
@@ -124,6 +143,57 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             direction; the evidence below shows both how large the errors are and which way they tend to go.
           </p>
         </section>
+      )
+    }
+
+    {
+      id === 'nonconservative-forces' && (
+        <section class="block" id="derivation" aria-labelledby="der-h">
+          <h2 id="der-h" class="h-sub">Why a curl means work, and work means drift</h2>
+          <p>
+            If the forces are the gradient of one energy, the work they do along a path depends only on its end points, so
+            around any closed loop it is zero <Cite id="bigi2024darkside" locator="Sec. 2.2, Eq. (5)" />:
+          </p>
+          <Math display number="1" tex={String.raw`\mathbf F = -\nabla E \;\Longrightarrow\; W = \oint \mathbf F\cdot d\mathbf x = -\big[E(\mathbf x_{\rm end}) - E(\mathbf x_{\rm start})\big] = 0`} />
+          <p>
+            A direct-force head gives <i>F</i> = −∇<i>V</i> + δ<b>F</b> with an error δ<b>F</b> that need not be a gradient.
+            In two dimensions Stokes’ theorem turns the loop work into the curl of the error over the enclosed area. For the
+            toy error δ<b>F</b> = <i>a</i>(−<i>y</i>, <i>x</i>), whose curl is 2<i>a</i> everywhere, a circle of radius
+            <i>R</i> gives
+          </p>
+          <Math display number="2" tex={String.raw`\oint \delta\mathbf F\cdot d\mathbf l = \iint (\partial_x \delta F_y - \partial_y \delta F_x)\, dA = 2a\,\pi R^2 \neq 0`} />
+          <p>
+            Along a trajectory with unit mass the reference energy <i>E</i> = ½|<b>v</b>|² + <i>V</i> changes at the rate of
+            the error’s power, and in the isotropic toy well the potential exerts no torque, so the angular momentum
+            <i>L</i> = <i>x v<sub>y</sub></i> − <i>y v<sub>x</sub></i> is driven only by the error:
+          </p>
+          <Math display number="3" tex={String.raw`\frac{dE}{dt} = \mathbf v\cdot(\mathbf F + \nabla V) = \mathbf v\cdot\delta\mathbf F = a\,L, \qquad \frac{dL}{dt} = x\,F_y - y\,F_x = a\,r^2 > 0`} />
+          <p>
+            So <i>L</i> grows steadily, and once it is positive the energy rises with it — whichever way the particle was
+            launched. Both identities are checked against the integrated trajectories in
+            <code>src/lib/physics/nonconservative.test.ts</code>. The toy explains the mechanism; why many-atom direct-force
+            simulations heat rather than cool on average is an empirical finding of the cited work, not something this toy
+            shows.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      id === 'nonconservative-forces' && (
+        <div class="wide fig-wrap">
+          <Figure title="The closed-loop test on four real checkpoints" labels={['precomputed']} number={2} id="fig-loop" framed={false}>
+            <ObservatoryTests client:visible />
+            <Fragment slot="caption">
+              From the <a href="/observatory/">Model Observatory</a>: rattled Si carried round a closed loop in configuration
+              space, and a rigid rotation of rattled ZnO. The three models with gradient forces close the loop to round-off;
+              Orb v2, whose forces come from a separate head <Cite id="neumann2024orb" locator="Sec. 2.2" />, does net work.
+              This shows the mechanism of Eq. (1) on a released checkpoint; it is not a reproduction of the published NVE
+              heating.
+            </Fragment>
+            <Fragment slot="source">Precomputed on CPU by the Atlas pipeline; integrals in <code>src/lib/models/observatory.ts</code>.</Fragment>
+          </Figure>
+        </div>
       )
     }
 
