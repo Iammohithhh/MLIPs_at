@@ -25,6 +25,7 @@ import UniffDensity, { type UniffSeries } from '~/islands/UniffDensity';
 import uniffData from '~/data/benchmarks/uniffbench-density.json';
 import { FUNCTIONALS, densityBudget, latticeFromDensity, signedDensityError, type UniffModel } from '~/lib/physics/reference-gap';
 import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
+import { correctionUrl, failureCaseUrl } from '~/lib/contribute';
 import type { LabelKey } from '~/lib/labels';
 
 export async function getStaticPaths() {
@@ -82,7 +83,10 @@ const latTol = 100 * latticeFromDensity(-0.025);
     <section class="block step" aria-labelledby="claim-h">
       <h2 id="claim-h"><span class="n">1</span> Claim</h2>
       <blockquote class="claim">{main.statement}</blockquote>
-      <p class="src">{main.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>
+      <p class="src">
+        {main.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}
+        <a class="fix" href={correctionUrl('claims', data.claim, main.statement)}>Suggest a correction</a>
+      </p>
     </section>
 
     {
@@ -290,7 +294,10 @@ const latTol = 100 * latticeFromDensity(-0.025);
             <li>
               <Badge label={gradeLabel[cl.grade]!} />
               <p>{cl.statement}</p>
-              <p class="src">{cl.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}</p>
+              <p class="src">
+                {cl.sources.map((s) => <Cite id={s.paper} locator={s.locator} />)}
+                <a class="fix" href={correctionUrl('claims', c, cl.statement)}>Suggest a correction</a>
+              </p>
             </li>
           );
         })}
@@ -434,10 +441,28 @@ const latTol = 100 * latticeFromDensity(-0.025);
         </section>
       )
     }
+    <p class="block contrib">
+      Know of evidence for or against this case, or a failure that is missing? <a href={failureCaseUrl()}>Propose it</a> — or
+      read <a href="/method/contribute/">how contributions are reviewed</a>.
+    </p>
   </article>
 </BaseLayout>
 
 <style>
+  .fix {
+    margin-left: 0.6rem;
+    font: 0.78rem var(--font-sans);
+    color: var(--atlas-ink-faint);
+    text-decoration: underline dotted;
+  }
+  .fix:hover {
+    color: var(--atlas-fail);
+  }
+  .contrib {
+    margin-top: 2rem;
+    font: 0.92rem/1.5 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
   .fc {
     padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
   }

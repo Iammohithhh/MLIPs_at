@@ -1,0 +1,29 @@
+name: New source or result
+description: A paper, dataset, checkpoint or benchmark result the Atlas should include.
+title: "[source] "
+labels: [new-source, needs-review]
+body:
+  - type: input
+    id: identifier
+    attributes:
+      label: Identifier
+      description: DOI, arXiv id, or a stable URL (dataset, model card, repository).
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: What it shows
+      description: One checkable statement per line, each with its locator (figure, table, section).
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [Paper, Dataset, Checkpoint, Benchmark result, Software]
+  - type: textarea
+    id: where
+    attributes:
+      label: Where it belongs
+      description: Model page, Physics Lab module, Failure Atlas case, application lab…

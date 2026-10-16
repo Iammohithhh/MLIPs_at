@@ -1,0 +1,42 @@
+name: Correction
+description: Something on the Atlas is wrong, unsupported, or overstated.
+title: "[correction] "
+labels: [correction, needs-review]
+body:
+  - type: input
+    id: record
+    attributes:
+      label: Record or page
+      description: The record id (e.g. claims/migration-barrier-mae) or the page URL.
+      placeholder: claims/…
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong
+      description: Quote the statement and say what is incorrect, missing or overstated.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source with locator
+      description: Paper (DOI or arXiv id) and the figure, table, section or equation that supports the correction.
+      placeholder: arXiv:2512.03642, Sec. 3.1
+  - type: dropdown
+    id: grade
+    attributes:
+      label: What the evidence supports
+      options:
+        - Published result (a paper reports it)
+        - Reproduced (I recomputed it from released data or code)
+        - Theory (follows from a derivation)
+        - Hypothesis (plausible, not yet tested)
+        - Not sure
+  - type: checkboxes
+    id: read
+    attributes:
+      label: Checks
+      options:
+        - label: I read the source itself (full text), not only an abstract or a summary.

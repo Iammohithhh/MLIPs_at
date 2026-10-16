@@ -1,0 +1,164 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Badge from '~/components/Badge.astro';
+import { COLLECTION_NAMES } from '~/content/schemas';
+import { REPO_URL, failureCaseUrl, newSourceUrl } from '~/lib/contribute';
+
+const counts = { draft: 0, 'in-review': 0, published: 0 } as Record<string, number>;
+for (const c of COLLECTION_NAMES) for (const e of await getCollection(c)) counts[(e.data as { review: { status: string } }).review.status]! += 1;
+const total = Object.values(counts).reduce((a, b) => a + b, 0);
+const stages = [
+  { key: 'draft', title: 'Draft', text: 'Written and checked by the tooling: schema, references, locators, bibliography against Crossref and arXiv. Shown on the site with its status.' },
+  { key: 'in-review', title: 'In review', text: 'A reviewer is reading every source at its locator and checking the grade the claim was given.' },
+  { key: 'published', title: 'Published', text: 'A named reviewer has checked it against the full text. The build refuses a published record that rests on a draft or on an abstract.' },
+];
+---
+
+<BaseLayout title="Contribute" description="How to correct or extend MLIP Atlas: issue forms, the evidence rules every record follows, and the draft → in review → published lifecycle.">
+  <article class="page-grid co">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/method/">Method</a> · Contribute</p>
+      <h1 class="h-display">Contribute</h1>
+      <p class="lede">
+        Found something wrong, overstated or missing? Every statement on the Atlas is a record with a source and an evidence
+        grade, so a correction is a change to one record — and it goes through the same checks as everything else.
+      </p>
+    </header>
+
+    <section class="wide ways" aria-label="Ways to contribute">
+      <a class="way" href={`${REPO_URL}/issues/new?template=correction.yml`}>
+        <span class="t">Correct a claim</span>
+        <span class="s">Every claim has a “Suggest a correction” link that opens this form with the record filled in.</span>
+      </a>
+      <a class="way" href={newSourceUrl()}>
+        <span class="t">Add a source</span>
+        <span class="s">A paper, dataset, checkpoint or result, with the statement it supports and its locator.</span>
+      </a>
+      <a class="way" href={failureCaseUrl()}>
+        <span class="t">Propose a failure case</span>
+        <span class="s">A documented failure, the evidence for it, and diagnostics a user could run.</span>
+      </a>
+    </section>
+
+    <section class="block" aria-labelledby="life-h">
+      <h2 id="life-h" class="h-section">From draft to published</h2>
+      <ol class="stages">
+        {
+          stages.map((s) => (
+            <li>
+              <p class="n">{counts[s.key]} of {total} records</p>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="block" aria-labelledby="rules-h">
+      <h2 id="rules-h" class="h-section">What every contribution needs</h2>
+      <ul class="rules">
+        <li>One checkable statement per claim, with a source and a figure, table or section locator — or a derivation on the page.</li>
+        <li>How the source was read: full text, abstract, or a secondary summary. Only full text can back a published record.</li>
+        <li>
+          A grade: <Badge label="published-result" link={false} /> <Badge label="reproduced" link={false} /> <Badge label="theory" link={false} />
+          <Badge label="toy-demo" link={false} /> <Badge label="hypothesis" link={false} />. A reproduction that does not match is recorded as such.
+        </li>
+        <li>Benchmark numbers from a tested pipeline snapshot, never typed; results from different protocols never merged into one ranking.</li>
+        <li>Electronic-structure quantities never presented as MLIP output.</li>
+      </ul>
+      <p>
+        The full rules and the commands to run before a pull request are in
+        <a href={`${REPO_URL}/blob/main/CONTRIBUTING.md`}>CONTRIBUTING.md</a>. All records and their schemas can be
+        downloaded from <a href="/method/open-data/">open data</a>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .co {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .ways {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+  }
+  .way {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--atlas-rule);
+    border-left: 4px solid var(--atlas-arch);
+    border-radius: 0.7rem;
+    background: var(--atlas-surface);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: var(--atlas-shadow);
+  }
+  .way:hover {
+    border-left-color: var(--atlas-phys);
+  }
+  .way .t {
+    font: 600 1.2rem/1.25 var(--font-serif);
+  }
+  .way .s {
+    font: 0.92rem/1.5 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .stages {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 1rem;
+    counter-reset: st;
+  }
+  .stages li {
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--atlas-rule);
+    border-top: 3px solid var(--atlas-phys);
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+    font: 0.95rem/1.55 var(--font-sans);
+  }
+  .stages h3 {
+    margin: 0.2rem 0 0.4rem;
+    font: 600 1.15rem/1.3 var(--font-serif);
+  }
+  .stages p {
+    margin: 0;
+  }
+  .stages .n {
+    font: 0.78rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .rules {
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1.2rem;
+    font: 0.98rem/1.6 var(--font-sans);
+  }
+</style>

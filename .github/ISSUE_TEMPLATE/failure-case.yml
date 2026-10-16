@@ -1,0 +1,26 @@
+name: Failure case proposal
+description: A documented way in which machine-learned interatomic potentials fail.
+title: "[failure] "
+labels: [failure-case, needs-review]
+body:
+  - type: textarea
+    id: claim
+    attributes:
+      label: The failure, as a checkable claim
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence with locators
+      description: Papers or reproductions; say which models, checkpoints and protocols were tested.
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Proposed mechanism (if any) and how it could be tested
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics a user could run

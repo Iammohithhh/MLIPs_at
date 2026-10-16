@@ -40,6 +40,7 @@ const QUICK: Hit[] = [
   { url: '/explore/', title: 'Explore the Atlas map', meta: 'destination', group: 'Go to' },
   { url: '/failures/', title: 'Failure Atlas', meta: 'destination', group: 'Go to' },
   { url: '/changes/', title: 'What changed', meta: 'digest', group: 'Go to' },
+  { url: '/method/contribute/', title: 'Contribute a correction or source', meta: 'method', group: 'Go to' },
   { url: '/method/open-data/', title: 'Open data (JSON API)', meta: 'method', group: 'Go to' },
   { url: '/applications/batteries/', title: 'Battery lab', meta: 'application', group: 'Go to' },
   { url: '/applications/electrochemical-interfaces/', title: 'Electrochemical Interface Lab', meta: 'application', group: 'Go to' },
