@@ -1,0 +1,831 @@
+{
+ "entries": [
+  {
+   "commit": "2f90b0e017",
+   "date": "2026-10-16",
+   "subject": "Applications: battery lab — 574 migration barriers recomputed from released data",
+   "records": {
+    "applications": [
+     "batteries"
+    ],
+    "claims": [
+     "migration-barrier-reproduced",
+     "migration-chgnet-mae-discrepancy",
+     "orbv3-cathode-barriers"
+    ],
+    "experiments": [
+     "barrier-parity-reproduction"
+    ]
+   },
+   "pages": [
+    "/applications/batteries/"
+   ]
+  },
+  {
+   "commit": "1c62880542",
+   "date": "2026-10-16",
+   "subject": "Models: PET page — smooth attention and exact symmetry from frame averaging",
+   "records": {
+    "checkpoints": [
+     "pet-mad-v1-0-2"
+    ],
+    "claims": [
+     "ecse-force-error",
+     "ecse-symmetrisation",
+     "pet-architecture",
+     "pet-augmentation",
+     "pet-mad-direct-forces",
+     "pet-mad-hyperparameters",
+     "pet-mad-symmetry-error",
+     "pet-smooth-attention"
+    ],
+    "datasets": [
+     "mad"
+    ],
+    "implementations": [
+     "metatrain"
+    ],
+    "levels-of-theory": [
+     "pbesol-mad"
+    ],
+    "model-families": [
+     "pet"
+    ],
+    "papers": [
+     "mazitov2025petmad",
+     "pozdnyakov2023pet"
+    ]
+   },
+   "pages": [
+    "/models/pet/"
+   ]
+  },
+  {
+   "commit": "fa513e91a5",
+   "date": "2026-10-16",
+   "subject": "Models: M3GNet and CHGNet page — explicit angles in invariant message passing",
+   "records": {
+    "claims": [
+     "chgnet-graphs",
+     "chgnet-magmom-charge",
+     "m3gnet-hyperparameters",
+     "m3gnet-three-body",
+     "three-body-angle-count"
+    ],
+    "implementations": [
+     "chgnet",
+     "matgl"
+    ],
+    "model-families": [
+     "chgnet",
+     "m3gnet"
+    ],
+    "papers": [
+     "chen2022m3gnet"
+    ]
+   },
+   "pages": [
+    "/models/m3gnet-chgnet/"
+   ]
+  },
+  {
+   "commit": "8e39df6184",
+   "date": "2026-10-16",
+   "subject": "Models: SchNet page — continuous filters and what distance-only messages cannot see",
+   "records": {
+    "checkpoints": [
+     "schnet-oc20-s2ef-all"
+    ],
+    "claims": [
+     "distance-gnn-incomplete",
+     "schnet-angle-blind",
+     "schnet-cfconv",
+     "schnet-hyperparameters"
+    ],
+    "implementations": [
+     "ocp",
+     "schnetpack"
+    ],
+    "model-families": [
+     "schnet"
+    ],
+    "papers": [
+     "pozdnyakov2022incompleteness",
+     "schutt2017schnet",
+     "schutt2018schnet",
+     "schutt2018schnetpack"
+    ]
+   },
+   "pages": [
+    "/models/schnet/"
+   ]
+  },
+  {
+   "commit": "5040ed4b72",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: small → large cell transfer at interfaces (hypothesis, theory-backed)",
+   "records": {
+    "claims": [
+     "constant-charge-barrier-shift",
+     "small-cell-granularity",
+     "small-to-large-transfer"
+    ],
+    "experiments": [
+     "small-cell-budget"
+    ],
+    "failure-cases": [
+     "small-to-large-cell"
+    ],
+    "papers": [
+     "chan2015barriers"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "552e897a5b",
+   "date": "2026-10-16",
+   "subject": "Interface Lab panel 4: ion discharge at constant potential vs constant charge",
+   "records": {
+    "claims": [
+     "constant-charge-fermi-shift"
+    ],
+    "experiments": [
+     "ion-discharge-fermi"
+    ],
+    "papers": [
+     "anderson1961localized",
+     "gurney1935adsorption",
+     "newns1969chemisorption"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "e552829b11",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: heterogeneous catalysis — 80 models × 14 tasks, a different winner each time",
+   "records": {
+    "claims": [
+     "catalysis-magnetic-failure",
+     "catalysis-magnetism-hypothesis",
+     "catalysis-no-universal-best",
+     "catalysis-relaxation-error",
+     "catalysis-scaling-relations"
+    ],
+    "failure-cases": [
+     "catalysis"
+    ],
+    "papers": [
+     "kempen2025catalysis"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "8468605d93",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: experiment vs DFT reference (UniFFBench)",
+   "records": {
+    "benchmarks": [
+     "uniffbench"
+    ],
+    "claims": [
+     "density-inherits-reference",
+     "difftre-experimental-training",
+     "functional-lattice-errors",
+     "hubbard-u-two-surfaces",
+     "uniffbench-density-gap",
+     "uniffbench-disorder",
+     "uniffbench-elastic",
+     "uniffbench-matbench-uncorrelated",
+     "uniffbench-mlip-vs-dft",
+     "uniffbench-stability-not-accuracy"
+    ],
+    "experiments": [
+     "reference-gap",
+     "uniffbench-density"
+    ],
+    "failure-cases": [
+     "experiment-vs-dft"
+    ],
+    "papers": [
+     "mannan2025uniffbench",
+     "thaler2021difftre",
+     "tran2016rungs",
+     "warford2026hubbard"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "9d11222c29",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: non-conservative forces and energy drift",
+   "records": {
+    "claims": [
+     "closed-loop-work-zero",
+     "conservative-finetuning",
+     "direct-forces-cheaper",
+     "mts-conservative-correction",
+     "orb-v3-energy-drift",
+     "thermostat-masks-nonconservative"
+    ],
+    "experiments": [
+     "nonconservative-drift-lab"
+    ],
+    "failure-cases": [
+     "nonconservative-forces"
+    ],
+    "papers": [
+     "rhodes2025orbv3"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "8d55dc8d25",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: ion migration case — barrier errors as orders of magnitude in diffusion",
+   "records": {
+    "claims": [
+     "barrier-error-diffusivity",
+     "migration-barrier-mae",
+     "migration-high-barriers",
+     "migration-training-data",
+     "migration-underestimation"
+    ],
+    "experiments": [
+     "migration-hopping"
+    ],
+    "failure-cases": [
+     "ion-migration"
+    ],
+    "papers": [
+     "bheemaguli2025migration",
+     "guo2026alkali"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "02c648cb9d",
+   "date": "2026-10-16",
+   "subject": "Failure Atlas: surfaces case — cleavage toy and a same-architecture/different-data benchmark view",
+   "records": {
+    "claims": [
+     "cleavage-training-data-dominates",
+     "omat-nonequilibrium-covers-cleavage",
+     "surface-energy-underestimated",
+     "surface-order-not-reproduced"
+    ],
+    "experiments": [
+     "cleavage-toy"
+    ],
+    "failure-cases": [
+     "surfaces"
+    ],
+    "papers": [
+     "focassio2024surfaces",
+     "girifalco1959morse",
+     "mehdizadeh2025cleavage"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "c8d3588b99",
+   "date": "2026-10-16",
+   "subject": "Observatory: four MPtrj checkpoints on identical inputs (precomputed on CPU)",
+   "records": {
+    "papers": [
+     "neumann2024orb",
+     "park2024sevennet"
+    ]
+   },
+   "pages": [
+    "/observatory/"
+   ]
+  },
+  {
+   "commit": "6b2d67f915",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P12: dynamics and stability with LAMMPS in the browser",
+   "records": {
+    "claims": [
+     "force-error-not-stability",
+     "nonconservative-forces-heat-nve",
+     "shift-keeps-force-jump",
+     "verlet-energy-error-h2"
+    ],
+    "experiments": [
+     "dynamics-stability-lab"
+    ],
+    "papers": [
+     "bigi2024darkside",
+     "fu2022forces",
+     "hairer2003verlet",
+     "swope1982verlet"
+    ]
+   },
+   "pages": [
+    "/physics-lab/dynamics/"
+   ]
+  },
+  {
+   "commit": "d5b6e32772",
+   "date": "2026-10-15",
+   "subject": "Models: Architecture X-ray — real MACE-MP-0a internals on ethanol, ZnO and Si",
+   "records": {},
+   "pages": [
+    "/models/x-ray/"
+   ]
+  },
+  {
+   "commit": "4f407ae5d6",
+   "date": "2026-10-16",
+   "subject": "Interface Lab: constant-potential strategies and published Ag(111) water orientations",
+   "records": {
+    "claims": [
+     "ag-water-h-down",
+     "ag-water-separate-mlips",
+     "cp-mlff-electron-count",
+     "treci-transfer-learning"
+    ],
+    "papers": [
+     "bianchi2025treci",
+     "tian2025agwater",
+     "wang2025cpmlff"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "a38c9e1033",
+   "date": "2026-10-16",
+   "subject": "Electrochemical Interface Lab: LO–TO splitting panel (rigid-ion rock salt, Ewald vs local)",
+   "records": {
+    "claims": [
+     "loto-splitting-long-range"
+    ],
+    "experiments": [
+     "loto-splitting-lab"
+    ],
+    "papers": [
+     "fennell2006dsf",
+     "gonze1997dfpt",
+     "kellermann1940nacl",
+     "lyddane1941lst"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "fdbf8e110a",
+   "date": "2026-10-15",
+   "subject": "Electrochemical Interface Lab: interfacial water dipole and potential step; Applications hub",
+   "records": {
+    "claims": [
+     "interfacial-dipole-potential-step"
+    ],
+    "experiments": [
+     "image-charge-lab",
+     "interfacial-water-dipole"
+    ]
+   },
+   "pages": [
+    "/applications/",
+    "/applications/electrochemical-interfaces/"
+   ]
+  },
+  {
+   "commit": "140851847c",
+   "date": "2026-10-15",
+   "subject": "Failure Atlas: electrostatics at electrodes (EPhEct) with an image-charge scene",
+   "records": {
+    "claims": [
+     "ephect-energy-force-insufficient",
+     "image-charge-energy",
+     "local-model-no-image-tail"
+    ],
+    "failure-cases": [
+     "electrostatics-at-electrodes"
+    ],
+    "papers": [
+     "sumic2026ephect"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "b3aeeddcc4",
+   "date": "2026-10-15",
+   "subject": "Failure Atlas: index and record-driven case pages; PES softening case",
+   "records": {},
+   "pages": [
+    "/failures/"
+   ]
+  },
+  {
+   "commit": "7b81a6a666",
+   "date": "2026-10-15",
+   "subject": "Models: checkpoints page — every released checkpoint with data and licences",
+   "records": {},
+   "pages": [
+    "/models/checkpoints/"
+   ]
+  },
+  {
+   "commit": "165ac8683c",
+   "date": "2026-10-15",
+   "subject": "Models: Behler-Parrinello page with an interactive symmetry-function fingerprint",
+   "records": {
+    "claims": [
+     "bp-symmetry-functions"
+    ]
+   },
+   "pages": [
+    "/models/behler-parrinello/"
+   ]
+  },
+  {
+   "commit": "64b6f9eb7d",
+   "date": "2026-10-15",
+   "subject": "Models: Allegro page — strict locality and pair features",
+   "records": {
+    "claims": [
+     "allegro-pair-features",
+     "allegro-scaling"
+    ]
+   },
+   "pages": [
+    "/models/allegro/"
+   ]
+  },
+  {
+   "commit": "e7900f2b09",
+   "date": "2026-10-15",
+   "subject": "Models: NequIP page with the receptive field of depth in a real crystal",
+   "records": {
+    "claims": [
+     "nequip-architecture",
+     "nequip-data-efficiency"
+    ]
+   },
+   "pages": [
+    "/models/nequip/"
+   ]
+  },
+  {
+   "commit": "bb25591dda",
+   "date": "2026-10-15",
+   "subject": "Explore: the Atlas as one map",
+   "records": {},
+   "pages": [
+    "/explore/"
+   ]
+  },
+  {
+   "commit": "25419c7719",
+   "date": "2026-10-15",
+   "subject": "Benchmarks: Matbench Discovery explorer from an upstream snapshot",
+   "records": {
+    "papers": [
+     "pota2024kappa"
+    ]
+   },
+   "pages": [
+    "/benchmarks/"
+   ]
+  },
+  {
+   "commit": "29132e5a1d",
+   "date": "2026-10-15",
+   "subject": "Data: the training-data atlas",
+   "records": {
+    "datasets": [
+     "matpes",
+     "oc20",
+     "omat24",
+     "omol25",
+     "spice"
+    ],
+    "levels-of-theory": [
+     "pbe-matpes",
+     "pbe-pbeu-omat24",
+     "r2scan-matpes",
+     "rpbe-oc20",
+     "wb97md3bj-def2tzvppd",
+     "wb97mv-def2tzvpd"
+    ],
+    "papers": [
+     "barrosoluque2024omat24",
+     "chanussot2020oc20",
+     "eastman2022spice",
+     "kaplan2025matpes",
+     "levine2025omol25",
+     "perdew2001ladder"
+    ]
+   },
+   "pages": [
+    "/data/"
+   ]
+  },
+  {
+   "commit": "3b04f37197",
+   "date": "2026-10-15",
+   "subject": "Models: MACE model page (the bar for every family page) and Models index",
+   "records": {
+    "claims": [
+     "mace-four-body-two-layers",
+     "mace-layer-equations",
+     "mace-paper-hyperparameters"
+    ]
+   },
+   "pages": [
+    "/models/",
+    "/models/mace/"
+   ]
+  },
+  {
+   "commit": "43e8667b62",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P3: pairs, angles and body order (Stillinger-Weber)",
+   "records": {
+    "claims": [
+     "pair-models-angle-blind",
+     "sw-diamond-energy"
+    ],
+    "concepts": [
+     "body-order"
+    ],
+    "experiments": [
+     "body-order-lab"
+    ],
+    "papers": [
+     "drautz2019ace",
+     "stillinger1985sw"
+    ]
+   },
+   "pages": [
+    "/physics-lab/body-order/"
+   ]
+  },
+  {
+   "commit": "9cf0464172",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P9: periodic boundaries and finite size",
+   "records": {
+    "claims": [
+     "periodic-slab-artificial-field"
+    ],
+    "concepts": [
+     "periodic-boundaries"
+    ],
+    "experiments": [
+     "periodic-slab-lab"
+    ],
+    "papers": [
+     "bengtsson1999dipole",
+     "yeh1999slab"
+    ]
+   },
+   "pages": [
+    "/physics-lab/periodic-slab/"
+   ]
+  },
+  {
+   "commit": "d1ea23208f",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P8: charge equilibration",
+   "records": {
+    "claims": [
+     "qeq-dissociation-fractional-charge",
+     "qeq-equalises-electronegativity"
+    ],
+    "concepts": [
+     "charge-equilibration"
+    ],
+    "experiments": [
+     "charge-equilibration-lab"
+    ],
+    "papers": [
+     "rappe1991qeq"
+    ]
+   },
+   "pages": [
+    "/physics-lab/charge-equilibration/"
+   ]
+  },
+  {
+   "commit": "7bbcf472d2",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P6: Ewald Lab",
+   "records": {
+    "claims": [
+     "ewald-alpha-independence"
+    ],
+    "experiments": [
+     "ewald-lab"
+    ],
+    "papers": [
+     "darden1993pme"
+    ]
+   },
+   "pages": [
+    "/physics-lab/ewald/"
+   ]
+  },
+  {
+   "commit": "18e393390e",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P5: spherical harmonics and tensor products",
+   "records": {
+    "claims": [
+     "sh-addition-theorem",
+     "tensor-product-selection-rules"
+    ],
+    "experiments": [
+     "spherical-harmonics",
+     "tensor-products"
+    ],
+    "papers": [
+     "geiger2022e3nn"
+    ]
+   },
+   "pages": [
+    "/physics-lab/harmonics/"
+   ]
+  },
+  {
+   "commit": "4410140c98",
+   "date": "2026-10-15",
+   "subject": "Physics Lab P4: What changes under rotation?",
+   "records": {
+    "claims": [
+     "invariant-energy-equivariant-forces"
+    ],
+    "concepts": [
+     "equivariance"
+    ],
+    "experiments": [
+     "rotation-equivariance"
+    ]
+   },
+   "pages": [
+    "/physics-lab/rotation/"
+   ]
+  },
+  {
+   "commit": "e5e74d2421",
+   "date": "2026-10-14",
+   "subject": "Bibliography pipeline, Papers page and <Cite> (Phase 1 step 5)",
+   "records": {},
+   "pages": [
+    "/papers/"
+   ]
+  },
+  {
+   "commit": "70ad667c8e",
+   "date": "2026-10-14",
+   "subject": "Atomic viewer and structure pipeline (Phase 1 steps 3–4)",
+   "records": {},
+   "pages": [
+    "/method/atomic-viewer/"
+   ]
+  },
+  {
+   "commit": "fef1e9ff2b",
+   "date": "2026-10-15",
+   "subject": "Physics Lab: P1 'Can an atom feel beyond the cutoff?' and lab index",
+   "records": {
+    "claims": [
+     "cutoff-pair-misses-coulomb-tail",
+     "madelung-nacl-value",
+     "madelung-sphere-sums-diverge"
+    ],
+    "concepts": [
+     "ewald-summation"
+    ],
+    "experiments": [
+     "interface-receptive-field",
+     "madelung-sums",
+     "pair-cutoff"
+    ],
+    "papers": [
+     "berendsen1987spce",
+     "borwein1985madelung",
+     "evjen1932",
+     "ewald1921",
+     "grasselli2026longrange"
+    ]
+   },
+   "pages": [
+    "/physics-lab/",
+    "/physics-lab/beyond-the-cutoff/"
+   ]
+  },
+  {
+   "commit": "bcf790a8c1",
+   "date": "2026-10-14",
+   "subject": "Content: apply source locators verified against full texts",
+   "records": {
+    "checkpoints": [
+     "mace-mp-0a-medium"
+    ]
+   },
+   "pages": []
+  },
+  {
+   "commit": "e929fc0b6a",
+   "date": "2026-10-14",
+   "subject": "Phase 1 step 2: content schemas, integrity checks, content-model page; review fixes",
+   "records": {
+    "applications": [
+     "electrochemical-interfaces"
+    ],
+    "benchmarks": [
+     "matbench-discovery"
+    ],
+    "checkpoints": [
+     "mace-mp-0"
+    ],
+    "claims": [
+     "allegro-strictly-local",
+     "cosine-cutoff-curvature-jump",
+     "mace-mp-0-trained-on-mptrj",
+     "mp-receptive-field-bound",
+     "mptrj-level-of-theory",
+     "polynomial-envelope-c2",
+     "softening-fixed-by-finetuning",
+     "softening-near-equilibrium-bias",
+     "softening-phonons"
+    ],
+    "concepts": [
+     "locality",
+     "long-range-electrostatics",
+     "receptive-field",
+     "smooth-cutoff"
+    ],
+    "datasets": [
+     "mptrj"
+    ],
+    "experiments": [
+     "cutoff-explorer",
+     "receptive-field-figure"
+    ],
+    "failure-cases": [
+     "pes-softening"
+    ],
+    "implementations": [
+     "allegro",
+     "mace",
+     "nequip"
+    ],
+    "levels-of-theory": [
+     "pbe-pbeu-mp"
+    ],
+    "model-families": [
+     "allegro",
+     "behler-parrinello",
+     "mace",
+     "nequip"
+    ],
+    "papers": [
+     "batatia2022mace",
+     "batatia2023foundation",
+     "batzner2022nequip",
+     "behler2007generalized",
+     "behler2011symmetry",
+     "cheng2025les",
+     "deng2023chgnet",
+     "deng2024softening",
+     "gasteiger2020dimenet",
+     "musaelian2023allegro",
+     "prodan2005nearsightedness",
+     "riebesell2023matbench"
+    ],
+    "principles": [
+     "coulomb-interaction",
+     "forces-from-energy",
+     "nearsightedness"
+    ]
+   },
+   "pages": [
+    "/method/content-model/"
+   ]
+  },
+  {
+   "commit": "13e353534b",
+   "date": "2026-10-14",
+   "subject": "Phase 1 step 1: Astro site scaffold and design system",
+   "records": {},
+   "pages": [
+    "/",
+    "/404/",
+    "/method/",
+    "/method/design-system/"
+   ]
+  }
+ ]
+}

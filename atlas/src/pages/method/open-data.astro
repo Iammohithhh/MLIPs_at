@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Callout from '~/components/Callout.astro';
+import { COLLECTION_NAMES } from '~/content/schemas';
+import { COLLECTION_META } from '~/content/meta';
+import { API_BASE, snapshots } from '~/lib/open-data';
+
+const rows = [];
+for (const c of COLLECTION_NAMES) {
+  const entries = await getCollection(c);
+  rows.push({ c, label: COLLECTION_META[c].label, n: entries.length, published: entries.filter((e) => (e.data as { review: { status: string } }).review.status === 'published').length });
+}
+const snaps = snapshots().map((s) => {
+  const src = (s.source ?? {}) as Record<string, unknown>;
+  return { name: s.name, paper: src['paper'] as string | undefined, retrieved: (src['retrieved'] ?? src['date']) as string | undefined, where: (src['arxiv'] ?? src['zenodo'] ?? src['repo'] ?? src['url'] ?? src['commit']) as string | undefined };
+});
+const py = `import requests
+base = "https://<atlas-host>${API_BASE}"
+index = requests.get(f"{base}/index.json").json()
+claims = requests.get(f"{base}/claims.json").json()["records"]
+reproduced = [c for c in claims if c["grade"] == "REPRODUCED"]`;
+---
+
+<BaseLayout
+  title="Open data"
+  description="Every Atlas record, its JSON Schema, and every benchmark snapshot, as static JSON under /api/v1/ — with the provenance each number carries."
+>
+  <article class="page-grid od">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/method/">Method</a> · Open data</p>
+      <h1 class="h-display">Open data</h1>
+      <p class="lede">
+        Everything the Atlas shows is built from records and snapshots you can download: the content records with their
+        schemas, and the benchmark numbers exactly as the pipeline copied them from published sources.
+      </p>
+    </header>
+
+    <section class="block" aria-labelledby="rec-h">
+      <h2 id="rec-h" class="h-section">Records</h2>
+      <p>
+        One JSON file per collection, regenerated on every build. Each record keeps its review status; only
+        <code>published</code> records have passed review, the rest are drafts shown with that label on the site.
+      </p>
+      <table class="tbl">
+        <thead>
+          <tr><th>Collection</th><th class="num">Records</th><th class="num">Published</th><th>Data</th><th>Schema</th></tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((r) => (
+              <tr>
+                <td>{r.label}</td>
+                <td class="num">{r.n}</td>
+                <td class="num">{r.published}</td>
+                <td><a href={`${API_BASE}/${r.c}.json`}><code>{r.c}.json</code></a></td>
+                <td><a href={`${API_BASE}/schema/${r.c}.json`}>JSON Schema</a></td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p>
+        The index at <a href={`${API_BASE}/index.json`}><code>{API_BASE}/index.json</code></a> lists all of this with
+        counts. References between records are plain ids; the site URL of each record is included as <code>url</code>.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="snap-h">
+      <h2 id="snap-h" class="h-section">Benchmark snapshots</h2>
+      <p>
+        Numbers from benchmarks and papers are never typed by hand: a tested pipeline module copies them from the source and
+        stores where they came from. These files are those snapshots, unchanged.
+      </p>
+      <table class="tbl">
+        <thead>
+          <tr><th>Snapshot</th><th>Source</th><th>Retrieved</th></tr>
+        </thead>
+        <tbody>
+          {
+            snaps.map((s) => (
+              <tr>
+                <td><a href={`${API_BASE}/snapshots/${s.name}.json`}><code>{s.name}.json</code></a></td>
+                <td>{s.paper ? <a href={`/papers/#paper-${s.paper}`}>{s.paper}</a> : null}{s.where ? <span class="faint"> · {s.where}</span> : null}</td>
+                <td>{s.retrieved ?? '—'}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <Callout kind="caveat" title="Licences">
+        Snapshot numbers keep the terms of their sources (stated on each source page). The licence for the Atlas’s own
+        records has not been chosen yet; until it is, ask before redistributing them.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="use-h">
+      <h2 id="use-h" class="h-section">Using it</h2>
+      <pre class="code"><code>{py}</code></pre>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .od {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font: 0.92rem/1.4 var(--font-sans);
+    margin-bottom: 1rem;
+  }
+  .tbl th,
+  .tbl td {
+    text-align: left;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .tbl th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+  }
+  .tbl .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .faint {
+    color: var(--atlas-ink-faint);
+  }
+  .code {
+    padding: 1rem 1.2rem;
+    border-radius: 0.6rem;
+    background: var(--atlas-surface-2);
+    overflow-x: auto;
+    font: 0.85rem/1.55 var(--font-mono);
+  }
+</style>

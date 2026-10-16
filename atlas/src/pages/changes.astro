@@ -1,0 +1,148 @@
+---
+// "What changed": every record and page added to the Atlas, by month and day, from the git-history
+// snapshot written by pipeline/atlas_pipeline/digest.py.
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import digest from '~/data/digest.json';
+import { COLLECTION_NAMES, type CollectionName } from '~/content/schemas';
+import { COLLECTION_META, recordTitle } from '~/content/meta';
+import { recordUrl } from '~/lib/record-urls';
+
+const known = new Map<string, { title: string; url: string }>();
+for (const c of COLLECTION_NAMES) {
+  for (const e of await getCollection(c)) {
+    const d = e.data as Record<string, unknown>;
+    const t = recordTitle(d);
+    known.set(`${c}/${e.id}`, { title: t.length > 110 ? `${t.slice(0, 107).trimEnd()}…` : t, url: recordUrl(c, e.id, d) });
+  }
+}
+
+type Entry = (typeof digest.entries)[number];
+const months = new Map<string, Entry[]>();
+for (const e of digest.entries) {
+  const m = e.date.slice(0, 7);
+  months.set(m, [...(months.get(m) ?? []), e]);
+}
+const monthName = (m: string) => new Date(`${m}-01T00:00:00Z`).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const totals = (es: Entry[]) => {
+  const t = new Map<string, number>();
+  for (const e of es) for (const [c, ids] of Object.entries(e.records)) t.set(c, (t.get(c) ?? 0) + (ids as string[]).length);
+  return [...t.entries()].sort((a, b) => b[1] - a[1]);
+};
+const label = (c: string) => COLLECTION_META[c as CollectionName]?.label ?? c;
+---
+
+<BaseLayout title="What changed" description="Every record and page added to MLIP Atlas, month by month, from the repository history.">
+  <article class="page-grid ch">
+    <header class="wide head">
+      <p class="eyebrow">Digest</p>
+      <h1 class="h-display">What changed</h1>
+      <p class="lede">
+        Everything added to the Atlas, newest first: new pages, new claims with their evidence grades, new papers and
+        records. Generated from the repository history; edits to existing records are not listed.
+      </p>
+    </header>
+
+    {
+      [...months.entries()].map(([m, es]) => (
+        <section class="wide month" aria-labelledby={`m-${m}`}>
+          <h2 id={`m-${m}`} class="h-section">{monthName(m)}</h2>
+          <p class="sum">
+            {es.reduce((n, e) => n + e.pages.length, 0)} pages ·{' '}
+            {totals(es)
+              .map(([c, n]) => `${n} ${label(c).toLowerCase()}`)
+              .join(' · ')}
+          </p>
+          <ol class="entries">
+            {es.map((e) => (
+              <li class="entry">
+                <p class="meta">
+                  <time datetime={e.date}>{e.date}</time> · <code>{e.commit}</code>
+                </p>
+                <p class="subj">{e.subject}</p>
+                {e.pages.length > 0 && (
+                  <p class="pages">
+                    {e.pages.map((u) => (
+                      <a href={u}>{u}</a>
+                    ))}
+                  </p>
+                )}
+                {Object.entries(e.records).map(([c, ids]) => (
+                  <p class="recs">
+                    <span class="coll">{label(c)}</span>
+                    {(ids as string[]).map((id) => {
+                      const k = known.get(`${c}/${id}`);
+                      return k ? <a href={k.url}>{k.title}</a> : <span class="gone">{id} (since removed)</span>;
+                    })}
+                  </p>
+                ))}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .ch {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .month {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .sum {
+    font: 0.9rem var(--font-mono);
+    color: var(--atlas-ink-muted);
+    margin: 0 0 1rem;
+  }
+  .entries {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .entry {
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--atlas-rule);
+    border-left: 3px solid var(--atlas-arch);
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+  }
+  .entry p {
+    margin: 0 0 0.35rem;
+  }
+  .meta {
+    font: 0.78rem var(--font-mono);
+    color: var(--atlas-ink-faint);
+  }
+  .subj {
+    font: 600 1.02rem/1.4 var(--font-serif);
+  }
+  .pages,
+  .recs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.75rem;
+    font: 0.86rem/1.4 var(--font-sans);
+  }
+  .coll {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+  }
+  .gone {
+    color: var(--atlas-ink-faint);
+  }
+</style>

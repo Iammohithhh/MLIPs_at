@@ -101,3 +101,18 @@ into `atlas/src/data/benchmarks/catalysis-kempen2025.json`, expanding row spans 
 curl -sL https://arxiv.org/html/2512.16702v1 -o catalysis.html
 ../.venv/bin/python -m atlas_pipeline.catalysis catalysis.html ../atlas/src/data/benchmarks/catalysis-kempen2025.json
 ```
+
+### Digest of additions
+
+`digest.py` reads the repository history (`git log --diff-filter=A`) for content records and pages and writes
+`atlas/src/data/digest.json`, which the "What changed" page renders. It refuses to run on a shallow clone:
+
+```bash
+../.venv/bin/python -m atlas_pipeline.digest .. ../atlas/src/data/digest.json
+```
+
+### Migration barriers (battery lab)
+
+`migration_barriers.py` joins the DFT-NEB barriers of Bheemaguli et al.'s Dataset-2 (Zenodo) with each model's released
+NEB barrier and writes `atlas/src/data/benchmarks/migration-bheemaguli2025.json` plus the hop geometries in
+`atlas/public/data/migration-paths.json`; see the module docstring for the sparse-clone commands.
