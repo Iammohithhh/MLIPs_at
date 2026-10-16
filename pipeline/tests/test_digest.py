@@ -6,6 +6,7 @@ def test_page_url_maps_files_to_site_paths():
     assert page_url("failures/index") == "/failures/"
     assert page_url("applications/batteries") == "/applications/batteries/"
     assert page_url("failures/[id]") is None
+    assert page_url("404") is None
 
 
 def test_parse_log_groups_additions_by_commit():

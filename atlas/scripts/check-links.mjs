@@ -1,9 +1,10 @@
 // Check every internal link and #anchor in the built site (dist/). Fails on
 // links to missing pages or missing ids. External links are not fetched.
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const dist = new URL('../dist/', import.meta.url).pathname;
+const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const files = [];
 (function walk(d) {
   for (const f of readdirSync(d)) {
@@ -15,7 +16,7 @@ const files = [];
 })(dist);
 
 const ids = new Map();
-const pageOf = (file) => '/' + relative(dist, file).replace(/index\.html$/, '').replace(/\.html$/, '');
+const pageOf = (file) => '/' + relative(dist, file).split(sep).join('/').replace(/index\.html$/, '').replace(/\.html$/, '');
 for (const f of files) {
   const html = readFileSync(f, 'utf8');
   ids.set(pageOf(f), new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1])));

@@ -1,6 +1,16 @@
 {
  "entries": [
   {
+   "commit": "e72d56cf39",
+   "date": "2026-10-16",
+   "subject": "Phase 6: open data API and a 'What changed' digest",
+   "records": {},
+   "pages": [
+    "/changes/",
+    "/method/open-data/"
+   ]
+  },
+  {
    "commit": "2f90b0e017",
    "date": "2026-10-16",
    "subject": "Applications: battery lab — 574 migration barriers recomputed from released data",
@@ -822,7 +832,6 @@
    "records": {},
    "pages": [
     "/",
-    "/404/",
     "/method/",
     "/method/design-system/"
    ]

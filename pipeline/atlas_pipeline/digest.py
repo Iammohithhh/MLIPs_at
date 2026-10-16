@@ -23,7 +23,7 @@ PAGE = re.compile(r"^atlas/src/pages/(.+)\.astro$")
 
 def page_url(rel: str) -> str | None:
     """Site path for a page file; dynamic routes ([id]) are skipped."""
-    if "[" in rel:
+    if "[" in rel or rel == "404":
         return None
     rel = re.sub(r"(^|/)index$", "", rel)
     return "/" + (rel + "/" if rel else "")

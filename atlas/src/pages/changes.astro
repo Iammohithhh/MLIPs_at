@@ -17,6 +17,10 @@ for (const c of COLLECTION_NAMES) {
   }
 }
 
+// Only link pages that still exist (a page added once may have been renamed since).
+const PAGE_FILES = Object.keys(import.meta.glob('./**/*.astro'));
+const livePages = new Set(PAGE_FILES.filter((f) => !f.includes('[')).map((f) => '/' + f.replace(/^\.\//, '').replace(/\.astro$/, '').replace(/(^|\/)index$/, '') + '/').map((u) => u.replace(/^\/\/$/, '/')));
+
 type Entry = (typeof digest.entries)[number];
 const months = new Map<string, Entry[]>();
 for (const e of digest.entries) {
@@ -62,9 +66,7 @@ const label = (c: string) => COLLECTION_META[c as CollectionName]?.label ?? c;
                 <p class="subj">{e.subject}</p>
                 {e.pages.length > 0 && (
                   <p class="pages">
-                    {e.pages.map((u) => (
-                      <a href={u}>{u}</a>
-                    ))}
+                    {e.pages.map((u) => (livePages.has(u) ? <a href={u}>{u}</a> : <span class="gone">{u} (since moved)</span>))}
                   </p>
                 )}
                 {Object.entries(e.records).map(([c, ids]) => (
