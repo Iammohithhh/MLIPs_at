@@ -1,4 +1,62 @@
 {
+ "anderson1961localized": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1961; fetched [1961]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Anderson, P. W.' vs fetched ['anderson']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Anderson",
+     "given": "P. W."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.124.41",
+   "issue": "1",
+   "page": "41-53",
+   "title": "Localized Magnetic States in Metals",
+   "type": "journal-article",
+   "volume": "124",
+   "year": 1961
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 5610,
+   "id": "W1971472669",
+   "publication_year": 1961,
+   "referenced_works": [
+    "W1965846654",
+    "W1976020482",
+    "W1978924628",
+    "W2003293113",
+    "W2039885434",
+    "W2064085102",
+    "W2067600085",
+    "W2068795961",
+    "W2077272898",
+    "W2091883658",
+    "W2316192482",
+    "W3189673749"
+   ]
+  }
+ },
  "barrosoluque2024omat24": {
   "arxiv": {
    "authors": [
@@ -3114,6 +3172,57 @@
    "referenced_works": []
   }
  },
+ "gurney1935adsorption": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1935; fetched [1935]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gurney, R. W.' vs fetched ['gurney']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Gurney",
+     "given": "R. W."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.47.479",
+   "issue": "6",
+   "page": "479-482",
+   "title": "Theory of Electrical Double Layers in Adsorbed Films",
+   "type": "journal-article",
+   "volume": "47",
+   "year": 1935
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 489,
+   "id": "W2030591142",
+   "publication_year": 1935,
+   "referenced_works": [
+    "W1970342738",
+    "W2090357993",
+    "W2093595197",
+    "W2108386818",
+    "W2319544851"
+   ]
+  }
+ },
  "hairer2003verlet": {
   "arxiv": null,
   "checks": [
@@ -3737,6 +3846,91 @@
    "id": "W4404342379",
    "publication_year": 2024,
    "referenced_works": []
+  }
+ },
+ "newns1969chemisorption": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1969; fetched [1969]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Newns, D. M.' vs fetched ['newns']"
+   }
+  ],
+  "cites": [
+   "anderson1961localized"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "NEWNS",
+     "given": "D. M."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.178.1123",
+   "issue": "3",
+   "page": "1123-1135",
+   "title": "Self-Consistent Model of Hydrogen Chemisorption",
+   "type": "journal-article",
+   "volume": "178",
+   "year": 1969
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 1632,
+   "id": "W2013998255",
+   "publication_year": 1969,
+   "referenced_works": [
+    "W1612063092",
+    "W1669880665",
+    "W1968817450",
+    "W1968994119",
+    "W1971472669",
+    "W1999771276",
+    "W2005218945",
+    "W2010258052",
+    "W2020062935",
+    "W2026763365",
+    "W2043352734",
+    "W2044010601",
+    "W2046524828",
+    "W2048214943",
+    "W2049309209",
+    "W2054668063",
+    "W2054948268",
+    "W2057824218",
+    "W2059177467",
+    "W2059722252",
+    "W2073026770",
+    "W2084196973",
+    "W2088821992",
+    "W2089872576",
+    "W2091281858",
+    "W2093262964",
+    "W2103480295",
+    "W2105564187",
+    "W2108793540",
+    "W2113070161",
+    "W2129073425",
+    "W2146073105",
+    "W2165757409",
+    "W2316926432",
+    "W2318863731",
+    "W4240242015",
+    "W4240867252"
+   ]
   }
  },
  "park2024sevennet": {

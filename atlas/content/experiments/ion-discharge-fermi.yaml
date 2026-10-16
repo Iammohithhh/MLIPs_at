@@ -1,0 +1,12 @@
+title: Ion discharge at constant potential and at constant charge
+question: How does a cation's charge near an electrode depend on the electrode's Fermi level, and how does a finite cell without a potentiostat change it?
+kind: physics-lab
+status: TOY_MODEL
+tier: T0
+page: /applications/electrochemical-interfaces/#fig-discharge
+assumptions:
+  - { term: Model, value: 'Spinless Newns–Anderson level, wide-band limit; illustrative I = 5.0 eV, W = 5.3 eV, Δ = 1.2 eV at 2 Å decaying over 0.9 Å; no solvent.' }
+  - { term: Electrode, value: 'Constant potential (fixed E_F) or constant charge with a Helmholtz capacitance C = ε₀ε_r A/d (d = 3 Å, ε_r = 6).' }
+concepts: [long-range-electrostatics]
+claims: [constant-charge-fermi-shift]
+review: { status: draft, last_checked: 2026-10-16 }

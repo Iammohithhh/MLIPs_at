@@ -1,0 +1,8 @@
+statement: >-
+  In a simulation cell with a fixed number of electrons, charge transferred to an adsorbing ion comes from the electrode
+  itself, whose Fermi level then shifts by about e²/C per electron (C the double-layer capacitance of the cell, which
+  scales with its area); at constant potential the Fermi level stays fixed. The ion's charge at a given height therefore
+  depends on the electrode condition and on the cell size.
+grade: THEORY
+derivation: /applications/electrochemical-interfaces/#discharge
+review: { status: draft, last_checked: 2026-10-16, notes: 'Newns–Anderson occupation solved self-consistently with a capacitor model of the electrode; checked in newns-anderson.test.ts.' }

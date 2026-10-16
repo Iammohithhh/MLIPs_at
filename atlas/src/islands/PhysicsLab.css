@@ -749,3 +749,8 @@
   vertical-align: -0.05rem;
   margin-right: 0.3rem;
 }
+.lab-plot-stack {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}

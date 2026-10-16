@@ -1,0 +1,11 @@
+title: Self-Consistent Model of Hydrogen Chemisorption
+topic: electrochemistry
+authors:
+  - 'Newns, D. M.'
+year: 1969
+venue: Physical Review 178, 1123–1135
+type: article
+identifiers:
+  doi: 10.1103/PhysRev.178.1123
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Adsorbate level coupled to a metal band (Anderson–Newns model); used here in the wide-band limit, a standard textbook reduction.' }

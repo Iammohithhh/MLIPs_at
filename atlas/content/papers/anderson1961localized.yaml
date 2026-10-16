@@ -1,0 +1,11 @@
+title: Localized Magnetic States in Metals
+topic: other
+authors:
+  - 'Anderson, P. W.'
+year: 1961
+venue: Physical Review 124, 41–53
+type: article
+identifiers:
+  doi: 10.1103/PhysRev.124.41
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'The localized-level-in-a-continuum Hamiltonian that the Newns–Anderson chemisorption model builds on.' }

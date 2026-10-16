@@ -9,6 +9,7 @@ import Cite from '~/components/Cite.astro';
 import ImageChargeLab from '~/islands/ImageChargeLab';
 import WaterDipoleLab from '~/islands/WaterDipoleLab';
 import LotoLab from '~/islands/LotoLab';
+import DischargeLab from '~/islands/DischargeLab';
 
 const imageAssumptions = [
   { term: 'Electrode', value: 'An ideal flat conductor at z = 0; the Au(111) slab (ASE fcc111, a = 4.078 Å) is drawn for orientation only.' },
@@ -21,6 +22,13 @@ const waterAssumptions = [
   { term: 'First layer', value: 'Waters whose oxygen lies within 3.6 Å of the top Au layer. All of them are given the same tilt θ of their dipole from the surface normal; azimuths are spread by the golden angle.' },
   { term: 'Charges', value: 'SPC/E partial charges (O −0.8476 e, H +0.4238 e), ions ±1 e, Au uncharged: the metal’s electronic response is not modelled.' },
   { term: 'Electrostatics', value: 'Charges smeared by 0.45 Å Gaussians and averaged over the cell area; d²φ̄/dz² = −ρ̄/ε₀ integrated upward from the metal surface with zero field and φ̄ = 0 there. ε₀ = 5.5263 × 10⁻³ e/(V·Å).' },
+];
+
+const dischargeAssumptions = [
+  { term: 'Model', value: 'One spinless level in the wide-band limit (Newns–Anderson). Illustrative parameters: I = 5.0 eV, work function W = 5.3 eV, half-width Δ = 1.2 eV at 2 Å decaying with length 0.9 Å. No solvent, no spin, no adsorbate relaxation.' },
+  { term: 'Heights', value: 'z is measured from the metal’s image plane; the image shift k/(4z) uses k = e²/(4πε₀).' },
+  { term: 'Electrode', value: 'Constant potential: E_F = −W − eφ, fixed. Constant charge: E_F falls by e²/C per electron given to the ion, with a Helmholtz capacitance C = ε₀ε_r A/d, d = 3 Å, ε_r = 6, A the lateral cell area.' },
+  { term: 'Status', value: 'A model Hamiltonian for intuition. Fermi levels and level occupations of real interfaces come from electronic-structure calculations, never from an energy-only MLIP.' },
 ];
 
 const lotoAssumptions = [
@@ -57,7 +65,7 @@ const lotoAssumptions = [
         The EPhEct benchmarks probe four electrostatic phenomena at electrodes: the image-charge attraction of an ion,
         the LO–TO splitting of a polar crystal, the dipole of interfacial water, and Fermi-level pinning during ion
         discharge <Cite id="sumic2026ephect" />. Their point is that models with similar energy and force errors can
-        differ qualitatively on all four. This lab builds the first three as calculations you can change; the
+        differ qualitatively on all four. This lab builds all four as calculations you can change — the fourth as a model Hamiltonian, since it is electronic; the
         <a href="/failures/electrostatics-at-electrodes/">Failure Atlas case</a> collects the evidence.
       </p>
     </section>
@@ -172,8 +180,52 @@ const lotoAssumptions = [
       </Figure>
     </div>
 
+    <section class="block" id="discharge" aria-labelledby="fl-h">
+      <h2 id="fl-h" class="h-section">4 · The Fermi level decides the charge</h2>
+      <p>
+        Whether an ion arriving at an electrode keeps its charge is an electronic question. Far from the metal its empty
+        level sits at minus its ionisation energy; close to the metal the image charge raises it and coupling to the
+        metal’s electrons broadens it into a resonance <Cite id="gurney1935adsorption" />. In the Newns–Anderson model
+        with a wide metal band <Cite id="newns1969chemisorption" /><Cite id="anderson1961localized" />, the level is filled
+        up to the electrode’s Fermi level:
+      </p>
+      <Math display number="4" tex={String.raw`\varepsilon(z) = -I + \frac{k}{4z}, \qquad n = \frac{1}{2} - \frac{1}{\pi}\arctan\frac{\varepsilon(z) - E_F}{\Delta(z)}, \qquad q_{\text{ion}} = 1 - n`} />
+      <p>
+        An electrode held by a potentiostat keeps <i>E</i><sub>F</sub> fixed, so electrons flow in from outside as the ion
+        fills. A simulation cell with a fixed number of electrons cannot do that: the metal itself gives up the charge,
+        and through its double-layer capacitance its Fermi level falls by <i>e</i>²/<i>C</i> per electron — a lot in a
+        small cell. The ion then has to be solved self-consistently with the shifting Fermi level:
+      </p>
+      <Math display number="5" tex={String.raw`E_F(n) = E_F^{0} - \frac{e^2}{C}\,n, \qquad C = \frac{\varepsilon_0\varepsilon_r A}{d}`} />
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Ion discharge at constant potential and at constant charge" labels={['toy-model', 'live-calculation']} number={4} id="fig-discharge" framed={false}>
+        <DischargeLab client:visible />
+        <Fragment slot="caption">
+          Left: the ion above the electrode, shaded from cation to neutral by its charge; the outline is the lateral cell
+          that sets the capacitance, and the tint shows electrons drawn out of a finite electrode. Right: the ion’s
+          broadened level against the metal’s Fermi level (dashed: where it would sit at constant potential), and the
+          ion’s charge along its approach under both conditions.
+        </Fragment>
+        <Assumptions slot="assumptions" items={dischargeAssumptions} />
+        <Fragment slot="source">
+          Model Hamiltonian after <Cite id="newns1969chemisorption" /> and <Cite id="gurney1935adsorption" />; computed in your browser. Not an electronic-structure calculation of any real system.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="pin-h">
+      <Callout kind="caveat" title="What this means for MLIPs">
+        An energy-and-force potential sees positions only. It cannot know where the Fermi level is, so it cannot know
+        whether an ion at a given height should be charged — unless the electrode potential or electron count is an input,
+        as in the strategies below. A model trained on fixed-electron-count cells also inherits their shifting Fermi level,
+        which depends on the cell size: data from small cells may not describe discharge in large ones.
+      </Callout>
+    </section>
+
     <section class="block" id="potential" aria-labelledby="cp-h">
-      <h2 id="cp-h" class="h-section">4 · Holding the electrode potential</h2>
+      <h2 id="cp-h" class="h-section">5 · Holding the electrode potential</h2>
       <p>
         An electrode is held at a potential, not at a fixed number of electrons. In grand-canonical DFT the electron count
         changes until the Fermi level matches the target, so the same atoms have different energies and forces at
@@ -216,13 +268,6 @@ const lotoAssumptions = [
       </Callout>
     </section>
 
-    <section class="block" aria-labelledby="next-h">
-      <h2 id="next-h" class="h-section">Still to build in this lab</h2>
-      <ul class="todo">
-        <li><b>Fermi-level pinning</b> during ion discharge — an electronic-structure result on a named snapshot, labelled as such, never as MLIP output.</li>
-        <li><b>Constant potential</b> strategies: a separate model per electrode potential, electron-count-conditioned models, transfer learning.</li>
-      </ul>
-    </section>
   </article>
 </BaseLayout>
 

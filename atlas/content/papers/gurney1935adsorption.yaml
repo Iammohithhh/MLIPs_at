@@ -1,0 +1,11 @@
+title: Theory of Electrical Double Layers in Adsorbed Films
+topic: electrochemistry
+authors:
+  - 'Gurney, R. W.'
+year: 1935
+venue: Physical Review 47, 479–482
+type: article
+identifiers:
+  doi: 10.1103/PhysRev.47.479
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Broadened adsorbate level partially filled up to the metal Fermi level, giving fractional ionic character of adsorbed alkali atoms.' }
