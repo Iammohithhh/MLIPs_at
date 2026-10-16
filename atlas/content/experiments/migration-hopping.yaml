@@ -1,0 +1,12 @@
+title: What a barrier error does to diffusion
+question: How much faster does an ion diffuse in a model whose migration barrier is too low by δ, at a given temperature?
+kind: figure
+status: LIVE_CALCULATION
+tier: T0
+page: /failures/ion-migration/#fig-scene
+assumptions:
+  - { term: Hopping, value: 'Single activated path, rate ν·exp(−E_m/k_BT) per direction on a simple cubic lattice; ν = 10¹³ s⁻¹ and a = 3 Å set the toy D but cancel in the ratio.' }
+  - { term: Walks, value: 'Two random walks over the same time window with the mean number of hops; the model walk draws at most 2,500 hops.' }
+concepts: []
+claims: [barrier-error-diffusivity]
+review: { status: draft, last_checked: 2026-10-16 }

@@ -1,0 +1,9 @@
+statement: >-
+  Coupled to the nudged elastic band method without fine-tuning, five foundation potentials predict 574 literature
+  DFT-NEB ion-migration barriers (up to 2.5 eV) with mean absolute errors of 0.310 eV (MACE-MP-0 large), 0.336 eV
+  (Orb-v3), 0.343 eV (CHGNet), 0.344 eV (SevenNet) and 0.349 eV (M3GNet); typical DFT-NEB error is about 60 meV.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bheemaguli2025migration, locator: 'arXiv v1 Sec. 3.1 and Fig. 2; dataset Sec. 2.1; model versions Sec. 2.2 and Table 1' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

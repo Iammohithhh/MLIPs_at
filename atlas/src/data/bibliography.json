@@ -1330,6 +1330,46 @@
    ]
   }
  },
+ "bheemaguli2025migration": {
+  "arxiv": {
+   "authors": [
+    "Achinthya Krishna Bheemaguli",
+    "Penghao Xiao",
+    "Gopalakrishnan Sai Gautam"
+   ],
+   "id": "2512.03642v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-12-03",
+   "title": "Evaluation of Foundational Machine Learned Interatomic Potentials for Migration Barrier Predictions",
+   "updated": "2025-12-03"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bheemaguli, A. K.' vs fetched ['bheemaguli']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 3,
+   "id": "W4417030995",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "bianchi2025treci": {
   "arxiv": {
    "authors": [
@@ -3030,6 +3070,46 @@
   "openalex": {
    "cited_by_count": 1,
    "id": "W7128713787",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
+ "guo2026alkali": {
+  "arxiv": {
+   "authors": [
+    "Xingyu Guo",
+    "Cheng Gui",
+    "Zhenbin Wang"
+   ],
+   "id": "2601.10938v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2026-01-16",
+   "title": "Are Universal Potentials Ready for Alkali-Ion Battery Kinetics?",
+   "updated": "2026-01-16"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Guo, X.' vs fetched ['guo']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 0,
+   "id": "W7124750206",
    "publication_year": 2026,
    "referenced_works": []
   }

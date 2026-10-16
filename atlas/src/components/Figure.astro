@@ -17,9 +17,11 @@ interface Props {
 }
 
 const { title, labels, number, id, width = 'wide', framed = true } = Astro.props;
-const hasCaption = Astro.slots.has('caption');
-const hasAssumptions = Astro.slots.has('assumptions');
-const hasSource = Astro.slots.has('source');
+// A slot filled by a false conditional still "exists"; render it and treat empty output as absent.
+const filled = async (name: string) => Astro.slots.has(name) && (await Astro.slots.render(name)).trim() !== '';
+const hasCaption = await filled('caption');
+const hasAssumptions = await filled('assumptions');
+const hasSource = await filled('source');
 ---
 
 <figure class:list={['atlas-figure', width]} id={id}>

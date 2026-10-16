@@ -1,0 +1,12 @@
+title: Evaluation of Foundational Machine Learned Interatomic Potentials for Migration Barrier Predictions
+topic: benchmarks-failures
+authors:
+  - 'Bheemaguli, A. K.'
+  - 'Xiao, P.'
+  - 'Sai Gautam, G.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2512.03642'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 HTML. Dataset-2: 574 literature DFT-NEB barriers (E_m ≤ 2.5 eV); models MACE-MP-0 large, SevenNet-MF-ompa, Orb-v3-conservative-inf-omat, CHGNet v0.3.0, M3GNet MP-2021.2.8-EFS, used without fine-tuning.' }

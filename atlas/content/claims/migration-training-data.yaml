@@ -1,0 +1,9 @@
+statement: >-
+  For Li/Na cathode migration barriers, adding training data to the same medium MACE model lowers the mean absolute
+  error from 312 meV (MPtrj) to 148 meV (MPtrj + sAlex) and 89 meV (with OMat24 added); switching GRACE and SevenNet
+  from MPtrj to OMat24 lowers it by 108 and 161 meV.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: guo2026alkali, locator: 'arXiv v1 Sec. 2.3 and Fig. 3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

@@ -1,0 +1,6 @@
+statement: >-
+  For thermally activated hopping, D ∝ exp(−E_m/k_BT), so an error δ in the migration barrier multiplies the diffusion
+  coefficient by exp(δ/k_BT): about tenfold per 59 meV at 298 K, and about 10⁵ for a 0.31 eV error.
+grade: THEORY
+derivation: /failures/ion-migration/#derivation
+review: { status: draft, last_checked: 2026-10-16, notes: 'Checked in hopping.test.ts.' }

@@ -1,0 +1,19 @@
+title: 'Ion migration: barrier errors that become orders of magnitude'
+claim: migration-barrier-mae
+grade: PUBLISHED_RESULT
+evidence: [migration-barrier-mae, migration-high-barriers, migration-underestimation, migration-training-data]
+mechanisms:
+  - { description: 'Transition states are high-energy, non-equilibrium configurations that bulk relaxation trajectories rarely contain; models trained on such data tend to soften them.', grade: HYPOTHESIS }
+  - { description: 'Transport depends exponentially on the barrier, so an error that is small on an energy scale is large on a rate scale.', grade: THEORY, claim: barrier-error-diffusivity }
+diagnostics:
+  - 'Compare barriers with DFT-NEB on a few representative paths before screening; look at the sign of the errors, not only their mean.'
+  - 'Check high-barrier paths separately: accuracy falls with barrier height.'
+  - 'For diffusivities from MD, compare at several temperatures; errors can grow at high temperature for models trained without thermal disorder.'
+responses:
+  - { description: 'Prefer checkpoints trained with non-equilibrium data (sAlex, OMat24), which lowered barrier errors several-fold for the same architecture.', claim: migration-training-data }
+  - { description: 'Use the model to generate NEB starting paths and refine the barrier with DFT.' }
+open_questions:
+  - 'Do models that rank good and bad conductors correctly also get absolute room-temperature conductivities within an order of magnitude?'
+  - 'How large is the remaining error once a model is fine-tuned on a handful of NEB images for the material of interest?'
+applications: []
+review: { status: draft, last_checked: 2026-10-16 }

@@ -29,7 +29,8 @@ The full product vision and plan is in [MLIP_Atlas_Vision.md](MLIP_Atlas_Vision.
 
 ## Working conventions
 - Commit and push small, working steps so desktop and mobile/cloud sessions stay in sync.
-- Commands: `cd atlas && npm install`, `npm run dev`, `npm run build`, `npm run check`, `npm test` (Vitest: physics numerics, contrast, TeX guards).
+- On Windows use `npm ci`, not `npm install`: install rewrites `package-lock.json` without other platforms' optional binaries (esbuild, rollup), breaking Linux CI and cloud sessions. Never commit such a lockfile diff.
+- Commands: `cd atlas && npm ci`, `npm run dev`, `npm run build`, `npm run check`, `npm test` (Vitest: physics numerics, contrast, TeX guards).
 - In `.astro` files pass TeX as ``tex={String.raw`...`}`` — quoted attributes process escapes (`\v`, `\b`); `assertTexIntact` fails the build if this happens.
 - Linked symbols: `\sym{key}{tex}` in TeX ↔ `data-sym="key"` on SVG/HTML ↔ `useLinkedSymbol()` in islands.
 - Elements created by client scripts don't get Astro scoped-style attributes; style them with `:global()`.

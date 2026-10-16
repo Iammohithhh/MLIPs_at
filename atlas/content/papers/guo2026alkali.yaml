@@ -1,0 +1,12 @@
+title: Are Universal Potentials Ready for Alkali-Ion Battery Kinetics?
+topic: benchmarks-failures
+authors:
+  - 'Guo, X.'
+  - 'Gui, C.'
+  - 'Wang, Z.'
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2601.10938'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 HTML. Li/Na cathodes (layered, olivine, maricite; single and di-vacancy) and solid electrolytes; barriers by NEB, diffusivities by MD.' }

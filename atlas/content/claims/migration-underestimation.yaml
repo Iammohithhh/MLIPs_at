@@ -1,0 +1,10 @@
+statement: >-
+  Underestimated migration barriers are the common error for older or MPtrj-only universal potentials: CHGNet and
+  M3GNet underestimate 73.1% and 78.2% of 574 barriers, while MACE-MP-0, SevenNet and Orb-v3 are roughly balanced; in a
+  separate Li/Na cathode benchmark, models trained only on MPtrj consistently underestimate barriers.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bheemaguli2025migration, locator: 'arXiv v1 Sec. 3.1 (under/over counts)' }
+  - { paper: guo2026alkali, locator: 'arXiv v1 Sec. 2.3 and Fig. 4' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

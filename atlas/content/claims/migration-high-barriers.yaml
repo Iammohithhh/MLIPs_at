@@ -1,0 +1,9 @@
+statement: >-
+  All five foundation potentials degrade at high migration barriers: in the highest of seven equal-count bins
+  (about 1.31–2.50 eV), only 3.7% (CHGNet) to 20.7% (Orb-v3) of barriers are predicted within 0.1 eV, against more than
+  50% for every model in the lowest bin (about 0.0025–0.25 eV).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bheemaguli2025migration, locator: 'arXiv v1 Sec. 3.2 and Fig. 3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

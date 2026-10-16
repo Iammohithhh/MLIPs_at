@@ -10,6 +10,7 @@ import Callout from '~/components/Callout.astro';
 import SofteningLab from '~/islands/SofteningLab';
 import ImageChargeLab from '~/islands/ImageChargeLab';
 import CleavageLab from '~/islands/CleavageLab';
+import MigrationLab from '~/islands/MigrationLab';
 import CleavageBenchmark from '~/islands/CleavageBenchmark';
 import cleavageData from '~/data/benchmarks/cleavage-mehdizadeh2025.json';
 import Assumptions from '~/components/Assumptions.astro';
@@ -37,7 +38,7 @@ const gradeLabel: Record<string, LabelKey> = {
   HYPOTHESIS: 'hypothesis',
 };
 const main = claims.get(data.claim)!;
-const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab, surfaces: CleavageLab };
+const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab, surfaces: CleavageLab, 'ion-migration': MigrationLab };
 const hasScene = id in scenes;
 const cleavageRetrieved = cleavageData.source.retrieved;
 ---
@@ -63,6 +64,7 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             {id === 'pes-softening' && <SofteningLab client:visible />}
             {id === 'electrostatics-at-electrodes' && <ImageChargeLab client:visible />}
             {id === 'surfaces' && <CleavageLab client:visible />}
+            {id === 'ion-migration' && <MigrationLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
             {id === 'surfaces' && (
               <Assumptions
@@ -99,6 +101,27 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             The attraction decays as 1/<i>z</i>. A model whose energy is a sum of local terms with a finite receptive field has
             nothing that produces this tail once the ion is farther away than that field; inside it, the model can only learn
             what its training data contained.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      id === 'ion-migration' && (
+        <section class="block" id="derivation" aria-labelledby="der-h">
+          <h2 id="der-h" class="h-sub">From a barrier error to a diffusion error</h2>
+          <p>
+            In transition-state theory an ion leaves its site along one path at a rate set by the attempt frequency ν and the
+            migration barrier. On a simple cubic lattice with spacing <i>a</i> and six equivalent paths, the hops form a
+            random walk whose mean squared displacement grows by <i>a</i>² per hop, so
+          </p>
+          <Math display number="1" tex={String.raw`\Gamma = \nu\,e^{-E_m/k_BT}, \qquad D = \frac{\langle r^2\rangle}{6t} = \frac{6\Gamma a^2}{6} = a^2\nu\,e^{-E_m/k_BT}`} />
+          <p>A model that underestimates the barrier by δ therefore overestimates the diffusion coefficient by</p>
+          <Math display number="2" tex={String.raw`\frac{D_{\text{model}}}{D_{\text{ref}}} = e^{\delta/k_BT}, \qquad \delta_{\times 10} = k_BT\ln 10 \approx 59\ \text{meV at } 298\ \text{K}`} />
+          <p>
+            The prefactor and lattice geometry cancel in the ratio, so this sensitivity holds for any single activated path.
+            A mean absolute barrier error of 0.31 eV corresponds to a factor of about 10⁵ at room temperature if it falls in one
+            direction; the evidence below shows both how large the errors are and which way they tend to go.
           </p>
         </section>
       )
