@@ -1,0 +1,9 @@
+statement: >-
+  For Ni, Cu, Li, Mo, Si and Ge, none of the universal or specialised potentials tested by Focassio et al. reproduces
+  the DFT order of the five lowest-energy surfaces; the energy differences between those surfaces are smaller than the
+  models' average surface-energy errors.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: focassio2024surfaces, locator: 'arXiv v2 Sec. II.4.3 and Fig. 7' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

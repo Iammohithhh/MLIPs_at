@@ -1,0 +1,9 @@
+statement: >-
+  On 1,497 elemental surfaces from the Materials Project (73 elements), the universal potentials M3GNet
+  (2021.2.8-DIRECT), CHGNet (v0.3.0) and MACE (2024.01.07, 128 channels, L = 2) mostly underestimate the surface energy
+  relative to the DFT reference, with few overestimates; the authors relate this to the softening reported by Deng et al.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: focassio2024surfaces, locator: 'arXiv v2 Sec. II.2 and Fig. 2c–d; dataset Sec. II.1 and Fig. 1; model versions Table 2' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

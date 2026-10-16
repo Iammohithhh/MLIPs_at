@@ -1,0 +1,18 @@
+title: 'Surfaces: energies a bulk-trained model never saw'
+claim: surface-energy-underestimated
+grade: PUBLISHED_RESULT
+evidence: [surface-energy-underestimated, surface-order-not-reproduced, cleavage-training-data-dominates]
+mechanisms:
+  - { description: 'Surfaces contain under-coordinated atoms and stretched bonds that are rare in bulk, near-equilibrium training sets, so predictions there are extrapolations.', grade: HYPOTHESIS, claim: omat-nonequilibrium-covers-cleavage }
+  - { description: 'The same softening that lowers phonon frequencies would lower the cost of breaking bonds, so surface energies come out too low.', grade: HYPOTHESIS }
+diagnostics:
+  - 'Compare surface or cleavage energies with DFT at the same functional, at fixed geometries first, then after relaxation.'
+  - 'Check the order of the lowest-energy facets, not only the mean error: facet energy differences can be smaller than the error.'
+  - 'Report bulk and slab total-energy errors separately; a good surface energy can come from cancelling errors.'
+responses:
+  - { description: 'Use checkpoints trained on non-equilibrium data (OMat24 and mixtures), which in the cleavage benchmark cut median errors several-fold for the same architecture.', claim: cleavage-training-data-dominates }
+  - { description: 'Fine-tune on a small set of slab calculations for the system of interest.' }
+open_questions:
+  - 'How do the conclusions change after surface relaxation, for oxides and semiconductors, and for higher Miller indices — all outside the cleavage benchmark?'
+  - 'Is the advantage of OMat24 training caused by its non-equilibrium sampling, or by its size? No ablation separates the two.'
+review: { status: draft, last_checked: 2026-10-16 }

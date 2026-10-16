@@ -69,3 +69,14 @@ curl -LO https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/force
 
 Run the models one after another: four PyTorch processes on four cores oversubscribe threads
 and slow each other down by orders of magnitude.
+
+### Cleavage-energy benchmark tables
+
+`cleavage.py` parses Tables 1–2 of Mehdizadeh & Schindler (arXiv:2508.21663v1) from the arXiv HTML into
+`atlas/src/data/benchmarks/cleavage-mehdizadeh2025.json`, copying numbers as printed and failing if the two
+tables' model lists do not match:
+
+```bash
+curl -sL https://arxiv.org/html/2508.21663v1 -o cleavage.html
+../.venv/bin/python -m atlas_pipeline.cleavage cleavage.html ../atlas/src/data/benchmarks/cleavage-mehdizadeh2025.json
+```

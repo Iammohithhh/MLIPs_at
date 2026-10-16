@@ -1,0 +1,9 @@
+statement: >-
+  Models trained on OMat24 may predict cleavage energies better because its rattled and high-temperature structures
+  expose them to the stretched and broken bonds that cleavage creates, which equilibrium-only data (MPtrj) and
+  surface–adsorbate data (OC20) rarely contain.
+grade: HYPOTHESIS
+sources:
+  - { paper: mehdizadeh2025cleavage, locator: 'arXiv v1 Sec. 3.3 ("likely stems from their emphasis on non-equilibrium configurations")' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The authors offer this as the likely explanation; it is not tested by an ablation in the paper.' }

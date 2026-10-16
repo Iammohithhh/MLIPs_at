@@ -2024,7 +2024,8 @@
   "cites": [
    "batzner2022nequip",
    "chanussot2020oc20",
-   "deng2023chgnet"
+   "deng2023chgnet",
+   "focassio2024surfaces"
   ],
   "crossref": {
    "article_number": "9",
@@ -2588,6 +2589,121 @@
    ]
   }
  },
+ "focassio2024surfaces": {
+  "arxiv": {
+   "authors": [
+    "Bruno Focassio",
+    "Luis Paulo Mezzina Freitas",
+    "Gabriel R. Schleder"
+   ],
+   "id": "2403.04217v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-03-07",
+   "title": "Performance Assessment of Universal Machine Learning Interatomic Potentials: Challenges and Directions for Materials' Surfaces",
+   "updated": "2024-05-30"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Focassio, B.' vs fetched ['focassio', 'focassio']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "deng2023chgnet"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Focassio",
+     "given": "Bruno"
+    },
+    {
+     "family": "M. Freitas",
+     "given": "Luis Paulo"
+    },
+    {
+     "family": "Schleder",
+     "given": "Gabriel R."
+    }
+   ],
+   "container": "ACS Applied Materials &amp; Interfaces",
+   "doi": "10.1021/acsami.4c03815",
+   "issue": "9",
+   "page": "13111-13121",
+   "title": "Performance Assessment of Universal Machine Learning Interatomic Potentials: Challenges and Directions for Materials’ Surfaces",
+   "type": "journal-article",
+   "volume": "17",
+   "year": 2024
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 116,
+   "id": "W4400526657",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W1981276685",
+    "W1992985800",
+    "W2197007850",
+    "W2337496963",
+    "W2518696367",
+    "W2766856748",
+    "W2883583109",
+    "W2884430236",
+    "W2917193084",
+    "W2949095042",
+    "W2971894235",
+    "W2981476861",
+    "W2988742961",
+    "W3000291311",
+    "W3093149769",
+    "W3113519001",
+    "W3146901712",
+    "W3164295949",
+    "W3165770695",
+    "W3169987391",
+    "W3182605665",
+    "W3188230897",
+    "W3203740629",
+    "W3212512279",
+    "W4225405705",
+    "W4285803067",
+    "W4293089302",
+    "W4307720341",
+    "W4308549737",
+    "W4310135808",
+    "W4322766470",
+    "W4362700002",
+    "W4363675662",
+    "W4368356826",
+    "W4378715160",
+    "W4385406529",
+    "W4386740800",
+    "W4387078081",
+    "W4389132751",
+    "W4389680298",
+    "W4389818315",
+    "W4391043087",
+    "W4391744697",
+    "W4392166749",
+    "W4399303478",
+    "W4400526657",
+    "W4401233871"
+   ]
+  }
+ },
  "fu2022forces": {
   "arxiv": {
    "authors": [
@@ -2709,6 +2825,71 @@
    "id": "W4286588524",
    "publication_year": 2022,
    "referenced_works": []
+  }
+ },
+ "girifalco1959morse": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1959; fetched [1959]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Girifalco, L. A.' vs fetched ['girifalco']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Girifalco",
+     "given": "L. A."
+    },
+    {
+     "family": "Weizer",
+     "given": "V. G."
+    }
+   ],
+   "container": "Physical Review",
+   "doi": "10.1103/physrev.114.687",
+   "issue": "3",
+   "page": "687-690",
+   "title": "Application of the Morse Potential Function to Cubic Metals",
+   "type": "journal-article",
+   "volume": "114",
+   "year": 1959
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 1137,
+   "id": "W2026374723",
+   "publication_year": 1959,
+   "referenced_works": [
+    "W1963976258",
+    "W1986935619",
+    "W2069299418",
+    "W2071154708",
+    "W2299103258",
+    "W2476019813",
+    "W2480874249",
+    "W2482440318",
+    "W2489024791",
+    "W2796590481",
+    "W2801963992",
+    "W2802005141",
+    "W2802144908",
+    "W3022419948",
+    "W4229499352"
+   ]
   }
  },
  "gonze1997dfpt": {
@@ -3153,6 +3334,45 @@
     "W2007041954",
     "W2059140979"
    ]
+  }
+ },
+ "mehdizadeh2025cleavage": {
+  "arxiv": {
+   "authors": [
+    "Ardavan Mehdizadeh",
+    "Peter Schindler"
+   ],
+   "id": "2508.21663v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-08-29",
+   "title": "Surface Stability Modeling with Universal Machine Learning Interatomic Potentials: A Comprehensive Cleavage Energy Benchmarking Study",
+   "updated": "2025-08-29"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Mehdizadeh, A.' vs fetched ['mehdizadeh']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 6,
+   "id": "W4415255098",
+   "publication_year": 2025,
+   "referenced_works": []
   }
  },
  "musaelian2023allegro": {

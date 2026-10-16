@@ -9,6 +9,10 @@ import Cite from '~/components/Cite.astro';
 import Callout from '~/components/Callout.astro';
 import SofteningLab from '~/islands/SofteningLab';
 import ImageChargeLab from '~/islands/ImageChargeLab';
+import CleavageLab from '~/islands/CleavageLab';
+import CleavageBenchmark from '~/islands/CleavageBenchmark';
+import cleavageData from '~/data/benchmarks/cleavage-mehdizadeh2025.json';
+import Assumptions from '~/components/Assumptions.astro';
 import Math from '~/components/Math.astro';
 import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
 import type { LabelKey } from '~/lib/labels';
@@ -33,8 +37,9 @@ const gradeLabel: Record<string, LabelKey> = {
   HYPOTHESIS: 'hypothesis',
 };
 const main = claims.get(data.claim)!;
-const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab };
+const scenes: Record<string, unknown> = { 'pes-softening': SofteningLab, 'electrostatics-at-electrodes': ImageChargeLab, surfaces: CleavageLab };
 const hasScene = id in scenes;
+const cleavageRetrieved = cleavageData.source.retrieved;
 ---
 
 <BaseLayout title={data.title} description={`Failure Atlas: ${data.title}. ${main.statement.slice(0, 150)}`}>
@@ -57,7 +62,24 @@ const hasScene = id in scenes;
           <Figure title="What the failure looks like" labels={['toy-model']} number={1} id="fig-scene" framed={false}>
             {id === 'pes-softening' && <SofteningLab client:visible />}
             {id === 'electrostatics-at-electrodes' && <ImageChargeLab client:visible />}
+            {id === 'surfaces' && <CleavageLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
+            {id === 'surfaces' && (
+              <Assumptions
+                slot="assumptions"
+                items={[
+                  { term: 'Potential', value: 'Morse pairs with the Cu parameters tabulated by Girifalco & Weizer (D = 0.3429 eV, α = 1.3588 Å⁻¹, r₀ = 2.866 Å), shifted to zero at 7 Å. Not a model of real copper: no many-body embedding, so surface energies are not quantitative.' },
+                  { term: 'Geometry', value: 'fcc(111) block, a = 3.615 Å, 8 layers, periodic in-plane; the top four layers move rigidly by the gap d, with no relaxation.' },
+                  { term: 'Energy', value: 'Change of the pair energy across the cleavage plane per in-plane area; as d → ∞ it is the unrelaxed cleavage energy, twice the surface energy.' },
+                  { term: 'Neighbours', value: 'Counted within 3.0 Å, between the first (2.56 Å) and second (3.62 Å) neighbour shells.' },
+                ]}
+              />
+            )}
+            {id === 'surfaces' && (
+              <Fragment slot="source">
+                Morse parameters: <Cite id="girifalco1959morse" />. Computed in your browser.
+              </Fragment>
+            )}
           </Figure>
         </div>
       )
@@ -97,6 +119,33 @@ const hasScene = id in scenes;
         })}
       </ul>
     </section>
+
+    {
+      id === 'surfaces' && (
+        <div class="wide fig-wrap">
+          <Figure title="Same architecture, different training data" labels={['published-result']} number={2} id="fig-cleavage" framed={false}>
+            <CleavageBenchmark client:visible />
+            <Fragment slot="caption">
+              Cleavage-energy errors of 19 universal potentials against 36,718 PBE slab calculations, grouped by architecture
+              family and coloured by training data, as published. These are single points at fixed DFT geometries; the
+              numbers come from one protocol and are not combined with any other benchmark.
+            </Fragment>
+            <Assumptions
+              slot="assumptions"
+              items={[
+                { term: 'Reference', value: 'PBE, 550 eV cutoff, no +U; metallic (near-zero gap) elemental, binary and ternary compounds; Miller indices up to 1, symmetric and asymmetric terminations.' },
+                { term: 'Protocol', value: 'Model single points on the DFT slab and bulk geometries; cleavage energy from the slab and bulk totals; no relaxation.' },
+                { term: 'Metrics', value: 'APE = absolute percentage error per structure; MAE in meV/Å²; termination agreement over 3,699 bulk materials. “Predict the mean” is the authors’ constant baseline.' },
+                { term: 'Training data', value: 'Colour classes are coarse groupings of the authors’ Table 1 descriptions; hover a row for the exact description.' },
+              ]}
+            />
+            <Fragment slot="source">
+              <Cite id="mehdizadeh2025cleavage" locator="Tables 1–2, Sec. 3.3" />; snapshotted by the Atlas pipeline from arXiv:2508.21663v1 (retrieved {cleavageRetrieved}).
+            </Fragment>
+          </Figure>
+        </div>
+      )
+    }
 
     <section class="block step" aria-labelledby="mech-h">
       <h2 id="mech-h"><span class="n">3</span> Mechanisms</h2>

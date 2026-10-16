@@ -1,0 +1,14 @@
+title: "Performance Assessment of Universal Machine Learning Interatomic Potentials: Challenges and Directions for Materials' Surfaces"
+topic: benchmarks-failures
+authors:
+  - 'Focassio, B.'
+  - 'Freitas, L. P. M.'
+  - 'Schleder, G. R.'
+year: 2024
+venue: ACS Applied Materials & Interfaces 17, 13111–13121
+type: article
+identifiers:
+  doi: 10.1021/acsami.4c03815
+  arxiv: '2403.04217'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (30 May 2024) HTML; section and figure numbers refer to v2. Published online 2024-07-11.' }

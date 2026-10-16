@@ -1,0 +1,10 @@
+statement: >-
+  In a benchmark of 19 universal potentials on 36,718 PBE cleavage energies of metallic slabs (single points at fixed DFT
+  geometries, Miller indices up to 1), the same architecture's median absolute percentage error changes several-fold with
+  its training data: eSEN-30M 2.9% (OMat24) vs 14.7% (MPtrj); MACE 6.1% (OMat24) vs 24.6% (MACE-MP-0b3); GRACE-2L 6.9%
+  vs 13.6%; EquiformerV2 3.7% (OMat24) vs 62.7% (OC20).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mehdizadeh2025cleavage, locator: 'arXiv v1 Sec. 3.3 and Table 2; protocol Secs. 2.2–2.4; training data Table 1' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Numbers in the figure are snapshotted from Table 2 by the pipeline, not typed.' }

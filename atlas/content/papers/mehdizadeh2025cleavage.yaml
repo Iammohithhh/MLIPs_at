@@ -1,0 +1,11 @@
+title: 'Surface Stability Modeling with Universal Machine Learning Interatomic Potentials: A Comprehensive Cleavage Energy Benchmarking Study'
+topic: benchmarks-failures
+authors:
+  - 'Mehdizadeh, A.'
+  - 'Schindler, P.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2508.21663'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 HTML. Tables 1–2 snapshotted by pipeline/atlas_pipeline/cleavage.py into src/data/benchmarks/cleavage-mehdizadeh2025.json.' }

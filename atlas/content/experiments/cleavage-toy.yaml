@@ -1,0 +1,13 @@
+title: Pulling a crystal apart along (111)
+question: What configurations does creating a surface pass through, and how far are they from the bulk structures a model was trained on?
+kind: figure
+status: TOY_MODEL
+tier: T0
+page: /failures/surfaces/#fig-scene
+assumptions:
+  - { term: Potential, value: 'Morse pairs with Cu parameters of Girifalco & Weizer (D = 0.3429 eV, α = 1.3588 Å⁻¹, r0 = 2.866 Å), shifted to zero at 7 Å.' }
+  - { term: Geometry, value: 'fcc(111) block, a = 3.615 Å, 8 layers, periodic in-plane; the top four layers are moved rigidly, without relaxation.' }
+  - { term: Neighbours, value: 'Counted within 3.0 Å, between the first (2.56 Å) and second (3.62 Å) shells.' }
+concepts: [locality]
+claims: [omat-nonequilibrium-covers-cleavage]
+review: { status: draft, last_checked: 2026-10-16 }

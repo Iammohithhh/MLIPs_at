@@ -1,0 +1,12 @@
+title: Application of the Morse Potential Function to Cubic Metals
+topic: other
+authors:
+  - 'Girifalco, L. A.'
+  - 'Weizer, V. G.'
+year: 1959
+venue: Physical Review 114, 687–690
+type: article
+identifiers:
+  doi: 10.1103/PhysRev.114.687
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-16, notes: 'Morse parameters for Cu (D = 0.3429 eV, α = 1.3588 Å⁻¹, r0 = 2.866 Å) as widely reproduced; check against the original table.' }
