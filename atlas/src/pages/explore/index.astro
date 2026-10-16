@@ -2,6 +2,8 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import Figure from '~/components/Figure.astro';
 import AtlasMap from '~/islands/AtlasMap';
+import Constellation from '~/islands/Constellation';
+import { buildConstellation } from '~/lib/constellation';
 import { auditContent } from '~/content/integrity';
 import { buildAtlasMap, COLLECTION_TONES } from '~/lib/atlas-graph';
 
@@ -13,6 +15,7 @@ const kinds = Object.entries(COLLECTION_TONES)
   .filter(([c]) => counts.has(c))
   .map(([id, m]) => ({ id, label: m.label, tone: m.tone, count: counts.get(id)! }));
 const published = map.nodes.filter((n) => n.status === 'published').length;
+const stars = buildConstellation(map);
 ---
 
 <BaseLayout
@@ -43,6 +46,18 @@ const published = map.nodes.filter((n) => n.status === 'published').length;
           build time (seeded, so the map is stable between builds); distance on the map means “closely linked”, nothing more.
         </Fragment>
         <Fragment slot="source">Generated from the Atlas content records and the references declared in their schemas.</Fragment>
+      </Figure>
+    </div>
+
+    <div class="wide fig-wrap">
+      <Figure title="The same graph in 3D: what rests on what" labels={['schematic']} number={2} id="fig-constellation" framed={false}>
+        <Constellation client:visible nodes={stars.nodes} edges={stars.edges} tones={COLLECTION_TONES} />
+        <Fragment slot="caption">
+          The positions of Fig. 1, lifted into four strata by the kind of record: physics at the bottom, models and data,
+          benchmarks and sources, then the claims, failure cases and applications that rest on them. Lines that climb show
+          evidence building on what lies below. Toggle strata to look inside.
+        </Fragment>
+        <Fragment slot="source">Generated from the Atlas content records; same layout as Fig. 1.</Fragment>
       </Figure>
     </div>
   </article>
