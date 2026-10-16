@@ -1,0 +1,396 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SchNetAngle from '~/islands/SchNetAngle';
+import SchNetFilter from '~/islands/SchNetFilter';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const ck = (await getEntry('checkpoints', 'schnet-oc20-s2ef-all'))!.data as Checkpoint;
+const MODELS_MD = 'https://github.com/Open-Catalyst-Project/ocp/blob/v0.1.0/MODELS.md';
+
+const angleAssumptions = [
+  { term: 'Model', value: 'A real SchNet forward pass (embedding, Gaussian expansion every 0.1 Å with γ = 10 Å⁻², two-layer filter network, cfconv, residual atom-wise update) with 16 features and 3 blocks. Weights are random and untrained: magnitudes mean nothing; zero versus non-zero is exact.' },
+  { term: 'Structure', value: 'Three silicon atoms, both bonds 2.352 Å (the diamond Si nearest-neighbour distance), in vacuum. No other atoms provide alternative paths between the neighbours.' },
+  { term: 'Cutoff', value: 'Cosine cutoff multiplying every filter, as in SchNetPack; an edge exists only for r < r_c.' },
+  { term: 'Measure', value: 'Relative change ‖x_i(θ′) − x_i(θ)‖ / ‖x_i(θ)‖ of the centre atom’s feature vector after T blocks; values below 10⁻¹² (round-off) are drawn on the zero lane.' },
+];
+const filterAssumptions = [
+  { term: 'Basis', value: 'Gaussians every 0.1 Å from 0 to r_c = 5 Å, γ = 10 Å⁻² (the NeurIPS paper’s spacing and width; it used centres up to 30 Å without a cutoff).' },
+  { term: 'Filter network', value: 'Dense → ssp → dense → ssp, 16 channels, random weights; multiplied by the cosine cutoff.' },
+];
+---
+
+<BaseLayout
+  title="SchNet"
+  description="SchNet, the continuous-filter convolutional network that started invariant message passing for interatomic potentials: its filter-generating network, interaction block and readout, a live demonstration of what distance-only messages cannot see, its checkpoints and its limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">SchNet</h1>
+      <p class="lede">
+        The first widely used message-passing potential. Every atom repeatedly collects its neighbours’ features, each
+        weighted by a filter that a small network generates from the distance between them — a convolution with a
+        continuous filter instead of a grid <Cite id="schutt2017schnet" locator="Sec. 3, Fig. 1" />. Only distances enter,
+        which makes the energy invariant by construction and sets the limits this page explores.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Invariant features (distances only)</dd></div>
+        <div><dt>Locality</dt><dd>Message passing; 3 or 6 interaction blocks in the papers</dd></div>
+        <div><dt>Messages</dt><dd>Two-body per block; no angles</dd></div>
+        <div><dt>Radial basis</dt><dd>Gaussians every 0.1 Å, γ = 10 Å⁻²</dd></div>
+        <div><dt>Introduced</dt><dd>NeurIPS 2017; J. Chem. Phys. 2018</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/atomistic-machine-learning/schnetpack">SchNetPack</a></dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="arch-h">
+      <h2 id="arch-h" class="h-section">From atoms to an energy</h2>
+      <p>
+        Each atom starts from a learned embedding of its element, <Math tex={String.raw`x_i^{0} = a_{Z_i}`} />
+        <Cite id="schutt2018schnet" locator="Eq. (1)" />. An interaction block then applies a continuous-filter
+        convolution <Cite id="schutt2017schnet" locator="Eq. (2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`x_i^{\,l+1} = \big(X^{l} * W^{l}\big)_i = \sum_{j} x_j^{\,l} \circ W^{l}\!\left(\mathbf r_i - \mathbf r_j\right)`} />
+      <p>
+        where ∘ is the element-wise product over feature channels. The filter is restricted to depend on the distance only,
+        through a fixed Gaussian expansion followed by dense layers <Cite id="schutt2017schnet" locator="Sec. 4.1" />:
+      </p>
+      <Math display number="2" tex={String.raw`W^{l}(\mathbf r_{ij}) = \mathrm{ssp}\!\Big(\mathrm{Dense}\big(\mathrm{ssp}(\mathrm{Dense}(e(r_{ij})))\big)\Big), \qquad e_k(r) = \exp\!\big(-\gamma\,(r - \mu_k)^2\big), \qquad \mathrm{ssp}(x) = \ln\!\big(\tfrac12 e^{x} + \tfrac12\big)`} />
+      <p>
+        The block wraps the convolution in atom-wise layers and adds the result as a residual,
+        <Math tex={String.raw`x_i \leftarrow x_i + v_i`} /> <Cite id="schutt2017schnet" locator="Sec. 4.1, Fig. 2" />. After the
+        last block an atom-wise network gives one energy per atom; the total is their sum, and forces are its gradient
+        <Cite id="schutt2018schnet" locator="Sec. II.5" />:
+      </p>
+      <Math display number="3" tex={String.raw`E = \sum_i E_i\big(x_i^{\,T}\big), \qquad \mathbf F_i = -\frac{\partial E}{\partial \mathbf r_i}`} />
+      <ol class="flow" aria-label="One SchNet interaction block">
+        <li><span>atom-wise</span> Dense on x<sub>j</sub></li>
+        <li class="key"><span>cfconv</span> Σ<sub>j</sub> x<sub>j</sub> ∘ W(r<sub>ij</sub>)</li>
+        <li><span>atom-wise</span> Dense → ssp → Dense</li>
+        <li><span>residual</span> x<sub>i</sub> + v<sub>i</sub></li>
+      </ol>
+      <p>
+        Because <i>W</i> sees |<b>r</b><sub>i</sub> − <b>r</b><sub>j</sub>| and nothing else, rotating or translating the
+        structure changes nothing, and swapping two atoms just swaps their features: the invariances are exact
+        <Cite id="schutt2017schnet" locator="Sec. 4" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The filter-generating network: from a distance to a continuous filter" labels={['toy-model', 'live-calculation']} number={1} id="fig-filter" framed={false}>
+        <SchNetFilter client:visible />
+        <Fragment slot="caption">
+          Drag the distance. Step 1 is the fixed Gaussian expansion; step 2 is the learnable part, here with random weights,
+          so the curves show the kind of function the network can represent rather than a trained filter. The
+          continuity is the design point of the paper’s Fig. 1: a discretised filter would make the energy jump.
+        </Fragment>
+        <Assumptions slot="assumptions" items={filterAssumptions} />
+        <Fragment slot="source">Architecture from <Cite id="schutt2017schnet" locator="Sec. 4.1, Fig. 2" />; cosine cutoff as in SchNetPack <Cite id="schutt2018schnetpack" />. Computed in your browser by the tested module <code>src/lib/models/schnet.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="angle-h">
+      <h2 id="angle-h" class="h-section">What a distance-only message cannot see</h2>
+      <p>
+        One block gives atom <i>i</i> a sum of terms that each depend on one neighbour’s species and its distance
+        <i>r</i><sub>ij</sub>. Two neighbours at the same distances but a different angle between them contribute the
+        same two terms, so after one block the bond angle is invisible — exactly, not approximately. A second block can
+        recover it only indirectly: neighbour <i>j</i> has meanwhile received a message from <i>k</i> through
+        <Math tex={String.raw`r_{jk} = 2r\sin(\theta/2)`} />, which encodes the angle. If <i>r</i><sub>jk</sub> exceeds the
+        cutoff and nothing else links the two, that path does not exist and no number of blocks helps.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Bond angles a SchNet can and cannot tell apart" labels={['toy-model', 'live-calculation']} number={2} id="fig-angle" framed={false}>
+        <SchNetAngle client:visible />
+        <Fragment slot="caption">
+          Set the angle, then read off which other angles produce different features at the centre atom. The block-1
+          curve lies on the zero lane for every angle; blocks 2 and 3 separate angles only where the shaded region ends,
+          at θ* = 2 arcsin(r<sub>c</sub>/2r). In a crystal more paths exist, but distance-only networks still have
+          blind spots: distinct structures they cannot separate at any cutoff <Cite id="pozdnyakov2022incompleteness" locator="Abstract" />.
+        </Fragment>
+        <Assumptions slot="assumptions" items={angleAssumptions} />
+        <Fragment slot="source">On-page derivation, checked to round-off in <code>src/lib/models/schnet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="n-int" checked />
+        <label for="n-int">Intuition</label>
+        <input type="radio" name="depth" id="n-tech" />
+        <label for="n-tech">Technical</label>
+        <input type="radio" name="depth" id="n-res" />
+        <label for="n-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Every atom keeps a list of numbers describing itself. In each round it listens to its neighbours, turning the
+            volume up or down for each number depending only on how far away that neighbour is. After a few rounds the
+            numbers summarise the neighbourhood, and a final small network turns them into the atom’s share of the
+            energy. Because only distances are used, turning the molecule around cannot change the answer.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            SchNet is a message-passing network whose messages are <Math tex={String.raw`m_{ij} = (W_{\mathrm{in}}x_j)\circ W(r_{ij})`} />,
+            summed over neighbours and passed through atom-wise layers with a residual connection. The filter network acts on
+            a Gaussian expansion of the distance; its shifted softplus is smooth to all orders and zero at the origin, so
+            energies and forces are smooth <Cite id="schutt2017schnet" locator="Sec. 4.2" />. Each block is two-body;
+            angular and many-body information comes only from composing blocks, as Fig. 2 shows. The papers use 64 features
+            and three blocks (MD17) or six (QM9, Materials Project) <Cite id="schutt2018schnet" locator="Sec. III" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Invariant features cannot carry direction, so the network can represent angles only through distances on
+            closed paths of the graph — a geometric version of the Weisfeiler–Leman limit. Pozdnyakov and Ceriotti construct
+            pairs of structures that distance-based networks cannot separate even with fully connected graphs
+            <Cite id="pozdnyakov2022incompleteness" locator="Abstract" />. The responses were explicit angles in invariant
+            models (DimeNet’s directional messages <Cite id="gasteiger2020dimenet" />; the bond graph of CHGNet
+            <Cite id="deng2023chgnet" />) and equivariant features (<a href="/models/nequip/">NequIP</a>,
+            <a href="/models/mace/">MACE</a>). For periodic crystals the JCP paper sums filters over all images within a
+            5 Å cutoff and normalises by the neighbour count <Cite id="schutt2018schnet" locator="Sec. II.4" />; the
+            molecular models used no cutoff at all, so their receptive field was the whole molecule.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy as a sum of atomic contributions, forces as its exact negative gradient (so they are conservative), and
+        stress by differentiating with respect to the cell. The JCP paper also reads out intensive properties by averaging
+        atomic contributions, and reports that the atomic decomposition fits polarisability and electronic spatial extent
+        poorly <Cite id="schutt2018schnet" locator="Sec. II.5; Sec. III" />. No charges or long-range terms are part of the
+        architecture.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Angles enter only through paths in the graph (Fig. 2), so a short cutoff
+        or a sparse environment leaves geometric differences invisible, and some distinct structures are indistinguishable
+        at any cutoff <Cite id="pozdnyakov2022incompleteness" locator="Abstract" />. Like every local model it cannot see
+        beyond its receptive field (<a href="/physics-lab/beyond-the-cutoff/">P1</a>) and has no electrostatics
+        (<a href="/physics-lab/ewald/">P6</a>).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> Accuracy on a given chemistry depends on what a set of weights was trained on:
+        the checkpoint below learned adsorbates on catalyst surfaces at the RPBE level and says nothing about, say, bulk
+        oxides. See its data on the <a href="/data/">Data</a> page.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <p>
+        No SchNet checkpoint is among the Matbench Discovery submissions. Its most-used released weights are the Open
+        Catalyst baselines; one is recorded here:
+      </p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Outputs</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck.name}</td>
+              <td>OC20 (S2EF “All”), RPBE</td>
+              <td>{ck.outputs.join(', ')}</td>
+              <td>{ck.licence}</td>
+              <td><a href={ck.weights!.url}>{ck.version}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The release table also lists 200k, 2M and 20M-split and force-only variants with validation errors measured on the
+        OC20 protocol <a href={MODELS_MD}>(MODELS.md)</a>; those
+        numbers belong to that protocol and are not compared with other benchmarks here.
+      </p>
+      <Callout kind="note" title="Related families">
+        SchNet’s continuous filter is the template for most later models’ radial networks:
+        <a href="/models/nequip/">NequIP</a> multiplies a learned radial function by spherical harmonics to get directional
+        filters, and <a href="/models/mace/">MACE</a> builds many-body messages from them. The
+        <a href="/models/behler-parrinello/">Behler–Parrinello</a> approach fixes the descriptor instead of learning it.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>Original paper: <Cite id="schutt2017schnet" />; extended version with periodic systems: <Cite id="schutt2018schnet" />.</li>
+        <li>Reference implementation: <a href="https://github.com/atomistic-machine-learning/schnetpack">SchNetPack</a> <Cite id="schutt2018schnetpack" /> (MIT).</li>
+        <li>OC20 baselines: <a href={MODELS_MD}>Open Catalyst model table</a> <Cite id="chanussot2020oc20" />.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #n-int:checked ~ .depth-int,
+  #n-tech:checked ~ .depth-tech,
+  #n-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

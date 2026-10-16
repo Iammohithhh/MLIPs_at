@@ -1,0 +1,8 @@
+statement: >-
+  After one SchNet interaction block an atom's features depend on its neighbours only through their species and
+  distances, so a bond angle is invisible; later blocks recover it only through edges between the neighbours, and if
+  two neighbours are farther apart than the cutoff (r_jk = 2r sin(θ/2) > r_c) and no other path connects them, the
+  angle stays invisible at any depth.
+grade: THEORY
+derivation: /models/schnet/#fig-angle
+review: { status: draft, last_checked: 2026-10-16, notes: 'Exact zeros checked in src/lib/models/schnet.test.ts.' }

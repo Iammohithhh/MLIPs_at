@@ -1,0 +1,11 @@
+statement: >-
+  The NeurIPS SchNet uses three interaction blocks with 64 features and Gaussian centres from 0 to 30 Å; the JCP
+  paper uses six blocks for QM9 and Materials Project, three for MD17, 64 features, and a 5 Å cutoff only for the
+  periodic Materials Project crystals.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: schutt2017schnet, locator: 'Sec. 4.1; Fig. 3' }
+  - { paper: schutt2018schnet, locator: 'Sec. II.4; Sec. III' }
+scope: { model_families: [schnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML renderings (ar5iv).' }

@@ -1,0 +1,16 @@
+title: 'SchNet: A continuous-filter convolutional neural network for modeling quantum interactions'
+topic: equivariant-message-passing
+authors:
+  - 'Schütt, K. T.'
+  - 'Kindermans, P.-J.'
+  - 'Sauceda, H. E.'
+  - 'Chmiela, S.'
+  - 'Tkatchenko, A.'
+  - 'Müller, K.-R.'
+year: 2017
+venue: Advances in Neural Information Processing Systems 30 (NeurIPS 2017)
+type: conference
+identifiers:
+  arxiv: '1706.08566'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML rendering (ar5iv). The paper writes the RBF width as "γ = 10Å"; dimensionally it is Å⁻².' }

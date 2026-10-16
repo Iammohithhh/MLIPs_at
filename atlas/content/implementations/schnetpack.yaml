@@ -1,0 +1,7 @@
+name: SchNetPack
+repo: https://github.com/atomistic-machine-learning/schnetpack
+language: Python
+framework: pytorch
+licence: MIT
+families: [schnet]
+review: { status: draft, last_checked: 2026-10-16 }

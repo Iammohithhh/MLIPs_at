@@ -1,0 +1,16 @@
+title: 'SchNetPack: A Deep Learning Toolbox For Atomistic Systems'
+topic: equivariant-message-passing
+authors:
+  - 'Schütt, K. T.'
+  - 'Kessel, P.'
+  - 'Gastegger, M.'
+  - 'Nicoli, K. A.'
+  - 'Tkatchenko, A.'
+  - 'Müller, K.-R.'
+year: 2018
+venue: Journal of Chemical Theory and Computation 15, 448–455
+type: article
+identifiers:
+  doi: 10.1021/acs.jctc.8b00908
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Cutoff handling taken from the SchNetPack source (src/schnetpack/representation/schnet.py), not from the paper.' }

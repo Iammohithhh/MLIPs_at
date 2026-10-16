@@ -1,0 +1,10 @@
+statement: >-
+  Graph neural networks that use only interatomic distances are not complete even on fully connected graphs of 3D
+  atom clouds: there are distinct structures, including chemically plausible molecules and crystals, that they cannot
+  tell apart for any cutoff; models that use angular or directional information can.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2022incompleteness, locator: Abstract }
+scope: { model_families: [schnet] }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16 }

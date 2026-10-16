@@ -1,0 +1,17 @@
+name: SchNet OC20 S2EF (All, optimised for EFwT)
+family: schnet
+implementation: ocp
+version: schnet_all_large.pt
+release: { source: chanussot2020oc20 }
+training:
+  - stage: training
+    dataset: oc20
+    level_of_theory: rpbe-oc20
+    note: Trained on the S2EF "All" split of OC20 (structure → energy and forces).
+outputs: [energy, forces]
+licence: Not stated for the weights (repository code MIT; OC20 data CC BY 4.0)
+weights: { url: 'https://dl.fbaipublicfiles.com/opencatalystproject/models/2020_11/s2ef/schnet_all_large.pt' }
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Listed in the OCP model table (github.com/Open-Catalyst-Project/ocp/blob/v0.1.0/MODELS.md). Released November 2020 according to the 2020_11 path of the download URL; no exact date stated. Validation metrics are listed in MODELS.md and are not copied here. The same table lists 200k, 2M, 20M and force-only variants and IS2RE models.'

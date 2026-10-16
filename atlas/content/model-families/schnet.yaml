@@ -1,0 +1,13 @@
+name: SchNet
+paradigms: [invariant-message-passing]
+introduced_in: schutt2017schnet
+year: 2017
+summary: >-
+  Invariant message passing with continuous-filter convolutions: each atom sums its neighbours' features weighted
+  element-wise by a filter that a small network generates from the interatomic distance alone.
+locality: { kind: message-passing, note: Receptive field grows by one cutoff per interaction block (molecular models in the papers used no cutoff). }
+symmetry: invariant
+body_order: Two-body per block; angular information only through paths in the graph.
+implementations: [schnetpack, ocp]
+claims: [schnet-cfconv, schnet-hyperparameters, schnet-angle-blind, distance-gnn-incomplete]
+review: { status: draft, last_checked: 2026-10-16 }

@@ -267,7 +267,8 @@
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
-   "riebesell2023matbench"
+   "riebesell2023matbench",
+   "schutt2018schnet"
   ],
   "crossref": {
    "article_number": "184110",
@@ -972,7 +973,8 @@
   "cites": [
    "behler2007generalized",
    "drautz2019ace",
-   "gasteiger2020dimenet"
+   "gasteiger2020dimenet",
+   "schutt2017schnet"
   ],
   "crossref": {
    "article_number": "2453",
@@ -3765,7 +3767,9 @@
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
-   "geiger2022e3nn"
+   "geiger2022e3nn",
+   "schutt2017schnet",
+   "schutt2018schnet"
   ],
   "crossref": {
    "article_number": "579",
@@ -4046,7 +4050,8 @@
    "batzner2022nequip",
    "behler2007generalized",
    "deng2023chgnet",
-   "musaelian2023allegro"
+   "musaelian2023allegro",
+   "schutt2018schnet"
   ],
   "crossref": {
    "article_number": null,
@@ -4219,6 +4224,128 @@
    "id": "W4401307762",
    "publication_year": 2024,
    "referenced_works": []
+  }
+ },
+ "pozdnyakov2022incompleteness": {
+  "arxiv": {
+   "authors": [
+    "Sergey N. Pozdnyakov",
+    "Michele Ceriotti"
+   ],
+   "id": "2201.07136v4",
+   "primary_category": "stat.ML",
+   "published": "2022-01-18",
+   "title": "Incompleteness of graph neural networks for points clouds in three dimensions",
+   "updated": "2022-11-07"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Pozdnyakov, S. N.' vs fetched ['pozdnyakov', 'pozdnyakov']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "behler2011symmetry",
+   "drautz2019ace",
+   "schutt2018schnet"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Pozdnyakov",
+     "given": "Sergey N"
+    },
+    {
+     "family": "Ceriotti",
+     "given": "Michele"
+    }
+   ],
+   "container": "Machine Learning: Science and Technology",
+   "doi": "10.1088/2632-2153/aca1f8",
+   "issue": "4",
+   "page": "045020",
+   "title": "Incompleteness of graph neural networks for points clouds in three dimensions",
+   "type": "journal-article",
+   "volume": "3",
+   "year": 2022
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 21,
+   "id": "W4308697345",
+   "publication_year": 2022,
+   "referenced_works": [
+    "W1496833370",
+    "W1524700571",
+    "W1970595491",
+    "W1975997599",
+    "W1980666386",
+    "W1996899409",
+    "W2025444507",
+    "W2029413789",
+    "W2046505730",
+    "W2051376093",
+    "W2083415705",
+    "W2104489082",
+    "W2105616783",
+    "W2111218731",
+    "W2143981217",
+    "W2167435874",
+    "W2197007850",
+    "W2290847742",
+    "W2778051509",
+    "W2786721297",
+    "W2795523124",
+    "W2886120629",
+    "W2910857709",
+    "W2913034365",
+    "W2946754110",
+    "W2949095042",
+    "W2979750740",
+    "W2984234582",
+    "W3003838176",
+    "W3006607755",
+    "W3007178273",
+    "W3031288689",
+    "W3035545788",
+    "W3039448353",
+    "W3041909131",
+    "W3080980548",
+    "W3100157108",
+    "W3100571530",
+    "W3102271855",
+    "W3102316735",
+    "W3103064283",
+    "W3104585744",
+    "W3104644561",
+    "W3120951562",
+    "W3137185865",
+    "W3169271328",
+    "W3174875816",
+    "W3185227028",
+    "W3206523221",
+    "W3210358810",
+    "W3212512279",
+    "W3214916886",
+    "W4200204280",
+    "W4200629215",
+    "W4221166836",
+    "W4247315118",
+    "W4303614937"
+   ]
   }
  },
  "prodan2005nearsightedness": {
@@ -4567,6 +4694,342 @@
     "W6874042194",
     "W6893138734",
     "W6894249930"
+   ]
+  }
+ },
+ "schutt2017schnet": {
+  "arxiv": {
+   "authors": [
+    "Kristof T. Schütt",
+    "Pieter-Jan Kindermans",
+    "Huziel E. Sauceda",
+    "Stefan Chmiela",
+    "Alexandre Tkatchenko",
+    "Klaus-Robert Müller"
+   ],
+   "id": "1706.08566v5",
+   "primary_category": "stat.ML",
+   "published": "2017-06-26",
+   "title": "SchNet: A continuous-filter convolutional neural network for modeling quantum interactions",
+   "updated": "2017-12-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2017; fetched [2017]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Schütt, K. T.' vs fetched ['schutt']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "behler2011symmetry"
+  ],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 453,
+   "id": "W2726670313",
+   "publication_year": 2017,
+   "referenced_works": [
+    "W637153065",
+    "W1531674615",
+    "W1975997599",
+    "W1976147568",
+    "W1992156271",
+    "W1998260904",
+    "W2020786104",
+    "W2025444507",
+    "W2029413789",
+    "W2029875938",
+    "W2034097448",
+    "W2067050455",
+    "W2083415705",
+    "W2104489082",
+    "W2147800946",
+    "W2153693853",
+    "W2176412452",
+    "W2194775991",
+    "W2240571584",
+    "W2296091763",
+    "W2308045930",
+    "W2519091744",
+    "W2520022941",
+    "W2527189750",
+    "W2606780347",
+    "W2751706698",
+    "W2752306073",
+    "W2753962198",
+    "W2951583185",
+    "W2964121744",
+    "W2964311892"
+   ]
+  }
+ },
+ "schutt2018schnet": {
+  "arxiv": {
+   "authors": [
+    "Kristof T. Schütt",
+    "Huziel E. Sauceda",
+    "Pieter-Jan Kindermans",
+    "Alexandre Tkatchenko",
+    "Klaus-Robert Müller"
+   ],
+   "id": "1712.06113v3",
+   "primary_category": "physics.chem-ph",
+   "published": "2017-12-17",
+   "title": "SchNet - a deep learning architecture for molecules and materials",
+   "updated": "2018-03-22"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2017, 2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Schütt, K. T.' vs fetched ['schutt', 'schutt']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "behler2011symmetry"
+  ],
+  "crossref": {
+   "article_number": "241722",
+   "authors": [
+    {
+     "family": "Schütt",
+     "given": "K. T."
+    },
+    {
+     "family": "Sauceda",
+     "given": "H. E."
+    },
+    {
+     "family": "Kindermans",
+     "given": "P.-J."
+    },
+    {
+     "family": "Tkatchenko",
+     "given": "A."
+    },
+    {
+     "family": "Müller",
+     "given": "K.-R."
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.5019779",
+   "issue": "24",
+   "page": null,
+   "title": "SchNet – A deep learning architecture for molecules and materials",
+   "type": "journal-article",
+   "volume": "148",
+   "year": 2018
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 2189,
+   "id": "W2778051509",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W1531674615",
+    "W1583837637",
+    "W1787224781",
+    "W1865667476",
+    "W1912250696",
+    "W1971044734",
+    "W1975997599",
+    "W1981368803",
+    "W1992156271",
+    "W1992985800",
+    "W1996084074",
+    "W1998260904",
+    "W2015197254",
+    "W2025444507",
+    "W2029413789",
+    "W2033206800",
+    "W2034097448",
+    "W2044105167",
+    "W2059885388",
+    "W2080635178",
+    "W2083415705",
+    "W2087404659",
+    "W2095168618",
+    "W2104489082",
+    "W2147800946",
+    "W2148424525",
+    "W2150165932",
+    "W2153693853",
+    "W2159357141",
+    "W2163681071",
+    "W2195388612",
+    "W2197007850",
+    "W2290847742",
+    "W2406696299",
+    "W2509907061",
+    "W2520022941",
+    "W2522381472",
+    "W2527189750",
+    "W2541404351",
+    "W2559655401",
+    "W2585152223",
+    "W2603947633",
+    "W2604272474",
+    "W2612690371",
+    "W2614157797",
+    "W2657631929",
+    "W2749006386",
+    "W2753962198",
+    "W2764267192",
+    "W2773497437",
+    "W2775801968",
+    "W2963716836",
+    "W2964186609",
+    "W2964268718",
+    "W3100157108",
+    "W3100709752",
+    "W3102380997",
+    "W3102449990",
+    "W4236965008",
+    "W4297580547",
+    "W4308897973"
+   ]
+  }
+ },
+ "schutt2018schnetpack": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Schütt, K. T.' vs fetched ['schutt']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "behler2011symmetry",
+   "schutt2018schnet"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Schütt",
+     "given": "K. T."
+    },
+    {
+     "family": "Kessel",
+     "given": "P."
+    },
+    {
+     "family": "Gastegger",
+     "given": "M."
+    },
+    {
+     "family": "Nicoli",
+     "given": "K. A."
+    },
+    {
+     "family": "Tkatchenko",
+     "given": "A."
+    },
+    {
+     "family": "Müller",
+     "given": "K.-R."
+    }
+   ],
+   "container": "Journal of Chemical Theory and Computation",
+   "doi": "10.1021/acs.jctc.8b00908",
+   "issue": "1",
+   "page": "448-455",
+   "title": "SchNetPack: A Deep Learning Toolbox For Atomistic Systems",
+   "type": "journal-article",
+   "volume": "15",
+   "year": 2018
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 434,
+   "id": "W2891365537",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W1975997599",
+    "W1992985800",
+    "W2025444507",
+    "W2033206800",
+    "W2034097448",
+    "W2055526416",
+    "W2080635178",
+    "W2083415705",
+    "W2104489082",
+    "W2114704115",
+    "W2194775991",
+    "W2337496963",
+    "W2470768373",
+    "W2520022941",
+    "W2527189750",
+    "W2541404351",
+    "W2585152223",
+    "W2601081289",
+    "W2604272474",
+    "W2606780347",
+    "W2612690371",
+    "W2614157797",
+    "W2620687153",
+    "W2728984672",
+    "W2742127985",
+    "W2746244909",
+    "W2749006386",
+    "W2753962198",
+    "W2761704992",
+    "W2776192919",
+    "W2778051509",
+    "W2780173879",
+    "W2788652239",
+    "W2800168263",
+    "W2805504266",
+    "W2963711743",
+    "W2964268718",
+    "W3005347330",
+    "W3099159503",
+    "W3101643101",
+    "W3101728438",
+    "W3101744125",
+    "W3101883705",
+    "W3102449990",
+    "W3104644561",
+    "W3106310231",
+    "W4234552385",
+    "W4240768087",
+    "W4308897973"
    ]
   }
  },
@@ -5332,7 +5795,8 @@
    }
   ],
   "cites": [
-   "batzner2022nequip"
+   "batzner2022nequip",
+   "schutt2018schnet"
   ],
   "crossref": {
    "article_number": null,

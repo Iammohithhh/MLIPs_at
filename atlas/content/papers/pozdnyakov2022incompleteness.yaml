@@ -1,0 +1,13 @@
+title: Incompleteness of graph neural networks for points clouds in three dimensions
+topic: descriptors-locality
+authors:
+  - 'Pozdnyakov, S. N.'
+  - 'Ceriotti, M.'
+year: 2022
+venue: 'Machine Learning: Science and Technology 3, 045020'
+type: article
+identifiers:
+  doi: 10.1088/2632-2153/aca1f8
+  arxiv: '2201.07136'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16 }
