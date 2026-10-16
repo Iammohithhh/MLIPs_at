@@ -25,6 +25,16 @@ git -C mbd sparse-checkout set models
 ../.venv/bin/python -m atlas_pipeline.matbench mbd ../atlas/src/data/benchmarks/matbench-discovery.json
 ```
 
+`uniffbench.py` copies the per-run experimental and simulated densities from the UniFFBench
+result files (Mannan et al., arXiv:2508.05762; MIT licence) into
+`atlas/src/data/benchmarks/uniffbench-density.json`, with the upstream commit. Only complete
+result files are taken; the site computes all errors and statistics (`reference-gap.ts`).
+
+```bash
+git clone --depth 1 https://github.com/M3RG-IITD/UniFFBench uniff
+../.venv/bin/python -m atlas_pipeline.uniffbench uniff ../atlas/src/data/benchmarks/uniffbench-density.json
+```
+
 ## Architecture X-ray tensors
 
 `xray.py` passes gallery structures through the MACE-MP-0a medium checkpoint on CPU and

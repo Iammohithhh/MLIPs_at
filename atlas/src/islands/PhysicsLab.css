@@ -718,3 +718,34 @@
 .lab .presets .seg-label {
   padding-left: 0;
 }
+
+/* Compact result table inside a lab panel */
+.lab-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 0.8125rem var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.lab-table th,
+.lab-table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--atlas-rule);
+  text-align: right;
+  white-space: nowrap;
+}
+.lab-table thead th {
+  font-weight: 600;
+  color: var(--atlas-ink-muted);
+}
+.lab-table th[scope='row'],
+.lab-table thead th:first-child {
+  text-align: left;
+}
+.lab-table .swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 0.2rem;
+  vertical-align: -0.05rem;
+  margin-right: 0.3rem;
+}

@@ -1,0 +1,9 @@
+statement: >-
+  On a subset of 10 minerals where Materials Project DFT values are available, the universal MLIPs' density errors
+  against experiment average 5.2%, about two to three times the 2.5% error of the DFT values themselves on the same
+  structures.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.6 (paragraph on oxygen bias and Hubbard U)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Only 10 minerals; the paper does not list which models enter the 5.2% average in the main text.' }

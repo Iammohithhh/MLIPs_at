@@ -1,0 +1,14 @@
+title: "Rungs 1 to 4 of DFT Jacob's ladder: Extensive test on the lattice constant, bulk modulus, and cohesive energy of solids"
+topic: other
+authors:
+  - 'Tran, F.'
+  - 'Stelzl, J.'
+  - 'Blaha, P.'
+year: 2016
+venue: The Journal of Chemical Physics 144, 204120
+type: article
+identifiers:
+  doi: 10.1063/1.4948636
+  arxiv: '1603.01504'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 PDF. Table II: ME/MAE/MRE/MARE of a0, B0, Ecoh for 44 strongly bound solids (Table I) against experiment corrected for thermal and zero-point vibrations; WIEN2k, non-self-consistent for MGGAs.' }

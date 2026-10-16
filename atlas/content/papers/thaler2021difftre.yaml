@@ -1,0 +1,13 @@
+title: Learning neural network potentials from experimental data via Differentiable Trajectory Reweighting
+topic: other
+authors:
+  - 'Thaler, S.'
+  - 'Zavadlav, J.'
+year: 2021
+venue: Nature Communications 12, 6884
+type: article
+identifiers:
+  doi: 10.1038/s41467-021-27241-4
+  arxiv: '2106.01138'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16 }

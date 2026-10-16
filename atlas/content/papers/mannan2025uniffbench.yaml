@@ -1,0 +1,20 @@
+title: 'UniFFBench: Evaluating Universal Machine Learning Force Fields Against Experimental Measurements'
+topic: benchmarks-failures
+authors:
+  - 'Mannan, S.'
+  - 'Bihani, V.'
+  - 'Gonzales, C.'
+  - 'Lee, K. L. K.'
+  - 'Gosvami, N. N.'
+  - 'Ranu, S.'
+  - 'Miret, S.'
+  - 'Krishnan, N. M. A.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2508.05762'
+verified_against: full-text
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Read arXiv v3 (19 Jun 2026) HTML, main text and supplement. MinX: ~1,500 experimental mineral structures (EQ 1,343, HTP 75, POcc 50, EM 100). 50 ps NPT MD (Berendsen), 1 fs, 100-200 atom cells; density averaged over the trajectory. Code and per-run CSVs: github.com/M3RG-IITD/UniFFBench (MIT).'

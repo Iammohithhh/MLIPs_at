@@ -1,0 +1,10 @@
+statement: >-
+  Elastic constants, second derivatives of the energy that no evaluated model was trained on, are predicted with
+  20–25% MAPE for C₁₁ by the stable models (MACE, SevenNet, MatterSim, UMA, MACE-OMat) and worse for the shear
+  components C₄₄ and C₆₆; Orb, which predicts forces directly rather than as energy gradients, exceeds 80% on every
+  component, reaching 100% for C₆₆.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.5 and Fig. 5a,g; strain–stress protocol Sec. 4.4' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

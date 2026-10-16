@@ -1,0 +1,8 @@
+statement: >-
+  For isotropic strain, density scales as a⁻³, so a relative lattice error ε becomes a density error (1 + ε)⁻³ − 1 ≈ −3ε,
+  and errors relative to experiment compose: a model that reproduced PBE exactly would inherit PBE's mean +1.1%
+  lattice error as a density 3.2% too low, already outside a ±2.5% tolerance, which corresponds to about 0.8% in the
+  lattice constant.
+grade: THEORY
+derivation: /failures/experiment-vs-dft/#derivation
+review: { status: draft, last_checked: 2026-10-16, notes: 'Checked in reference-gap.test.ts. Applying a mean lattice error to a mean density error is approximate.' }

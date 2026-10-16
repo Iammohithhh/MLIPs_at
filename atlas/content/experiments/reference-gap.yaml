@@ -1,0 +1,13 @@
+title: What a model inherits from its reference
+question: How large is the density error against experiment of a model that matches its DFT functional to a given accuracy?
+kind: figure
+status: TOY_MODEL
+tier: T0
+page: /failures/experiment-vs-dft/#fig-scene
+assumptions:
+  - { term: Strain, value: 'Isotropic: every lattice length scales by the same factor, so ρ ∝ a⁻³. Real minerals are anisotropic.' }
+  - { term: Reference error, value: 'Mean relative lattice error of each functional over 44 simple solids (Tran et al. 2016, Table II), applied to one rock-salt cell for illustration.' }
+  - { term: Fit error, value: 'The model’s lattice error relative to its own functional, set by the slider; composed multiplicatively with the reference error.' }
+concepts: []
+claims: [density-inherits-reference, functional-lattice-errors]
+review: { status: draft, last_checked: 2026-10-16 }

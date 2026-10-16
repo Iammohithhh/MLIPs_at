@@ -1,0 +1,10 @@
+statement: >-
+  Against roughly 1,500 experimentally determined mineral structures, even the best universal MLIPs evaluated by
+  UniFFBench (Orb, MatterSim, SevenNet, MACE) have density errors after 50 ps of NPT molecular dynamics above the
+  ±2–3% variation the authors take as acceptable; UMA and MACE-OMat, trained on far larger datasets, complete every
+  simulation but still reach 5.34% and 6.89% density MAPE.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.3 and Fig. 3d–f; UMA and MACE-OMat: Sec. 2.3 and Suppl. Fig. 3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

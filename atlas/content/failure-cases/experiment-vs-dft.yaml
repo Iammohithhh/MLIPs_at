@@ -1,0 +1,25 @@
+title: 'Experiment vs DFT: a model can match its reference and still miss the measurement'
+claim: uniffbench-density-gap
+grade: PUBLISHED_RESULT
+evidence: [uniffbench-density-gap, uniffbench-mlip-vs-dft, uniffbench-stability-not-accuracy, uniffbench-elastic, uniffbench-disorder, uniffbench-matbench-uncorrelated, functional-lattice-errors]
+mechanisms:
+  - { description: 'The training labels are DFT, mostly PBE or PBE+U. A model that reproduced them exactly would still carry the functional’s own error against experiment, about +1.1% in lattice constant for PBE, or a density 3% too low.', grade: THEORY, claim: density-inherits-reference }
+  - { description: 'Universal MLIPs systematically underpredict potential-energy-surface curvature (softening). A softer crystal is easier to strain; whether this shifts average densities at finite temperature has not been separated from the functional’s own error.', grade: HYPOTHESIS, claim: softening-near-equilibrium-bias }
+  - { description: 'Selective Hubbard U in the training data creates two incompatible energy surfaces for transition-metal oxides and fluorides.', grade: HYPOTHESIS, claim: hubbard-u-two-surfaces }
+  - { description: 'Minerals are further from the training data than typical test sets: up to 23 elements per structure, partial occupancy, extreme temperatures and pressures.', grade: PUBLISHED_RESULT, claim: uniffbench-disorder }
+  - { description: 'Properties that depend on second derivatives (elastic constants) are not constrained by energy and force training, and are not recoverable from direct-force models that have no consistent energy.', grade: PUBLISHED_RESULT, claim: uniffbench-elastic }
+diagnostics:
+  - 'Separate the two gaps: compute a few structures with the training functional and compare model → DFT and DFT → experiment before blaming the model.'
+  - 'Look at the sign of density or lattice errors across many structures; a one-sided distribution points at the reference or at softening, not at noise.'
+  - 'Compare with experiment at the experiment’s temperature and pressure, and remember that classical MD has no zero-point expansion.'
+  - 'Report completion and accuracy separately; a model that never crashes can still be systematically wrong.'
+responses:
+  - { description: 'Choose or fine-tune on a reference closer to experiment for the property at hand: PBEsol and SCAN lattice constants are far closer than PBE’s (MatPES offers r²SCAN labels, a regularised SCAN; its lattice accuracy is not in the cited table).', claim: functional-lattice-errors }
+  - { description: 'Add experimental observables to training, for example with differentiable trajectory reweighting.', claim: difftre-experimental-training }
+  - { description: 'Train or validate on stresses and elastic constants, not only energies and forces, when mechanical properties matter.' }
+open_questions:
+  - 'How much of the remaining density error of the best models is the functional, and how much is the model? This needs DFT and MLIP runs on the same mineral structures at scale.'
+  - 'Would r²SCAN-trained foundation models close the density gap, or move it to other properties?'
+  - 'Is the 2–3% density tolerance the right target for every application, or should thresholds be property- and use-specific?'
+applications: []
+review: { status: draft, last_checked: 2026-10-16 }

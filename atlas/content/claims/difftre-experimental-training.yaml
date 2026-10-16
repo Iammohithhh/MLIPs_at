@@ -1,0 +1,9 @@
+statement: >-
+  Differentiable trajectory reweighting (DiffTRe) trains neural-network potentials directly on experimental observables
+  without differentiating through the MD trajectory, shown for an atomistic model of diamond and a coarse-grained
+  water model using thermodynamic, structural and mechanical targets.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: thaler2021difftre, locator: Abstract }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16 }

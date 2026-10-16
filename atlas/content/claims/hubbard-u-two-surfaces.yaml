@@ -1,0 +1,11 @@
+statement: >-
+  Materials Project data apply a Hubbard U to some transition metals only when O or F is present, which creates two
+  incompatible energy surfaces; MLIPs trained on both interpolate between them, which Warford et al. link to
+  underbinding or spurious repulsion between U-corrected metals and O- or F-containing species, and which the
+  UniFFBench authors propose as a cause of large bond errors for some frequent transition-metal pairs.
+grade: HYPOTHESIS
+sources:
+  - { paper: warford2026hubbard, locator: Abstract }
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.6' }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'UniFFBench full text read; Warford et al. seen through the abstract only.' }

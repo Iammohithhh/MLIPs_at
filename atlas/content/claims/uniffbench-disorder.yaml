@@ -1,0 +1,8 @@
+statement: >-
+  All evaluated models do worse on minerals with partial site occupancy (modelled as random ordered supercells), with
+  density and lattice MAPE typically two to three times those at ambient conditions.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.3; supercell construction Sec. 4.1' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

@@ -1,0 +1,20 @@
+name: UniFFBench
+summary: >-
+  Runs universal MLIPs in finite-temperature NPT molecular dynamics on experimentally determined mineral structures
+  (the MinX set) and compares densities, lattice parameters, radial distribution functions, bond lengths and elastic
+  constants with experiment rather than with DFT. Simulation completion is reported alongside accuracy.
+url: https://github.com/M3RG-IITD/UniFFBench
+introduced_in: mannan2025uniffbench
+domain: [inorganic-materials]
+metrics:
+  - { id: completion, name: Simulation completion rate, unit: '%', higher_is_better: true, description: 'A run fails if it does not finish 50 ps or ends with a density or lattice error above 100%.' }
+  - { id: density-mape, name: Density MAPE against experiment, unit: '%', higher_is_better: false, description: 'Trajectory-averaged density against the density of the experimental structure, completed runs only.' }
+  - { id: lattice-mape, name: Lattice-parameter MAPE against experiment, unit: '%', higher_is_better: false }
+  - { id: elastic-mape, name: Elastic-constant MAPE (per C_ij), unit: '%', higher_is_better: false, description: 'Stress–strain fit after relaxation, strains up to 1e-4.' }
+protocols:
+  - { id: minx-eq, name: MinX-EQ, description: '1,343 stoichiometric mineral structures at their reported (mostly ambient) conditions.' }
+  - { id: minx-htp, name: MinX-HTP, description: '75 structures at high or low temperature and pressure.' }
+  - { id: minx-pocc, name: MinX-POcc, description: '50 minerals with partial occupancy, ordered at random in supercells.' }
+  - { id: minx-em, name: MinX-EM, description: '100 structures with experimental elastic tensors (from MPOD).' }
+claims: [uniffbench-density-gap, uniffbench-stability-not-accuracy, uniffbench-elastic, uniffbench-matbench-uncorrelated]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Protocol from arXiv v3 Secs. 4.1–4.7.' }

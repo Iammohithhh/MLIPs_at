@@ -3416,6 +3416,51 @@
    ]
   }
  },
+ "mannan2025uniffbench": {
+  "arxiv": {
+   "authors": [
+    "Sajid Mannan",
+    "Vaibhav Bihani",
+    "Carmelo Gonzales",
+    "Kin Long Kelvin Lee",
+    "Nitya Nand Gosvami",
+    "Sayan Ranu",
+    "Santiago Miret",
+    "N M Anoop Krishnan"
+   ],
+   "id": "2508.05762v3",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-08-07",
+   "title": "UniFFBench: Evaluating Universal Machine Learning Force Fields Against Experimental Measurements",
+   "updated": "2026-06-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Mannan, S.' vs fetched ['mannan']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 4,
+   "id": "W4415191223",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "mehdizadeh2025cleavage": {
   "arxiv": {
    "authors": [
@@ -4412,6 +4457,154 @@
    ]
   }
  },
+ "thaler2021difftre": {
+  "arxiv": {
+   "authors": [
+    "Stephan Thaler",
+    "Julija Zavadlav"
+   ],
+   "id": "2106.01138v2",
+   "primary_category": "physics.chem-ph",
+   "published": "2021-06-02",
+   "title": "Learning neural network potentials from experimental data via Differentiable Trajectory Reweighting",
+   "updated": "2021-11-25"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Thaler, S.' vs fetched ['thaler', 'thaler']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "stillinger1985sw"
+  ],
+  "crossref": {
+   "article_number": "6884",
+   "authors": [
+    {
+     "family": "Thaler",
+     "given": "Stephan"
+    },
+    {
+     "family": "Zavadlav",
+     "given": "Julija"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-021-27241-4",
+   "issue": "1",
+   "page": null,
+   "title": "Learning neural network potentials from experimental data via Differentiable Trajectory Reweighting",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2021
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 104,
+   "id": "W3168247670",
+   "publication_year": 2021,
+   "referenced_works": [
+    "W153292298",
+    "W1491824558",
+    "W1537479324",
+    "W1625910593",
+    "W1968666708",
+    "W1970486977",
+    "W1978656738",
+    "W1979561565",
+    "W1997630751",
+    "W2002490843",
+    "W2004518731",
+    "W2005069114",
+    "W2016638801",
+    "W2025444507",
+    "W2026737855",
+    "W2032859556",
+    "W2033086537",
+    "W2037782625",
+    "W2039588355",
+    "W2053640460",
+    "W2067910314",
+    "W2078699890",
+    "W2080635178",
+    "W2092837180",
+    "W2095530874",
+    "W2119267663",
+    "W2122199548",
+    "W2127522551",
+    "W2137352412",
+    "W2159565091",
+    "W2171697771",
+    "W2203471030",
+    "W2299046272",
+    "W2323439927",
+    "W2328874718",
+    "W2330511799",
+    "W2527189750",
+    "W2556096037",
+    "W2606780347",
+    "W2747329762",
+    "W2753962198",
+    "W2789106493",
+    "W2891122218",
+    "W2898391453",
+    "W2901995873",
+    "W2906744519",
+    "W2913376343",
+    "W2954088480",
+    "W2957135539",
+    "W2962727772",
+    "W2963119626",
+    "W2963711743",
+    "W2963755523",
+    "W2964121744",
+    "W2988055229",
+    "W2993837725",
+    "W2995001833",
+    "W2995253198",
+    "W2996443485",
+    "W3008198323",
+    "W3008973311",
+    "W3016291562",
+    "W3036540378",
+    "W3043238520",
+    "W3045213745",
+    "W3086372695",
+    "W3091277511",
+    "W3095709528",
+    "W3098321015",
+    "W3098509317",
+    "W3098985721",
+    "W3102277302",
+    "W3103390675",
+    "W3103736477",
+    "W3105591038",
+    "W3113616921",
+    "W3125814979",
+    "W3135480294",
+    "W3150113257",
+    "W3194649466",
+    "W4226237797",
+    "W4230126906",
+    "W4287586570",
+    "W4292320360",
+    "W4394649112"
+   ]
+  }
+ },
  "tian2025agwater": {
   "arxiv": null,
   "checks": [
@@ -4552,6 +4745,261 @@
    ]
   }
  },
+ "tran2016rungs": {
+  "arxiv": {
+   "authors": [
+    "Fabien Tran",
+    "Julia Stelzl",
+    "Peter Blaha"
+   ],
+   "id": "1603.01504v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2016-03-04",
+   "title": "Rungs 1 to 4 of DFT Jacob's ladder: extensive test on the lattice constant, bulk modulus, and cohesive energy of solids",
+   "updated": "2016-03-04"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2016; fetched [2016]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Tran, F.' vs fetched ['tran', 'tran']"
+   }
+  ],
+  "cites": [
+   "perdew2001ladder"
+  ],
+  "crossref": {
+   "article_number": "204120",
+   "authors": [
+    {
+     "family": "Tran",
+     "given": "Fabien"
+    },
+    {
+     "family": "Stelzl",
+     "given": "Julia"
+    },
+    {
+     "family": "Blaha",
+     "given": "Peter"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.4948636",
+   "issue": "20",
+   "page": null,
+   "title": "Rungs 1 to 4 of DFT Jacob’s ladder: Extensive test on the lattice constant, bulk modulus, and cohesive energy of solids",
+   "type": "journal-article",
+   "volume": "144",
+   "year": 2016
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 256,
+   "id": "W2293452066",
+   "publication_year": 2016,
+   "referenced_works": [
+    "W77753788",
+    "W285749399",
+    "W298367760",
+    "W335603986",
+    "W1561412729",
+    "W1563609065",
+    "W1614843501",
+    "W1749890555",
+    "W1762844997",
+    "W1862221011",
+    "W1949850809",
+    "W1965713690",
+    "W1970623278",
+    "W1970835510",
+    "W1973108015",
+    "W1973934867",
+    "W1974854882",
+    "W1976863147",
+    "W1978467350",
+    "W1981368803",
+    "W1982062653",
+    "W1982063246",
+    "W1982595063",
+    "W1986130781",
+    "W1987559113",
+    "W1988320534",
+    "W1989640103",
+    "W1989954305",
+    "W1990849018",
+    "W1991149034",
+    "W1992363034",
+    "W1992415512",
+    "W1994880295",
+    "W1995549469",
+    "W1996730574",
+    "W1996767128",
+    "W1996943850",
+    "W1997084402",
+    "W1998866028",
+    "W2000040638",
+    "W2000500972",
+    "W2000536749",
+    "W2001753500",
+    "W2002322198",
+    "W2002465357",
+    "W2003193361",
+    "W2003200682",
+    "W2005161416",
+    "W2006412815",
+    "W2006569455",
+    "W2007016642",
+    "W2008423326",
+    "W2012942946",
+    "W2014821025",
+    "W2015421649",
+    "W2016168218",
+    "W2017186033",
+    "W2017663485",
+    "W2018600150",
+    "W2019381721",
+    "W2019509723",
+    "W2020072134",
+    "W2020618854",
+    "W2021107698",
+    "W2023271753",
+    "W2023390323",
+    "W2023847687",
+    "W2026645533",
+    "W2026936385",
+    "W2028054907",
+    "W2029697845",
+    "W2031833592",
+    "W2032719166",
+    "W2032956651",
+    "W2036918693",
+    "W2038261361",
+    "W2040891489",
+    "W2041321224",
+    "W2042796027",
+    "W2042994860",
+    "W2044128600",
+    "W2044591029",
+    "W2045435773",
+    "W2046336558",
+    "W2047524879",
+    "W2048835561",
+    "W2049079467",
+    "W2049681700",
+    "W2050480585",
+    "W2050858126",
+    "W2051094745",
+    "W2052003880",
+    "W2054704030",
+    "W2055363965",
+    "W2058705304",
+    "W2059175253",
+    "W2059885388",
+    "W2064142965",
+    "W2065115647",
+    "W2066966625",
+    "W2068918072",
+    "W2071697664",
+    "W2071814779",
+    "W2073506004",
+    "W2074857700",
+    "W2075131065",
+    "W2076462975",
+    "W2076759175",
+    "W2079935930",
+    "W2080709819",
+    "W2081939952",
+    "W2083419663",
+    "W2085093563",
+    "W2086457107",
+    "W2086957099",
+    "W2087154377",
+    "W2088651952",
+    "W2090135568",
+    "W2091754380",
+    "W2092072083",
+    "W2092157292",
+    "W2093887036",
+    "W2096747776",
+    "W2099190231",
+    "W2100298731",
+    "W2104873860",
+    "W2106685809",
+    "W2108380821",
+    "W2111639451",
+    "W2111705896",
+    "W2112054650",
+    "W2114860804",
+    "W2117307259",
+    "W2122670192",
+    "W2127513957",
+    "W2130151591",
+    "W2132516451",
+    "W2134344701",
+    "W2139060521",
+    "W2140886907",
+    "W2143981217",
+    "W2146747898",
+    "W2148284063",
+    "W2150195378",
+    "W2150697053",
+    "W2152947112",
+    "W2157418460",
+    "W2158043072",
+    "W2166750802",
+    "W2167872912",
+    "W2169262306",
+    "W2173797643",
+    "W2230728100",
+    "W2283531705",
+    "W2283907593",
+    "W2292514037",
+    "W2292646695",
+    "W2292856023",
+    "W2293452066",
+    "W2297246695",
+    "W2313194977",
+    "W2313255355",
+    "W2315617370",
+    "W2318310847",
+    "W2319802194",
+    "W2320164150",
+    "W2321929780",
+    "W2322479756",
+    "W2323215419",
+    "W2323317872",
+    "W2325663311",
+    "W2328928309",
+    "W2330435951",
+    "W2378570406",
+    "W2413434998",
+    "W2565309564",
+    "W2963657244",
+    "W2964129995",
+    "W2993777855",
+    "W2998313242",
+    "W3098036074",
+    "W3102798902",
+    "W3103048490",
+    "W3103566548",
+    "W3103734703",
+    "W3206606417",
+    "W4229724516",
+    "W4244434851"
+   ]
+  }
+ },
  "wang2025cpmlff": {
   "arxiv": null,
   "checks": [
@@ -4658,6 +5106,46 @@
     "W4408821548",
     "W4409452381"
    ]
+  }
+ },
+ "warford2026hubbard": {
+  "arxiv": {
+   "authors": [
+    "Thomas Warford",
+    "Fabian L. Thiemann",
+    "Gábor Csányi"
+   ],
+   "id": "2601.21056v1",
+   "primary_category": "physics.chem-ph",
+   "published": "2026-01-28",
+   "title": "Better without U: Impact of Selective Hubbard U Correction on Foundational MLIPs",
+   "updated": "2026-01-28"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Warford, T.' vs fetched ['warford']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 1,
+   "id": "W7126276477",
+   "publication_year": 2026,
+   "referenced_works": []
   }
  },
  "yeh1999slab": {

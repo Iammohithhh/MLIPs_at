@@ -1,0 +1,10 @@
+statement: >-
+  Completing a simulation and matching experiment are different tests: in UniFFBench, Orb and MatterSim complete
+  100% of MD runs on all three mineral subsets while CHGNet and M3GNet fail on more than 85% (a run fails if it
+  diverges or ends with a property error above 100%), yet Orb, the most stable model, has the largest elastic-constant
+  errors of the stable models.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 2.2 and Fig. 3a–c (completion, failure definition); Sec. 2.5 and Fig. 5 (elastic constants)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

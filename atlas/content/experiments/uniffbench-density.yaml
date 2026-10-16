@@ -1,0 +1,13 @@
+title: Signed density errors against experiment, UniFFBench result files
+question: Are density errors against experimental mineral structures random, or do they lean one way?
+kind: figure
+status: PUBLISHED_RESULT
+tier: T0
+page: /failures/experiment-vs-dft/#fig-evidence
+assumptions:
+  - { term: Data, value: 'Per-run experimental and trajectory-averaged simulated densities copied from the UniFFBench repository result files (pinned commit), not re-run by the Atlas.' }
+  - { term: Filter, value: 'Runs with |error| > 100% are dropped, as in the paper; the files list completed runs only.' }
+  - { term: Checkpoints, value: 'The CSVs do not record a checkpoint; the repository’s loaders at that commit use Orb v2 and MatterSim v1.0.0-1M.' }
+concepts: []
+claims: [uniffbench-density-gap]
+review: { status: draft, last_checked: 2026-10-16 }

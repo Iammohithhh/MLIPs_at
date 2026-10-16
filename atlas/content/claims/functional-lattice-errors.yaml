@@ -1,0 +1,9 @@
+statement: >-
+  Against experimental lattice constants corrected for thermal and zero-point vibrations, PBE overestimates the
+  lattice constant of 44 strongly bound solids by 1.1% on average (mean error 0.056 Å) and underestimates the bulk
+  modulus by 9.8%; LDA underestimates the lattice constant by 1.5%, while PBEsol (−0.1%) and SCAN (+0.3%) come closest.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: tran2016rungs, locator: 'Table II (MRE of a₀ and B₀); test set Table I; reference data Sec. II' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Simple elemental and binary solids, not minerals; WIEN2k all-electron.' }

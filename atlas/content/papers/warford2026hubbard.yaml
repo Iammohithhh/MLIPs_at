@@ -1,0 +1,12 @@
+title: 'Better without U: Impact of Selective Hubbard U Correction on Foundational MLIPs'
+topic: benchmarks-failures
+authors:
+  - 'Warford, T.'
+  - 'Thiemann, F. L.'
+  - 'Csányi, G.'
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2601.21056'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16 }

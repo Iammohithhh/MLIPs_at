@@ -1,0 +1,8 @@
+statement: >-
+  Formation-energy R² scores reported by Matbench Discovery correlate poorly with the same models' R² against
+  experimental Young's modulus, shear modulus, density and lattice parameters.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mannan2025uniffbench, locator: 'arXiv v3 Sec. 3 and Suppl. Fig. 10' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

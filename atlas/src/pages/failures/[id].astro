@@ -17,6 +17,10 @@ import Assumptions from '~/components/Assumptions.astro';
 import NonConservativeLab from '~/islands/NonConservativeLab';
 import { ObservatoryTests } from '~/islands/ObservatoryScans';
 import Math from '~/components/Math.astro';
+import ReferenceGapLab from '~/islands/ReferenceGapLab';
+import UniffDensity, { type UniffSeries } from '~/islands/UniffDensity';
+import uniffData from '~/data/benchmarks/uniffbench-density.json';
+import { FUNCTIONALS, densityBudget, latticeFromDensity, signedDensityError, type UniffModel } from '~/lib/physics/reference-gap';
 import type { Checkpoint, Claim, FailureCase } from '~/content/schemas';
 import type { LabelKey } from '~/lib/labels';
 
@@ -46,9 +50,21 @@ const scenes: Record<string, unknown> = {
   surfaces: CleavageLab,
   'ion-migration': MigrationLab,
   'nonconservative-forces': NonConservativeLab,
+  'experiment-vs-dft': ReferenceGapLab,
 };
 const hasScene = id in scenes;
 const cleavageRetrieved = cleavageData.source.retrieved;
+// Experiment vs DFT: every number below is computed from the snapshot and Tran et al. Table II by reference-gap.ts.
+const uniff = uniffData as unknown as { source: { commit: string; commit_date: string; retrieved: string; repository: string }; models: UniffModel[] };
+const uniffSeries: UniffSeries[] = uniff.models.map((m) => ({
+  name: m.name,
+  loader: m.loader,
+  runs: m.runs.length,
+  errors: m.runs.map(signedDensityError).filter((e) => globalThis.Math.abs(e) <= 100).map((e) => globalThis.Math.round(e * 100) / 100),
+}));
+const pbe = FUNCTIONALS.find((f) => f.id === 'pbe')!;
+const pbeFloor = densityBudget(pbe.a0MRE, 0).reference;
+const latTol = 100 * latticeFromDensity(-0.025);
 ---
 
 <BaseLayout title={data.title} description={`Failure Atlas: ${data.title}. ${main.statement.slice(0, 150)}`}>
@@ -74,6 +90,7 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             {id === 'surfaces' && <CleavageLab client:visible />}
             {id === 'ion-migration' && <MigrationLab client:visible />}
             {id === 'nonconservative-forces' && <NonConservativeLab client:visible />}
+            {id === 'experiment-vs-dft' && <ReferenceGapLab client:visible />}
             <Fragment slot="caption">An illustration of the mechanism, not a reproduction of the published data; the evidence follows below.</Fragment>
             {id === 'nonconservative-forces' && (
               <Assumptions
@@ -84,6 +101,22 @@ const cleavageRetrieved = cleavageData.source.retrieved;
                   { term: 'Integrator', value: 'Velocity Verlet with time step h; energy scored as ½|v|² + V. Computed in your browser by src/lib/physics/nonconservative.ts.' },
                 ]}
               />
+            )}
+            {id === 'experiment-vs-dft' && (
+              <Assumptions
+                slot="assumptions"
+                items={[
+                  { term: 'Cell', value: 'Gallery NaCl rock salt, a = 5.64 Å, taken as the measured cell; the functional and model cells are scaled from it. Strain in the 3D view is magnified; the plot and readouts are not.' },
+                  { term: 'Functional errors', value: 'Mean relative lattice-constant errors over 44 strongly bound solids against experiment corrected for thermal and zero-point vibrations (Tran et al. 2016, Table II). A mean, not the error for NaCl or for any mineral.' },
+                  { term: 'Strain', value: 'Isotropic, so ρ ∝ a⁻³. Errors compose as (1 + ε_ref)(1 + ε_fit).' },
+                  { term: 'Not included', value: 'Temperature: the measured cell and the model are compared at the same conditions. Zero-point expansion, which classical MD lacks, would add to the gap.' },
+                ]}
+              />
+            )}
+            {id === 'experiment-vs-dft' && (
+              <Fragment slot="source">
+                Functional errors: <Cite id="tran2016rungs" locator="Table II" />. Computed in your browser by <code>src/lib/physics/reference-gap.ts</code>.
+              </Fragment>
             )}
             {id === 'surfaces' && (
               <Assumptions
@@ -120,6 +153,32 @@ const cleavageRetrieved = cleavageData.source.retrieved;
             The attraction decays as 1/<i>z</i>. A model whose energy is a sum of local terms with a finite receptive field has
             nothing that produces this tail once the ion is farther away than that field; inside it, the model can only learn
             what its training data contained.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      id === 'experiment-vs-dft' && (
+        <section class="block" id="derivation" aria-labelledby="der-h">
+          <h2 id="der-h" class="h-sub">Two gaps that add up</h2>
+          <p>
+            A universal MLIP is fitted to DFT, and DFT is itself an approximation. Write the model’s lattice constant relative
+            to experiment as the product of the functional’s error and the model’s error relative to the functional. For
+            isotropic strain the density scales as the inverse volume:
+          </p>
+          <Math display number="1" tex={String.raw`\frac{a_{\text{model}}}{a_{\text{exp}}} = (1+\varepsilon_{\text{ref}})(1+\varepsilon_{\text{fit}}), \qquad \frac{\rho_{\text{model}}}{\rho_{\text{exp}}} - 1 = (1+\varepsilon_{\text{ref}})^{-3}(1+\varepsilon_{\text{fit}})^{-3} - 1 \approx -3\,(\varepsilon_{\text{ref}}+\varepsilon_{\text{fit}})`} />
+          <p>
+            A density tolerance therefore means a lattice tolerance three times tighter: ±2.5% in density is about
+            {' '}{latTol.toFixed(2)}% in the lattice constant. PBE, the functional behind MPtrj, Alexandria and OMat24, overestimates
+            lattice constants of simple solids by {pbe.a0MRE}% on average <Cite id="tran2016rungs" locator="Table II" />, so even
+            with ε<sub>fit</sub> = 0:
+          </p>
+          <Math display number="2" tex={String.raw`\varepsilon_{\text{fit}} = 0,\ \varepsilon_{\text{ref}} = +0.011 \;\Longrightarrow\; \frac{\Delta\rho}{\rho} = (1.011)^{-3} - 1 = ${pbeFloor.toFixed(2)}\%`} />
+          <p>
+            A model that reproduced PBE perfectly would, on average, miss a ±2.5% density target before any error of its own.
+            This is a mean over simple solids, not a bound for every mineral, and a model’s own error can add to it or partly
+            cancel it. It does say where to look first: at the sign of the errors, and at the reference the model was trained on.
           </p>
         </section>
       )
@@ -212,6 +271,33 @@ const cleavageRetrieved = cleavageData.source.retrieved;
         })}
       </ul>
     </section>
+
+    {
+      id === 'experiment-vs-dft' && (
+        <div class="wide fig-wrap">
+          <Figure title="Which way the density errors lean" labels={['published-result']} number={2} id="fig-evidence" framed={false}>
+            <UniffDensity client:visible series={uniffSeries} floor={pbeFloor} />
+            <Fragment slot="caption">
+              Signed density error of every completed run in the UniFFBench result files for two models, against the density
+              of the experimental structure each run started from. The authors’ data, re-plotted; the Atlas computed only the
+              differences and their statistics. The paper’s own figures use its final filtered subsets and more models.
+            </Fragment>
+            <Assumptions
+              slot="assumptions"
+              items={[
+                { term: 'Protocol', value: 'FIRE minimisation, then 50 ps NPT (Berendsen) and a 50 ps production run at 1 fs, at the temperature and pressure of the experimental structure; supercells of 100–200 atoms; density averaged over the trajectory.' },
+                { term: 'Runs', value: `${uniffSeries.map((s) => `${s.name}: ${s.runs.toLocaleString('en-US')} rows`).join('; ')}. Runs with |error| > 100% are dropped, as in the paper. The rows mix ambient and non-ambient conditions.` },
+                { term: 'Checkpoints', value: `Not recorded in the files. At the snapshot commit, ${uniffSeries.map((s) => s.loader).join('; ')}.` },
+                { term: 'PBE line', value: `Density a perfect copy of PBE would have on average, from PBE’s +${pbe.a0MRE}% mean lattice error (Eq. 2).` },
+              ]}
+            />
+            <Fragment slot="source">
+              <Cite id="mannan2025uniffbench" locator="Methods 4.2–4.5" />; result files from <a href={uniff.source.repository}>M3RG-IITD/UniFFBench</a> (MIT) at commit <code>{uniff.source.commit.slice(0, 7)}</code> ({uniff.source.commit_date}), snapshotted by <code>pipeline/atlas_pipeline/uniffbench.py</code> on {uniff.source.retrieved}.
+            </Fragment>
+          </Figure>
+        </div>
+      )
+    }
 
     {
       id === 'surfaces' && (
