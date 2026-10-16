@@ -1,0 +1,16 @@
+name: CHGNet
+aliases: [Crystal Hamiltonian Graph Network]
+paradigms: [invariant-message-passing, foundation]
+introduced_in: deng2023chgnet
+year: 2023
+summary: >-
+  Invariant message passing on an atom graph and a bond graph (bonds as nodes, angles as edges), with magnetic moments
+  predicted from intermediate atom features as a proxy for atomic charge and oxidation state.
+locality: { kind: message-passing, note: Atom graph 5 Å, bond graph 3 Å, three interaction blocks and a final atom convolution. }
+symmetry: invariant
+body_order: Explicit three-body terms through the bond graph.
+reuses_mechanism:
+  - { family: m3gnet, mechanism: Bond-angle (three-body) updates inside invariant message passing }
+implementations: [chgnet]
+claims: [chgnet-graphs, chgnet-magmom-charge]
+review: { status: draft, last_checked: 2026-10-16 }

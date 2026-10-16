@@ -264,6 +264,7 @@
    "batzner2022nequip",
    "behler2007generalized",
    "chanussot2020oc20",
+   "chen2022m3gnet",
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
@@ -1835,6 +1836,130 @@
    ]
   }
  },
+ "chen2022m3gnet": {
+  "arxiv": {
+   "authors": [
+    "Chi Chen",
+    "Shyue Ping Ong"
+   ],
+   "id": "2202.02450v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2022-02-05",
+   "title": "A Universal Graph Deep Learning Interatomic Potential for the Periodic Table",
+   "updated": "2022-08-14"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Chen, C.' vs fetched ['chen', 'chen']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "schutt2017schnet"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Chen",
+     "given": "Chi"
+    },
+    {
+     "family": "Ong",
+     "given": "Shyue Ping"
+    }
+   ],
+   "container": "Nature Computational Science",
+   "doi": "10.1038/s43588-022-00349-3",
+   "issue": "11",
+   "page": "718-728",
+   "title": "A universal graph deep learning interatomic potential for the periodic table",
+   "type": "journal-article",
+   "volume": "2",
+   "year": 2022
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 983,
+   "id": "W4310135808",
+   "publication_year": 2022,
+   "referenced_works": [
+    "W26088913",
+    "W832976576",
+    "W1798528872",
+    "W1952152691",
+    "W1964746686",
+    "W1966156734",
+    "W1981368803",
+    "W1985628158",
+    "W1992985800",
+    "W2006102096",
+    "W2007395042",
+    "W2011301426",
+    "W2015197254",
+    "W2016168218",
+    "W2023972500",
+    "W2025444507",
+    "W2030971064",
+    "W2044028691",
+    "W2046033161",
+    "W2079105963",
+    "W2083415705",
+    "W2117363206",
+    "W2118233996",
+    "W2124820885",
+    "W2138199172",
+    "W2147415793",
+    "W2181523240",
+    "W2197007850",
+    "W2278970271",
+    "W2310703973",
+    "W2527189750",
+    "W2551323975",
+    "W2585152223",
+    "W2601081289",
+    "W2726670313",
+    "W2742127985",
+    "W2742492277",
+    "W2766856748",
+    "W2783134407",
+    "W2788652239",
+    "W2914218087",
+    "W2924281192",
+    "W2935718355",
+    "W2949095042",
+    "W2968558338",
+    "W2997959813",
+    "W3000291311",
+    "W3099302496",
+    "W3106310231",
+    "W3118334075",
+    "W3128261063",
+    "W3163857962",
+    "W3174806471",
+    "W3189651386",
+    "W3212512279",
+    "W4394261361",
+    "W4394401120",
+    "W6675354045",
+    "W6677567705",
+    "W6713134421",
+    "W6912740402"
+   ]
+  }
+ },
  "cheng2025les": {
   "arxiv": {
    "authors": [
@@ -2042,6 +2167,7 @@
   ],
   "cites": [
    "batzner2022nequip",
+   "chen2022m3gnet",
    "fu2022forces",
    "rappe1991qeq"
   ],
@@ -2202,6 +2328,7 @@
   "cites": [
    "batzner2022nequip",
    "chanussot2020oc20",
+   "chen2022m3gnet",
    "deng2023chgnet",
    "focassio2024surfaces"
   ],
@@ -2799,6 +2926,7 @@
   ],
   "cites": [
    "batzner2022nequip",
+   "chen2022m3gnet",
    "deng2023chgnet"
   ],
   "crossref": {
@@ -4049,6 +4177,7 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
+   "chen2022m3gnet",
    "deng2023chgnet",
    "musaelian2023allegro",
    "schutt2018schnet"
@@ -4555,6 +4684,7 @@
    "batzner2022nequip",
    "behler2007generalized",
    "chanussot2020oc20",
+   "chen2022m3gnet",
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",

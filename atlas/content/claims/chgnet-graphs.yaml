@@ -1,0 +1,11 @@
+statement: >-
+  CHGNet builds an atom graph with a 5 Å cutoff and a bond graph with a 3 Å cutoff whose nodes are bonds and whose
+  edges are the angles between bonds sharing an atom; distances are expanded in trainable smooth radial Bessel
+  functions and angles in a Fourier basis, and three interaction blocks update atoms, bonds and angles before a final
+  atom convolution, with 64-dimensional features (400,438 trainable parameters in the paper's model).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: deng2023chgnet, locator: 'Sec. II.1; Eqs. (1)–(5); Methods V.2; Fig. 1b–e' }
+scope: { model_families: [chgnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML rendering.' }

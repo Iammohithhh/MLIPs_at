@@ -1,0 +1,11 @@
+statement: >-
+  CHGNet predicts a magnetic moment for every atom by a linear map of the atom features after the third interaction
+  block and trains it on DFT moments, so those features carry charge information; the paper uses the predicted moments
+  to infer oxidation states (for example Mn4+ and Mn3+ around 3 and 4 μB) and notes that this does not enforce global
+  charge neutrality.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: deng2023chgnet, locator: 'Eq. (4); Sec. II.1; Sec. II.5; Sec. III; Methods V.5' }
+scope: { model_families: [chgnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML rendering.' }

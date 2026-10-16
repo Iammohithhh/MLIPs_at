@@ -1,0 +1,11 @@
+statement: >-
+  M3GNet updates each bond e_ij by a sum over neighbours k of atom i, ẽ_ij = Σ_k j_l(z_ln r_ik/r_c) Y_l^0(θ_jik) ⊙
+  σ(W_v v_k + b_v) f_c(r_ij) f_c(r_ik), with spherical Bessel functions j_l (roots z_ln), m = 0 spherical harmonics of
+  the bond angle and the cutoff f_c(r) = 1 − 6(r/r_c)⁵ + 15(r/r_c)⁴ − 10(r/r_c)³, followed by a gated residual bond
+  update; the energy is a sum of atomic terms and forces and stresses are derivatives of it.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: chen2022m3gnet, locator: 'Eqs. (1)–(3), (16); Sec. 2; Fig. 1' }
+scope: { model_families: [m3gnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML rendering (v2).' }

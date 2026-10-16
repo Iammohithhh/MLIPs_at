@@ -1,0 +1,468 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import ThreeBodyGraph, { type ThreeBodyCrystal } from '~/islands/ThreeBodyGraph';
+import ThreeBodyBasis from '~/islands/ThreeBodyBasis';
+import si from '~/data/structures/si-diamond.json';
+import nacl from '~/data/structures/nacl-rocksalt.json';
+import zno from '~/data/structures/zno-wurtzite.json';
+import cu from '~/data/structures/cu-fcc.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { countsVsCutoff, shellAround } from '~/lib/models/three-body';
+
+// Exact bond and angle counts in four ideal crystals, computed at build time.
+const ATOM_CUTOFF = 5;
+const CUTOFFS = Array.from({ length: 201 }, (_, k) => 2 + k * 0.02);
+const crystal = (s: Structure, label: string): ThreeBodyCrystal => ({
+  id: s.id,
+  label,
+  shell: shellAround(s, ATOM_CUTOFF),
+  centreSymbol: s.symbols[0]!,
+  counts: countsVsCutoff(s, CUTOFFS),
+});
+const crystals = [
+  crystal(si as unknown as Structure, 'Si (diamond)'),
+  crystal(nacl as unknown as Structure, 'NaCl (rock salt)'),
+  crystal(zno as unknown as Structure, 'ZnO (wurtzite)'),
+  crystal(cu as unknown as Structure, 'Cu (fcc)'),
+];
+
+const checkpoints = snapshot.models.filter((m) => m.family_dir === 'm3gnet' || m.family_dir === 'chgnet');
+
+const graphAssumptions = [
+  { term: 'Structures', value: 'Ideal crystals from the Atlas structure pipeline (ASE): Si a = 5.431 Å, NaCl a = 5.64 Å, wurtzite ZnO, fcc Cu; periodic images included. The scene shows atom 0 of each cell; the chart averages over all atoms of the cell.' },
+  { term: 'Counting', value: 'A bond is any neighbour closer than the cutoff; an angle is an unordered pair of bonds at the same atom, n(n − 1)/2. M3GNet’s sum runs over ordered (j, k), twice as many terms.' },
+  { term: 'Not shown', value: 'Thermal disorder, which smears shells across a cutoff and changes counts frame by frame.' },
+];
+const basisAssumptions = [
+  { term: 'Form', value: 'j_l(z_ln r/r_c) · Y_l⁰(θ) · f_c(r) with the paper’s fifth-order polynomial cutoff, r_c = 4 Å (the three-body cutoff). The full term also multiplies f_c(r_ij) and a learned gate of atom k’s features.' },
+  { term: 'Numbers', value: 'Which (l, n) the released model uses is not stated in the text read for this page; the panel shows the first few.' },
+];
+---
+
+<BaseLayout
+  title="M3GNet and CHGNet"
+  description="M3GNet and CHGNet, the invariant message-passing universal potentials that add explicit bond angles: their three-body updates, the cost of angles in real crystals, M3GNet's Bessel–harmonic basis, CHGNet's magnetic-moment charge proxy, checkpoints and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model families</p>
+      <h1 class="h-display">M3GNet and CHGNet</h1>
+      <p class="lede">
+        Two universal potentials for the whole periodic table that keep <a href="/models/schnet/">SchNet</a>’s invariant
+        features but stop relying on graph paths to see angles: every block adds explicit three-body terms
+        <Cite id="chen2022m3gnet" locator="Eq. (2)" />. CHGNet adds a second idea — predicting magnetic moments so the
+        atom features carry charge information <Cite id="deng2023chgnet" locator="Sec. II.1" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Invariant (distances and angles)</dd></div>
+        <div><dt>Locality</dt><dd>Message passing, 3 blocks; atom graph 5 Å</dd></div>
+        <div><dt>Three-body</dt><dd>M3GNet within 4 Å; CHGNet bond graph within 3 Å</dd></div>
+        <div><dt>Extra output</dt><dd>CHGNet: magnetic moments</dd></div>
+        <div><dt>Introduced</dt><dd>Nat. Comput. Sci. 2022; Nat. Mach. Intell. 2023</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/materialsvirtuallab/matgl">MatGL</a>, <a href="https://github.com/CederGroupHub/chgnet">chgnet</a></dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about two <strong>architectures</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="m3g-h">
+      <h2 id="m3g-h" class="h-section">M3GNet: a three-body update before every convolution</h2>
+      <p>
+        M3GNet keeps features on atoms <i>v</i><sub>i</sub>, bonds <i>e</i><sub>ij</sub> and an optional global state.
+        Each block first updates every bond with a sum over the other neighbours <i>k</i> of atom <i>i</i>, weighted by a
+        radial–angular basis <Cite id="chen2022m3gnet" locator="Eqs. (2)–(3)" />:
+      </p>
+      <Math display number="1" tex={String.raw`\tilde e_{ij} = \sum_{k \ne j} j_l\!\Big(z_{ln}\frac{r_{ik}}{r_c}\Big)\, Y_l^{0}(\theta_{jik}) \odot \sigma\!\big(W_v v_k + b_v\big)\; f_c(r_{ij})\, f_c(r_{ik}), \qquad e_{ij} \leftarrow e_{ij} + g\big(\tilde W_2 \tilde e_{ij} + \tilde b_2\big) \odot \sigma\big(\tilde W_1 \tilde e_{ij} + \tilde b_1\big)`} />
+      <p>
+        with spherical Bessel functions <i>j</i><sub>l</sub> scaled by their roots <i>z</i><sub>ln</sub>, <i>m</i> = 0
+        spherical harmonics of the bond angle, <i>g</i>(<i>x</i>) = <i>x</i>σ(<i>x</i>), and a polynomial cutoff
+        <Math tex={String.raw`f_c(r) = 1 - 6(r/r_c)^5 + 15(r/r_c)^4 - 10(r/r_c)^3`} />. Gated graph convolutions then update
+        bonds and atoms <Cite id="chen2022m3gnet" locator="Eqs. (4)–(5)" />, and the energy is a sum of atomic terms with
+        forces and stresses by differentiation <Cite id="chen2022m3gnet" locator="Eq. (16); Sec. 2" />:
+      </p>
+      <Math display number="2" tex={String.raw`E = \sum_i \phi_3(v_i), \qquad \mathbf F_i = -\frac{\partial E}{\partial \mathbf r_i}, \qquad \sigma = \frac{1}{V}\frac{\partial E}{\partial \varepsilon}`} />
+      <p>
+        The published model uses a 5 Å graph, three-body terms within 4 Å, three blocks and 64-dimensional features —
+        227,549 weights in all <Cite id="chen2022m3gnet" locator="Sec. 7.1.2" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="M3GNet’s three-body basis: where a single block sees the bond angle" labels={['live-calculation']} number={1} id="fig-basis" framed={false}>
+        <ThreeBodyBasis client:visible />
+        <Fragment slot="caption">
+          Each function weights the contribution of a third atom <i>k</i> by its distance from <i>i</i> (vertical) and the
+          angle <i>j</i>–<i>i</i>–<i>k</i> (horizontal). With <i>l</i> = 0 the weight is blind to the angle, exactly like a
+          SchNet filter in its first block (<a href="/models/schnet/#fig-angle">SchNet, Fig. 2</a>); every <i>l</i> ≥ 1
+          changes sign with it, so different angles give different bond updates in block one.
+        </Fragment>
+        <Assumptions slot="assumptions" items={basisAssumptions} />
+        <Fragment slot="source">Functional form from <Cite id="chen2022m3gnet" locator="Eq. (2) and the cutoff function in Sec. 1" />; computed in your browser by <code>src/lib/models/three-body.ts</code> (tested against closed forms and known roots).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="chg-h">
+      <h2 id="chg-h" class="h-section">CHGNet: a bond graph and a charge proxy</h2>
+      <p>
+        CHGNet makes angles first-class: besides the atom graph (5 Å) it builds a bond graph whose nodes are bonds shorter
+        than 3 Å and whose edges are the angles between bonds that share an atom. Distances are expanded in trainable smooth
+        radial Bessel functions, angles in a Fourier basis, and each of three interaction blocks updates atoms, bonds and
+        angles before a final atom convolution <Cite id="deng2023chgnet" locator="Sec. II.1; Eqs. (1)–(5); Methods V.2" />.
+      </p>
+      <p>
+        After the third block, a linear layer maps every atom’s features to a magnetic moment,
+        <Math tex={String.raw`m_i = L_m\big(v_i^{3}\big)`} />, trained against DFT moments <Cite id="deng2023chgnet" locator="Eq. (4)" />.
+        Because a moment reflects the number of unpaired <i>d</i> electrons, the features that later produce the energy are
+        forced to carry oxidation-state information — the “charge-informed” part of the name. It is a proxy, not a charge:
+        no electrostatic energy is computed and global neutrality is not enforced <Cite id="deng2023chgnet" locator="Sec. III" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The cost of angles: atom graph versus three-body graph in real crystals" labels={['live-calculation']} number={2} id="fig-angles" framed={false}>
+        <ThreeBodyGraph client:visible crystals={crystals} />
+        <Fragment slot="caption">
+          Drag the three-body cutoff. Each orange line joins the two outer atoms of one bond angle at the centre atom.
+          The dashed markers are CHGNet’s 3 Å bond graph and M3GNet’s 4 Å three-body cutoff; both keep the 5 Å atom graph
+          for two-body messages. In silicon, going from 3 to 5 Å multiplies bonds by 7 and angles by 63.
+        </Fragment>
+        <Assumptions slot="assumptions" items={graphAssumptions} />
+        <Fragment slot="source">Counts computed at build time from the Atlas structures (exact; checked in <code>three-body.test.ts</code>); cutoffs from <Cite id="chen2022m3gnet" locator="Sec. 7.1.2" /> and <Cite id="deng2023chgnet" locator="Methods V.2" />.</Fragment>
+      </Figure>
+    </div>
+
+    <div class="wide fig-wrap">
+      <Figure title="Why a magnetic moment can stand in for an oxidation state" labels={['theory', 'published-result']} number={3} id="fig-magmom" framed>
+        <svg class="magmom" viewBox="0 0 640 150" role="img" aria-label="Spin-only moments of high-spin manganese ions: Mn4+ (d3) 3 μB, Mn3+ (d4) 4 μB, Mn2+ (d5) 5 μB, with CHGNet's published 4.2 μB boundary between Mn3+ and Mn2+.">
+          <line x1="40" x2="600" y1="80" y2="80" class="ax" />
+          {[0, 1, 2, 3, 4, 5].map((m) => (
+            <g>
+              <line x1={40 + m * 112} x2={40 + m * 112} y1="76" y2="84" class="ax" />
+              <text x={40 + m * 112} y="104" text-anchor="middle" class="tk">{m} μB</text>
+            </g>
+          ))}
+          {[
+            { m: 3, ion: 'Mn⁴⁺', d: 'd³' },
+            { m: 4, ion: 'Mn³⁺', d: 'd⁴' },
+            { m: 5, ion: 'Mn²⁺', d: 'd⁵' },
+          ].map((x) => (
+            <g>
+              <circle cx={40 + x.m * 112} cy="80" r="7" class="ion" />
+              <text x={40 + x.m * 112} y="56" text-anchor="middle" class="lb">{x.ion}</text>
+              <text x={40 + x.m * 112} y="38" text-anchor="middle" class="tk">{x.d}, high spin</text>
+            </g>
+          ))}
+          <line x1={40 + 4.2 * 112} x2={40 + 4.2 * 112} y1="64" y2="96" class="cut" />
+          <text x={40 + 4.2 * 112} y="128" text-anchor="middle" class="tk">4.2 μB: CHGNet’s Mn³⁺/Mn²⁺ boundary</text>
+        </svg>
+        <Fragment slot="caption">
+          Spin-only moments (one Bohr magneton per unpaired electron) separate the common manganese oxidation states, so a
+          model trained to predict moments learns to tell them apart. The paper assigns Mn valences from predicted moments
+          in this way, with Mn⁴⁺/Mn³⁺ around 3–4 μB and a 4.2 μB threshold between Mn³⁺ and Mn²⁺
+          <Cite id="deng2023chgnet" locator="Sec. II.5; Methods V.5" />. Low-spin states, covalency and itinerant magnetism
+          break this simple picture.
+        </Fragment>
+        <Fragment slot="source">Spin-only values from the d-electron count (theory); thresholds from <Cite id="deng2023chgnet" locator="Methods V.5" />.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="n-int" checked />
+        <label for="n-int">Intuition</label>
+        <input type="radio" name="depth" id="n-tech" />
+        <label for="n-tech">Technical</label>
+        <input type="radio" name="depth" id="n-res" />
+        <label for="n-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            A pair potential knows only how far apart atoms are; chemistry also cares about angles — silicon wants
+            tetrahedra, water is bent. These models let every bond look at the other bonds around the same atom and
+            adjust itself according to the angle between them, the same idea as classical bond-order potentials. CHGNet
+            also learns each atom’s magnetic moment, which tells it, for example, whether a manganese ion is Mn³⁺ or Mn⁴⁺.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Both are invariant: inputs are distances and angles, outputs are scalars, so rotations change nothing and no
+            tensor algebra is needed. Three-body terms make each block at least three-body, rather than relying on depth as
+            SchNet does. Their price is the number of terms, <i>n</i>(<i>n</i> − 1)/2 per atom (Fig. 2), which is why both
+            models use a shorter cutoff for angles. M3GNet was trained on 187,687 ionic steps of Materials Project
+            relaxations <Cite id="chen2022m3gnet" locator="Sec. 2.2" />; CHGNet on MPtrj, about 1.58 million configurations
+            with 7.9 million magnetic moments <Cite id="deng2023chgnet" locator="Sec. II.2" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            M3GNet’s Eq. (1) is the bond-order idea of Tersoff written as a learnable layer
+            <Cite id="chen2022m3gnet" locator="Sec. 1" />; a sum over neighbours of products of radial and Legendre functions
+            is an invariant three-body expansion, related to the angular part of the
+            <a href="/models/behler-parrinello/">Behler–Parrinello</a> functions and of ACE. Higher body orders still come
+            only from depth, and invariant features cannot carry directions between blocks, which equivariant models
+            (<a href="/models/nequip/">NequIP</a>, <a href="/models/mace/">MACE</a>) do. CHGNet’s magnetic-moment head is a
+            training signal, not a charge model: the energy still has no explicit long-range electrostatics.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Both give energy, forces and stress, the latter two as derivatives of the energy, so forces are conservative
+        <Cite id="chen2022m3gnet" locator="Sec. 2" />. CHGNet also returns a magnetic moment per atom
+        <Cite id="deng2023chgnet" locator="Eq. (4)" />. Neither outputs charges, a Fermi level or anything electronic beyond
+        that moment.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Interactions beyond the receptive field and long-range electrostatics are
+        invisible (<a href="/physics-lab/beyond-the-cutoff/">P1</a>, <a href="/physics-lab/ewald/">P6</a>); angles count
+        only inside the short three-body cutoff, so a bond angle with one arm longer than 3 Å (CHGNet) or 4 Å (M3GNet) is
+        seen only through distances. A moment-based charge proxy fails where moments do not track charge — non-magnetic
+        ions such as Li⁺ or O²⁻, low-spin states.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> The released weights learned Materials Project PBE/PBE+U data from relaxations
+        near equilibrium. Their systematic softening of the potential energy surface is a property of those checkpoints and
+        their training data, documented in the <a href="/failures/pes-softening/">Failure Atlas</a>
+        <Cite id="deng2024softening" />; measured results are on <a href="/benchmarks/">Benchmarks</a>.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints on Matbench Discovery</h2>
+      <p>The M3GNet and CHGNet checkpoints submitted to Matbench Discovery (snapshot {snapshot.source.commit_date}); their results are on the <a href="/benchmarks/">Benchmarks</a> page.</p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Family</th><th>Training data</th><th>Parameters</th><th>Weights licence</th><th>Added</th></tr></thead>
+          <tbody>
+            {
+              checkpoints.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.family_dir === 'chgnet' ? 'CHGNet' : 'M3GNet'}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>{m.params ? `${(m.params / 1e3).toFixed(0)} k` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td>{m.added}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Parameter counts are the leaderboard’s, for the submitted version; they can differ from the papers’ figures
+        (CHGNet’s paper reports its model’s count separately). CHGNet 0.3.0 also runs on identical inputs beside three
+        other MPtrj checkpoints in the <a href="/observatory/">Observatory</a>.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/schnet/">SchNet</a> is the distance-only ancestor; DimeNet introduced angles into message passing
+        for molecules <Cite id="gasteiger2020dimenet" />. <a href="/models/mace/">MACE</a>-MP-0 was trained on the same MPtrj
+        data as CHGNet, which makes the pair a clean comparison of architectures.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>Papers: <Cite id="chen2022m3gnet" /> (M3GNet); <Cite id="deng2023chgnet" /> (CHGNet and MPtrj).</li>
+        <li>Code: <a href="https://github.com/materialsvirtuallab/matgl">MatGL</a> (M3GNet, BSD-3-Clause; the original TensorFlow <a href="https://github.com/materialsvirtuallab/m3gnet">m3gnet</a> repository is superseded); <a href="https://github.com/CederGroupHub/chgnet">chgnet</a> (BSD-style licence).</li>
+        <li>Training data: <a href="/data/">MPtrj on the Data page</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #n-int:checked ~ .depth-int,
+  #n-tech:checked ~ .depth-tech,
+  #n-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+  .magmom {
+    width: 100%;
+    max-width: 44rem;
+    display: block;
+    margin: 0 auto;
+  }
+  .magmom .ax {
+    stroke: var(--atlas-rule-strong);
+  }
+  .magmom .tk {
+    font: 12px var(--font-sans);
+    fill: var(--atlas-ink-muted);
+  }
+  .magmom .lb {
+    font: 600 15px var(--font-sans);
+    fill: var(--atlas-ink);
+  }
+  .magmom .ion {
+    fill: var(--atlas-arch);
+  }
+  .magmom .cut {
+    stroke: var(--atlas-caveat);
+    stroke-width: 2.5;
+  }
+</style>

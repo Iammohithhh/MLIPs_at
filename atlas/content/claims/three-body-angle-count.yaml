@@ -1,0 +1,7 @@
+statement: >-
+  An atom with n neighbours inside a three-body cutoff has n(n − 1)/2 bond angles, so the cost of explicit three-body
+  terms grows roughly as the square of the neighbour count: in diamond silicon, 4 bonds and 6 angles within 3 Å, 16
+  and 120 within 4 Å, 28 and 378 within 5 Å.
+grade: THEORY
+derivation: /models/m3gnet-chgnet/#fig-angles
+review: { status: draft, last_checked: 2026-10-16, notes: 'Counts checked in src/lib/models/three-body.test.ts.' }

@@ -1,0 +1,7 @@
+name: chgnet
+repo: https://github.com/CederGroupHub/chgnet
+language: Python
+framework: pytorch
+licence: BSD-3-Clause (LBNL variant)
+families: [chgnet]
+review: { status: draft, last_checked: 2026-10-16 }

@@ -1,0 +1,7 @@
+name: MatGL
+repo: https://github.com/materialsvirtuallab/matgl
+language: Python
+framework: pytorch
+licence: BSD-3-Clause
+families: [m3gnet]
+review: { status: draft, last_checked: 2026-10-16, notes: 'The original TensorFlow implementation (github.com/materialsvirtuallab/m3gnet, BSD-3-Clause) is superseded by MatGL.' }

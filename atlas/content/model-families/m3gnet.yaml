@@ -1,0 +1,15 @@
+name: M3GNet
+aliases: [Materials 3-body Graph Network]
+paradigms: [invariant-message-passing, foundation]
+introduced_in: chen2022m3gnet
+year: 2022
+summary: >-
+  Invariant message passing on atoms, bonds and a global state, in which every bond is first updated by a sum over
+  third atoms weighted by spherical Bessel functions of the distance and spherical harmonics of the bond angle.
+locality: { kind: message-passing, note: Atom graph 5 Å, three-body terms within 4 Å, three blocks. }
+symmetry: invariant
+body_order: Explicit three-body terms in every block.
+extends: [schnet]
+implementations: [matgl]
+claims: [m3gnet-three-body, m3gnet-hyperparameters]
+review: { status: draft, last_checked: 2026-10-16 }

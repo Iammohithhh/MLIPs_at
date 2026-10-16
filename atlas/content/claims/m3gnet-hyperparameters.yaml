@@ -1,0 +1,10 @@
+statement: >-
+  The published M3GNet uses a 5 Å graph cutoff, three-body interactions within 4 Å, three main blocks, 64-dimensional
+  features and 227,549 learnable weights, and was trained on the MPF.2021.2.8 data (187,687 ionic steps of 62,783
+  compounds from Materials Project relaxations).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: chen2022m3gnet, locator: 'Sec. 2.2; Sec. 7.1.2' }
+scope: { model_families: [m3gnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read from the arXiv HTML rendering (v2).' }
