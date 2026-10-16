@@ -13,6 +13,8 @@ import CleavageLab from '~/islands/CleavageLab';
 import MigrationLab from '~/islands/MigrationLab';
 import CleavageBenchmark from '~/islands/CleavageBenchmark';
 import cleavageData from '~/data/benchmarks/cleavage-mehdizadeh2025.json';
+import CatalysisHeatmap from '~/islands/CatalysisHeatmap';
+import catalysisData from '~/data/benchmarks/catalysis-kempen2025.json';
 import Assumptions from '~/components/Assumptions.astro';
 import NonConservativeLab from '~/islands/NonConservativeLab';
 import { ObservatoryTests } from '~/islands/ObservatoryScans';
@@ -54,6 +56,7 @@ const scenes: Record<string, unknown> = {
 };
 const hasScene = id in scenes;
 const cleavageRetrieved = cleavageData.source.retrieved;
+const catalysisRetrieved = catalysisData.source.retrieved;
 // Experiment vs DFT: every number below is computed from the snapshot and Tran et al. Table II by reference-gap.ts.
 const uniff = uniffData as unknown as { source: { commit: string; commit_date: string; retrieved: string; repository: string }; models: UniffModel[] };
 const uniffSeries: UniffSeries[] = uniff.models.map((m) => ({
@@ -320,6 +323,33 @@ const latTol = 100 * latticeFromDensity(-0.025);
             />
             <Fragment slot="source">
               <Cite id="mehdizadeh2025cleavage" locator="Tables 1–2, Sec. 3.3" />; snapshotted by the Atlas pipeline from arXiv:2508.21663v1 (retrieved {cleavageRetrieved}).
+            </Fragment>
+          </Figure>
+        </div>
+      )
+    }
+
+    {
+      id === 'catalysis' && (
+        <div class="wide fig-wrap">
+          <Figure title="Eighty models, fourteen tasks, a different winner each time" labels={['published-result']} number={1} id="fig-catalysis" framed={false}>
+            <CatalysisHeatmap client:visible />
+            <Fragment slot="caption">
+              Each cell is one model’s rank within one task, from lowest RMSE (teal) to highest (red); the outlined cell in each
+              column is that task’s best model. Click a column to sort the rows by that task. Ranks are never averaged across
+              tasks: each column is its own comparison.
+            </Fragment>
+            <Assumptions
+              slot="assumptions"
+              items={[
+                { term: 'Protocol', value: 'Zero-shot single points on DFT-relaxed geometries, except “Formate ads., relaxed”, where each model relaxes 10% of the structures into its own minimum. Gas-phase references corrected as in the paper’s Sec. 2.4.' },
+                { term: 'References', value: 'Each data set keeps its own DFT functional and settings (PBE, PBE+U, …), which may differ from the models’ training data.' },
+                { term: 'Rows', value: '80 foundation potentials, labelled by family, variant and training set as in Table S1; the paper’s task-specific baselines are not shown here.' },
+                { term: 'Colour', value: 'Rank percentile within the column, so a teal cell means relatively good, not good in absolute terms; hover a cell for its RMSE and maximum error in eV.' },
+              ]}
+            />
+            <Fragment slot="source">
+              <Cite id="kempen2025catalysis" locator="Tables S2–S15, Fig. 2" />; snapshotted by the Atlas pipeline from arXiv:2512.16702v1 (retrieved {catalysisRetrieved}).
             </Fragment>
           </Figure>
         </div>

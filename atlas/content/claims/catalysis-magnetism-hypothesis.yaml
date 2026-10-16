@@ -1,0 +1,9 @@
+statement: >-
+  The large errors on Co- and Ni-containing surfaces may come from these metals being magnetic combined with how spin
+  polarisation was treated when the training data sets were prepared; models that use magnetic moments or spin as an
+  explicit input (CHGNet, AQCat) are less affected.
+grade: HYPOTHESIS
+sources:
+  - { paper: kempen2025catalysis, locator: 'arXiv v1 Sec. 3.2 ("We hypothesize that…")' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

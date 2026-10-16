@@ -3299,6 +3299,46 @@
    ]
   }
  },
+ "kempen2025catalysis": {
+  "arxiv": {
+   "authors": [
+    "Luuk H. E. Kempen",
+    "Raffaele Cheula",
+    "Mie Andersen"
+   ],
+   "id": "2512.16702v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-12-18",
+   "title": "How accurate are foundational machine learning interatomic potentials for heterogeneous catalysis?",
+   "updated": "2025-12-18"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kempen, L. H. E.' vs fetched ['kempen']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 2,
+   "id": "W4417530988",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "levine2025omol25": {
   "arxiv": {
    "authors": [

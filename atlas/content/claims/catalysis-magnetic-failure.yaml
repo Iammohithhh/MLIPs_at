@@ -1,0 +1,10 @@
+statement: >-
+  On reaction intermediates and transition states over metal and single-atom-alloy surfaces, many foundation potentials
+  fail catastrophically, with RMSEs above 3 eV and maximum errors above 15 eV (approaching 100 eV in the worst cases),
+  concentrated on C- and O-containing adsorbates on Co- and Ni-containing surfaces; models trained on OMat24, Alex or
+  OAM are affected most and models trained on OC20, OC22 or OC25 least.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kempen2025catalysis, locator: 'arXiv v1 Sec. 3.2, Fig. 3 and Figs. S8, S15–S16; Tables S9–S10' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

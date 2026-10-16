@@ -1,0 +1,18 @@
+title: 'Heterogeneous catalysis: no model is best everywhere'
+claim: catalysis-no-universal-best
+grade: PUBLISHED_RESULT
+evidence: [catalysis-no-universal-best, catalysis-magnetic-failure, catalysis-relaxation-error, catalysis-scaling-relations]
+mechanisms:
+  - { description: 'Spin polarisation of magnetic metals (Co, Ni) may be treated inconsistently between training sets and catalysis references, so adsorbates on those surfaces fall outside what a model learned.', grade: HYPOTHESIS, claim: catalysis-magnetism-hypothesis }
+  - { description: 'Training sets differ in what they contain — bulk and oxides (OMat24, Alex), or adsorbates on surfaces (Open Catalyst) — so each is closest to a different catalysis task.', grade: HYPOTHESIS }
+diagnostics:
+  - 'Benchmark candidate models on a small DFT set for the exact property you need: the ranking changes between adsorption, reaction and activation energies even on the same surfaces.'
+  - 'Report the maximum error, not only the RMSE; catastrophic outliers on magnetic surfaces dominate some data sets.'
+  - 'Evaluate after relaxing with the model, not only on DFT geometries.'
+responses:
+  - { description: 'Use foundation potentials for screening and refine the shortlisted candidates with DFT.' }
+  - { description: 'Where a reaction family is well sampled, a task-specific model (scaling relations, GPR) can be more accurate than a zero-shot foundation model.', claim: catalysis-scaling-relations }
+open_questions:
+  - 'Do spin-aware architectures trained on OMat24-scale data remove the failures on magnetic surfaces?'
+  - 'How much of the remaining error is the difference between the functionals and settings of the training data and of each catalysis data set?'
+review: { status: draft, last_checked: 2026-10-16 }

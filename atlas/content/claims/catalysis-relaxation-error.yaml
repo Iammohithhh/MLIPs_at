@@ -1,0 +1,9 @@
+statement: >-
+  Relaxing adsorbed formate on metal-supported oxide nanoclusters into each potential's own local minimum increases the
+  adsorption-energy error for all models compared with evaluating DFT-relaxed geometries (1.6× for eSEN-30M-OAM), and the
+  RMSE does not fall below about 0.18 eV for any model after relaxation.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kempen2025catalysis, locator: 'arXiv v1 Sec. 3.4, Fig. 5 and Fig. S12; Tables S12–S13' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

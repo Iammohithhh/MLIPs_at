@@ -1,0 +1,12 @@
+title: How accurate are foundational machine learning interatomic potentials for heterogeneous catalysis?
+topic: benchmarks-failures
+authors:
+  - 'Kempen, L. H. E.'
+  - 'Cheula, R.'
+  - 'Andersen, M.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2512.16702'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 HTML. 80 MLIPs zero-shot on 13 properties from 6 data sets; DFT-relaxed geometries unless stated. SI Tables S2–S15 snapshotted by pipeline/atlas_pipeline/catalysis.py.' }

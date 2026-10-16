@@ -1,0 +1,9 @@
+statement: >-
+  For transition-state formation energies of CO₂ hydrogenation steps on doped ZrO₂(101), linear scaling relations fitted
+  to that data set are about three times as accurate as the best zero-shot foundation potential, although each relation
+  covers only one reaction step and its error is a training error.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kempen2025catalysis, locator: 'arXiv v1 Sec. 3.5 and Fig. 2b' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

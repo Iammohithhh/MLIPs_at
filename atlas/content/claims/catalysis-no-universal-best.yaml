@@ -1,0 +1,10 @@
+statement: >-
+  Evaluated zero-shot on 13 catalysis properties from 6 data sets (perovskite oxide vacancies, reactions on doped ZrO₂
+  and on metals and single-atom alloys, metal–oxide interfaces), no single one of 80 foundation potentials is best: the
+  best model changes between data sets and between properties within the same data set. The best models reach RMSEs of
+  roughly 0.1–0.3 eV on energy differences.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kempen2025catalysis, locator: 'arXiv v1 Sec. 4 (Discussion), Sec. 3.1 and Fig. 2; per-model results Tables S2–S15' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

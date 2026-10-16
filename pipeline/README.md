@@ -90,3 +90,14 @@ tables' model lists do not match:
 curl -sL https://arxiv.org/html/2508.21663v1 -o cleavage.html
 ../.venv/bin/python -m atlas_pipeline.cleavage cleavage.html ../atlas/src/data/benchmarks/cleavage-mehdizadeh2025.json
 ```
+
+### Catalysis error tables
+
+`catalysis.py` parses Supplementary Tables S2–S15 of Kempen, Cheula & Andersen (arXiv:2512.16702v1) — the RMSE and
+maximum error of 80 foundation potentials (and the paper's task-specific baselines) for 14 catalysis target properties —
+into `atlas/src/data/benchmarks/catalysis-kempen2025.json`, expanding row spans and failing unless all 14 tables parse:
+
+```bash
+curl -sL https://arxiv.org/html/2512.16702v1 -o catalysis.html
+../.venv/bin/python -m atlas_pipeline.catalysis catalysis.html ../atlas/src/data/benchmarks/catalysis-kempen2025.json
+```
