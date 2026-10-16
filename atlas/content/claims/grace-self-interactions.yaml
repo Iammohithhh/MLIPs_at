@@ -1,0 +1,12 @@
+statement: >-
+  Graph ACE's cluster functions are defined with pairwise different atoms, but local ACE may sum without that
+  restriction because the resulting self-interactions can be absorbed by renormalising lower body-order coefficients,
+  which enables efficient implementations. The recursive GRACE evaluation also includes self-interactions; for four-atom
+  Si clusters, models with self-interacting basis functions of more edges than the cluster has bonds keep lowering the
+  test error.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bochkarev2024grace, locator: 'arXiv v2, Secs. IV.2, VI.5 (after Eq. 76) and IX.1; Fig. 10' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The exact split of a product-basis invariant into distinct-neighbour and repeated-neighbour sums is derived and computed on the GRACE page (Fig. 2; tested in src/lib/models/grace.test.ts).' }

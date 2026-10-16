@@ -1,0 +1,10 @@
+statement: >-
+  Fine-tuning GRACE-2L-OAM on a hydrogen-combustion dataset with all weights trainable caused catastrophic forgetting on
+  the original sAlex data for all elements, while training only the ACE expansion coefficients (which depend on the
+  central atom's species) left predictions unchanged for structures without H or O and raised errors much less.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Sec. II.5.2; Fig. 9' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

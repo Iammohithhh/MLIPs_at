@@ -1,0 +1,82 @@
+/* GRACE page figures: topology picker (Fig. 1) and the self-interaction bar (Fig. 2). */
+
+.grace-topos {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 1rem 1.1rem;
+  min-width: 0;
+}
+.grace-topos-head {
+  margin: 0 0 0.3rem;
+  font: 0.8125rem/1.45 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.grace-topos button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.4rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.55rem;
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  text-align: left;
+  cursor: pointer;
+}
+.grace-topos button.is-star {
+  background: var(--atlas-canvas);
+}
+.grace-topos button[aria-pressed='true'] {
+  border-color: var(--atlas-fail);
+  box-shadow: inset 0 0 0 1px var(--atlas-fail);
+}
+.grace-topos button:focus-visible {
+  outline: 2px solid var(--atlas-arch);
+  outline-offset: 2px;
+}
+.grace-topo-label {
+  font: 600 0.9rem var(--font-sans);
+}
+.grace-topo-label small {
+  display: block;
+  font: 400 0.75rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.grace-topo-count {
+  font: 600 0.9rem var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.grace-bar {
+  display: flex;
+  height: 1.6rem;
+  border-radius: 0.35rem;
+  overflow: hidden;
+  border: 1px solid var(--atlas-rule);
+  background: var(--atlas-canvas);
+}
+.grace-bar span {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+}
+.grace-split {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  align-content: start;
+  min-width: 0;
+}
+.grace-split h4 {
+  margin: 0;
+  font: 600 0.8rem var(--font-sans);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-muted);
+}
+.grace-split .lab-table td:first-child {
+  text-align: left;
+  white-space: normal;
+}

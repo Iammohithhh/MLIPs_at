@@ -1,0 +1,10 @@
+statement: >-
+  Because one-layer GRACE models are local, they can be parallelised by spatial domain decomposition in LAMMPS; the
+  authors report that one A100-80GB GPU holds 78,000–215,000 atoms for one-layer and 20,000–55,000 atoms for two-layer
+  models, depending on the system.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Sec. II.4; Fig. 7' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'gracemaker docs (commit 4729845) add that the deprecated small GRACE-2L-OMAT and GRACE-2L-OAM cannot be split over several MPI ranks; the other 2L and 3L models can.' }

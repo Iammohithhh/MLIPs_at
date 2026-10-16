@@ -1,0 +1,11 @@
+statement: >-
+  Decomposing the species indices of the expansion coefficients moves all chemistry into species-dependent radial
+  functions R^(t)_{μ_j n l}(r), so the number of expansion coefficients no longer grows combinatorially with the number of
+  elements; the foundation models embed the 89 elements into a 128-dimensional space.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bochkarev2024grace, locator: 'arXiv v2, Sec. VI.2; Eqs. (51)–(57)' }
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Supplementary X.1; Table S1' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

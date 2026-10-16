@@ -1,0 +1,536 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import GraceGraphs, { type CrystalInput } from '~/islands/GraceGraphs';
+import GraceDensity from '~/islands/GraceDensity';
+import cu from '~/data/structures/cu-fcc.json';
+import si from '~/data/structures/si-diamond.json';
+import zno from '~/data/structures/zno-wurtzite.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { shellAround } from '~/lib/models/three-body';
+import { GRACE_RCUT, TOPOLOGIES, buildCluster, countEmbeddings, reach, type Vec3 } from '~/lib/models/grace';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const crystals: CrystalInput[] = [
+  { id: 'si', name: 'Si (diamond)', structure: si as unknown as Structure },
+  { id: 'zno', name: 'ZnO (wurtzite)', structure: zno as unknown as Structure },
+  { id: 'cu', name: 'Cu (fcc)', structure: cu as unknown as Structure },
+];
+
+// Build-time table: graphs per root atom and reach at GRACE's 6 Å cutoff (same module as Fig. 1).
+const table = crystals.map(({ name, structure }) => {
+  const ball: Vec3[] = [[0, 0, 0], ...shellAround(structure, 3 * GRACE_RCUT + 0.2).map((n) => n.p as Vec3)];
+  const c = buildCluster(ball, GRACE_RCUT);
+  const count = (id: string) => countEmbeddings(c, TOPOLOGIES.find((t) => t.id === id)!, GRACE_RCUT);
+  return { name, n: count('1'), star: count('111'), trees: count('112') + count('122') + count('123'), r: [1, 2, 3].map((T) => reach(c, GRACE_RCUT, T)) };
+});
+
+// Fig. 2: a Si atom's neighbours inside 6 Å.
+const siEnv = shellAround(si as unknown as Structure, GRACE_RCUT).map((n) => n.p as Vec3);
+
+const ck = (await getEntry('checkpoints', 'grace-2l-omat-large-ft-am'))!.data as Checkpoint;
+const board = snapshot.models.filter((m) => m.family_dir === 'grace');
+
+const graphAssumptions = [
+  { term: 'Structures', value: 'Perfect crystals from ASE as used across the Atlas: diamond Si (a = 5.431 Å), wurtzite ZnO (a = 3.25 Å, c = 5.21 Å, u = 0.382), fcc Cu (a = 3.615 Å). The root is atom 0; every periodic image within 18.2 Å is included, enough for chains of three 6 Å edges.' },
+  { term: 'Edges', value: 'An edge i → j exists when r_ij < r_cut, because the single-particle functions φ(r_ij) vanish beyond the cutoff (Sec. II.4.3). Species are ignored; in GRACE they enter through the radial functions.' },
+  { term: 'Counting', value: 'A graph is a set of distinct atoms with a given rooted tree connecting them; ordered placements are divided by the tree’s symmetries. Repeated atoms (self-interactions) are not counted. Each graph carries many basis functions (one per choice of n, l, m on every edge), so these are not basis-function counts.' },
+  { term: 'Layers', value: 'A T-layer GRACE evaluates trees of depth ≤ T (dandelion recursion, Sec. VII). The foundation models have one, two or three layers.' },
+];
+const densityAssumptions = [
+  { term: 'Environment', value: 'The Si atom of diamond Si and its neighbours inside 6 Å (46 atoms), each displaced by Gaussian noise σ per component (fixed seed). Only neighbours inside the chosen r_cut enter.' },
+  { term: 'Radial functions', value: 'gracemaker’s “Cheb” basis without its MLP: g_n(r) = T_n(2r/r_cut − 1) × (1 − 21x⁵ + 35x⁶ − 15x⁷), x = r/r_cut, n = 1 … 4. Real orthonormal spherical harmonics up to l = 6.' },
+  { term: 'Invariants', value: 'ν = 2: the sum over m of A(n₁, l, m) A(n₂, l, m). ν = 3: the sum over m₁, m₂, m₃ of G(l₁m₁, l₂m₂, l₃m₃) A A A, with real Gaunt coefficients G computed by exact quadrature. One invariant at a time; a fitted model sums thousands with learned weights.' },
+  { term: 'Work', value: 'Multiply–adds counted as N^ν tuples for the explicit sum and N × 4 × 49 for the atomic base. Not timings.' },
+];
+---
+
+<BaseLayout
+  title="GRACE"
+  description="GRACE, the graph atomic cluster expansion: ACE's complete many-body basis extended from stars to trees, evaluated layer by layer. Stars and trees counted in real crystals, the density trick and its self-interactions computed live, foundation checkpoints and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">GRACE</h1>
+      <p class="lede">
+        The atomic cluster expansion (ACE) describes an atom’s energy with a complete basis of many-body functions of its
+        neighbours <Cite id="drautz2019ace" />. GRACE, the graph ACE, keeps that basis but lets its clusters be trees rather
+        than stars, so a four-atom function can follow a chain of bonds instead of radiating from one atom. Simplifying the tree
+        expansion by tensor decomposition turns it into a layer-by-layer recursion of local ACEs, which the authors show
+        contains equivariant message passing as a special case <Cite id="bochkarev2024grace" locator="Abstract; Secs. VI–VIII" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exact: invariants coupled from Y<sub>lm</sub> with Clebsch–Gordan coefficients</dd></div>
+        <div><dt>Locality</dt><dd>1L: strictly local, 6 Å; T layers: trees of depth T</dd></div>
+        <div><dt>Messages</dt><dd>Local ACE on each layer (product order 4 in the foundation models)</dd></div>
+        <div><dt>Forces</dt><dd>Conservative: −∂E/∂r</dd></div>
+        <div><dt>Introduced</dt><dd>Phys. Rev. X 2024; foundation models npj Comput. Mater. 2026</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/ICAMS/grace-tensorpotential">gracemaker</a> (TensorFlow; Academic Software Licence)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="ace-h">
+      <h2 id="ace-h" class="h-section">From ACE’s stars …</h2>
+      <p>
+        ACE attaches single-particle functions to each bond, a radial function times a spherical harmonic, and sums them over
+        the neighbours into an <em>atomic base</em> <Cite id="bochkarev2024grace" locator="Eqs. (15), (31), (53)" />:
+      </p>
+      <Math display number="1" tex={String.raw`A_{i,nlm} = \sum_{j} \phi_{i,nlm}(\mathbf r_j) = \sum_{j} R_{\mu_j nl}(r_{ij})\, Y_{lm}(\hat{\mathbf r}_{ij})`} />
+      <p>
+        Many-body functions are then products of atomic bases, coupled to rotational invariants (or to any other irreducible
+        representation for vector and tensor outputs). For ν factors, with generalised Clebsch–Gordan coefficients
+        <i>C</i> <Cite id="drautz2019ace" />,
+      </p>
+      <Math display number="2" tex={String.raw`B_{i,\boldsymbol{nl}} = \sum_{\boldsymbol m} C^{\boldsymbol l}_{\boldsymbol m} \prod_{t=1}^{\nu} A_{i,n_t l_t m_t}, \qquad E_i = \sum_{\nu} \sum_{\boldsymbol{nl}} c_{\boldsymbol{nl}}\, B_{i,\boldsymbol{nl}}`} />
+      <p>
+        A product of ν single sums is a sum over ν-tuples of neighbours, so Eq. (2) is a (ν + 1)-body function, yet the
+        neighbours are visited only once, in Eq. (1), whatever ν is (Fig. 2). ACE’s cost therefore grows linearly with the
+        number of basis functions, irrespective of body order <Cite id="bochkarev2024grace" locator="Sec. I" />. Every such
+        cluster is a <em>star</em>: all its edges leave atom <i>i</i>. Two of its atoms can therefore be at most twice the
+        cutoff apart <Cite id="bochkarev2024grace" locator="Sec. IV.1" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="tree-h">
+      <h2 id="tree-h" class="h-section">… to trees</h2>
+      <p>
+        Graph ACE starts from the whole system rather than from one atom. Any set of <i>n</i> − 1 bond vectors that fixes <i>n</i>
+        positions up to a translation gives a complete basis, and the admissible ones are trees: connected, acyclic, every edge
+        shorter than the cutoff, at most one edge entering each atom. Assigning each tree to its root node gives atomic bases
+        that follow chains of bonds <Cite id="bochkarev2024grace" locator="Secs. II.1–II.6; Eqs. (54)–(55)" />:
+      </p>
+      <Math display number="3" tex={String.raw`A^{(12)}_{i,v_1v_2} = \sum_{j_1 j_2} \phi^{(1)}_{i v_1}(\mathbf r_{j_1})\, \phi^{(2)}_{j_1 v_2}(\mathbf r_{j_2}), \qquad A^{(123)}_{i,v_1v_2v_3} = \sum_{j_1 j_2 j_3} \phi^{(1)}_{i v_1}(\mathbf r_{j_1})\, \phi^{(2)}_{j_1 v_2}(\mathbf r_{j_2})\, \phi^{(3)}_{j_2 v_3}(\mathbf r_{j_3})`} />
+      <p>
+        The labels list each node’s distance from the root: (111) is the four-atom star, (123) a chain of three edges. Stars
+        and trees agree up to three-body functions and differ from four bodies on. The authors argue that a tree’s wide
+        angles and similar edge lengths make it more sensitive to small displacements than a star with narrow opening angles on
+        the same atoms. In their four-atom Si test the (123) tree was more accurate than the (111) star
+        <Cite id="bochkarev2024grace" locator="Secs. IV, IV.1, IX.1; Figs. 5, 10" />. Figure 1 counts both kinds of graph in real
+        crystals.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Stars and trees around one atom" labels={['live-calculation']} number={1} id="fig-graphs" framed={false}>
+        <GraceGraphs client:visible crystals={crystals} />
+        <Fragment slot="caption">
+          Every cluster graph of a given shape that fits on the root atom, counted exactly. With a first-neighbour cutoff a star
+          sees only the four bonds of Si or ZnO, while in Si a three-edge chain already reaches 40 atoms and almost 6 Å. Raise the cutoff
+          to GRACE’s 6 Å and a single root carries tens of thousands of four-atom stars and hundreds of thousands of trees. The
+          colours show how many edges each atom is from the root, the layers a GRACE model needs to reach it.
+        </Fragment>
+        <Assumptions slot="assumptions" items={graphAssumptions} />
+        <Fragment slot="source">Graph rules from <Cite id="bochkarev2024grace" locator="Secs. II.4–II.5, IV, VII" />. Counted in your browser by the tested module <code>src/lib/models/grace.ts</code> (closed-form checks in <code>grace.test.ts</code>).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="count-h">
+      <h3 id="count-h" class="h-sub">At GRACE’s 6 Å cutoff</h3>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Structure</th><th>Neighbours</th><th>4-atom stars (111)</th><th>4-atom trees (112), (122), (123)</th><th>Atoms within 1 / 2 / 3 edges</th><th>Farthest, 1 / 2 / 3 edges</th></tr></thead>
+          <tbody>
+            {
+              table.map((t) => (
+                <tr>
+                  <td>{t.name}</td>
+                  <td>{t.n}</td>
+                  <td>{t.star.toLocaleString('en')}</td>
+                  <td>{t.trees.toLocaleString('en')}</td>
+                  <td>{t.r.map((x) => x.atoms.toLocaleString('en')).join(' / ')}</td>
+                  <td>{t.r.map((x) => x.rmax.toFixed(1)).join(' / ')} Å</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Computed at build time by the same module as Fig. 1; one root atom, no repeated atoms. Such counts are why no model
+        enumerates graphs. The recursion below sums over all of them, and over the self-interacting graphs too, in a few passes
+        over the neighbour list.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="rec-h">
+      <h2 id="rec-h" class="h-section">Tensor decomposition, chemistry and layers</h2>
+      <p>
+        Two simplifications make the tree basis practical. First, the species indices of the expansion coefficients are
+        decomposed, which moves all chemistry into radial functions that depend on the neighbour’s species. The number of
+        coefficients then no longer explodes combinatorially with the number of elements
+        <Cite id="bochkarev2024grace" locator="Sec. VI.2; Eqs. (51)–(52)" />:
+      </p>
+      <Math display number="4" tex={String.raw`R^{(t)}_{\mu_j k n l}(r_{ji}) = \sum_{\kappa} w^{(t)}_{k\kappa}\, \chi_{j\kappa}(\mu_j)\, R_{nl}(r_{ji})`} />
+      <p>
+        For 89 elements, species-resolved four-body coefficients alone would number on the order of 10<sup>8</sup>
+        <Cite id="lysogorskiy2026grace" locator="Sec. I" />, since 89<sup>4</sup> ≈ 6.3 × 10<sup>7</sup> ordered species
+        tuples. The foundation models instead embed each element as a 128-dimensional vector
+        <Cite id="lysogorskiy2026grace" locator="Table S1" />. Second, each tree’s coefficient is written as a product of star
+        coefficients sharing a channel index <i>k</i>, so a tree and all its subtrees can be evaluated together, from the
+        outermost layer inwards <Cite id="bochkarev2024grace" locator="Secs. VI.3–VI.5, VII.1; Eqs. (59), (85)–(86), (81)" />:
+      </p>
+      <Math display number="5" tex={String.raw`\varphi^{(t)}_{jk} = c^{(t,0)}_{k} + \sum_{v} c^{(t,1)}_{kv} A^{(t+1)}_{jv} + \sum_{v_1 v_2} c^{(t,2)}_{k v_1 v_2} A^{(t+1)}_{j v_1} A^{(t+1)}_{j v_2} + \dots`} />
+      <Math display number="6" tex={String.raw`A^{(t)}_{ikv} = \sum_{j} \phi^{(t)}_{iv}(\mathbf r_j)\, \varphi^{(t)}_{jk}, \qquad E_i = \sum_{k} \lambda^{(\mu_i)}_{k}\, \varphi^{(0)}_{ik}`} />
+      <p>
+        Eq. (5) is a local ACE on atom <i>j</i>; Eq. (6) passes its output to <i>j</i>’s neighbours as a weight on their
+        bonds, which is a message. Starting with plain atomic bases (Eq. 1) in the outermost layer <i>T</i> and iterating down
+        to <i>t</i> = 0 evaluates every tree of depth ≤ <i>T</i>. The authors identify multi-layer ACE, NequIP, Allegro and
+        MACE as particular choices within this scheme <Cite id="bochkarev2024grace" locator="Secs. VII, VIII" />.
+      </p>
+      <ol class="flow" aria-label="One GRACE layer">
+        <li><span>basis</span> R<sub>μnl</sub>(r) Y<sub>lm</sub>(r̂) on every bond</li>
+        <li class="key"><span>atomic base</span> sum over neighbours, weighted by their messages</li>
+        <li><span>products</span> couple to order 4 with Clebsch–Gordan coefficients</li>
+        <li><span>message</span> linear combinations, passed to the next layer</li>
+      </ol>
+      <p>
+        In the foundation models the radial functions are Chebyshev polynomials of 2<i>r</i>/<i>r</i><sub>cut</sub> − 1
+        times a smooth cutoff, passed through an MLP, with <i>l</i> ≤ 4 and product order 4 on each layer. In two-layer models
+        the first layer’s equivariant functions are combined into atomic representations that carry geometry out to
+        2<i>r</i><sub>cut</sub> and seed a second ACE evaluation. All invariants of both layers are combined into a set of
+        densities, and the atomic energy is the first density plus an MLP of the others
+        <Cite id="lysogorskiy2026grace" locator="Supplementary X.1; Fig. S1" />. The radial basis is gracemaker’s
+        <code>ChebSqrRadialBasisFunction</code> with a fifth-order polynomial cutoff (<code>tensorpotential/functions/radial.py</code>).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="self-h">
+      <h2 id="self-h" class="h-section">The density trick and its self-interactions</h2>
+      <p>
+        The products in Eq. (2) and the recursion in Eqs. (5)–(6) sum over neighbours <em>without</em> requiring them to be
+        different. A product of two atomic bases therefore contains terms in which <i>j</i><sub>1</sub> = <i>j</i><sub>2</sub>:
+        an atom paired with itself. In local ACE these self-interactions are harmless, because they are lower body-order
+        functions that the lower-order coefficients can absorb. Graph ACE’s formal basis excludes them, but its efficient
+        recursive evaluation includes them, and the authors find that they add useful flexibility
+        <Cite id="bochkarev2024grace" locator="Secs. IV.2, VI.5, IX.1" />.
+      </p>
+      <Callout kind="derivation" title="Where the self-interaction goes for ν = 2">
+        <p id="self-derivation">
+          Write <i>g</i><sub><i>n</i></sub>(<i>r</i>) for the radial part. Splitting the double sum and using the addition
+          theorem Σ<sub><i>m</i></sub> <i>Y</i><sub><i>lm</i></sub>(r̂)<sup>2</sup> = (2<i>l</i> + 1)/4π for the diagonal,
+        </p>
+        <Math display tex={String.raw`\sum_{m} A_{i,n_1 lm} A_{i,n_2 lm} = \underbrace{\sum_{j \ne k} g_{n_1}(r_{ij})\, g_{n_2}(r_{ik}) \tfrac{2l+1}{4\pi} P_l(\cos\theta_{jik})}_{\text{three-body}} \;+\; \underbrace{\tfrac{2l+1}{4\pi} \sum_{j} g_{n_1}(r_{ij})\, g_{n_2}(r_{ij})}_{\text{two-body}}`} />
+        <p>
+          The second term is a function of bond lengths only, a two-body term, so a linear model with a complete two-body
+          basis reproduces any fit with or without it. For ν = 3 the same split gives a four-body term, three-body terms with
+          one neighbour repeated and a two-body term. Figure 2 computes all of them for a real environment, and
+          <code>grace.test.ts</code> checks that they add up to the product exactly.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="One pass over the neighbours, every body order" labels={['toy-model', 'live-calculation']} number={2} id="fig-density" framed={false}>
+        <GraceDensity client:visible neighbours={siEnv} />
+        <Fragment slot="caption">
+          Left: the neighbours of a Si atom projected on one radial channel and spherical harmonics up to the chosen degree, the
+          density whose coefficients form the atomic base A. Right: one invariant computed as a product of atomic bases and as an
+          explicit sum over neighbour tuples, split by how many neighbours repeat. The two agree exactly, and the explicit sum
+          costs N<sup>ν</sup> terms. Scrambling bond angles shows that the repeated-neighbour parts are lower-order functions.
+        </Fragment>
+        <Assumptions slot="assumptions" items={densityAssumptions} />
+        <Fragment slot="source">Atomic base and self-interactions as in <Cite id="bochkarev2024grace" locator="Eqs. (53)–(56); Sec. IV.2" />; radial basis from gracemaker (commit 4729845). Computed in your browser by <code>src/lib/models/grace.ts</code>; the identities quoted are tested in <code>grace.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="g-int" checked />
+        <label for="g-int">Intuition</label>
+        <input type="radio" name="depth" id="g-tech" />
+        <label for="g-tech">Technical</label>
+        <input type="radio" name="depth" id="g-res" />
+        <label for="g-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            ACE describes an atom by the shape of the cloud of neighbours around it, broken into simple angular patterns, and
+            builds every many-body feature by multiplying those patterns together. GRACE also lets a feature follow a path,
+            from an atom to a neighbour to that neighbour’s neighbour, and evaluates all such paths by repeating the ACE step
+            once per layer. A one-layer model only ever sees 6 Å around each atom; each extra layer extends the view by one more
+            hop.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Eq. (1) is a projection of the neighbour density onto a complete single-particle basis; Eq. (2) spans the
+            symmetric polynomials of that density, so local ACE is complete for each atom’s environment
+            <Cite id="bochkarev2024grace" locator="Sec. IV.1" />. Exact equivariance comes from coupling with Clebsch–Gordan
+            coefficients. Graph ACE builds on all admissible configurations at once and is therefore overcomplete, which leaves
+            freedom to choose sensitive functions <Cite id="bochkarev2024grace" locator="Secs. II.3, IV.1" />. The recursion of
+            Eqs. (5)–(6) costs time linear in the number of neighbours and in the number of layers
+            <Cite id="bochkarev2024grace" locator="Abstract; App. E" />. Forces and stress are energy derivatives, so the
+            potential is conservative.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            GRACE gives message passing a basis-set reading. A message is a local ACE on the sending atom (Eq. 5); depth and
+            body order per layer are two routes to the same trees. In the four-atom Si test, models with six edges improved
+            on local ACE whether they used two or three layers, and the authors read this as the reason why
+            <a href="/models/mace/">MACE</a> works with two layers of many-body messages while
+            <a href="/models/nequip/">NequIP</a> and <a href="/models/allegro/">Allegro</a> need more
+            <Cite id="bochkarev2024grace" locator="Sec. IX.1" />. Self-interactions, often treated as an artefact to remove,
+            become extra degrees of freedom. A complete basis also has practical uses: current gracemaker releases compute an
+            extrapolation grade per atom, and frozen-basis fine-tuning that only retrains expansion coefficients limits
+            catastrophic forgetting <Cite id="lysogorskiy2026grace" locator="Sec. II.5.2; Fig. 9" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and stress as its derivatives <Cite id="lysogorskiy2026grace" locator="Supplementary X.1" />. ACE’s
+        basis can also represent vectorial and tensorial properties and depend on magnetic moments or charges
+        <Cite id="bochkarev2024grace" locator="Sec. I" />, but the foundation checkpoints predict energies only. Current
+        gracemaker releases can also return a per-atom extrapolation grade γ (γ ≤ 1 means an environment similar to the
+        training data), switched off by default because it slows the calculator (gracemaker <code>docs/gracemaker/foundation.md</code>).
+        There is no electrostatic or other long-range term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Interactions end at <i>T</i> × <i>r</i><sub>cut</sub> along bonds and at
+        <i>r</i><sub>cut</sub> for GRACE-1L and GRACE-FS. Coulomb tails, image charges and LO–TO splitting are outside any finite
+        cutoff (<a href="/physics-lab/ewald/">P6</a>; <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>). Graph
+        reach also depends on bonding: in a sparse network such as diamond Si, three layers of 2.6 Å edges reach only 40 atoms
+        (Fig. 1). Multi-layer models are harder to parallelise: one-layer models split into spatial domains in LAMMPS, while the
+        deprecated small two-layer checkpoints cannot be split over MPI ranks at all
+        <Cite id="lysogorskiy2026grace" locator="Sec. II.4" /> (gracemaker <code>foundation.md</code>).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> The foundation models learned bulk PBE/PBE+U data. OMat24’s DFT settings differ from
+        those of MPtrj and Alexandria, which is why the -OAM models were fine-tuned on the latter
+        <Cite id="lysogorskiy2026grace" locator="Sec. II.1" />, so -OMAT and -OAM energies sit on different references. On grain
+        boundaries in pure metals, almost all foundation models tested, GRACE included, err more for K, Rb and Cs, and the authors
+        suggest that 6 Å is too short a cutoff for these large atoms <Cite id="lysogorskiy2026grace" locator="Sec. II.2.4; Fig. 3" />.
+        Naive fine-tuning to a new chemistry can destroy the general model
+        <Cite id="lysogorskiy2026grace" locator="Sec. II.5.2; Fig. 9" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Layers</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck.name}</td>
+              <td>OMat24, then MPtrj + sAlex (PBE/PBE+U)</td>
+              <td>2</td>
+              <td>{((ck.parameters?.total ?? 0) / 1e6).toFixed(1)} M</td>
+              <td>{ck.licence}</td>
+              <td><a href={ck.weights?.url}>archive</a></td>
+            </tr>
+            {
+              board.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>{/-(\d)L-/.exec(m.name)?.[1] ?? '—'}</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(1)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td><a href={m.checkpoint_url}>{m.version}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The first row is the checkpoint the paper calls GRACE-2L-OAM-L, under the full name gracemaker uses; its parameter count is
+        the paper’s for the 2L-large configuration. The other rows are the GRACE models submitted to Matbench Discovery (snapshot
+        {snapshot.source.commit_date}; leaderboard parameter counts and training-set labels), whose results are on the
+        <a href="/benchmarks/">Benchmarks</a> page. gracemaker also distributes -OMAT (OMat24 only), SMAX and three-layer
+        models, and deprecates the small 2L and 1L models and GRACE-FS; these are not yet recorded here individually.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/mace/">MACE</a> uses the same ACE products as many-body messages; the GRACE paper derives it as a
+        special case. <a href="/models/behler-parrinello/">Behler–Parrinello</a> symmetry functions are another local descriptor
+        that ACE can represent. <a href="/models/allegro/">Allegro</a> is strictly local like GRACE-1L but builds its features on
+        pairs.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The atomic cluster expansion: <Cite id="drautz2019ace" />.</li>
+        <li>Graph ACE, its recursion and its relation to message passing: <Cite id="bochkarev2024grace" />.</li>
+        <li>GRACE foundation models, benchmarks, fine-tuning and distillation: <Cite id="lysogorskiy2026grace" />.</li>
+        <li>Code and models: <a href="https://github.com/ICAMS/grace-tensorpotential">grace-tensorpotential / gracemaker</a> (Academic Software Licence); model list in <a href="https://github.com/ICAMS/grace-tensorpotential/blob/master/docs/gracemaker/foundation.md">foundation.md</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #g-int:checked ~ .depth-int,
+  #g-tech:checked ~ .depth-tech,
+  #g-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

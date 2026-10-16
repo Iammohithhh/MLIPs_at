@@ -1,0 +1,7 @@
+name: gracemaker (grace-tensorpotential)
+repo: https://github.com/ICAMS/grace-tensorpotential
+language: Python
+framework: tensorflow
+licence: Academic Software Licence (ASL; academic, non-commercial use)
+families: [grace]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read at commit 4729845 (2026-10-15): LICENSE.md (ASL), docs/gracemaker/foundation.md (model list, 6 Å cutoff, small models deprecated, small 2L models not splittable over MPI ranks), tensorpotential/functions/radial.py (ChebSqrRadialBasisFunction: T_n(2r/r_c − 1) times the p-order polynomial cutoff), tensorpotential/potentials/presets.py (GRACE_1LAYER_v1_24: Cheb basis, cutoff order 5, embedding 128, lmax 4, max_order 4), tensorpotential/calculator/foundation_models.py (licence string and download URLs).' }

@@ -1,0 +1,9 @@
+statement: >-
+  On a grain-boundary energy benchmark for pure metals, almost all foundation models tested, GRACE included, have larger
+  relative errors for K, Rb and Cs; the authors suggest that the usual 6 Å cutoff is too small for these large alkali atoms.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Sec. II.2.4; Fig. 3; Sec. III' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The attribution to the cutoff is the authors'' suggestion, not a tested result. The SMAX models released later use element-dependent cutoffs of 5.0–7.5 Å (gracemaker docs).' }

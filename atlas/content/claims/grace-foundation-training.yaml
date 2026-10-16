@@ -1,0 +1,10 @@
+statement: >-
+  GRACE foundation models are first trained on OMat24 ("OMat-base", 12 epochs for 1L and 8 for 2L, with energy : force :
+  stress loss weights 16 : 128 : 128), then either fine-tuned on MPtrj plus sAlex ("OAM") or further trained on OMat24 with
+  more weight on energies ("ft-E"); all losses are Huber with δ = 0.01 on raw VASP energies, forces and stresses.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Sec. II.1; Supplementary X.1' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

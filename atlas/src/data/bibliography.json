@@ -263,6 +263,7 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
+   "bochkarev2024grace",
    "chanussot2020oc20",
    "chen2022m3gnet",
    "deng2023chgnet",
@@ -1537,6 +1538,131 @@
    "id": "W4405470127",
    "publication_year": 2024,
    "referenced_works": []
+  }
+ },
+ "bochkarev2024grace": {
+  "arxiv": {
+   "authors": [
+    "Anton Bochkarev",
+    "Yury Lysogorskiy",
+    "Ralf Drautz"
+   ],
+   "id": "2311.16326v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2023-11-27",
+   "title": "Graph Atomic Cluster Expansion for semilocal interactions beyond equivariant message passing",
+   "updated": "2024-01-20"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2023, 2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bochkarev, A.' vs fetched ['bochkarev', 'bochkarev']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "drautz2019ace"
+  ],
+  "crossref": {
+   "article_number": "021036",
+   "authors": [
+    {
+     "family": "Bochkarev",
+     "given": "Anton"
+    },
+    {
+     "family": "Lysogorskiy",
+     "given": "Yury"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "Physical Review X",
+   "doi": "10.1103/physrevx.14.021036",
+   "issue": "2",
+   "page": null,
+   "title": "Graph Atomic Cluster Expansion for Semilocal Interactions beyond Equivariant Message Passing",
+   "type": "journal-article",
+   "volume": "14",
+   "year": 2024
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 86,
+   "id": "W4399303478",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W26088913",
+    "W1549427706",
+    "W1964882117",
+    "W1974565829",
+    "W1981368803",
+    "W2001238335",
+    "W2024211806",
+    "W2024901770",
+    "W2025444507",
+    "W2029413789",
+    "W2032576009",
+    "W2046505730",
+    "W2052815382",
+    "W2063730997",
+    "W2065742525",
+    "W2075966481",
+    "W2083415705",
+    "W2085688023",
+    "W2148424525",
+    "W2157886206",
+    "W2197007850",
+    "W2254735683",
+    "W2326765705",
+    "W2541404351",
+    "W2585152223",
+    "W2612690371",
+    "W2742127985",
+    "W2761704992",
+    "W2780173879",
+    "W2910857709",
+    "W2923693308",
+    "W2935718355",
+    "W2990138404",
+    "W3003257820",
+    "W3009030042",
+    "W3042508420",
+    "W3043300003",
+    "W3044111935",
+    "W3176386153",
+    "W3191849418",
+    "W3201073812",
+    "W3208707586",
+    "W4207013141",
+    "W4221166836",
+    "W4225405705",
+    "W4308022370",
+    "W4311003603",
+    "W4362665674",
+    "W4365144350",
+    "W4381716411",
+    "W4384206875",
+    "W4385238484",
+    "W4388761260",
+    "W4390754891",
+    "W6912526729",
+    "W6945526794"
+   ]
   }
  },
  "borwein1985madelung": {
@@ -2950,6 +3076,7 @@
   ],
   "cites": [
    "batzner2022nequip",
+   "bochkarev2024grace",
    "chen2022m3gnet",
    "deng2023chgnet"
   ],
@@ -3838,6 +3965,145 @@
     "W2002860774",
     "W2007041954",
     "W2059140979"
+   ]
+  }
+ },
+ "lysogorskiy2026grace": {
+  "arxiv": {
+   "authors": [
+    "Yury Lysogorskiy",
+    "Anton Bochkarev",
+    "Ralf Drautz"
+   ],
+   "id": "2508.17936v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-08-25",
+   "title": "Graph atomic cluster expansion for foundational machine learning interatomic potentials",
+   "updated": "2026-01-03"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2025, 2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Lysogorskiy, Y.' vs fetched ['lysogorskiy', 'lysogorskiy']"
+   }
+  ],
+  "cites": [
+   "batatia2023foundation",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "chen2022m3gnet",
+   "deng2023chgnet",
+   "drautz2019ace",
+   "mazitov2025petmad",
+   "musaelian2023allegro",
+   "riebesell2023matbench"
+  ],
+  "crossref": {
+   "article_number": "114",
+   "authors": [
+    {
+     "family": "Lysogorskiy",
+     "given": "Yury"
+    },
+    {
+     "family": "Bochkarev",
+     "given": "Anton"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-026-01979-1",
+   "issue": "1",
+   "page": null,
+   "title": "Graph atomic cluster expansion for foundational machine learning interatomic potentials",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2026
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 36,
+   "id": "W7128394095",
+   "publication_year": 2026,
+   "referenced_works": [
+    "W1567736474",
+    "W1754932684",
+    "W1981368803",
+    "W1992985800",
+    "W1996425351",
+    "W2007395042",
+    "W2025444507",
+    "W2029810674",
+    "W2030971064",
+    "W2065340773",
+    "W2079105963",
+    "W2083222334",
+    "W2083415705",
+    "W2117363206",
+    "W2150539921",
+    "W2159357141",
+    "W2197007850",
+    "W2278970271",
+    "W2337529739",
+    "W2518696367",
+    "W2585152223",
+    "W2601081289",
+    "W2761704992",
+    "W2910729328",
+    "W2910857709",
+    "W2923693308",
+    "W2996146227",
+    "W3047837641",
+    "W3093149769",
+    "W3121034290",
+    "W3126463765",
+    "W3162725023",
+    "W3176386153",
+    "W3189651386",
+    "W3201073812",
+    "W3214563829",
+    "W4207013141",
+    "W4221166836",
+    "W4225405705",
+    "W4280533865",
+    "W4296037872",
+    "W4308022370",
+    "W4310135808",
+    "W4319162181",
+    "W4360601153",
+    "W4365138106",
+    "W4367048790",
+    "W4377694431",
+    "W4386740800",
+    "W4391805016",
+    "W4394789724",
+    "W4404447799",
+    "W4404580258",
+    "W4404623322",
+    "W4405499204",
+    "W4406405186",
+    "W4407925765",
+    "W4411543224",
+    "W4416191329",
+    "W4416291809",
+    "W4416470820",
+    "W4416758539",
+    "W4417213662",
+    "W7118125901"
    ]
   }
  },

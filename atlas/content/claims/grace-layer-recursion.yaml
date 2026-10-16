@@ -1,0 +1,11 @@
+statement: >-
+  Writing tree expansion coefficients as products of star coefficients (tensor decomposition) lets a tree and all its
+  subtrees be evaluated by a downward recursion of local ACEs: on each layer an atomic base sums neighbour functions
+  weighted by the neighbours' local-ACE outputs from the layer above. A model with T layers evaluates trees of depth up to
+  T, which the authors identify with message passing, multi-ACE and MACE.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bochkarev2024grace, locator: 'arXiv v2, Secs. VI.3–VI.5, VII.1, VIII; Eqs. (59), (77)–(81), (84)–(86)' }
+scope: { model_families: [grace, mace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

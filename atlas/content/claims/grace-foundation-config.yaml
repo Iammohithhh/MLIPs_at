@@ -1,0 +1,11 @@
+statement: >-
+  The GRACE foundation models use a 6 Å cutoff, 8 or 10 Chebyshev radial functions transformed by an MLP, spherical
+  harmonics up to l = 4, a 128-dimensional chemical embedding and product order 4. Their parameter counts are 3.4 M
+  (1L), 4.5 M (1L-medium), 9.0 M (1L-large), 12.6 M (2L), 21.8 M (2L-medium) and 26.4 M (2L-large); energies are
+  computed in double precision and forces are energy gradients.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2026grace, locator: 'arXiv v2, Supplementary X.1; Table S1' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The current gracemaker release distributes fp32 models by default with -fp64 variants, and 3-layer models (fp32 only) not described in the paper (docs/gracemaker/foundation.md, commit 4729845).' }

@@ -1,0 +1,10 @@
+statement: >-
+  Star graphs (local ACE) span at most twice the cutoff, between two neighbours of the root, while tree graphs can extend
+  over several cutoff distances along chains of edges each shorter than the cutoff; the authors argue that trees with
+  large angles and comparable edge lengths are also more sensitive to small displacements than stars on the same atoms.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bochkarev2024grace, locator: 'arXiv v2, Sec. IV.1; Fig. 5' }
+scope: { model_families: [grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Atom counts per hop in real crystals are computed on the GRACE page (src/lib/models/grace.ts).' }

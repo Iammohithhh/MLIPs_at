@@ -1,0 +1,19 @@
+title: Graph atomic cluster expansion for semilocal interactions beyond equivariant message passing
+topic: equivariant-message-passing
+authors:
+  - 'Bochkarev, A.'
+  - 'Lysogorskiy, Y.'
+  - 'Drautz, R.'
+year: 2024
+venue: Physical Review X 14, 021036
+type: article
+identifiers:
+  doi: 10.1103/PhysRevX.14.021036
+  arxiv: '2311.16326'
+edges:
+  - { type: extends, target: drautz2019ace, documented: true }
+  - { type: compares-against, target: batatia2022mace, documented: true }
+  - { type: compares-against, target: batzner2022nequip, documented: true }
+  - { type: compares-against, target: musaelian2023allegro, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (HTML, 20 Jan 2024): Secs. II, IV, VI.1–VI.5, VII, VIII, IX.1. Equation and section numbers follow arXiv v2, not the journal version.' }

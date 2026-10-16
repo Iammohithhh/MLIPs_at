@@ -1,0 +1,24 @@
+name: GRACE-2L-OMAT-large-ft-AM
+family: grace
+implementation: gracemaker
+version: GRACE-2L-OMAT-large-ft-AM
+release: { source: lysogorskiy2026grace }
+parameters: { total: 26394284 }
+training:
+  - stage: training
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: '"OMat-base" stage: 8 epochs, Huber loss (δ = 0.01), energy : force : stress weights 16 : 128 : 128.'
+  - stage: finetuning
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Fine-tuned for 4 epochs on MPtrj together with sAlex (subsampled Alexandria; not yet recorded in the Atlas), weights 128 : 128 : 256.'
+outputs: [energy, forces, stress]
+licence: Academic Software Licence (ASL)
+weights: { url: 'https://huggingface.co/AMS-ICAMS-RUB/grace-foundation-models/resolve/model-v5-uq-v6/models/GRACE-2L-OMAT-large-ft-AM-model.tar.gz' }
+known_issues: [grace-alkali-cutoff]
+claims: [grace-foundation-config, grace-foundation-training]
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Called GRACE-2L-OAM-L in the paper and on Matbench Discovery; the full name is the one gracemaker uses (docs/gracemaker/foundation.md, alias table). Parameter count is the paper''s for the 2L-large configuration (Table S1). Forces and stress as gradients of the energy. The current release is fp32 by default with an -fp64 variant and a CALM extrapolation grade γ per atom (foundation.md); URL assembled from foundation_models.py (HF_REPO_BASE, model-v5-uq-v6 tag); not downloaded.'
