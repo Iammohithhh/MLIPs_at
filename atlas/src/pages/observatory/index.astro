@@ -1,0 +1,488 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import ObservatoryExplorer from '~/islands/ObservatoryExplorer';
+import { ObservatoryScans, ObservatoryTests } from '~/islands/ObservatoryScans';
+import raw from '~/data/observatory/observatory.json';
+import { slopeMismatch, curveSummary, eosFromScan, forceAgreement, galleryForces, loopTest, rotationTest, type ObsDoc } from '~/lib/models/observatory';
+
+const doc = raw as unknown as ObsDoc;
+const S = doc.settings;
+const M = doc.models;
+const byKey = (k: string) => M.find((m) => m.key === k)!;
+const orb = byKey('orb-v2-mptrj');
+
+// Findings, all computed here from the stored model outputs.
+const spreadOf = (id: string) => {
+  const a = forceAgreement(galleryForces(doc, id));
+  return { mean: a.spread.reduce((s, v) => s + v, 0) / a.spread.length, max: globalThis.Math.max(...a.spread), mag: a.meanMagnitude };
+};
+const spreads = doc.inputs.gallery.map((g) => ({ id: g.id, ...spreadOf(g.id) }));
+const quiet = spreads.reduce((a, b) => (a.mean / a.mag < b.mean / b.mag ? a : b));
+const loud = spreads.reduce((a, b) => (a.mean / a.mag > b.mean / b.mag ? a : b));
+const absLoud = spreads.reduce((a, b) => (a.mean > b.mean ? a : b));
+const MOLECULES = new Set(['h2o', 'benzene', 'ethanol']);
+const NAMES: Record<string, string> = { 'si-diamond': 'silicon', 'nacl-rocksalt': 'NaCl', 'cu-fcc': 'copper', 'zno-wurtzite': 'ZnO', 'au111-slab': 'the Au(111) slab', h2o: 'water', benzene: 'benzene', ethanol: 'ethanol' };
+
+const eos = (k: 'ev-cu' | 'ev-si') => M.map((m) => eosFromScan(doc.inputs[k].x, m.results[k].energy, doc.inputs[k].atoms, doc.inputs[k].volume0));
+const range = (v: number[]) => [globalThis.Math.min(...v), globalThis.Math.max(...v)] as const;
+const bCu = range(eos('ev-cu').map((f) => f.b0));
+const bSi = range(eos('ev-si').map((f) => f.b0));
+const aSi = range(eos('ev-si').map((f) => f.scale0));
+
+const dimer = (k: 'dimer-si' | 'dimer-cu') => M.map((m) => ({ m, s: curveSummary(doc.inputs[k].x, m.results[k].energy, m.results[k].force) }));
+const dSi = dimer('dimer-si');
+const dCu = dimer('dimer-cu');
+const eShortSi = range(dSi.map((d) => d.s.eShort));
+const depthCu = range(dCu.map((d) => -d.s.depth));
+const depthSi = range(dSi.map((d) => -d.s.depth));
+const wrongSi = dSi.filter((d) => d.s.wrongWay.length);
+const multiSi = dSi.filter((d) => d.s.minima > 1);
+
+const loops = M.map((m) => ({ m, l: loopTest(doc.inputs.loop.theta, m.results.loop.power, m.results.loop.energy) }));
+const orbLoop = loops.find((x) => x.m.key === orb.key)!.l;
+const consLoopMax = globalThis.Math.max(...loops.filter((x) => x.m.forces === 'conservative').map((x) => globalThis.Math.abs(x.l.circulation)));
+const rots = M.map((m) => ({ m, r: rotationTest(doc.inputs.rotation.R, m.results.rotation.energy, m.results.rotation.forces) }));
+const orbRot = rots.find((x) => x.m.key === orb.key)!.r;
+const consRotMax = globalThis.Math.max(...rots.filter((x) => x.m.forces === 'conservative').map((x) => x.r.maxForceError));
+
+// Height above the top layer from which each model's adatom curve is exactly flat, and the
+// geometric expectation: the nearest Au atom leaves the cutoff when √(h² + d∥²) = r_c.
+const naX = doc.inputs['na-au'].x;
+const naFrame = doc.inputs['na-au'].frame;
+const na = naFrame.positions[naFrame.positions.length - 1]!;
+const topZ = globalThis.Math.max(...naFrame.positions.slice(0, -1).map((p) => p[2]));
+const dPar = globalThis.Math.min(
+  ...naFrame.positions
+    .slice(0, -1)
+    .filter((p) => p[2] > topZ - 0.5)
+    .flatMap((p) => [-1, 0, 1].flatMap((i) => [-1, 0, 1].map((j) => globalThis.Math.hypot(p[0] + i * naFrame.cell[0][0] + j * naFrame.cell[1][0] - na[0], p[1] + i * naFrame.cell[0][1] + j * naFrame.cell[1][1] - na[1])))),
+);
+const flatFrom = M.map((m) => {
+  const e = m.results['na-au'].energy;
+  let k = e.length - 1;
+  while (k > 0 && globalThis.Math.abs(e[k - 1]! - e[e.length - 1]!) < 1e-6) k--;
+  return { m, h: naX[k]!, expect: globalThis.Math.sqrt(m.cutoff! ** 2 - dPar ** 2) };
+});
+// Na F_z against −dE/dh of the same model, from the first height past the bottom of the wells.
+const naMis = M.map((m) => {
+  const pts = slopeMismatch(naX, m.results['na-au'].energy, m.results['na-au'].fz, 2.4);
+  const worst = pts.reduce((a, b) => (b.diff > a.diff ? b : a));
+  return { m, worst };
+});
+const naMisCons = globalThis.Math.max(...naMis.filter((n) => n.m.forces === 'conservative').map((n) => n.worst.diff));
+const naMisOrb = naMis.find((n) => n.m.key === orb.key)!.worst;
+const naMin = M.map((m) => curveSummary(naX, m.results['na-au'].energy).xMin);
+const naDepth = range(M.map((m) => curveSummary(doc.inputs['na-au'].x, m.results['na-au'].energy).depth));
+
+const sci = (x: number) => {
+  const [m, e] = x.toExponential(0).split('e');
+  return { m, e: e!.replace('-', '−').replace('+', '') };
+};
+const cl = sci(consLoopMax * 1000);
+const cr = sci(consRotMax * 1000);
+
+const ARCH: Record<string, { href?: string; text: string; cite: string }> = {
+  mace: { href: '/models/mace/', text: 'MACE: equivariant, higher body-order messages', cite: 'batatia2022mace' },
+  chgnet: { text: 'CHGNet: invariant graph network with bond angles and magnetic moments', cite: 'deng2023chgnet' },
+  sevennet: { href: '/models/nequip/', text: 'SevenNet: NequIP architecture, parallel implementation', cite: 'park2024sevennet' },
+  orb: { text: 'Orb: non-equivariant graph network simulator, direct forces', cite: 'neumann2024orb' },
+};
+const RELEASE: Record<string, string> = {
+  'mace-mp-0a-medium': 'batatia2023foundation',
+  'chgnet-0.3.0': 'deng2023chgnet',
+  'sevennet-0': 'park2024sevennet',
+  'orb-v2-mptrj': 'neumann2024orb',
+};
+
+const assumptions = [
+  { term: 'Models', value: `${M.map((m) => m.name).join(', ')}. All four were trained on MPtrj (PBE/PBE+U); each runs in its own pinned environment.` },
+  { term: 'Inputs', value: `Gallery geometries with every atom displaced by a Gaussian of σ = ${S.rattle.sigma} Å (seed ${S.rattle.seed}), so forces are not zero by symmetry. Molecules and dimers sit in a ${S.box} Å periodic box; the slab is periodic with ${(doc.inputs['na-au'].frame.cell[2][2]).toFixed(1)} Å along c, wider than every cutoff plus its thickness.` },
+  { term: 'Same input', value: 'Every model receives the same ASE Atoms (positions, cell, full periodicity). No model sees a different geometry or a relaxed structure.' },
+  { term: 'Precision', value: M.map((m) => `${m.name.split(' ')[0]} ${m.dtype}`).join(', ') + '. CHGNet and SevenNet run in their released float32.' },
+  { term: 'Energies', value: 'Never compared across models in absolute terms: the checkpoints use different per-element reference energies. Every curve is relative to a point of the same model’s own curve.' },
+  { term: 'Units, signs', value: 'eV, Å, eV/Å; pressure P = −tr σ / 3 in GPa (positive = compressed). Force on a dimer atom along +d is positive when it pushes the atoms apart.' },
+];
+---
+
+<BaseLayout
+  title="Model Observatory"
+  description="Four released machine-learned interatomic potentials, all trained on MPtrj, run on exactly the same atoms: forces with a disagreement halo, equation-of-state, dimer and adsorption scans, and rotation and closed-loop energy-conservation tests. Precomputed on CPU."
+>
+  <article class="page-grid obs-page">
+    <header class="wide head">
+      <p class="eyebrow">Observatory</p>
+      <h1 class="h-display">Same data, same atoms, four models</h1>
+      <p class="lede">
+        Four released checkpoints with four different architectures, all trained on the same dataset, were given exactly the
+        same structures. Where do their predictions agree, and where do they part? The point is the disagreement, not a ranking.
+      </p>
+      <dl class="glance">
+        <div><dt>Models</dt><dd>{M.length} checkpoints, all trained on <a href="/data/#ds-mptrj">MPtrj</a></dd></div>
+        <div><dt>Inputs</dt><dd>{doc.inputs.gallery.length} gallery structures, 5 scans, 2 symmetry tests</dd></div>
+        <div><dt>Compute</dt><dd>CPU, offline, {M.reduce((s, m) => s + m.seconds, 0).toFixed(0)} s in total</dd></div>
+        <div><dt>Status</dt><dd>Precomputed. A live CPU server for your own structures is not deployed yet.</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="precomputed" /> Every number below is a model output computed once by
+        <code>pipeline/atlas_pipeline/observatory.py</code>. No reference calculation is shown, so nothing here says which model
+        is right.
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="Forces from four models on the same rattled structure" labels={['precomputed']} number={1} id="fig-forces" framed={false}>
+        <ObservatoryExplorer client:visible />
+        <Fragment slot="caption">
+          Arrows: each model’s force on each atom, in the model’s colour, on one scale per structure. The red halo around an atom
+          grows with the spread of the four force vectors on it (defined below). Click an atom for its numbers. Below: the mean
+          force difference between every pair of models, and per-model summaries.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          Checkpoints: MACE-MP-0a <Cite id="batatia2023foundation" />, CHGNet <Cite id="deng2023chgnet" />, SevenNet-0
+          <Cite id="park2024sevennet" />, Orb v2 <Cite id="neumann2024orb" />. Outputs computed by the Atlas pipeline; licences
+          and file hashes in the table at the end of the page.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="halo-h">
+      <h2 id="halo-h" class="h-section">The disagreement halo</h2>
+      <p>
+        For atom i and models m = 1 … M, the consensus force is the plain mean and the halo radius grows with the spread around it:
+      </p>
+      <Math display tex={String.raw`\bar{\mathbf F}_i = \frac{1}{M}\sum_{m=1}^{M}\mathbf F_i^{(m)},\qquad s_i = \Big(\frac{1}{M}\sum_{m=1}^{M}\big|\mathbf F_i^{(m)}-\bar{\mathbf F}_i\big|^2\Big)^{1/2}`} />
+      <p>
+        s<sub>i</sub> is a <em>disagreement</em>, not an error bar. Models trained on the same data can share the same mistake,
+        and then s<sub>i</sub> is small while all of them are wrong. It is still a useful flag: where s<sub>i</sub> is large, at
+        least some of the models must be wrong, and the structure deserves a reference calculation.
+      </p>
+      <p>
+        Relative to the size of the forces, the four models agree most closely on {NAMES[quiet.id]} (mean spread
+        {quiet.mean.toFixed(3)} eV/Å against a mean consensus force of {quiet.mag.toFixed(2)} eV/Å) and least on {NAMES[loud.id]}
+        ({loud.mean.toFixed(3)} against {loud.mag.toFixed(2)} eV/Å).
+        {
+          MOLECULES.has(absLoud.id) && (
+            <>
+              {' '}In absolute terms the largest mean spread is on {NAMES[absLoud.id]} ({absLoud.mean.toFixed(2)} eV/Å): molecules are far from MPtrj’s
+              inorganic crystals, but their rattled forces are also several times larger.
+            </>
+          )
+        }
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Scans: strain, dimers and an adatom" labels={['precomputed']} number={2} id="fig-scans" framed={false}>
+        <ObservatoryScans client:visible />
+        <Fragment slot="caption">
+          Each curve is one model, relative to a point on its own curve. E(V): energy per atom against lattice scale of the
+          gallery cell (Cu fcc and Si diamond, conventional cells), with a third-order Birch–Murnaghan fit per model. Dimers:
+          two atoms alone in a box, 1.0–5.0 Å. Na on Au(111): a neutral Na atom above the fcc hollow, 1.6–8.0 Å above the top
+          layer. Hover for values; “Table view” lists every point.
+        </Fragment>
+        <Fragment slot="source">
+          Birch–Murnaghan fit: a cubic in V<sup>−2/3</sup> solved by least squares in <code>src/lib/models/observatory.ts</code>
+          (tested on exact BM data).
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="scan-h">
+      <h2 id="scan-h" class="h-section">What the scans show</h2>
+      <h3 class="h-sub">Near equilibrium, the models nearly coincide</h3>
+      <p>
+        On the strain scans, which stay close to the crystals MPtrj samples, the four fitted bulk moduli span
+        {bCu[0].toFixed(0)}–{bCu[1].toFixed(0)} GPa for Cu and {bSi[0].toFixed(0)}–{bSi[1].toFixed(0)} GPa for Si, and the Si
+        equilibrium lattice scale spans {aSi[0].toFixed(3)}–{aSi[1].toFixed(3)} of the gallery value. The gallery cells are
+        not PBE-relaxed, so “1.00” is not a reference; compare the curves with each other.
+      </p>
+      <h3 class="h-sub">Far from the data, they part</h3>
+      <p>
+        An isolated Si₂ or Cu₂ dimer at 1 Å is nothing MPtrj contains. The energy each model assigns to Si₂ at 1.0 Å
+        (relative to 5 Å) ranges from {eShortSi[0].toFixed(1)} to {eShortSi[1].toFixed(1)} eV.
+        The well depths differ too: {depthSi[0].toFixed(1)}–{depthSi[1].toFixed(1)} eV
+        for Si₂ and {depthCu[0].toFixed(1)}–{depthCu[1].toFixed(1)} eV for Cu₂.
+        {
+          wrongSi.length > 0 && (
+            <>
+              For {wrongSi.map((d) => d.m.name).join(' and ')} the force at the shortest separations points inward: the
+              repulsive wall turns over and the atoms would be pulled together.
+            </>
+          )
+        }
+        {multiSi.length > 0 && <> {multiSi.map((d) => d.m.name).join(' and ')} also has a second, spurious minimum. </>}
+        In molecular dynamics at high temperature or under compression, such holes can trap atoms in unphysical close
+        contacts. Which model is closest to the true dimer curve is not shown: that needs a reference calculation.
+      </p>
+      <p>
+        The Na adatom wells are {(-naDepth[1]).toFixed(2)} to {(-naDepth[0]).toFixed(2)} eV deep, {
+          new Set(naMin).size === 1 ? <> all with the minimum at h = {naMin[0]!.toFixed(1)} Å on this 0.2 Å grid.</> : <> with minima at {naMin.map((h) => h.toFixed(1)).join(', ')} Å.</>
+        } Further out every curve
+        becomes exactly flat (to 10<sup>−6</sup> eV): from h = {flatFrom.map((f) => `${f.h.toFixed(1)} Å (${f.m.name.split(' ')[0]})`).join(', ')}.
+        That is where the nearest Au atom, {dPar.toFixed(2)} Å off-axis, leaves each model’s cutoff: √(h² + {dPar.toFixed(2)}²) =
+        r<sub>c</sub> gives h = {[...new Set(flatFrom.map((f) => f.expect.toFixed(2)))].join(' or ')} Å. Beyond its cutoff a
+        local model has no term that can act.
+      </p>
+      <p>
+        The right panel is a consistency check that needs no reference. For a model with F = −∇E the force on Na must equal
+        minus the slope of its own energy curve; with points 0.2 Å apart, central differences agree to within
+        {naMisCons.toFixed(2)} eV/Å for the three gradient models (finite-difference error, largest where a curve bends
+        sharply). Orb’s force and its own energy slope differ by up to {naMisOrb.diff.toFixed(1)} eV/Å, at h =
+        {naMisOrb.x.toFixed(1)} Å: its energy and force heads give two different answers to the same question (see Fig. 3). This is a
+        neutral atom; for an ion near a metal the missing long-range image interaction is the subject of the
+        <a href="/applications/electrochemical-interfaces/">Interface Lab</a> and of the
+        <a href="/failures/electrostatics-at-electrodes/">electrostatics failure case</a>.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Two exact tests: rotate the input, go round a loop" labels={['precomputed']} number={3} id="fig-tests" framed={false}>
+        <ObservatoryTests client:visible />
+        <Fragment slot="caption">
+          Loop: rattled Si (2 × 2 × 2) carried around a closed circle of radius {S.loop.amplitude} Å in the 3N-dimensional
+          space of positions, {S.loop.points} points. “work − energy” is the running work of the model’s forces, −∫F·dx,
+          minus the model’s own energy change; it stays at zero for forces that are the gradient of the energy. Rotation:
+          rattled ZnO (2 × 2 × 2) and a rigid copy rotated by {S.rotation.angleDeg}° about (1, 2, 3).
+        </Fragment>
+        <Fragment slot="source">
+          Integrals by the periodic trapezoid rule in <code>src/lib/models/observatory.ts</code>; derivation below.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="tests-h">
+      <h2 id="tests-h" class="h-section">Conservative and equivariant, or approximately so</h2>
+      <p>
+        If the forces are the negative gradient of an energy, the work they do around any closed path vanishes:
+      </p>
+      <Math display tex={String.raw`\mathbf F = -\nabla_{\mathbf x} E \;\Longrightarrow\; \oint \mathbf F\cdot d\mathbf x = -\oint \nabla_{\mathbf x} E\cdot d\mathbf x = -\big[E(\mathbf x(2\pi)) - E(\mathbf x(0))\big] = 0`} />
+      <p>
+        MACE, CHGNet and SevenNet compute forces by differentiating their energy, and their circulations are at the level of
+        round-off (at most {cl.m} × 10<sup>{cl.e}</sup> meV). Orb v2 predicts forces with a separate output head, not as a
+        gradient <Cite id="neumann2024orb" locator="Sec. 2.2" />; around this loop its forces do
+        {(orbLoop.circulation * -1000).toFixed(2)} meV of net work, and the work-based energy drifts from its own energy by up to
+        {(orbLoop.maxGap * 1000).toFixed(0)} meV over a path along which the energy itself varies by
+        {(orbLoop.energyRange * 1000).toFixed(0)} meV. In NVE molecular dynamics such forces can pump energy into the system;
+        Bigi et al. measure this for direct-force models <Cite id="bigi2024darkside" locator="Sec. 4.4" />, and
+        <a href="/physics-lab/dynamics/">P12</a> shows what energy drift looks like.
+      </p>
+      <p>
+        Rotating the input should rotate the forces and leave the energy unchanged. For the three conservative models the
+        largest force mismatch is {cr.m} × 10<sup>{cr.e}</sup> meV/Å, float round-off: their energies are rotation-invariant by
+        construction, so their gradient forces co-rotate exactly. Orb is not equivariant by construction; it learns
+        approximate rotational symmetry from random rotations of the training data
+        <Cite id="neumann2024orb" locator="Secs. 5, 6.2" />. Here its forces miss by up to
+        {(orbRot.maxForceError * 1000).toFixed(0)} meV/Å ({(orbRot.relForceError * 100).toFixed(1)} % of the RMS force) and its
+        energy changes by {(orbRot.dE * 1000).toFixed(1)} meV.
+      </p>
+      <Callout kind="caveat" title="Architecture ≠ checkpoint">
+        These are tests of four specific checkpoints. A direct-force head and learned rather than built-in symmetry are
+        properties of the Orb v2 architecture as released; later Orb v3 releases include conservative variants. Small
+        violations do not by themselves make a model less accurate for a given task, but they are invisible in an
+        energy-and-force error table.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="prov-h">
+      <h2 id="prov-h" class="h-section">The four checkpoints</h2>
+      <p>
+        Same training set, four architectures, four training runs. Differences combine architecture, hyperparameters, loss
+        weights, energy referencing and the randomness of training; this page cannot separate them.
+      </p>
+      <div class="table-wrap">
+        <table class="prov">
+          <thead>
+            <tr>
+              <th scope="col">Checkpoint</th>
+              <th scope="col">Architecture</th>
+              <th scope="col">Forces</th>
+              <th scope="col">Graph</th>
+              <th scope="col">Licence</th>
+              <th scope="col">Software · precision</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              M.map((m) => (
+                <tr>
+                  <th scope="row">
+                    {m.name} <Cite id={RELEASE[m.key]!} />
+                    <br />
+                    <a href={m.url}>
+                      <code>{m.checkpoint}</code>
+                    </a>
+                    <br />
+                    <code class="hash">sha256 {m.sha256}</code>
+                  </th>
+                  <td>{ARCH[m.family]!.href ? <a href={ARCH[m.family]!.href}>{ARCH[m.family]!.text}</a> : ARCH[m.family]!.text}</td>
+                  <td>{m.forces === 'direct' ? 'direct output head' : '−∇E (autograd)'}</td>
+                  <td>
+                    r<sub>c</sub> = {m.cutoff} Å{m.neighbours ? `, nearest ${m.neighbours} neighbours only` : ''}
+                  </td>
+                  <td>{m.licence}</td>
+                  <td>
+                    {Object.entries(m.versions)
+                      .map(([k, v]) => `${k} ${v}`)
+                      .join(' · ')}{' '}
+                    · {m.dtype}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <ul class="facts">
+        <li>
+          <strong>Safe loading.</strong> Before a package loads a checkpoint, the pipeline reads the file’s pickle opcodes without
+          executing them and refuses any import outside a list of data constructors (tensors, arrays, dictionaries). The
+          CHGNet, SevenNet and Orb files pass. The MACE file stores Python source and fails by design; MACE is rebuilt from its
+          tensors alone, as in the <a href="/models/x-ray/">X-ray</a>.
+        </li>
+        <li>
+          <strong>Training data.</strong> MACE-MP-0a and CHGNet 0.3.0 were trained on MPtrj
+          <Cite id="batatia2023foundation" /> <Cite id="deng2023chgnet" />; SevenNet-0 (11Jul2024) on MPtrj per its checkpoint
+          README; the Orb v2 “MPtrj only” checkpoint is the Orb release restricted to MPtrj
+          <Cite id="neumann2024orb" locator="Sec. 3.1" />. CHGNet was trained on MP2020-corrected energies, MACE-MP-0 on raw
+          VASP energies (mace-mp README), one reason absolute energies are not compared.
+        </li>
+        <li>
+          <strong>Orb’s graph.</strong> Orb v2 keeps at most the {orb.neighbours} nearest neighbours within {orb.cutoff} Å
+          (orb-models loader). An atom in bulk fcc Au (a = 4.078 Å, as in the gallery slab) has 12 + 6 + 24 + 12 = 54 neighbours within 6 Å
+          (shells at a/√2, a, a√(3/2) and a√2 = 5.77 Å), so the cap drops almost two thirds of them: a real modelling
+          choice, not a detail.
+        </li>
+        <li>
+          <strong>Reproduce.</strong> <code>python -m atlas_pipeline.observatory run &lt;model&gt; …</code> in each model’s
+          environment, then <code>merge</code>; the exact versions are in the table and in
+          <code>pipeline/README.md</code>.
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" aria-labelledby="lim-h">
+      <h2 id="lim-h" class="h-section">What this page is not</h2>
+      <p>
+        Not a leaderboard: no DFT reference is shown, and four models trained on the same data can agree and all be wrong.
+        Not live: the outputs were computed once, offline, for these inputs. A CPU inference service that runs the same
+        pinned environments on uploaded structures is the next step; it needs a deployment decision by the Atlas owner. For
+        accuracy against references under stated protocols, see <a href="/benchmarks/">Benchmarks</a>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .obs-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-phys);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block h3 {
+    margin-block: 1.5rem 0.5rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+    margin-top: 1rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .prov {
+    border-collapse: collapse;
+    font: 0.82rem/1.45 var(--font-sans);
+    width: 100%;
+    min-width: 46rem;
+  }
+  .prov th,
+  .prov td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    vertical-align: top;
+  }
+  .prov thead th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+  }
+  .prov tbody th {
+    font-weight: 600;
+  }
+  .prov code {
+    overflow-wrap: anywhere;
+    font-size: 0.75rem;
+  }
+  .prov .hash {
+    color: var(--atlas-ink-faint);
+    font-weight: 400;
+  }
+</style>

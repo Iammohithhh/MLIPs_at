@@ -1,0 +1,11 @@
+# Model Observatory precompute (CPU). One virtual environment per model: the packages
+# pin conflicting dependencies. Python 3.12; torch from the CPU index:
+#   uv venv -p 3.12 ../.venv-obs-<model>
+#   VIRTUAL_ENV=../.venv-obs-<model> uv pip install --extra-index-url https://download.pytorch.org/whl/cpu \
+#       --index-strategy unsafe-best-match torch==2.14.1 ase==3.29.0 <package line below>
+# mace-mp-0a-medium:  mace-torch==0.3.16 e3nn==0.4.4
+# chgnet-0.3.0:       chgnet==0.4.2
+# sevennet-0:         sevenn==0.13.0
+# orb-v2-mptrj:       orb-models==0.7.0
+torch==2.14.1
+ase==3.29.0

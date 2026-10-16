@@ -30,6 +30,11 @@
   --atlas-fail: #9f4740;
   --atlas-verified: #44704f;
   --atlas-neutral: #5a616b;
+  /* Model series (Observatory): identity only, validated for CVD separation and 3:1 on canvas. */
+  --atlas-m1: #3d6bb3;
+  --atlas-m2: #c4622d;
+  --atlas-m3: #2a8a6a;
+  --atlas-m4: #a04e9e;
 
   --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 16%, transparent);
   --atlas-shadow: 0 1px 2px rgb(43 50 60 / 0.05), 0 4px 16px rgb(43 50 60 / 0.04);
@@ -61,6 +66,10 @@
   --atlas-fail: #d39893;
   --atlas-verified: #95bb9e;
   --atlas-neutral: #a7adb5;
+  --atlas-m1: #5b8ad6;
+  --atlas-m2: #d7743e;
+  --atlas-m3: #2fa580;
+  --atlas-m4: #c56cc2;
 
   --atlas-sym-bg: color-mix(in oklab, var(--atlas-phys) 22%, transparent);
   --atlas-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 24px rgb(0 0 0 / 0.18);

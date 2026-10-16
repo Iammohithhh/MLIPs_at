@@ -32,3 +32,16 @@ describe('design tokens', () => {
     }
   }
 });
+
+describe('model series colours (Observatory)', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    for (const m of ['m1', 'm2', 'm3', 'm4']) {
+      it(`${theme}: ${m} is a graphical mark ≥ 3:1 on canvas and surface`, () => {
+        const t = themes[theme];
+        expect(t[m], `missing --atlas-${m}`).toBeDefined();
+        expect(contrastRatio(t[m]!, t.canvas!)).toBeGreaterThanOrEqual(3);
+        expect(contrastRatio(t[m]!, t.surface!)).toBeGreaterThanOrEqual(3);
+      });
+    }
+  }
+});

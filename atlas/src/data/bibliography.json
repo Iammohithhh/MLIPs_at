@@ -3309,6 +3309,171 @@
    ]
   }
  },
+ "neumann2024orb": {
+  "arxiv": {
+   "authors": [
+    "Mark Neumann",
+    "James Gin",
+    "Benjamin Rhodes",
+    "Steven Bennett",
+    "Zhiyi Li",
+    "Hitarth Choubisa",
+    "Arthur Hussey",
+    "Jonathan Godwin"
+   ],
+   "id": "2410.22570v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-10-29",
+   "title": "Orb: A Fast, Scalable Neural Network Potential",
+   "updated": "2024-10-29"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Neumann, M.' vs fetched ['neumann']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 54,
+   "id": "W4404342379",
+   "publication_year": 2024,
+   "referenced_works": []
+  }
+ },
+ "park2024sevennet": {
+  "arxiv": {
+   "authors": [
+    "Yutack Park",
+    "Jaesun Kim",
+    "Seungwoo Hwang",
+    "Seungwu Han"
+   ],
+   "id": "2402.03789v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-02-06",
+   "title": "Scalable Parallel Algorithm for Graph Neural Network Interatomic Potentials in Molecular Dynamics Simulations",
+   "updated": "2024-02-06"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Park, Y.' vs fetched ['park', 'park']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "deng2023chgnet",
+   "musaelian2023allegro"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Park",
+     "given": "Yutack"
+    },
+    {
+     "family": "Kim",
+     "given": "Jaesun"
+    },
+    {
+     "family": "Hwang",
+     "given": "Seungwoo"
+    },
+    {
+     "family": "Han",
+     "given": "Seungwu"
+    }
+   ],
+   "container": "Journal of Chemical Theory and Computation",
+   "doi": "10.1021/acs.jctc.4c00190",
+   "issue": "11",
+   "page": "4857-4868",
+   "title": "Scalable Parallel Algorithm for Graph Neural Network Interatomic Potentials in Molecular Dynamics Simulations",
+   "type": "journal-article",
+   "volume": "20",
+   "year": 2024
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 228,
+   "id": "W4391631778",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W1981368803",
+    "W1992985800",
+    "W2007395042",
+    "W2017196167",
+    "W2019465613",
+    "W2025444507",
+    "W2083415705",
+    "W2093603869",
+    "W2113143253",
+    "W2123969193",
+    "W2165805241",
+    "W2197007850",
+    "W2547447472",
+    "W2601081289",
+    "W2763115929",
+    "W2772764871",
+    "W2778051509",
+    "W2902918458",
+    "W2906627964",
+    "W2910599945",
+    "W2922019493",
+    "W2923693308",
+    "W2962742941",
+    "W3004981459",
+    "W3033667425",
+    "W3127915450",
+    "W3163857962",
+    "W3201073812",
+    "W3209219382",
+    "W3212512279",
+    "W4206246660",
+    "W4224007003",
+    "W4225405705",
+    "W4282041110",
+    "W4307407385",
+    "W4310135808",
+    "W4310273071",
+    "W4319162181",
+    "W4368360348",
+    "W4386134960",
+    "W4386740800",
+    "W4387013014",
+    "W4388697929",
+    "W4389132751",
+    "W4389680298"
+   ]
+  }
+ },
  "perdew2001ladder": {
   "arxiv": null,
   "checks": [
@@ -3565,7 +3730,8 @@
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
-   "fu2022forces"
+   "fu2022forces",
+   "park2024sevennet"
   ],
   "crossref": {
    "article_number": null,

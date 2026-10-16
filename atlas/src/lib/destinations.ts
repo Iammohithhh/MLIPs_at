@@ -38,6 +38,7 @@ export const DESTINATIONS: Destination[] = [
     signature: 'Several real checkpoints on the same structure, with their disagreement made visible',
     phase: 4,
     tone: 'phys',
+    href: '/observatory/',
     inNav: true,
   },
   {

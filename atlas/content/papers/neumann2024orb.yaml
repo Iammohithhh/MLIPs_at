@@ -1,0 +1,17 @@
+title: 'Orb: A Fast, Scalable Neural Network Potential'
+topic: foundation-models-data
+authors:
+  - 'Neumann, M.'
+  - 'Gin, J.'
+  - 'Rhodes, B.'
+  - 'Bennett, S.'
+  - 'Li, Z.'
+  - 'Choubisa, H.'
+  - 'Hussey, A.'
+  - 'Godwin, J.'
+year: 2024
+type: preprint
+identifiers:
+  arxiv: '2410.22570'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv HTML: Sec. 2.2 (forces not a conservative field), Sec. 3.4 (forces predicted directly), Sec. 6.2 (random-rotation augmentation; approximately equivariant, Sec. 5).' }

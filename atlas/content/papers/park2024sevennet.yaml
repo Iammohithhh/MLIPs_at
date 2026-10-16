@@ -1,0 +1,15 @@
+title: Scalable Parallel Algorithm for Graph Neural Network Interatomic Potentials in Molecular Dynamics Simulations
+topic: foundation-models-data
+authors:
+  - 'Park, Y.'
+  - 'Kim, J.'
+  - 'Hwang, S.'
+  - 'Han, S.'
+year: 2024
+venue: Journal of Chemical Theory and Computation 20, 4857–4868
+type: article
+identifiers:
+  doi: 10.1021/acs.jctc.4c00190
+  arxiv: '2402.03789'
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract: SevenNet is based on the NequIP architecture; SevenNet-0 pretrained on Materials Project data. The 11Jul2024 checkpoint README states MPtrj (CHGNet) training data.' }
