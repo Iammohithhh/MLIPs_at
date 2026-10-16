@@ -1,0 +1,7 @@
+name: metatrain
+repo: https://github.com/metatensor/metatrain
+language: Python
+framework: pytorch
+licence: BSD-3-Clause
+families: [pet]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Default PET hyperparameters (cutoff 4.5 Å, cutoff_width 0.5 Å, d_pet 128, 8 heads, 2 attention layers, 2 GNN layers) read from src/metatrain/pet/documentation.py on main.' }

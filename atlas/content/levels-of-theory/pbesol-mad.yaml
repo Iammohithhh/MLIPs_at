@@ -1,0 +1,8 @@
+name: PBEsol (MAD)
+method: DFT
+functional: PBEsol
+corrections: [Non-magnetic (no spin polarisation), Marzari–Vanderbilt cold smearing 0.01 Ry]
+basis: Plane waves, SSSP v1.2 efficiency pseudopotentials, 110 Ry / 1320 Ry cutoffs for every structure
+codes: [Quantum ESPRESSO 7.2 (SIRIUS), AiiDA]
+notes: One fixed set of converged settings across 85 elements, so all structures share a consistent energy reference; not comparable with PBE/PBE+U checkpoints without recomputation.
+review: { status: draft, last_checked: 2026-10-16, notes: 'From Mazitov et al., arXiv v2 Sec. IV B.' }

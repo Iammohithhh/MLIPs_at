@@ -1,0 +1,14 @@
+title: 'Smooth, exact rotational symmetrization for deep learning on point clouds'
+topic: equivariant-message-passing
+authors:
+  - 'Pozdnyakov, S. N.'
+  - 'Ceriotti, M.'
+year: 2023
+venue: Advances in Neural Information Processing Systems 36 (NeurIPS 2023)
+type: conference
+identifiers:
+  arxiv: '2305.19302'
+edges:
+  - { type: responds-to, target: pozdnyakov2022incompleteness, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v3 (PDF): Secs. 4–7, App. A, B, F.1, F.3, F.7. Equation numbers follow v3.' }

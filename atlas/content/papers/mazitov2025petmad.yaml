@@ -1,0 +1,22 @@
+title: 'PET-MAD as a lightweight universal interatomic potential for advanced materials modeling'
+topic: foundation-models-data
+authors:
+  - 'Mazitov, A.'
+  - 'Bigi, F.'
+  - 'Kellner, M.'
+  - 'Pegolo, P.'
+  - 'Tisi, D.'
+  - 'Fraux, G.'
+  - 'Pozdnyakov, S.'
+  - 'Loche, P.'
+  - 'Ceriotti, M.'
+year: 2025
+venue: Nature Communications 16, 10653
+type: article
+identifiers:
+  doi: 10.1038/s41467-025-65662-7
+  arxiv: '2503.14118'
+edges:
+  - { type: extends, target: pozdnyakov2023pet, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (PDF, 4 Aug 2025; titled "PET-MAD, a lightweight universal interatomic potential ..."): Secs. II A–C, IV B–E. Locators follow arXiv v2, not the journal version.' }

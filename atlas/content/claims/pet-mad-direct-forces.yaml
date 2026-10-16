@@ -1,0 +1,11 @@
+statement: >-
+  Besides back-propagated (conservative) forces, PET-MAD trains a separate head that predicts forces directly; skipping
+  back-propagation makes it two to three times faster but violates energy conservation, and the authors recommend a
+  multiple-time-step integrator to keep the speed without sampling artefacts.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mazitov2025petmad, locator: 'Sec. II A (arXiv v2), Fig. 3; SI Sec. S12' }
+  - { paper: bigi2024darkside, locator: 'Sec. 4' }
+scope: { model_families: [pet], checkpoints: [pet-mad-v1-0-2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

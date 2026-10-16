@@ -1,0 +1,10 @@
+statement: >-
+  PET-MAD imposes no rotational constraint and learns equivariance from data augmentation; its authors measured the
+  residual symmetry breaking as the standard deviation of the energy over rotations on an order-9 Lebedev–Laikov grid,
+  for every MAD subset, and report it alongside Orb-v2's in their Fig. 2 (right panel).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mazitov2025petmad, locator: 'Sec. II C, Fig. 2 right panel; Sec. IV C (arXiv v2)' }
+scope: { model_families: [pet], checkpoints: [pet-mad-v1-0-2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Values are read off a figure and are not copied here.' }

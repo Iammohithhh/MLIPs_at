@@ -1,0 +1,11 @@
+statement: >-
+  ECSE makes any smooth, permutation- and translation-invariant backbone exactly rotationally equivariant by evaluating
+  it in the local frame of every ordered pair of neighbours (r̂_j, r̂_j × r̂_j′ normalised, and their cross product) and
+  taking a weighted average with w_jj′ = f_c(r_j) f_c(r_j′) q_c(|r̂_j × r̂_j′|²), which removes frames of atoms crossing
+  the cutoff and of nearly collinear pairs and so keeps the result smooth; a plain average would be discontinuous.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2023pet, locator: 'Sec. 5, Eqs. (3)–(4); Fig. 1a–c; App. F.1' }
+scope: { model_families: [pet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Demonstrated live on /models/pet/#fig-ecse with a toy backbone.' }

@@ -1,0 +1,10 @@
+statement: >-
+  The PET backbones in the original paper were trained with random rotational augmentation (a new uniformly random
+  rotation of every sample at each epoch), and ECSE was applied only at inference; the accuracy of the backbone y_0 and
+  of the symmetrised model y_S differed minutely on COLL, MnO, HME21 and HEA.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2023pet, locator: 'Sec. 5 ("Training and symmetrization"); App. B; Table 1' }
+scope: { model_families: [pet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

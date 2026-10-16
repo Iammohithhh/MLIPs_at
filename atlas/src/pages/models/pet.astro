@@ -1,0 +1,445 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import PetAttention, { type PetEnvironmentData } from '~/islands/PetAttention';
+import PetEcse from '~/islands/PetEcse';
+import zno from '~/data/structures/zno-wurtzite.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { shellAround } from '~/lib/models/three-body';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+// One Zn environment of wurtzite ZnO, computed at build time and shared by both figures.
+const shell = (R: number): PetEnvironmentData => ({
+  centreSymbol: (zno as unknown as Structure).symbols[0]!,
+  neighbours: shellAround(zno as unknown as Structure, R).map((n) => ({ p: n.p, symbol: n.symbol })),
+});
+const wide = shell(5.5);
+const tight = shell(4.5);
+
+const ck = (await getEntry('checkpoints', 'pet-mad-v1-0-2'))!.data as Checkpoint;
+const petMadParams = ((ck.parameters?.total ?? 0) / 1e6).toFixed(1);
+const petMadUrl = ck.weights?.url;
+const board = snapshot.models.filter((m) => m.family_dir === 'pet');
+
+const attentionAssumptions = [
+  { term: 'Model', value: 'One PET block as in the paper’s Sec. 6 and App. A: species embeddings, a SiLU position embedding of the Cartesian r_ij, a compression MLP, one single-head self-attention layer with a SiLU feed-forward network and residuals, then centre and bond heads. 8 features, no layer normalisation. Weights are random and untrained: magnitudes mean nothing; continuity versus a jump is exact.' },
+  { term: 'Cutoff', value: 'R_c = 4.5 Å and ΔR_c = 0.5 Å (the PET-MAD cutoff and metatrain’s default width) with the paper’s tanh switching function, Eq. (9). The same f_c multiplies the bond heads in both modes.' },
+  { term: 'Structure', value: 'A Zn atom of wurtzite ZnO (ASE, a = 3.25 Å, c = 5.21 Å, u = 0.382) and its periodic neighbours; the probe is an extra atom of a third species moved along the direction that keeps it farthest from the crystal.' },
+];
+const ecseAssumptions = [
+  { term: 'Backbone', value: 'The toy PET block of Fig. 1 on the same Zn environment, without a probe; it is not rotationally invariant because L acts on Cartesian components.' },
+  { term: 'Frames', value: 'All ordered pairs (j, j′) of neighbours inside r_in; axes r̂_j, r̂_j × r̂_j′ (normalised) and their cross product (App. F.1). Weights f_c(r_j|r_in, 0.5 Å) f_c(r_j′|r_in, 0.5 Å) q_c1(|r̂_j × r̂_j′|²|ω = 0.05, Δω = 0.1); ω and Δω are illustrative, not the paper’s values.' },
+  { term: 'Simplified', value: 'A fixed frame cutoff instead of the paper’s adaptive inner cutoff (App. F.4), and no auxiliary model for the all-collinear corner case (App. F.3).' },
+  { term: 'Measure', value: 'Spread = standard deviation of the prediction over random rotations (backbone: 100 uniformly random; ECSE: the 9 plotted). PET-MAD’s authors used an order-9 Lebedev grid for the same measure.' },
+];
+---
+
+<BaseLayout
+  title="PET"
+  description="The Point Edge Transformer: a message-passing potential that runs a transformer over each atom’s bonds, learns rotational symmetry instead of building it in, and can be made exactly invariant afterwards. Its smooth attention, the ECSE symmetrisation, PET-MAD and its checkpoints, and its limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">PET</h1>
+      <p class="lede">
+        The Point Edge Transformer drops the rule that every layer must respect rotations. Each atom runs a transformer over
+        tokens that stand for its bonds, fed with the raw Cartesian bond vectors; symmetry is learned from rotated training
+        data, and an averaging over local frames can make the model exactly invariant afterwards
+        <Cite id="pozdnyakov2023pet" locator="Abstract; Secs. 5–6" />. The universal checkpoint PET-MAD is built on it
+        <Cite id="mazitov2025petmad" locator="Sec. II B" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Learned (rotational augmentation); exact on demand via ECSE</dd></div>
+        <div><dt>Locality</dt><dd>Message passing; PET-MAD: 4.5 Å, 2 blocks</dd></div>
+        <div><dt>Messages</dt><dd>One token per directed bond; a transformer per atom</dd></div>
+        <div><dt>Smoothness</dt><dd>Attention multiplied by a C<sup>∞</sup> cutoff and renormalised</dd></div>
+        <div><dt>Introduced</dt><dd>NeurIPS 2023; PET-MAD 2025</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/metatensor/metatrain">metatrain</a>, <a href="https://github.com/lab-cosmo/upet">upet</a></dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="arch-h">
+      <h2 id="arch-h" class="h-section">From bonds to an energy</h2>
+      <p>
+        PET is a message-passing network whose messages live on directed bonds, not on atoms. In block <i>k</i>, every
+        neighbour <i>j</i> of atom <i>i</i> inside the cutoff <i>R</i><sub>c</sub> becomes one token, built from the
+        message it sent, its species and its displacement vector <Cite id="pozdnyakov2023pet" locator="App. A, Eq. (5)" />:
+      </p>
+      <Math display number="1" tex={String.raw`t_j^{(k)} = M^{(k)}\Big[\tilde x_{ij}^{(k-1)} \,\Vert\, E_n^{(k)}(s_j) \,\Vert\, \sigma\big(L^{(k)}\mathbf r_{ij}\big)\Big], \qquad t_0^{(k)} = E_c^{(k)}(s_i)`} />
+      <p>
+        <i>L</i> is a linear map of the three <em>Cartesian components</em> of <b>r</b><sub>ij</sub> — the step no
+        equivariant model may take. A standard transformer then lets all tokens of the environment attend to each other,
+        with one change: every attention coefficient is multiplied by the cutoff function of the token’s neighbour and the
+        row is renormalised <Cite id="pozdnyakov2023pet" locator="Sec. 6" />,
+      </p>
+      <Math display number="2" tex={String.raw`\alpha_{ij} \;\leftarrow\; \frac{\alpha_{ij}\, f_c(r_j \mid R_c, \Delta R_c)}{\sum_{l} \alpha_{il}\, f_c(r_l \mid R_c, \Delta R_c)}`} />
+      <p>
+        where <i>f</i><sub>c</sub> falls smoothly from 1 at <i>R</i><sub>c</sub> − Δ<i>R</i><sub>c</sub> to 0 at
+        <i>R</i><sub>c</sub> <Cite id="pozdnyakov2023pet" locator="App. F.1, Eq. (9)" />. The output tokens are the new
+        messages from <i>i</i> to each neighbour (added to the old ones as a residual), and two heads read the target from
+        them <Cite id="pozdnyakov2023pet" locator="App. A, Eq. (7)" />:
+      </p>
+      <Math display number="3" tex={String.raw`E = \sum_i \sum_k \Big[ H_c^{(k)}\big(x_i^{(k)}\big) + \sum_{j} H_n^{(k)}\big(x_{ji}^{(k)}\big)\, f_c(r_{ij} \mid R_c, \Delta R_c) \Big], \qquad \mathbf F_i = -\frac{\partial E}{\partial \mathbf r_i}`} />
+      <ol class="flow" aria-label="One PET message-passing block">
+        <li><span>encode</span> message ‖ species ‖ σ(L r<sub>ij</sub>)</li>
+        <li class="key"><span>transformer</span> attention × f<sub>c</sub>(r<sub>j</sub>), renormalised</li>
+        <li><span>heads</span> atom + bond contributions</li>
+        <li><span>messages</span> output tokens + residual</li>
+      </ol>
+      <p>
+        Because the transformer keeps one output per input token, the outputs can be handed back as messages to the
+        same neighbours without first summing over them; the authors describe this as aggregation-free message passing
+        that avoids an information bottleneck <Cite id="pozdnyakov2023pet" locator="Sec. 6" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Tokens that fade out: attention at the cutoff" labels={['toy-model', 'live-calculation']} number={1} id="fig-attention" framed={false}>
+        <PetAttention client:visible data={wide} />
+        <Fragment slot="caption">
+          Drag the probe outward through the shaded switching region. Line opacity is the attention the centre token pays to
+          each neighbour. With PET’s modulated attention the probe’s share goes to zero before it leaves the token list;
+          with a plain softmax it is still finite at <i>R</i><sub>c</sub>, so the energy steps there (dashed curve).
+          This is the discontinuity the paper’s modification removes <Cite id="pozdnyakov2023pet" locator="Sec. 6" />.
+        </Fragment>
+        <Assumptions slot="assumptions" items={attentionAssumptions} />
+        <Fragment slot="source">Functional form from <Cite id="pozdnyakov2023pet" locator="Sec. 6; App. A; App. F.1" />. Computed in your browser by the tested module <code>src/lib/models/pet.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="sym-h">
+      <h2 id="sym-h" class="h-section">Symmetry: learned, then made exact</h2>
+      <p>
+        Since <i>L</i> sees Cartesian components, a rotated copy of a structure is, to the network, a different input. PET
+        is trained with every sample rotated at random in each epoch, so it learns to give nearly the same answer
+        <Cite id="pozdnyakov2023pet" locator="App. B" />. Approximate invariance can be enough for accuracy, but the paper
+        argues that simulations need exact symmetry, and adds a protocol to impose it after training: the Equivariant
+        Coordinate System Ensemble, ECSE <Cite id="pozdnyakov2023pet" locator="Sec. 5" />.
+      </p>
+      <p>
+        Every ordered pair of neighbours (<i>j</i>, <i>j′</i>) defines a frame that turns with the structure. Expressing
+        the environment in that frame, <Math tex={String.raw`\hat R_{jj'}[A_i]`} />, gives coordinates that do not depend on
+        how the structure was oriented, and a weighted average over frames is exactly invariant
+        <Cite id="pozdnyakov2023pet" locator="Eqs. (3)–(4)" />:
+      </p>
+      <Math display number="4" tex={String.raw`y_S(A_i) = \frac{\sum_{jj'} w_{jj'}\, \hat R^{-1}_{jj'}\big[y_0(\hat R_{jj'}[A_i])\big]}{\sum_{jj'} w_{jj'}}, \qquad w_{jj'} = f_c(r_j)\, f_c(r_{j'})\, q_c\big(\lvert \hat{\mathbf r}_j \times \hat{\mathbf r}_{j'} \rvert^2\big)`} />
+      <p>
+        The weights do two jobs. <i>f</i><sub>c</sub> lets frames of atoms crossing the cutoff fade instead of appearing
+        at once, and <i>q</i><sub>c</sub> removes nearly collinear pairs, whose frame is ill-defined. With a plain average
+        the symmetrised model would jump <Cite id="pozdnyakov2023pet" locator="Sec. 5; Fig. 1b" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="ECSE: averaging over frames that rotate with the atoms" labels={['toy-model', 'live-calculation']} number={2} id="fig-ecse" framed={false}>
+        <PetEcse client:visible data={tight} />
+        <Fragment slot="caption">
+          Rotate the structure: the backbone’s prediction (red) changes, while the ECSE average (blue) does not, to
+          round-off, for any backbone. The drawn axes are those of the heaviest frame; they turn with the atoms. Widening the
+          frame cutoff past the Zn shell at 3.2 Å raises the number of frames from 12 to over 200, each one a full backbone
+          evaluation. The bottom panel stretches a Zn–O bond through <i>r</i><sub>in</sub> to show why the weights must be smooth.
+        </Fragment>
+        <Assumptions slot="assumptions" items={ecseAssumptions} />
+        <Fragment slot="source">Protocol from <Cite id="pozdnyakov2023pet" locator="Sec. 5, Eqs. (3)–(4); App. F.1" />; exact invariance and continuity checked in <code>src/lib/models/pet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="n-int" checked />
+        <label for="n-int">Intuition</label>
+        <input type="radio" name="depth" id="n-tech" />
+        <label for="n-tech">Technical</label>
+        <input type="radio" name="depth" id="n-res" />
+        <label for="n-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Most potentials are built so that turning a molecule round cannot change their answer. PET is not: it reads the
+            directions of bonds in a fixed x-y-z frame, which makes it simpler and very flexible. It is shown each training
+            structure in many random orientations until it gives nearly the same answer for all of them. If an exact answer
+            is needed, one can ask the model the same question in several frames tied to the atoms themselves and average.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Each block is a transformer acting on the set of tokens of one environment; attention is permutation-covariant,
+            so neighbours keep their identity and outputs map back to bonds. Smoothness needs two ingredients:
+            <i>f</i><sub>c</sub>-modulated attention (Eq. 2, Fig. 1) and <i>f</i><sub>c</sub>-weighted bond heads (Eq. 3).
+            Symmetry is learned by augmentation; the backbone and the ECSE-symmetrised model differed minutely in accuracy on
+            the paper’s benchmarks <Cite id="pozdnyakov2023pet" locator="Table 1" />. ECSE forces are not averages of backbone
+            forces, because the frames and weights depend on positions; their error can exceed the backbone’s for “tight”
+            parameters with few frames <Cite id="pozdnyakov2023pet" locator="App. F.7" />. PET-MAD uses two blocks of two
+            transformer layers, token size 256, eight heads and a 4.5 Å cutoff
+            <Cite id="mazitov2025petmad" locator="Sec. IV D" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Distance-only message passing is incomplete — there are distinct structures it cannot separate
+            <Cite id="pozdnyakov2022incompleteness" locator="Abstract" /> — and equivariant networks answer by restricting
+            every operation to tensors of SO(3). PET instead puts Cartesian components on the edges, which restores
+            completeness and lets each block be a universal approximator, because transformers are
+            <Cite id="pozdnyakov2023pet" locator="Secs. 2, 6" />. The price moves to symmetry: invariance is an approximation
+            whose error must be measured, as PET-MAD’s authors do with rotations on a Lebedev grid
+            <Cite id="mazitov2025petmad" locator="Sec. II C, Fig. 2" />, or enforced by ECSE at extra cost. Earlier local-frame
+            methods were not smooth: DeePMD’s first version picked frames from the two closest neighbours, and frame averaging
+            uses covariance eigenvectors that jump when eigenvalues cross <Cite id="pozdnyakov2023pet" locator="Sec. 5" />.
+            ECSE’s smooth weights are what make the frame idea usable for forces.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy as a sum of atom and bond contributions over blocks; forces as its negative gradient. PET-MAD also trains a
+        head that predicts forces directly, two to three times faster but not conservative, and the authors pair it with a
+        multiple-time-step integrator to avoid sampling artefacts <Cite id="mazitov2025petmad" locator="Sec. II A, Fig. 3" />
+        (see the <a href="/failures/nonconservative-forces/">Failure Atlas case</a> on non-conservative forces <Cite id="bigi2024darkside" />). PET-MAD
+        adds a cheap uncertainty estimate from last-layer prediction rigidity and a shallow ensemble
+        <Cite id="mazitov2025petmad" locator="Sec. II B" />. The architecture has no charges or long-range term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Without ECSE, rotational invariance is approximate: a prediction can
+        depend slightly on orientation, and the size of that error has to be measured rather than assumed
+        <Cite id="mazitov2025petmad" locator="Sec. II C" />. With ECSE, inference costs one backbone call per frame (Fig. 2),
+        and forces can be less accurate than the backbone’s <Cite id="pozdnyakov2023pet" locator="App. F.7" />. Like every
+        local model it cannot see past its receptive field (<a href="/physics-lab/beyond-the-cutoff/">P1</a>) and has no
+        electrostatics (<a href="/physics-lab/ewald/">P6</a>). The direct-force head breaks energy conservation.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> PET-MAD v1.0.2 learned non-magnetic PBEsol energies of MAD: magnetic states are
+        absent by construction, PBEsol’s own errors are inherited, and its authors report larger errors on surfaces and
+        clusters cut from MC3D than on bulk crystals <Cite id="mazitov2025petmad" locator="Sec. II C" />. Its energies are not on
+        the PBE/PBE+U scale of MPtrj-trained models; compare them only after recomputing references.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Elements</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck.name}</td>
+              <td>MAD, PBEsol (non-magnetic)</td>
+              <td>{ck.elements}</td>
+              <td>≈ {petMadParams} M</td>
+              <td>BSD-3-Clause</td>
+              <td><a href={petMadUrl}>{ck.version}</a></td>
+            </tr>
+            {
+              board.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>—</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(0)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td><a href={m.checkpoint_url}>{m.version}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        PET-MAD’s parameter count is the paper’s approximate figure; the second row is the PET checkpoint submitted to
+        Matbench Discovery (snapshot {snapshot.source.commit_date}; leaderboard parameter count), whose results are on the
+        <a href="/benchmarks/">Benchmarks</a> page. The original PET-MAD repository is archived; newer checkpoints
+        (PET-MAD 1.5 and 1.6 at r²SCAN, PET-OMat, PET-OMAD, PET-SPICE and others) are distributed through
+        <a href="https://github.com/lab-cosmo/upet">upet</a> and are not yet recorded here.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/allegro/">Allegro</a> also keeps features on bonds; the paper notes it loosely resembles a single
+        PET block <Cite id="pozdnyakov2023pet" locator="Sec. 6" />. <a href="/models/nequip/">NequIP</a> and
+        <a href="/models/mace/">MACE</a> take the opposite route and build equivariance into every layer. Orb is the other
+        universal model its authors compare that does not enforce exact rotational equivariance
+        <Cite id="mazitov2025petmad" locator="Sec. II C" />.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>Architecture and ECSE: <Cite id="pozdnyakov2023pet" />.</li>
+        <li>PET-MAD and the MAD dataset: <Cite id="mazitov2025petmad" />.</li>
+        <li>Training code: <a href="https://github.com/metatensor/metatrain">metatrain</a> (BSD-3-Clause); models and calculators: <a href="https://github.com/lab-cosmo/upet">upet</a>; PET-MAD weights on <a href="https://huggingface.co/lab-cosmo/pet-mad">Hugging Face</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #n-int:checked ~ .depth-int,
+  #n-tech:checked ~ .depth-tech,
+  #n-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

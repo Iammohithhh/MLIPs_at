@@ -3818,6 +3818,160 @@
    "referenced_works": []
   }
  },
+ "mazitov2025petmad": {
+  "arxiv": {
+   "authors": [
+    "Arslan Mazitov",
+    "Filippo Bigi",
+    "Matthias Kellner",
+    "Paolo Pegolo",
+    "Davide Tisi",
+    "Guillaume Fraux",
+    "Sergey Pozdnyakov",
+    "Philip Loche",
+    "Michele Ceriotti"
+   ],
+   "id": "2503.14118v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-03-18",
+   "title": "PET-MAD, a lightweight universal interatomic potential for advanced materials modeling",
+   "updated": "2025-08-04"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Mazitov, A.' vs fetched ['mazitov', 'mazitov']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "chanussot2020oc20",
+   "deng2023chgnet",
+   "eastman2022spice",
+   "focassio2024surfaces",
+   "park2024sevennet"
+  ],
+  "crossref": {
+   "article_number": "10653",
+   "authors": [
+    {
+     "family": "Mazitov",
+     "given": "Arslan"
+    },
+    {
+     "family": "Bigi",
+     "given": "Filippo"
+    },
+    {
+     "family": "Kellner",
+     "given": "Matthias"
+    },
+    {
+     "family": "Pegolo",
+     "given": "Paolo"
+    },
+    {
+     "family": "Tisi",
+     "given": "Davide"
+    },
+    {
+     "family": "Fraux",
+     "given": "Guillaume"
+    },
+    {
+     "family": "Pozdnyakov",
+     "given": "Sergey"
+    },
+    {
+     "family": "Loche",
+     "given": "Philip"
+    },
+    {
+     "family": "Ceriotti",
+     "given": "Michele"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-025-65662-7",
+   "issue": "1",
+   "page": null,
+   "title": "PET-MAD as a lightweight universal interatomic potential for advanced materials modeling",
+   "type": "journal-article",
+   "volume": "16",
+   "year": 2025
+  },
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 58,
+   "id": "W4416758539",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W1972258937",
+    "W2003975937",
+    "W2011402105",
+    "W2018763953",
+    "W2019465613",
+    "W2025444507",
+    "W2035823800",
+    "W2083415705",
+    "W2104489082",
+    "W2111004309",
+    "W2111218731",
+    "W2120145199",
+    "W2141847807",
+    "W2319902168",
+    "W2541404351",
+    "W2789857314",
+    "W2797821849",
+    "W2808484747",
+    "W2900475422",
+    "W2901995873",
+    "W2943626891",
+    "W2971894235",
+    "W3011984279",
+    "W3013285202",
+    "W3016668295",
+    "W3093149769",
+    "W3093999435",
+    "W3119291344",
+    "W3126463765",
+    "W3162678041",
+    "W3165300194",
+    "W3173362576",
+    "W3176754577",
+    "W3195293013",
+    "W4282041110",
+    "W4297003420",
+    "W4297999440",
+    "W4313545414",
+    "W4315631504",
+    "W4316466136",
+    "W4360601153",
+    "W4365138106",
+    "W4380434237",
+    "W4380869926",
+    "W4386740800",
+    "W4389132751",
+    "W4391540646",
+    "W4391631778",
+    "W4391805016",
+    "W4400526657",
+    "W4401584941",
+    "W4406385288"
+   ]
+  }
+ },
  "mehdizadeh2025cleavage": {
   "arxiv": {
    "authors": [
@@ -4475,6 +4629,45 @@
     "W4247315118",
     "W4303614937"
    ]
+  }
+ },
+ "pozdnyakov2023pet": {
+  "arxiv": {
+   "authors": [
+    "Sergey N. Pozdnyakov",
+    "Michele Ceriotti"
+   ],
+   "id": "2305.19302v3",
+   "primary_category": "cs.CV",
+   "published": "2023-05-30",
+   "title": "Smooth, exact rotational symmetrization for deep learning on point clouds",
+   "updated": "2024-02-06"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Pozdnyakov, S. N.' vs fetched ['pozdnyakov']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 11,
+   "id": "W4379086724",
+   "publication_year": 2023,
+   "referenced_works": []
   }
  },
  "prodan2005nearsightedness": {

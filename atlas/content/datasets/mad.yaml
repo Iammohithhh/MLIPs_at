@@ -1,0 +1,14 @@
+name: MAD (Massive Atomic Diversity)
+domain: [mixed]
+summary: >-
+  Fewer than 100,000 structures of 85 elements, built to be diverse rather than large: stable inorganic crystals plus
+  rattled, randomised, surface, cluster, 2D, molecular-crystal and molecular subsets, all recomputed with one consistent
+  PBEsol setup.
+introduced_in: mazitov2025petmad
+levels_of_theory: [pbesol-mad]
+configuration_types: [rattled, single-point, other]
+size:
+  structures: 95595
+  approximate: false
+  source: { paper: mazitov2025petmad, locator: 'Sec. II A (arXiv v2)' }
+review: { status: draft, last_checked: 2026-10-16, notes: 'Subsets and counts listed in Sec. II A; a separate dataset paper exists and is not yet recorded here.' }

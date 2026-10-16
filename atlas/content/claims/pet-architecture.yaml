@@ -1,0 +1,11 @@
+statement: >-
+  In each PET message-passing block, every atom's neighbours within R_c become tokens t_j = M(concat(x̃_ij, E_n(s_j),
+  σ(L r_ij))) built from the incoming message, the neighbour's species and a linear map of the Cartesian displacement
+  r_ij; a transformer over these tokens and the centre token E_c(s_i) returns the outgoing messages (with residual
+  updates) and atomic plus bond contributions H_c(x_i) + Σ_j H_n(x_ji) f_c(r_ij) to the target.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2023pet, locator: 'Sec. 6; Fig. 2; App. A, Eqs. (5) and (7)' }
+scope: { model_families: [pet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

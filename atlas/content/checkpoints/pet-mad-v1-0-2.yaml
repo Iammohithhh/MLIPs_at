@@ -1,0 +1,20 @@
+name: PET-MAD v1.0.2
+family: pet
+implementation: metatrain
+version: v1.0.2
+release: { source: mazitov2025petmad }
+elements: 85
+parameters: { total: 3300000 }
+training:
+  - stage: training
+    dataset: mad
+    level_of_theory: pbesol-mad
+    note: 80/10/10 split of each MAD subset; energies and forces (forces by back-propagation), RMSE loss with energy weight 0.1.
+outputs: [energy, forces]
+licence: BSD-3-Clause (Hugging Face model card lab-cosmo/pet-mad)
+weights: { url: 'https://huggingface.co/lab-cosmo/pet-mad/resolve/v1.0.2/models/pet-mad-v1.0.2.ckpt' }
+claims: [pet-mad-hyperparameters, pet-mad-symmetry-error, pet-mad-direct-forces]
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Parameter count is the paper''s "approximately 3.3 million" (Sec. II B). The archived pet-mad repository calls v1.0.2 the stable model for reproducing the paper; v1.1.0 (non-conservative forces and stresses) is marked dev. Development moved to github.com/lab-cosmo/upet (PET-MAD-1.5/1.6 at r2SCAN, PET-OAM, PET-OMat, ...), not recorded here yet.'

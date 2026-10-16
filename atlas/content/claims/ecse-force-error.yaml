@@ -1,0 +1,11 @@
+statement: >-
+  Forces of an ECSE-symmetrised model are not a weighted average of backbone forces, because the frames and weights
+  depend on the atomic positions; their error can therefore exceed the backbone's, more so for "tight" ECSE parameters
+  that use few frames, and the original paper chose "loose" parameters at a higher cost (its proof-of-principle
+  implementation was about three orders of magnitude slower than the backbone).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2023pet, locator: 'App. F.6–F.7; Sec. 6 ("Limitations")' }
+scope: { model_families: [pet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

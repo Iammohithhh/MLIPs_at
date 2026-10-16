@@ -1,0 +1,10 @@
+statement: >-
+  PET's transformer multiplies each attention coefficient α_ij by the switching function f_c(r_j | R_c, ΔR_c) of the
+  token's neighbour and renormalises, so that atoms entering or leaving the cutoff sphere do not make the prediction
+  discontinuous; f_c is an infinitely differentiable tanh-based switch from 1 at R_c − ΔR_c to 0 at R_c.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: pozdnyakov2023pet, locator: 'Sec. 6 (p. 8); Sec. 4, Eq. (2); App. F.1, Eq. (9)' }
+scope: { model_families: [pet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

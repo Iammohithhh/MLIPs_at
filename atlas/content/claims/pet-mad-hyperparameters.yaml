@@ -1,0 +1,11 @@
+statement: >-
+  PET-MAD uses a 4.5 Å cutoff, 2 message-passing layers each with 2 transformer layers, token size 256, 8 attention heads
+  and 512 neurons in the output MLP (about 3.3 million parameters), chosen as the Pareto-optimal point of a
+  hyperparameter search over accuracy and inference time; it was trained on MAD for 1500 epochs with an RMSE loss on
+  energies (weight 0.1) and forces.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: mazitov2025petmad, locator: 'Secs. II B and IV D (arXiv v2); SI hyperparameter search' }
+scope: { model_families: [pet], checkpoints: [pet-mad-v1-0-2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

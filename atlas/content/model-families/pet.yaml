@@ -1,0 +1,15 @@
+name: PET
+aliases: [Point Edge Transformer]
+paradigms: [learned-equivariance]
+introduced_in: pozdnyakov2023pet
+year: 2023
+summary: >-
+  A message-passing network in which every atom runs a transformer over tokens that stand for its bonds, built from the
+  Cartesian components of the bond vectors: rotational symmetry is not built in but learned by augmentation, and can be
+  restored exactly afterwards by averaging over local frames (ECSE).
+locality: { kind: message-passing, note: 'Each block is a transformer over one atom''s neighbours inside R_c; the receptive field grows by R_c per block (PET-MAD: 4.5 Å, 2 blocks).' }
+symmetry: learned
+body_order: Unrestricted within a block (each transformer layer can be a universal approximator).
+implementations: [metatrain]
+claims: [pet-architecture, pet-smooth-attention, ecse-symmetrisation, pet-augmentation, ecse-force-error, pet-mad-hyperparameters, pet-mad-symmetry-error, pet-mad-direct-forces]
+review: { status: draft, last_checked: 2026-10-16 }

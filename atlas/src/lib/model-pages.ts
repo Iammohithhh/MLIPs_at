@@ -10,6 +10,7 @@ const PAGES: ReadonlyMap<string, string> = new Map([
   ['schnet', 'schnet'],
   ['m3gnet', 'm3gnet-chgnet'],
   ['chgnet', 'm3gnet-chgnet'],
+  ['pet', 'pet'],
 ]);
 
 export const MODEL_PAGES: ReadonlySet<string> = new Set(PAGES.keys());
