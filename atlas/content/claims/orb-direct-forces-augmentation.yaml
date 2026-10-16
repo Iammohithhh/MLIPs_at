@@ -1,0 +1,11 @@
+statement: >-
+  Orb-v1/v2 predict forces and stress with separate decoder heads rather than as gradients of the energy, so the force
+  field is not conservative, and they are only approximately rotation-invariant/equivariant, through random-rotation
+  augmentation during training; predicted forces have their mean subtracted, and for non-periodic systems the net torque
+  is removed.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: neumann2024orb, locator: 'Sec. 2.2; Sec. 5; App. 6.2–6.3' }
+scope: { model_families: [orb] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

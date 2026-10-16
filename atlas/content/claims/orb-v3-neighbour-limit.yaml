@@ -1,0 +1,10 @@
+statement: >-
+  Limiting each atom to 20 neighbours reduces Orb's cost but induces subtle discontinuities in the potential energy
+  surface, which the authors report as a modest performance penalty for certain workflows and a source of
+  non-energy-conserving behaviour even for the conservative -20 model.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'Sec. "Neighbor limits"; App. C; App. E' }
+scope: { model_families: [orb] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

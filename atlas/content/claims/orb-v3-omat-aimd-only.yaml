@@ -1,0 +1,10 @@
+statement: >-
+  All orb-v3-*-omat models were trained only on the AIMD subset of OMat24, because including the rattled structures hurt
+  out-of-distribution behaviour such as diatomic curves; the -mpa models were trained on MPtrj plus Alexandria (PBE) for
+  compatibility with benchmarks such as Matbench Discovery, and the authors advise defaulting to -omat.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'Sec. "Datasets and distillation"; App. I' }
+scope: { model_families: [orb], checkpoints: [orb-v3-conservative-inf-omat], datasets: [omat24] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

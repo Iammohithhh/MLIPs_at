@@ -1,0 +1,8 @@
+statement: >-
+  With a 6 Å cutoff and a 20-neighbour limit, the 20th place falls inside a shell of symmetry-equivalent atoms in fcc Cu
+  (2 of 24 third-shell atoms kept), diamond Si (4 of 12) and rock-salt NaCl (2 of 8): which equivalent atoms become
+  edges is decided by ordering, and moving one of them through the shell distance swaps it with another, changing the
+  graph discontinuously.
+grade: THEORY
+derivation: /models/orb/#fig-limit
+review: { status: draft, last_checked: 2026-10-16, notes: 'Shell counts and the swap computed in src/lib/models/orb.test.ts from the ASE structures in src/data/structures.' }

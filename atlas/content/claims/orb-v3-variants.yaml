@@ -1,0 +1,10 @@
+statement: >-
+  Orb-v3 is released as orb-v3-X-Y-Z with X ∈ {direct, conservative} (forces and stress predicted directly or by
+  back-propagating the energy), Y ∈ {20, inf} (neighbour limit) and Z ∈ {omat, mpa} (training data); the direct -mpa
+  models were distilled from orb-v3-conservative-inf-mpa because direct models overfit forces on that data.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'Sec. "Orb-v3 Models"; Sec. "Datasets and distillation"; App. H' }
+scope: { model_families: [orb], checkpoints: [orb-v3-conservative-inf-omat] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'In code "inf" is max_num_neighbors = 120 within 6 Å, which the docstring calls effectively unlimited for the training distribution (pretrained.py, commit 1794f85).' }

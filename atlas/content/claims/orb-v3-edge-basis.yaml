@@ -1,0 +1,10 @@
+statement: >-
+  Orb-v3 replaces Orb-v2's edge features (unit vector concatenated with 20 Gaussians) by the outer product of 8 Bessel
+  radial functions and spherical harmonics up to L_max = 3, and widens the backbone MLPs from 512 to 1024 so that 5
+  message-passing layers have about the same parameter count (~25 M) as Orb-v2.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'App. C, "Smoother edge embeddings" and "Width over depth"' }
+scope: { model_families: [orb] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Code: BesselBasis(r_max=6.0, num_bases=8), SphericalHarmonics(lmax=3), outer product times the p = 4 polynomial envelope (pretrained.py, gns.py, commit 1794f85).' }

@@ -1,0 +1,11 @@
+statement: >-
+  Orb-v3 measures rotational non-invariance with Δ_rot = ∂E(rR, hR)/∂G at G = 0, R = exp(G − Gᵀ), which vanishes for
+  an invariant model, and adds an L2 penalty on Δ_rot to the training loss of conservative models at no extra cost; the
+  authors report about five times better measured invariance on the 103 structures of the thermal-conductivity
+  benchmark.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: rhodes2025orbv3, locator: 'Sec. "Equigrad – Learned Rotational Invariance", Eq. (1); Fig. 3' }
+scope: { model_families: [orb] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The released fine-tuning code penalises the mean Frobenius norm of the rotational gradient (conservative_regressor.py, loss weight "rotational_grad"; commit 1794f85), not its square.' }

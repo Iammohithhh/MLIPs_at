@@ -1,0 +1,19 @@
+name: orb-v3-conservative-inf-omat
+family: orb
+implementation: orb-models
+version: '20250404'
+release: { date: 2025-04-04, source: rhodes2025orbv3 }
+training:
+  - stage: training
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: 'AIMD subset of OMat24 only (rattled structures excluded); energies, forces and stress, Huber loss.'
+outputs: [energy, forces, stress, other]
+licence: Apache-2.0
+weights: { url: 'https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/forcefields/orb-v3/orb-v3-conservative-inf-omat-20250404.ckpt' }
+known_issues: []
+claims: [orb-v3-variants, orb-v3-omat-aimd-only, orb-v3-energy-drift]
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Forces and stress by back-propagation; up to 120 neighbours within 6 Å (pretrained.py). "other" output = per-atom confidence head (binned force-error prediction). The paper gives ~25M parameters for the 5-layer model (App. C), not a per-checkpoint count. The v3 report says Orb-v3 shares Orb-v2''s denoising-diffusion pretraining scheme but does not itemise the pretraining data, so no pretraining stage is recorded.'

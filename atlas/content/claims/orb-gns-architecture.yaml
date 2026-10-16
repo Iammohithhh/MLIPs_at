@@ -1,0 +1,10 @@
+statement: >-
+  Orb is an encoder–processor–decoder Graph Network Simulator: each message-passing step updates every edge from the
+  concatenation of its features and those of its two nodes, sums the updated edges into the nodes with weights
+  sigmoid(w·e) × cutoff(r), and adds both updates as residuals; nodes carry only species embeddings.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: neumann2024orb, locator: 'Sec. 2.1–2.2' }
+scope: { model_families: [orb] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Same structure in orb_models/common/models/gns.py (AttentionInteractionNetwork) at commit 1794f85.' }

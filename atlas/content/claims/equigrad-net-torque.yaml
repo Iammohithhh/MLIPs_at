@@ -1,0 +1,7 @@
+statement: >-
+  For a conservative model of an isolated system, Δ_rot is antisymmetric and its three independent entries are minus
+  the components of the net torque Σ_i r_i × F_i, so the Equigrad penalty is a penalty on the spurious torque a
+  non-invariant energy exerts.
+grade: THEORY
+derivation: /models/orb/#equigrad-derivation
+review: { status: draft, last_checked: 2026-10-16, notes: 'Identity checked numerically in src/lib/models/orb.test.ts.' }

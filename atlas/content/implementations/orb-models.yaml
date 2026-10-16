@@ -1,0 +1,7 @@
+name: orb-models
+repo: https://github.com/orbital-materials/orb-models
+language: Python
+framework: pytorch
+licence: Apache-2.0
+families: [orb]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read at commit 1794f85 (2026-09-26): orb_models/forcefield/pretrained.py (radius 6.0, max_num_neighbors 20 or 120, 5 steps, latent 256, MLP hidden 1024, Bessel 8, SH lmax 3), common/models/gns.py (sigmoid gates × cutoff, sum aggregation, residuals), common/models/nn_util.py (polynomial envelope p = 4).' }
