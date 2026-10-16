@@ -1,0 +1,187 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import BarrierParity from '~/islands/BarrierParity';
+import migration from '~/data/benchmarks/migration-bheemaguli2025.json';
+
+const parityAssumptions = [
+  { term: 'Reference', value: 'Dataset-2: 574 literature DFT-NEB migration barriers (GGA, E_m ≤ 2.5 eV) across spinels, olivines, NaSICONs, layered and other frameworks, with the initial and final structures of each path.' },
+  { term: 'Models', value: 'MACE-MP-0 large, SevenNet-MF-ompa, Orb-v3-conservative-inf-omat, CHGNet v0.3.0 and M3GNet MP-2021.2.8-EFS, used as released with ASE’s NEB, no fine-tuning (authors’ Sec. 2.2–2.3).' },
+  { term: 'Numbers here', value: 'Recomputed in the Atlas from the released per-system barriers; nothing is copied from the paper’s tables. MACE-MP-0 has 496 released barriers, the others 574.' },
+  { term: 'Threshold', value: 'Paths below the threshold count as “good conductors”; the paper uses 0.5 eV (Sec. 3.3). Moving it shows how sensitive screening decisions are.' },
+];
+---
+
+<BaseLayout
+  title="Batteries"
+  description="Application lab: what decides battery performance at the atomic scale, and how well foundation potentials predict ion-migration barriers — 574 literature barriers, recomputed from released data and linked to each material’s hop."
+>
+  <article class="page-grid lab-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/applications/">Applications</a> · Batteries</p>
+      <h1 class="h-display">Batteries</h1>
+      <p class="lede">
+        A battery’s rate is set by how fast ions hop through its electrodes and electrolytes, and each hop crosses a
+        barrier. Because rates depend exponentially on that barrier, a potential that is good on average can still be
+        orders of magnitude off for the material you care about.
+      </p>
+      <div class="head-badges">
+        <Badge label="reproduced" />
+        <Badge label="published-result" />
+      </div>
+    </header>
+
+    <section class="block" aria-labelledby="what-h">
+      <h2 id="what-h" class="h-section">What a model has to get right</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Transport</h3>
+          <p>
+            Migration barriers decide ionic conductivity. Every 59 meV of barrier error at room temperature is a factor of
+            ten in the diffusion coefficient — the derivation and a live demonstration are in the
+            <a href="/failures/ion-migration/">ion-migration case</a>.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Redox and magnetism</h3>
+          <p>
+            Charging changes the oxidation state of transition metals. Reference data often treat them with spin
+            polarisation and +U corrections; a model has to inherit that consistently, which is where catalysis benchmarks
+            find the worst failures (<a href="/failures/catalysis/">catalysis case</a>).
+          </p>
+        </article>
+        <article class="card">
+          <h3>Interfaces</h3>
+          <p>
+            Electrode–electrolyte interfaces carry charge, potential drops and decomposition layers — the electrostatics of
+            the <a href="/applications/electrochemical-interfaces/">Electrochemical Interface Lab</a> applies here too.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="barriers" aria-labelledby="bar-h">
+      <h2 id="bar-h" class="h-section">574 barriers, recomputed</h2>
+      <p>
+        Bheemaguli, Xiao and Sai Gautam ran nudged-elastic-band calculations with five foundation potentials on 574
+        literature migration paths and released every barrier <Cite id="bheemaguli2025migration" />. The Atlas pipeline
+        joins those files with the DFT targets and recomputes the statistics, so the figure below is a reproduction of the
+        paper’s analysis rather than a copy of it. Click any point to see that material and its hop in 3D.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Migration barriers: five foundation potentials against DFT-NEB" labels={['reproduced']} number={1} id="fig-barriers" framed={false}>
+        <BarrierParity client:visible />
+        <Fragment slot="caption">
+          Left: each model’s barrier against DFT for every released path (orange: model too low; blue: too high); shaded
+          quadrants agree with DFT on whether the path is below the conductor threshold. Right: the selected material, with
+          the migrating ion and its hop between the NEB end points.
+        </Fragment>
+        <Assumptions slot="assumptions" items={parityAssumptions} />
+        <Fragment slot="source">
+          <Cite id="bheemaguli2025migration" locator="Secs. 2.1–3.3" />; data: Zenodo 10.5281/zenodo.17483476 and the authors’ repository (commit {migration.source.commit?.slice(0, 10)}), joined by the Atlas pipeline on {migration.source.retrieved}.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="found-h">
+      <h2 id="found-h" class="h-section">What the reproduction found</h2>
+      <ul class="found">
+        <li>
+          <Badge label="reproduced" />
+          SevenNet, Orb-v3 and M3GNet: mean absolute errors and the numbers of under- and over-estimated barriers match the
+          paper exactly, as does the &gt;82% good/bad-conductor agreement of Orb-v3 and SevenNet at 0.5 eV.
+        </li>
+        <li>
+          <Badge label="published-result" />
+          CHGNet: the counts match (420 under, 154 over), but the recomputed MAE is 0.335 eV, not the published 0.343 eV.
+          MACE-MP-0: only 496 of 574 barriers are in the release, so its 0.310 eV cannot be checked in full.
+        </li>
+        <li>
+          <Badge label="published-result" />
+          CHGNet and M3GNet underestimate about three quarters of the barriers — the softening seen in other properties —
+          while the newer models err in both directions.
+        </li>
+      </ul>
+      <Callout kind="caveat" title="Evaluated for related systems, not recommended">
+        On Li/Na cathodes, Orb-v3 checkpoints reached 75–111 meV against DFT, and adding sAlex and OMat24 data took the same
+        MACE model from 312 to 89 meV <Cite id="guo2026alkali" locator="Sec. 2.3, Fig. 3" />. These are results on specific
+        frameworks and protocols; check a few NEB paths of your own material before trusting any of them.
+      </Callout>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1.05;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 44rem;
+  }
+  .head-badges {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 1rem;
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+  }
+  .card {
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--atlas-rule);
+    border-top: 3px solid var(--atlas-phys);
+    border-radius: 0.6rem;
+    background: var(--atlas-surface);
+    font: 0.95rem/1.55 var(--font-sans);
+  }
+  .card h3 {
+    margin: 0 0 0.5rem;
+    font: 600 1.1rem/1.3 var(--font-serif);
+  }
+  .card p {
+    margin: 0;
+  }
+  .found {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    font: 0.98rem/1.6 var(--font-sans);
+  }
+  .found li {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+</style>

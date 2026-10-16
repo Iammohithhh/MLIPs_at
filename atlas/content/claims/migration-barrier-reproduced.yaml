@@ -1,0 +1,11 @@
+statement: >-
+  Recomputed from the authors' released per-system data, the migration-barrier errors of SevenNet (MAE 0.344 eV;
+  244 under- and 330 over-estimated), Orb-v3 (0.336 eV; 242/332) and M3GNet (0.349 eV; 449/125) on 574 DFT-NEB barriers
+  match the published values, as do the good/bad-conductor agreement at 0.5 eV for Orb-v3 (84.8%) and SevenNet (82.9%),
+  reported as above 82%.
+grade: REPRODUCED
+sources:
+  - { paper: bheemaguli2025migration, locator: 'arXiv v1 Sec. 3.1 (MAEs, under/over counts) and Sec. 3.3 (classification at 0.5 eV)' }
+verified_against: full-text
+reproduction: { experiment: barrier-parity-reproduction, date: 2026-10-16, matches: true, note: 'Exact agreement to the printed precision for the three models named.' }
+review: { status: draft, last_checked: 2026-10-16 }

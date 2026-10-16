@@ -5,8 +5,9 @@ authors:
   - 'Xiao, P.'
   - 'Sai Gautam, G.'
 year: 2025
-type: preprint
+type: article
 identifiers:
+  doi: 10.1039/D5DD00534E
   arxiv: '2512.03642'
 verified_against: full-text
-review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v1 HTML. Dataset-2: 574 literature DFT-NEB barriers (E_m ≤ 2.5 eV); models MACE-MP-0 large, SevenNet-MF-ompa, Orb-v3-conservative-inf-omat, CHGNet v0.3.0, M3GNet MP-2021.2.8-EFS, used without fine-tuning.' }
+review: { status: draft, last_checked: 2026-10-16, notes: 'Published in Digital Discovery (DOI per the authors’ repository README). Read arXiv v1 HTML; section numbers refer to v1. Dataset-2: 574 literature DFT-NEB barriers (E_m ≤ 2.5 eV); models MACE-MP-0 large, SevenNet-MF-ompa, Orb-v3-conservative-inf-omat, CHGNet v0.3.0, M3GNet MP-2021.2.8-EFS, used without fine-tuning.' }

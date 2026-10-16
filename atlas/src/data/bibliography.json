@@ -1413,16 +1413,40 @@
    {
     "field": "year",
     "level": "ok",
-    "message": "record year 2025; fetched [2025]"
+    "message": "record year 2025; fetched [2025, 2026]"
    },
    {
     "field": "authors",
     "level": "ok",
-    "message": "first author 'Bheemaguli, A. K.' vs fetched ['bheemaguli']"
+    "message": "first author 'Bheemaguli, A. K.' vs fetched ['bheemaguli', 'bheemaguli']"
    }
   ],
   "cites": [],
-  "crossref": null,
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Bheemaguli",
+     "given": "Achinthya Krishna"
+    },
+    {
+     "family": "Xiao",
+     "given": "Penghao"
+    },
+    {
+     "family": "Sai Gautam",
+     "given": "Gopalakrishnan"
+    }
+   ],
+   "container": "Digital Discovery",
+   "doi": "10.1039/d5dd00534e",
+   "issue": "4",
+   "page": "1809-1819",
+   "title": "Evaluation of foundational machine learned interatomic potentials for migration barrier predictions",
+   "type": "journal-article",
+   "volume": "5",
+   "year": 2026
+  },
   "fetched": "2026-10-16",
   "openalex": {
    "cited_by_count": 3,

@@ -1,0 +1,9 @@
+statement: >-
+  On Li/Na cathode migration barriers (layered, olivine and maricite frameworks), the Orb-v3 checkpoints reach mean
+  absolute errors of 75–111 meV against DFT, with the non-conservative direct variants (75–100 meV) slightly ahead of the
+  conservative ones (106–111 meV).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: guo2026alkali, locator: 'arXiv v1 Sec. 2.3 and Fig. 3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

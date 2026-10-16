@@ -3,7 +3,7 @@ import type { CollectionName } from '~/content/schemas';
 import { modelPageUrl } from './model-pages';
 
 /** Applications with a built lab page under /applications/<id>/. */
-export const APPLICATION_LABS = new Set(['electrochemical-interfaces']);
+export const APPLICATION_LABS = new Set(['electrochemical-interfaces', 'batteries']);
 
 export function recordUrl(c: CollectionName, id: string, d: Record<string, unknown>): string {
   if (c === 'papers') return `/papers/#paper-${id}`;

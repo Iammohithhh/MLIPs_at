@@ -1,0 +1,10 @@
+statement: >-
+  For CHGNet on the 574 DFT-NEB barriers, the under/over-estimate counts recomputed from the released data match the
+  paper (420/154), but the mean absolute error comes out at 0.335 eV rather than the published 0.343 eV; for MACE-MP-0
+  only 496 of 574 per-system barriers are released, giving 0.304 eV on that subset against 0.310 eV published for all 574.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bheemaguli2025migration, locator: 'arXiv v1 Sec. 3.1' }
+verified_against: full-text
+reproduction: { experiment: barrier-parity-reproduction, date: 2026-10-16, matches: false, note: 'CHGNet MAE differs by 0.008 eV with identical counts; MACE-MP-0 comparison is on a subset.' }
+review: { status: draft, last_checked: 2026-10-16 }

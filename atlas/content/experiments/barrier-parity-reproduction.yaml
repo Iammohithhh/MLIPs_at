@@ -1,0 +1,13 @@
+title: Migration barriers of five foundation potentials, recomputed from the released data
+question: Do the paper's error statistics follow from the authors' released per-system barriers, and where does each model disagree with DFT?
+kind: reproduction
+status: REPRODUCED
+tier: T0
+page: /applications/batteries/#fig-barriers
+assumptions:
+  - { term: Data, value: 'DFT-NEB targets of Dataset-2 (Zenodo 10.5281/zenodo.17483476) joined with each model’s NEB barrier from github.com/sai-mat-group/mlips-migration-barriers by atlas_pipeline.migration_barriers.' }
+  - { term: Coverage, value: 'SevenNet, Orb-v3, CHGNet and M3GNet: 574 of 574 systems. MACE-MP-0: 496 of 574 have a released barrier file.' }
+  - { term: Migrating ion, value: 'For the 3D view, the atom that moves most between the NEB end points (minimum image); three of 574 picks are framework cations and may be misidentified.' }
+concepts: []
+claims: [migration-barrier-reproduced, migration-chgnet-mae-discrepancy]
+review: { status: draft, last_checked: 2026-10-16 }

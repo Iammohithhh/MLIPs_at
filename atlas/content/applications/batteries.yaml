@@ -1,0 +1,14 @@
+title: Batteries
+domain: energy
+summary: >-
+  Electrodes and electrolytes for Li, Na and multivalent batteries: rates are set by ion-migration barriers, voltages
+  by energy differences between lithiated and delithiated phases, and both involve transition-metal redox and
+  interfaces that bulk-trained models see rarely.
+key_physics: [locality, long-range-electrostatics]
+requirements:
+  - Migration barriers checked against DFT-NEB on representative paths, with the sign of the errors reported
+  - Training data that include transition states, high temperature or other off-equilibrium structures
+  - Consistent treatment of transition-metal magnetism and +U between the training data and the reference
+papers: [bheemaguli2025migration, guo2026alkali]
+claims: [migration-barrier-reproduced, migration-chgnet-mae-discrepancy, migration-barrier-mae, migration-high-barriers, migration-underestimation, migration-training-data, orbv3-cathode-barriers, barrier-error-diffusivity]
+review: { status: draft, last_checked: 2026-10-16 }
