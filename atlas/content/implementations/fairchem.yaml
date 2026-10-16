@@ -1,0 +1,7 @@
+name: fairchem
+repo: https://github.com/facebookresearch/fairchem
+language: Python
+framework: pytorch
+licence: MIT (code); checkpoints under their own licences
+families: [esen, uma]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read at commit d4e10d0 (2026-10-15): models/uma/escn_md.py (eSEN/UMA backbone: PolynomialEnvelope exponent 5, Gaussian smearing, random roll in init_edge_rot_euler_angles), escn_moe.py (routing, merge_MOLE_model, consistency checks), nn/mole.py (softmax + 0.005), configs/uma/training_release/backbone/*.yaml (ff_type spectral, act_type gate).' }

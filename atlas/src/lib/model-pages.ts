@@ -12,6 +12,8 @@ const PAGES: ReadonlyMap<string, string> = new Map([
   ['chgnet', 'm3gnet-chgnet'],
   ['pet', 'pet'],
   ['orb', 'orb'],
+  ['esen', 'esen-uma'],
+  ['uma', 'esen-uma'],
 ]);
 
 export const MODEL_PAGES: ReadonlySet<string> = new Set(PAGES.keys());

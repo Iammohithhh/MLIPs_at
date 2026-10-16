@@ -1,0 +1,8 @@
+statement: >-
+  UMA's expert coefficients are computed by an MLP with a softmax from system-level features (element composition,
+  total charge, spin and task) and not from atomic positions or neighbourhoods.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Sec. 2.3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'fairchem: composition = mean over atoms of a learned per-element embedding; charge, spin and task embeddings mixed by a linear layer and SiLU; routing MLP Linear–SiLU–Linear–SiLU–Linear–SiLU then softmax (escn_moe.py set_MOLE_coefficients, mole_utils.py; commit d4e10d0).' }

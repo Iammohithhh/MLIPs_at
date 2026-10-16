@@ -1,0 +1,10 @@
+statement: >-
+  eSEN embeds nodes as multi-channel spherical-harmonic features; each block applies an edgewise convolution (source and
+  target features concatenated, two eSCN SO(2) convolutions with a nonlinearity between them, multiplied by an envelope)
+  and a nodewise feed-forward network of equivariant linear layers with a gated SiLU nonlinearity, without projecting
+  onto spatial grids; energy is the sum of per-atom l = 0 outputs and forces and stress are its derivatives.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: fu2025esen, locator: 'Sec. 4; Fig. 2; App. D, Table 6' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Hyperparameters (Table 6): 128 channels, L_max 2 (3 for the 30M models), M_max 2, 6 Å cutoff (5 Å SPICE), Gaussian radial basis (Bessel for SPICE), no neighbour limit in the final models.' }

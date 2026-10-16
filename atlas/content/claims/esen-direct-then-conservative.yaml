@@ -1,0 +1,9 @@
+statement: >-
+  Training a 2-layer eSEN with direct forces for 60 epochs, removing the force head and fine-tuning with conservative
+  forces for 40 epochs reached a lower validation loss than 100 epochs of conservative training from scratch, with 40 %
+  less wall-clock time.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: fu2025esen, locator: 'Sec. 5.1; Fig. 3' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

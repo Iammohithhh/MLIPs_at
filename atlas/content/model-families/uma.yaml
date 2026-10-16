@@ -1,0 +1,16 @@
+name: UMA
+aliases: [UMA-S, UMA-M, Universal Models for Atoms]
+paradigms: [equivariant, foundation]
+introduced_in: wood2025uma
+year: 2025
+summary: >-
+  An eSEN backbone whose SO(2)-convolution weights are a Mixture of Linear Experts routed by the system's composition,
+  task (DFT setting), charge and spin. Trained on about 500 million structures from OMat24, OMol25, OC20, ODAC and OMC25
+  with one model and a task embedding; the experts are merged once per system, so a 1.4-billion-parameter model runs
+  with about 50 million active parameters.
+locality: { kind: message-passing, note: '6 Å cutoff; at most 30 neighbours in direct pre-training and 300 in conservative fine-tuning; 4 (UMA-S) or 10 (UMA-M) layer blocks.' }
+symmetry: equivariant
+body_order: Unrestricted.
+implementations: [fairchem]
+claims: [uma-mole, uma-routing-inputs, uma-sizes, uma-two-stage, uma-cutoff-limit, uma-charge-spin-embeddings, uma-composition-extensivity]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read the arXiv v2 HTML and fairchem models/uma/escn_moe.py, nn/mole.py and nn/mole_utils.py at commit d4e10d0 (2026-10-15).' }

@@ -1,0 +1,8 @@
+statement: >-
+  UMA-S and UMA-M use a 6 Å cutoff and no explicit long-range term, so two fragments more than 6 Å apart (for example an
+  adsorbate placed 7 Å from a surface) are treated as independent, non-interacting structures.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Sec. 6 (Limitations)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

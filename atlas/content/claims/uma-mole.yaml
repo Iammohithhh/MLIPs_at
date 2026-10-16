@@ -1,0 +1,9 @@
+statement: >-
+  UMA replaces linear layers by a Mixture of Linear Experts, y = Σ_k α_k (W_k x) = (Σ_k α_k W_k) x, with coefficients
+  computed once per system, so the experts can be merged into one weight matrix before a simulation and inference costs
+  about as much as a dense model of the active size.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Sec. 2.3, Eqs. 1–2' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'In fairchem the MoLE layers are the linear maps inside the SO(2) convolutions (mole_type "so2"); α = softmax(·) + 0.005 (nn/mole.py), so Σα = 1 + 0.005·E. Merging refuses a batch whose reduced composition, charge, spin or task differ from the merged one (escn_moe.py, MergeMoleConsistencyError). Commit d4e10d0.' }

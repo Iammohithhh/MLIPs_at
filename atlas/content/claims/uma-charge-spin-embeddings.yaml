@@ -1,0 +1,8 @@
+statement: >-
+  UMA gives each integer total charge and spin its own learned embedding, added to the l = 0 node features at every
+  layer; the authors note that this limits generalisation to charges and spins not seen in training.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Sec. 2.2.1; Sec. 6 (Limitations)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

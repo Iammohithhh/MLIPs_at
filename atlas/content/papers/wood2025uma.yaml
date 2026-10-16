@@ -1,0 +1,19 @@
+title: 'UMA: A Family of Universal Models for Atoms'
+topic: foundation-models-data
+authors:
+  - 'Wood, B. M.'
+  - 'Dzamba, M.'
+  - 'Fu, X.'
+  - 'Gao, M.'
+  - 'Shuaibi, M.'
+  - 'Barroso-Luque, L.'
+et_al: true
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2506.23971'
+edges:
+  - { type: extends, target: fu2025esen, documented: true }
+  - { type: reuses-mechanism, target: passaro2023escn, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (HTML, 4 Mar 2026): Sec. 2.2–2.4 (backbone, charge/spin/task embeddings, MoLE Eqs. 1–2, two-stage direct then conservative training), Sec. 3 (datasets), Table 1 (sizes), App. Tables 5–7 and 9 (hyperparameters), App. A.6 (energy referencing). Eighteen authors in total.' }

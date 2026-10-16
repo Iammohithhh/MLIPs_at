@@ -1,0 +1,15 @@
+name: eSEN
+aliases: [eSEN-30M-MP, eSEN-30M-OAM, eSCN-MD]
+paradigms: [equivariant, foundation]
+introduced_in: fu2025esen
+year: 2025
+summary: >-
+  An equivariant message-passing network on spherical-harmonic node features whose edge messages use the eSCN SO(2)
+  convolution (rotate into the bond frame, mix only m with ±m), designed for a smooth potential energy surface:
+  conservative forces, no neighbour limit, a polynomial envelope and no projection onto spatial grids.
+locality: { kind: message-passing, note: '6 Å cutoff (5 Å for the SPICE models), all neighbours kept; 2 to 10 layer blocks.' }
+symmetry: equivariant
+body_order: Unrestricted (gated nonlinearities between SO(2) convolutions).
+implementations: [fairchem]
+claims: [escn-so2-reduction, so2-roll-invariance, esen-architecture, esen-smoothness-ablations, esen-direct-then-conservative]
+review: { status: draft, last_checked: 2026-10-16, notes: 'Architecture read from the arXiv HTML (Sec. 4, Fig. 2, App. D) and fairchem models/uma/escn_md.py at commit d4e10d0 (2026-10-15), which implements the eSEN backbone that UMA uses.' }

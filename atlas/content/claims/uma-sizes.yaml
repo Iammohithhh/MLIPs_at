@@ -1,0 +1,8 @@
+statement: >-
+  UMA-S has 150 million parameters of which 6 million are active per structure, UMA-M 1.4 billion with about 50 million
+  active (both with 32 experts and conservative forces); UMA-L is a dense 700-million-parameter model with direct forces.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Abstract; Table 1; App. A.3, Table 6' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'App. A.3, Table 6: UMA-S 4 layers, L_max 2; UMA-M 10 layers, L_max 4; UMA-L 16 layers, L_max 6; all M_max 2, 128 or 256 channels. UMA-S-1.2 (Table 9) has 64 experts and 290M total parameters.' }

@@ -1,0 +1,8 @@
+statement: >-
+  UMA is first trained with a direct-force head and at most 30 neighbours within 6 Å, then the force head is removed and
+  the model is fine-tuned to give forces and stress by automatic differentiation with up to 300 neighbours.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: wood2025uma, locator: 'Sec. 2.4; App. A.2, Table 5' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16 }

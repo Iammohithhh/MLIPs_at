@@ -1,0 +1,10 @@
+statement: >-
+  Rotating each edge so that the bond lies on the polar axis of the spherical harmonics makes Y_lm of the bond vanish
+  unless m = 0, so the SO(3) tensor product of a node feature with the bond's harmonics reduces to an SO(2)
+  convolution that mixes each pair of orders (m, −m) through a 2×2 block of radial weights, lowering the cost from
+  O(L⁶) to O(L³); orders above m_max can be dropped with little loss in accuracy.
+grade: THEORY
+sources:
+  - { paper: passaro2023escn, locator: 'Sec. 3, Eqs. 9 and 14; App. C; Secs. 5.1, 6.3 (m_max)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'eSCN aligns the bond with +y (e3nn convention). The Atlas toy aligns it with +z, the polar axis of its harmonics. Exactness checked in src/lib/models/escn.test.ts.' }

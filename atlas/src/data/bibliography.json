@@ -3078,6 +3078,50 @@
    "referenced_works": []
   }
  },
+ "fu2025esen": {
+  "arxiv": {
+   "authors": [
+    "Xiang Fu",
+    "Brandon M. Wood",
+    "Luis Barroso-Luque",
+    "Daniel S. Levine",
+    "Meng Gao",
+    "Misko Dzamba",
+    "C. Lawrence Zitnick"
+   ],
+   "id": "2502.12147v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2025-02-17",
+   "title": "Learning Smooth and Expressive Interatomic Potentials for Physical Property Prediction",
+   "updated": "2025-04-23"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Fu, X.' vs fetched ['fu']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 33,
+   "id": "W4407759102",
+   "publication_year": 2025,
+   "referenced_works": []
+  }
+ },
  "gasteiger2020dimenet": {
   "arxiv": {
    "authors": [
@@ -4441,6 +4485,45 @@
     "W4389132751",
     "W4389680298"
    ]
+  }
+ },
+ "passaro2023escn": {
+  "arxiv": {
+   "authors": [
+    "Saro Passaro",
+    "C. Lawrence Zitnick"
+   ],
+   "id": "2302.03655v2",
+   "primary_category": "cs.LG",
+   "published": "2023-02-07",
+   "title": "Reducing SO(3) Convolutions to SO(2) for Efficient Equivariant GNNs",
+   "updated": "2023-06-14"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Passaro, S.' vs fetched ['passaro']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 24,
+   "id": "W4319653980",
+   "publication_year": 2023,
+   "referenced_works": []
   }
  },
  "perdew2001ladder": {
@@ -6268,6 +6351,61 @@
    "cited_by_count": 1,
    "id": "W7126276477",
    "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
+ "wood2025uma": {
+  "arxiv": {
+   "authors": [
+    "Brandon M. Wood",
+    "Misko Dzamba",
+    "Xiang Fu",
+    "Meng Gao",
+    "Muhammed Shuaibi",
+    "Luis Barroso-Luque",
+    "Kareem Abdelmaqsoud",
+    "Vahe Gharakhanyan",
+    "John R. Kitchin",
+    "Daniel S. Levine",
+    "Kyle Michel",
+    "Anuroop Sriram",
+    "Taco Cohen",
+    "Abhishek Das",
+    "Ammar Rizvi",
+    "Sushree Jagriti Sahoo",
+    "Zachary W. Ulissi",
+    "C. Lawrence Zitnick"
+   ],
+   "id": "2506.23971v2",
+   "primary_category": "cs.LG",
+   "published": "2025-06-30",
+   "title": "UMA: A Family of Universal Models for Atoms",
+   "updated": "2026-03-04"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Wood, B. M.' vs fetched ['wood']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-16",
+  "openalex": {
+   "cited_by_count": 86,
+   "id": "W4416524231",
+   "publication_year": 2025,
    "referenced_works": []
   }
  },

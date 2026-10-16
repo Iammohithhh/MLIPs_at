@@ -1,0 +1,554 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import EsenEdge from '~/islands/EsenEdge';
+import UmaMole from '~/islands/UmaMole';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import { so2Terms, tensorProductTerms } from '~/lib/models/escn';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const uma = (await getEntry('checkpoints', 'uma-s-1p1'))!.data as Checkpoint;
+const umaParams = `${((uma.parameters?.total ?? 0) / 1e6).toFixed(0)} M total, ${((uma.parameters?.active ?? 0) / 1e6).toFixed(0)} M active`;
+const board = snapshot.models.filter((m) => m.family_dir === 'esen');
+const costs = [2, 4, 6].map((L) => ({ L, tp: tensorProductTerms(L), so2: so2Terms(L, 2).total }));
+
+const edgeAssumptions = [
+  { term: 'Model', value: 'One eSEN-style edge block: source and target features (one channel each, degree ≤ L) rotated into the bond frame, an SO(2) convolution to 4 hidden channels, a gate (SiLU on each channel’s l = 0 part, its sigmoid scaling the l > 0 parts), a second SO(2) convolution to one channel, rotation back and the p = 5 envelope. Radial weights are linear in 10 Gaussians on [0, 6] Å. Random, untrained weights: shapes and magnitudes mean nothing; roll independence and equivariance are exact.' },
+  { term: 'Frame', value: 'The Atlas’s real harmonics have their polar axis along z, so the bond is rotated onto +z. eSCN and fairchem use e3nn’s harmonics, whose polar axis is y, and rotate the bond onto +y. The construction is the same.' },
+  { term: 'Control', value: '“Dense” replaces each SO(2) convolution by an unrestricted linear map of all kept coefficients in the bond frame, with the same radial dependence. Orders |m| > M_max are dropped in both.' },
+  { term: 'Tests', value: 'Equivariance error: relative difference between the message of a rotated pair and the rotated message, for one fixed random rotation. Roll change: largest relative change over five other rolls.' },
+  { term: 'Cost', value: 'Multiply–adds per pair of channels for one edge: Σ(2l_i+1)(2l_f+1)(2l_o+1) over triangle-allowed degrees ≤ L for the tensor product; (L+1)² + Σ_{m≤M} 4(L−m+1)² plus 2Σ(2l+1)² for the rotations on the SO(2) route.' },
+];
+const moleAssumptions = [
+  { term: 'Model', value: 'One MoLE layer of width 8 with 32 experts and a shared bias, and fairchem’s routing: composition = mean over atoms of a per-element embedding; charge, spin and task embeddings mixed by a linear layer and SiLU; a three-layer SiLU MLP; softmax + 0.005. Random, untrained weights.' },
+  { term: 'Energy', value: 'A stand-in for the rest of the network: each atom’s fixed per-element environment feature goes through the merged layer, a SiLU and a linear readout, summed over atoms. In a perfect crystal every atom of an element has the same environment, so E/N changes only if the coefficients do.' },
+  { term: 'Systems', value: 'Compositions only; positions never enter the routing. “Remove one” deletes one atom of the named element from the whole supercell.' },
+  { term: 'UMA-S-1.2 mean', value: 'Divides the summed embeddings by N + 1, which is what a mean that includes the zero-initialised accumulator computes (fairchem escn_moe.py, include_self, commit d4e10d0).' },
+];
+---
+
+<BaseLayout
+  title="eSEN and UMA"
+  description="eSEN and UMA: equivariant message passing through SO(2) convolutions in the bond frame, the design choices behind a smooth potential energy surface, and UMA's mixture of linear experts across five DFT tasks. Equations, two live toys, failure modes and checkpoints."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">eSEN and UMA</h1>
+      <p class="lede">
+        eSEN is an equivariant network built around one trick and one discipline. The trick, from eSCN, is to compute every
+        message in the bond’s own frame, where the expensive SO(3) tensor product becomes a cheap SO(2) convolution
+        <Cite id="passaro2023escn" locator="Sec. 3" />. The discipline is smoothness: conservative forces, no neighbour limit,
+        an envelope and no spatial grids, because energy conservation in molecular dynamics needs more than accurate forces
+        <Cite id="fu2025esen" locator="Secs. 3, 5" />. UMA puts an eSEN backbone behind a mixture of linear experts, so that one
+        model can serve materials, molecules, catalysis, metal–organic frameworks and molecular crystals
+        <Cite id="wood2025uma" locator="Secs. 2–3" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exactly E(3)-equivariant features; invariant energy</dd></div>
+        <div><dt>Locality</dt><dd>Message passing, 6 Å; eSEN keeps all neighbours</dd></div>
+        <div><dt>Messages</dt><dd>Rotate to the bond frame, SO(2) convolutions, rotate back</dd></div>
+        <div><dt>Forces</dt><dd>Conservative (−∂E/∂r), after direct-force pre-training</dd></div>
+        <div><dt>Introduced</dt><dd>eSCN 2023; eSEN 2025; UMA 2025</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/facebookresearch/fairchem">fairchem</a> (MIT; weights licensed separately)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architectures</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="arch-h">
+      <h2 id="arch-h" class="h-section">Messages in the bond frame</h2>
+      <p>
+        Like <a href="/models/nequip/">NequIP</a> and <a href="/models/mace/">MACE</a>, eSEN stores on every atom a stack of
+        spherical-harmonic coefficients <i>x</i><sub>lm</sub> with <i>l</i> ≤ <i>L</i>, one stack per channel. Read as a
+        function on the sphere, <i>f</i>(û) = Σ <i>x</i><sub>lm</sub> <i>Y</i><sub>lm</sub>(û), such a feature turns rigidly
+        with the structure: rotating the atoms by <i>R</i> maps <i>x</i> to <i>D</i>(<i>R</i>) <i>x</i>, with one Wigner block
+        per <i>l</i>. A message along a bond is normally a tensor product of the sender’s feature with the harmonics of the
+        bond direction. Its cost grows as <i>L</i><sup>6</sup> <Cite id="passaro2023escn" locator="App. C" />.
+      </p>
+      <p>
+        eSCN’s observation is that the bond’s harmonics are trivial in the right frame. Rotate the bond onto the polar axis
+        of the harmonics and only the <i>m</i> = 0 components survive <Cite id="passaro2023escn" locator="Sec. 3, Eq. 9" />:
+      </p>
+      <Math display number="1" tex={String.raw`Y_{lm}\big(R_{st}\,\hat{\mathbf r}_{st}\big) \propto \delta_{m0}, \qquad \tilde x_s = D(R_{st})\, x_s`} />
+      <p>
+        The tensor product then collapses. In the bond frame, an output of order <i>m</i> can only come from inputs of order
+        ±<i>m</i>, and each pair mixes through a 2×2 block of learned radial weights <i>h̃</i>, a convolution over the roll
+        angle about the bond <Cite id="passaro2023escn" locator="Sec. 3, Eq. 14; Sec. 4" />:
+      </p>
+      <Math display number="2" tex={String.raw`\begin{pmatrix} \tilde y_{l',m} \\ \tilde y_{l',-m} \end{pmatrix} = \sum_{l} \begin{pmatrix} \tilde h^{(l',l)}_{m}(r) & -\tilde h^{(l',l)}_{-m}(r) \\ \tilde h^{(l',l)}_{-m}(r) & \tilde h^{(l',l)}_{m}(r) \end{pmatrix} \begin{pmatrix} \tilde x_{l,m} \\ \tilde x_{l,-m} \end{pmatrix}, \qquad \tilde y_{l',0} = \sum_l \tilde h^{(l',l)}_{0}(r)\, \tilde x_{l,0}`} />
+      <p>
+        Only <i>L</i>+1 − <i>m</i> degrees carry order <i>m</i>, and eSCN found that orders above <i>m</i><sub>max</sub> = 2 add
+        little <Cite id="passaro2023escn" locator="Secs. 5.1, 6.3" />. eSEN and UMA keep <i>M</i><sub>max</sub> = 2
+        <Cite id="fu2025esen" locator="App. D, Table 6" /> <Cite id="wood2025uma" locator="App. A.3, Table 6" />. An eSEN edge block
+        concatenates the source and target features, applies two such convolutions with a nonlinearity between them, rotates
+        back and multiplies by an envelope that eSCN lacked <Cite id="fu2025esen" locator="Sec. 4; Fig. 2" />:
+      </p>
+      <Math display number="3" tex={String.raw`\mathbf m_{st} = f_{\mathrm{env}}\!\Big(\tfrac{r_{st}}{r_c}\Big)\; D(R_{st})^{\mathsf T}\, \mathrm{SO2}_2\Big(\sigma\big(\mathrm{SO2}_1\big(D(R_{st})\,[\,x_s \,\Vert\, x_t\,]\big)\big)\Big)`} />
+      <p>
+        with <i>r</i><sub>c</sub> = 6 Å and the polynomial envelope of exponent 5,
+        <Math tex={String.raw`f_{\mathrm{env}}(x) = 1 - 21x^5 + 35x^6 - 15x^7`} /> for <i>x</i> &lt; 1 and 0 beyond, whose value,
+        slope and curvature vanish at the cutoff (fairchem <code>PolynomialEnvelope(exponent=5)</code>). A nodewise
+        feed-forward block of equivariant linear layers with a gated SiLU follows, with equivariant layer norm and residual
+        connections. The energy is the sum of per-atom <i>l</i> = 0 outputs, and forces and stress are its derivatives
+        <Cite id="fu2025esen" locator="Sec. 4" />:
+      </p>
+      <Math display number="4" tex={String.raw`E = \sum_i \varepsilon_i\big(x^{(K)}_{i,00}\big), \qquad \mathbf F_i = -\frac{\partial E}{\partial \mathbf r_i}, \qquad \sigma = \frac{1}{V}\frac{\partial E}{\partial \boldsymbol\epsilon}`} />
+      <ol class="flow" aria-label="One eSEN edge message">
+        <li><span>rotate</span> D(R<sub>st</sub>): bond onto the polar axis</li>
+        <li class="key"><span>SO(2)</span> mix m with ±m, |m| ≤ 2</li>
+        <li><span>gate</span> then a second SO(2) convolution</li>
+        <li><span>back</span> D(R<sub>st</sub>)<sup>T</sup> × f<sub>env</sub>(r)</li>
+      </ol>
+      <p>
+        The bond fixes only one axis of the frame. The roll γ about the bond is arbitrary, and fairchem simply draws it at
+        random for every edge on every call (<code>init_edge_rot_euler_angles</code>). That is safe only because Eq. (2) does
+        not care. Figure 1 lets you check.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="One edge message, computed in the bond frame" labels={['toy-model', 'live-calculation']} number={1} id="fig-edge" framed={false}>
+        <EsenEdge client:visible />
+        <Fragment slot="caption">
+          The source atom’s feature is drawn as a polar plot (teal positive, amber negative), and the message it sends is drawn on
+          the target. The ladders show the coefficients in the bond frame, by degree <i>l</i> and order <i>m</i>. Roll the frame:
+          the coefficients trade places between <i>m</i> and −<i>m</i>, but the message does not move. Rotate the whole pair: the
+          message turns with it. The dense control, which mixes orders freely in the same frame, fails both tests. Below,
+          the cost of a full tensor product and of the SO(2) route as <i>L</i> grows.
+        </Fragment>
+        <Assumptions slot="assumptions" items={edgeAssumptions} />
+        <Fragment slot="source">Equations from <Cite id="passaro2023escn" locator="Eqs. 9, 14" /> and <Cite id="fu2025esen" locator="Sec. 4" />; envelope, radial basis and random roll from fairchem (commit d4e10d0). Computed in your browser by the tested module <code>src/lib/models/escn.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="roll-h">
+      <Callout kind="derivation" title="Why the roll does not matter">
+        <p id="roll-derivation">
+          A rotation by γ about the polar axis acts on real harmonics of order ±<i>m</i> as a plane rotation by <i>m</i>γ:
+          <Math tex={String.raw`(\tilde x_{l,m}, \tilde x_{l,-m}) \mapsto \mathcal R(m\gamma)\,(\tilde x_{l,m}, \tilde x_{l,-m})`} />,
+          the same <i>m</i>γ for every <i>l</i>. The blocks of Eq. (2) have the form <i>a</i>𝟙 + <i>b</i><i>J</i> with
+          <i>J</i> the 90° rotation, and every such matrix commutes with every plane rotation. Hence
+          SO2(𝓡<sub>γ</sub> <i>x̃</i>) = 𝓡<sub>γ</sub> SO2(<i>x̃</i>). The gate multiplies whole <i>l</i>-blocks by functions of
+          <i>l</i> = 0 scalars, which the roll leaves alone. Rotating back with the same rolled frame then cancels γ exactly.
+          A general matrix that mixes <i>m</i> = 1 with <i>m</i> = 2 does not commute with 𝓡 (it would need 𝓡(γ) and 𝓡(2γ) to
+          agree), which is what the dense control shows. For <i>m</i><sub>max</sub> = 0 only roll-invariant coefficients
+          remain and any linear map is allowed. Checked numerically in <code>src/lib/models/escn.test.ts</code>.
+        </p>
+      </Callout>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Degree L</th><th>Tensor-product terms</th><th>SO(2) route, M<sub>max</sub> = 2</th><th>Ratio</th></tr></thead>
+          <tbody>
+            {
+              costs.map((c) => (
+                <tr>
+                  <td>{c.L}</td>
+                  <td>{c.tp.toLocaleString('en')}</td>
+                  <td>{c.so2.toLocaleString('en')}</td>
+                  <td>{(c.tp / c.so2).toFixed(0)}×</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Multiply–adds per channel pair for one edge, counted by <code>escn.ts</code> with the definitions in Fig. 1’s
+        assumptions. L = 2, 4 and 6 are the degrees of UMA-S, UMA-M and UMA-L <Cite id="wood2025uma" locator="App. A.3, Table 6" />.
+        Counts are not timings; real implementations also differ in channel mixing and memory traffic.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="smooth-h">
+      <h2 id="smooth-h" class="h-section">Smoothness as a design rule</h2>
+      <p>
+        eSEN’s paper starts from molecular dynamics, not from test errors. Conservative forces, ∮ <b>F</b>·d<b>r</b> = 0, are
+        necessary for energy conservation but not sufficient <Cite id="fu2025esen" locator="Secs. 3.1–3.2" />. For a symplectic
+        integrator with time step Δ<i>t</i>, the energy error after time <i>T</i> obeys
+        <Cite id="fu2025esen" locator="Sec. 3.2, Eq. 2" />
+      </p>
+      <Math display number="5" tex={String.raw`\big|E(\mathbf r_T, \mathbf a) - E(\mathbf r_0, \mathbf a)\big| \le C\,\Delta t^{2} + C_N\,\Delta t^{N}\, T, \qquad 0 \le T \le \Delta t^{-N}`} />
+      <p>
+        where <i>N</i> is the order up to which <i>E</i> has continuous, bounded derivatives and the constants do not depend on
+        <i>T</i> or Δ<i>t</i>. A kink anywhere in the energy surface, from a neighbour list that switches abruptly or an
+        edge that appears with a finite weight, ruins the second term. The authors therefore ablated the choices one at a time
+        in 100 ps NVE runs of small eSEN models. Direct forces, a maximum-neighbour limit, a missing envelope and projection
+        onto a coarse spatial grid each broke energy conservation, while barely changing test-set errors
+        <Cite id="fu2025esen" locator="Sec. 5; Fig. 4; Table 1" />.
+      </p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Design choice</th><th>eSEN</th><th>What the ablation showed</th><th>Seen elsewhere in the Atlas</th></tr></thead>
+          <tbody>
+            <tr><td>Forces</td><td>−∂E/∂r</td><td>Direct forces drift <Cite id="fu2025esen" locator="Fig. 4 (a)" /></td><td><a href="/failures/nonconservative-forces/">Non-conservative forces</a></td></tr>
+            <tr><td>Neighbour set</td><td>All atoms within 6 Å</td><td>A neighbour limit breaks conservation <Cite id="fu2025esen" locator="Fig. 4 (c); Sec. 5.3" /></td><td><a href="/models/orb/#fig-limit">Orb, Fig. 1</a></td></tr>
+            <tr><td>Envelope</td><td>Polynomial, p = 5</td><td>No envelope breaks conservation <Cite id="fu2025esen" locator="Fig. 4 (c)" /></td><td><a href="/physics-lab/">Physics Lab</a> cutoff experiments</td></tr>
+            <tr><td>Nonlinearity</td><td>Gated, no grid</td><td>Low-resolution grids break equivariance and conservation; finer grids mitigate it <Cite id="fu2025esen" locator="Sec. 5.2; Fig. 4 (b)" /></td><td>—</td></tr>
+            <tr><td>Radial basis</td><td>10 functions (64 for OMat)</td><td>512 functions broke conservation on TM23, not on MD22 <Cite id="fu2025esen" locator="Sec. 5.3" /></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Conservative training costs a backward pass. eSEN’s answer is to train with a direct-force head first, then remove
+        it and fine-tune conservatively. For a 2-layer model on MPtrj, 60 direct plus 40 conservative epochs beat 100
+        conservative epochs from scratch in 40 % less wall-clock time <Cite id="fu2025esen" locator="Sec. 5.1; Fig. 3" />.
+        PET reached a similar conclusion <Cite id="bigi2024darkside" locator="Sec. 4.8" />. UMA trains the same way, and
+        raises the neighbour cap from 30 in the direct stage to 300 in the conservative stage
+        <Cite id="wood2025uma" locator="Sec. 2.4; App. A.2, Table 5" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="mole-h">
+      <h2 id="mole-h" class="h-section">UMA: one backbone, many experts</h2>
+      <p>
+        UMA is trained on close to 500 million structures from five datasets computed with different codes and functionals:
+        OMat24 (VASP, PBE), OMol25 (ORCA, ωB97M-V), OC20 (VASP, RPBE), and ODAC25 and OMC25 (VASP, PBE with D3 dispersion)
+        <Cite id="wood2025uma" locator="Sec. 3; App. B.3–B.5" />. One network sees them all. A task embedding says which DFT
+        setting a structure belongs to, and learned embeddings of the integer total charge and spin are added to the
+        <i>l</i> = 0 features in every layer <Cite id="wood2025uma" locator="Sec. 2.2.1" />. Capacity comes from a Mixture of
+        Linear Experts <Cite id="wood2025uma" locator="Sec. 2.3, Eqs. 1–2" />:
+      </p>
+      <Math display number="6" tex={String.raw`\mathbf y = \sum_{k=1}^{E} \alpha_k \big(W_k\, \mathbf x\big) = \Big(\sum_{k=1}^{E} \alpha_k W_k\Big)\mathbf x = W^{*}\mathbf x, \qquad \boldsymbol\alpha = \mathrm{softmax}\big(\mathrm{MLP}[\,\bar{\mathbf z},\; \mathbf c\,]\big)`} />
+      <p>
+        Here <b>z̄</b> is the mean of learned per-element embeddings over the atoms and <b>c</b> mixes the charge, spin and
+        task embeddings (fairchem <code>escn_moe.py</code>). The paper deliberately leaves positions and neighbourhoods out
+        of the routing <Cite id="wood2025uma" locator="Sec. 2.3" />, so <b>α</b> is fixed for a given system. The 32 expert
+        matrices of every MoLE layer can then be merged into one <i>W</i>* before a simulation starts. This is how UMA-M has
+        1.4 billion parameters but only about 50 million active <Cite id="wood2025uma" locator="Abstract; Table 1" />. In
+        fairchem the MoLE layers are the linear maps inside the SO(2) convolutions. The merged model refuses a structure whose
+        reduced composition, charge, spin or task differs from the one it was merged for.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Routing a system to its experts" labels={['toy-model', 'live-calculation']} number={2} id="fig-mole" framed={false}>
+        <UmaMole client:visible />
+        <Fragment slot="caption">
+          Left: the 32 expert coefficients for a chosen composition, task, charge and spin. Merging the experts first gives the
+          same output as running them one by one, to rounding error. Grow the supercell and nothing changes, because the
+          composition feature is a mean. Remove an atom from a compound and the defect cell gets slightly different weights
+          from the bulk (red ticks). Right: the energy per atom of perfect supercells is constant, unless the mean is replaced
+          by a sum divided by <i>N</i> + 1, as in UMA-S-1.2.
+        </Fragment>
+        <Assumptions slot="assumptions" items={moleAssumptions} />
+        <Fragment slot="source">MoLE from <Cite id="wood2025uma" locator="Sec. 2.3, Eqs. 1–2" />; routing inputs, softmax + 0.005 and the UMA-S-1.2 mean from fairchem (commit d4e10d0). Computed in your browser by the tested module <code>src/lib/models/mole.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="ext-h">
+      <Callout kind="derivation" title="When routing breaks extensivity">
+        <p id="extensivity">
+          Write the routing feature as <b>z̄</b> = Σ<sub>i</sub> <b>e</b><sub>Z<sub>i</sub></sub> / <i>d</i>(<i>N</i>). For
+          <i>n</i> copies of a cell, the sum grows by <i>n</i>. With <i>d</i> = <i>N</i> the feature is unchanged, so <b>α</b>,
+          <i>W</i>* and every atom’s energy are those of the unit cell, and <i>E</i>(<i>n</i> cells) = <i>n</i> <i>E</i>(1 cell).
+          With <i>d</i> = <i>N</i> + 1 the feature is scaled by <i>nN</i>/(<i>nN</i> + 1), which changes with <i>n</i>. Then
+          <b>α</b> changes, every atom’s energy changes, and the energy per atom of a perfect crystal depends on the size of the
+          simulation cell. fairchem’s code keeps that behaviour for UMA-S-1.2 only and marks it as breaking extensivity. The
+          model card says that uma-s-1 has a known extensivity bug and recommends uma-s-1.1 or uma-s-1.2.1
+          (<a href="https://huggingface.co/facebook/UMA">facebook/UMA</a>). The two notes name different versions. Check which
+          checkpoint a published number used. Shown numerically in <code>src/lib/models/mole.test.ts</code>.
+        </p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="o-int" checked />
+        <label for="o-int">Intuition</label>
+        <input type="radio" name="depth" id="o-tech" />
+        <label for="o-tech">Technical</label>
+        <input type="radio" name="depth" id="o-res" />
+        <label for="o-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Every atom carries a small 3D “shape” that describes its surroundings. To pass information along a bond, eSEN first
+            turns that shape so the bond points straight up. Seen this way, only rotations about the bond remain, and they are
+            simple to handle. It then turns the result back. UMA keeps a bank of such networks and blends them into one for each
+            system, according to the elements, the charge and spin, and the kind of DFT calculation it should imitate.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Eq. (2) is the general SO(2)-equivariant linear map on real harmonics in the bond frame. Combined with
+            <i>D</i>(<i>R</i><sub>st</sub>) on both sides it gives an SO(3)-equivariant message without Clebsch–Gordan
+            coefficients. Its weights depend on <i>r</i>, and in eSCN also on the two species
+            <Cite id="passaro2023escn" locator="Sec. 2.2, Eq. 5" />. Restricting |<i>m</i>| ≤ 2 cuts the cost from
+            <i>O</i>(<i>L</i><sup>3</sup>) toward <i>O</i>(<i>L</i><sup>2</sup>) for the convolution. The rotations,
+            <i>O</i>(<i>L</i><sup>3</sup>), then dominate. eSEN’s smoothness rules make <i>E</i>(<b>r</b>) as differentiable as
+            its building blocks: an envelope that is <i>C</i><sup>2</sup> at the cutoff, no ordering-dependent neighbour
+            truncation, and no point sampling on the sphere. The MoLE coefficients depend on composition but not on
+            <b>r</b>, so ∂<i>E</i>/∂<b>r</b> passes through the merged <i>W</i>* only, and forces stay conservative.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Two questions remain open. First, no choice of bond frame can be smooth over all bond directions: a continuous frame would give a
+            continuous tangent field on the sphere, which the hairy-ball theorem rules out. Any construction jumps somewhere.
+            Roll independence is what keeps the message smooth anyway, and it is also why a random roll is exact, apart
+            from floating-point noise that changes from call to call. Second, MoLE makes the potential a function of composition, task, charge and spin as well
+            as positions. Energy differences between systems of different composition, such as defect formation, adsorption or
+            reaction energies, are differences between two differently merged models. That is legitimate, since it is one
+            learned function. But the composition dependence is learned only where training data constrain it, and nothing
+            forces it to be smooth across compositions far from the data. Transfer between tasks, for example a molecule
+            computed with the omat task, is a property of a checkpoint and has to be tested, not assumed. Compare
+            <a href="/models/orb/">Orb</a>, which gives up exact symmetry for speed, and <a href="/models/pet/">PET</a>, which
+            learns symmetry and restores it by frame averaging.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, forces and stress, the latter two by back-propagation <Cite id="fu2025esen" locator="Sec. 4" />. UMA predicts
+        energies for the selected task. A referencing scheme that subtracts isolated-atom DFT energies and adds tabulated heats of
+        formation puts all tasks on comparable scales, so a single energy head can serve them
+        <Cite id="wood2025uma" locator="App. A.6" />. Energies from different tasks are still at different levels of theory and
+        are not interchangeable. Neither family has explicit long-range electrostatics. Charge and spin enter as global
+        embeddings, not as atomic charges.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> The receptive field is finite. With a 6 Å cutoff and no long-range term, UMA treats
+        an adsorbate 7 Å from a surface as an independent structure <Cite id="wood2025uma" locator="Sec. 6" />.
+        Electrostatics beyond the receptive field are absent (<a href="/physics-lab/ewald/">P6</a>,
+        <a href="/failures/electrostatics-at-electrodes/">electrodes</a>). Each integer charge and spin has its own embedding, so
+        unseen values do not generalise <Cite id="wood2025uma" locator="Secs. 2.2.1, 6" />. Routing by composition
+        makes the merged model valid only for one reduced composition, charge, spin and task. Grand-canonical or
+        reactive simulations that change composition must re-merge, or run unmerged. A composition feature that is not
+        intensive breaks extensivity (Fig. 2). Direct-force models from the same codebase, such as the pre-training stage and
+        UMA-L, are not conservative <Cite id="wood2025uma" locator="Table 1" />.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> Each task inherits its dataset’s functional and coverage. omat is PBE/PBE+U bulk, omol
+        is ωB97M-V for molecules, oc20 is RPBE for adsorbates on surfaces <Cite id="wood2025uma" locator="Sec. 3; App. B.3" />. Using a task
+        outside its domain is extrapolation. The authors report that bfloat16 alone degrades accuracy by as much as 20–50 % and
+        that training for more than two or three epochs over-fitted <Cite id="wood2025uma" locator="Secs. 2.4, 4.1" />. Of the Matbench Discovery eSEN models,
+        eSEN-30M-MP learned MPtrj only; eSEN-30M-OAM was pre-trained on OMat24 and fine-tuned on sAlex and MPtrj
+        <Cite id="fu2025esen" locator="Sec. 6.1" />. Their energies follow those references.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Forces</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{uma.name}</td>
+              <td>OMat24, OMol25, OC20, ODAC, OMC25 (five tasks)</td>
+              <td>conservative</td>
+              <td>{umaParams}</td>
+              <td>{uma.licence}</td>
+              <td><a href={uma.weights?.url}>{uma.version}</a></td>
+            </tr>
+            {
+              board.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>{m.targets.endsWith('_G') ? 'conservative' : 'direct'}</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(1)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td><a href={m.checkpoint_url}>{m.version}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The UMA row gives the paper’s UMA-S parameter counts <Cite id="wood2025uma" locator="Table 1" />. The model card also
+        lists uma-s-1p2, uma-s-1p2p1 and uma-m-1p1, which are not yet recorded individually. Downloads are gated behind the
+        licence. The other rows are the eSEN models submitted to Matbench Discovery (snapshot {snapshot.source.commit_date};
+        leaderboard parameter counts and training-set labels), whose results are on the <a href="/benchmarks/">Benchmarks</a>
+        page. Benchmark numbers from different protocols are not compared here.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/nequip/">NequIP</a>, <a href="/models/allegro/">Allegro</a> and <a href="/models/mace/">MACE</a> use
+        full Clebsch–Gordan tensor products. eSEN computes the same kind of equivariant message more cheaply in the bond frame.
+        <a href="/models/orb/">Orb</a> and <a href="/models/pet/">PET</a> learn rotational symmetry instead of building it in.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>SO(2) convolutions and m<sub>max</sub>: <Cite id="passaro2023escn" />.</li>
+        <li>eSEN, the smoothness ablations and direct-then-conservative training: <Cite id="fu2025esen" />.</li>
+        <li>UMA, MoLE, the five tasks and model sizes: <Cite id="wood2025uma" />.</li>
+        <li>Code: <a href="https://github.com/facebookresearch/fairchem">fairchem</a> (<code>src/fairchem/core/models/uma/</code>); weights: <a href="https://huggingface.co/facebook/UMA">facebook/UMA</a> and <a href="https://huggingface.co/facebook/OMAT24">facebook/OMAT24</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #o-int:checked ~ .depth-int,
+  #o-tech:checked ~ .depth-tech,
+  #o-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

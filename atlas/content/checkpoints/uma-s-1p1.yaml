@@ -1,0 +1,28 @@
+name: UMA-S 1.1
+family: uma
+implementation: fairchem
+version: uma-s-1p1
+release: { source: wood2025uma }
+parameters: { total: 150000000, active: 6000000 }
+training:
+  - stage: training
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: 'Task "omat". Sampling ratio 4 (UMA Sec. 3).'
+  - stage: training
+    dataset: omol25
+    level_of_theory: wb97mv-def2tzvpd
+    note: 'Task "omol", with total charge and spin. Sampling ratio 4.'
+  - stage: training
+    dataset: oc20
+    level_of_theory: rpbe-oc20
+    note: 'Task "oc20". Sampling ratio 1. ODAC (PBE+D3, ratio 1) and OMC25 (PBE+D3, ratio 2) are also in the training set but not yet recorded in the Atlas.'
+outputs: [energy, forces, stress]
+licence: FAIR Chemistry License v1 (gated download; geographic and acceptable-use restrictions)
+weights: { url: 'https://huggingface.co/facebook/UMA/blob/main/checkpoints/uma-s-1p1.pt' }
+known_issues: [uma-composition-extensivity]
+claims: [uma-sizes, uma-two-stage, uma-mole]
+review:
+  status: draft
+  last_checked: 2026-10-16
+  notes: 'Parameter counts are the paper''s for UMA-S (Table 1: 150M total, 6M active, 32 experts, App. Table 6); the Hugging Face card lists uma-s-1p1, uma-s-1p2, uma-s-1p2p1 and uma-m-1p1 and says uma-s-1 has a known extensivity bug. One model, five tasks selected at inference; forces and stress by back-propagation after conservative fine-tuning. Weight file path as listed on the model card; not downloaded.'

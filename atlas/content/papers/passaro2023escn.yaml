@@ -1,0 +1,11 @@
+title: Reducing SO(3) Convolutions to SO(2) for Efficient Equivariant GNNs
+topic: equivariant-message-passing
+authors:
+  - 'Passaro, S.'
+  - 'Zitnick, C. L.'
+year: 2023
+type: preprint
+identifiers:
+  arxiv: '2302.03655'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (HTML): Sec. 3 (edge aligned with the y axis, Eq. 9; SO(2) convolution Eq. 14), Sec. 5.1 and 6.3 (m_max), App. C (O(L^6) to O(L^3)). Published at ICML 2023 per the arXiv comments; venue not cross-checked.' }

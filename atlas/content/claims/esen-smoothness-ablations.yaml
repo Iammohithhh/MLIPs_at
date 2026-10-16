@@ -1,0 +1,9 @@
+statement: >-
+  In 100 ps NVE runs of 2-layer eSEN models (81 TM23 systems from MPtrj-trained models, 7 MD22 systems from SPICE-trained
+  ones), direct-force prediction, a maximum-neighbour limit, a missing envelope and projection onto a low-resolution
+  spatial grid each broke energy conservation, while changing test-set errors little.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: fu2025esen, locator: 'Sec. 5; Fig. 4; Table 1' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'The paper also reports that 512 radial basis functions broke conservation on TM23 but not on MD22 (Sec. 5.3), and that a Bessel basis had no effect. Its drift bound (Eq. 2) is the reason it asks for bounded energy derivatives.' }

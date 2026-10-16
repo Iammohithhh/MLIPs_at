@@ -1,0 +1,19 @@
+title: Learning Smooth and Expressive Interatomic Potentials for Physical Property Prediction
+topic: equivariant-message-passing
+authors:
+  - 'Fu, X.'
+  - 'Wood, B. M.'
+  - 'Barroso-Luque, L.'
+  - 'Levine, D. S.'
+  - 'Gao, M.'
+  - 'Dzamba, M.'
+  - 'Zitnick, C. L.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2502.12147'
+edges:
+  - { type: reuses-mechanism, target: passaro2023escn, documented: true }
+  - { type: compares-against, target: neumann2024orb, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 (HTML): Secs. 3–5 (design principles, Eq. 2 drift bound, Fig. 4 NVE ablations, Table 1), Sec. 4 and Fig. 2 (architecture), Sec. 5.1 and Fig. 3 (direct pretraining then conservative fine-tuning), App. D Table 6 (hyperparameters).' }

@@ -1,0 +1,7 @@
+statement: >-
+  If the composition feature that routes UMA's experts is the summed element embeddings divided by N + 1 instead of N,
+  the expert coefficients depend on the number of atoms, so the energy per atom of a perfect supercell changes with its
+  size and the energy is not extensive.
+grade: THEORY
+derivation: /models/esen-uma/#extensivity
+review: { status: draft, last_checked: 2026-10-16, notes: 'fairchem escn_moe.py (commit d4e10d0) keeps include_self=True in the composition mean only for model_id "UMA-S-1.2", with a comment that this breaks extensivity; the Hugging Face card (facebook/UMA) says uma-s-1 has a known extensivity bug and recommends uma-s-1.1 or uma-s-1.2.1. The two sources name different versions; both are quoted on the page. Demonstrated in src/lib/models/mole.test.ts.' }

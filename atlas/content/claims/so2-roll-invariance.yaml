@@ -1,0 +1,8 @@
+statement: >-
+  A rotation of the bond frame about the bond acts on each (m, −m) pair of coefficients as a 2-D rotation by mγ, which
+  commutes with the SO(2) convolution's [[A, −B], [B, A]] blocks, so the message does not depend on the roll; this is
+  why an implementation may choose the roll at random. An unrestricted linear map in the same frame does depend on it
+  and is not equivariant.
+grade: THEORY
+derivation: /models/esen-uma/#roll-derivation
+review: { status: draft, last_checked: 2026-10-16, notes: 'fairchem draws the roll uniformly at random (models/uma/common/rotation.py, init_edge_rot_euler_angles; commit d4e10d0). Checked numerically in src/lib/models/escn.test.ts.' }
