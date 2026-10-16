@@ -116,3 +116,13 @@ curl -sL https://arxiv.org/html/2512.16702v1 -o catalysis.html
 `migration_barriers.py` joins the DFT-NEB barriers of Bheemaguli et al.'s Dataset-2 (Zenodo) with each model's released
 NEB barrier and writes `atlas/src/data/benchmarks/migration-bheemaguli2025.json` plus the hop geometries in
 `atlas/public/data/migration-paths.json`; see the module docstring for the sparse-clone commands.
+
+### Citation universe
+
+`citations.py` builds the literature around the Atlas papers from OpenAlex (CC0): every Atlas paper, every work it
+cites and the most-cited works citing it, with all citations among them, laid out by a seeded 3D force layout with
+rank-equalised radii, into `atlas/public/data/citation-universe.json`. Pass a cache path to avoid refetching:
+
+```bash
+../.venv/bin/python -m atlas_pipeline.citations ../atlas/src/data/bibliography.json ../atlas/public/data/citation-universe.json /tmp/oa-works.json
+```

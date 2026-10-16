@@ -8,6 +8,7 @@ import { PAPER_TOPICS, type Paper } from '~/content/schemas';
 import { authorList, bibEntry, citeLabel, primaryUrl, venueLine } from '~/lib/bibliography';
 import { layoutPapers, NODE_R, type GraphEdge } from '~/lib/paper-graph';
 import { typesetInline } from '~/lib/typeset';
+import CitationUniverse from '~/islands/CitationUniverse';
 
 const TOPIC_LABEL: Record<(typeof PAPER_TOPICS)[number], string> = {
   electrostatics: 'Electrostatics & lattice sums',
@@ -139,6 +140,19 @@ const verifyLabel = { 'full-text': 'checked against full text', abstract: 'check
       </Fragment>
       <Fragment slot="source">
         Metadata: Crossref, arXiv API and OpenAlex, fetched by <code>pipeline/atlas_pipeline/bibliography.py</code>.
+      </Fragment>
+    </Figure>
+
+    <Figure number="2" title="The citation universe around the Atlas" labels={['schematic']} id="fig-universe" framed={false}>
+      <CitationUniverse client:visible />
+      <Fragment slot="caption">
+        Every Atlas paper (large, in ink colour), every work it cites and the twelve most-cited works citing each of them — about two
+        thousand works and the citations among them. Position comes from a seeded force layout of the citation network with
+        radii equalised by rank, so the dense core is readable; colour is publication year or field. Grow it from 1950 to
+        watch the field accumulate.
+      </Fragment>
+      <Fragment slot="source">
+        OpenAlex (CC0), fetched and laid out by <code>pipeline/atlas_pipeline/citations.py</code>; field is OpenAlex’s primary-topic field.
       </Fragment>
     </Figure>
 
