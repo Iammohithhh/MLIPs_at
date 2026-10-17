@@ -330,3 +330,16 @@
     grid-template-columns: repeat(64, minmax(0, 1fr));
   }
 }
+.scene-fallback {
+  min-height: 340px;
+  display: grid;
+  align-content: center;
+  gap: 0.3rem;
+  padding: 2rem 1.5rem 6rem;
+  color: var(--im-stage-ink);
+  font-size: 0.9rem;
+}
+.scene-fallback p {
+  margin: 0;
+  max-width: 36rem;
+}

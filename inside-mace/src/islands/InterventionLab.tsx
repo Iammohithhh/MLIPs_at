@@ -23,6 +23,7 @@ import { Stage } from '../three/Stage';
 import { Arrows, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
 import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
+import { SceneGuard } from './SceneGuard';
 import './InterventionLab.css';
 
 const m = parseManifest(raw);
@@ -93,7 +94,9 @@ export default function InterventionLab() {
       )}
       <div className="lab__grid">
         <div className="lab__stage">
-          <Scene shown={shown} view={view} selected={s.atom} showEdges={showEdges} showShell={showShell} colourMode={colourMode} layer={s.layer} resetKey={resetKey} reduced={reduced} onPick={(i) => set({ atom: i })} />
+          <SceneGuard>
+            <Scene shown={shown} view={view} selected={s.atom} showEdges={showEdges} showShell={showShell} colourMode={colourMode} layer={s.layer} resetKey={resetKey} reduced={reduced} onPick={(i) => set({ atom: i })} />
+          </SceneGuard>
           <ForceScale />
           <ColourLegend mode={colourMode} layer={s.layer} />
           <div className="lab__views" role="radiogroup" aria-label="Comparison view">
@@ -210,7 +213,7 @@ function Scene(props: {
       if (!f) continue;
       const mag = norm(f);
       if (mag * FORCE_SCALE < 0.06) continue;
-      out.push({ a: a.pos, b: [a.pos[0] + f[0] * FORCE_SCALE, a.pos[1] + f[1] * FORCE_SCALE, a.pos[2] + f[2] * FORCE_SCALE], color: view === 'difference' ? amber : teal, radius: 0.05 });
+      out.push({ a: a.pos, b: [a.pos[0] + f[0] * FORCE_SCALE, a.pos[1] + f[1] * FORCE_SCALE, a.pos[2] + f[2] * FORCE_SCALE], color: view === 'difference' ? amber : teal, radius: 0.075 });
     }
     return out;
   }, [atoms, view, props.shown]);
@@ -262,7 +265,7 @@ function SceneContents(p: {
     <>
       <ImpostorAtoms buffers={p.buffers} version={p.version} uniforms={uniforms} />
       <Sticks segments={p.sticks} uniforms={uniforms} />
-      <Arrows arrows={p.arrows} uniforms={uniforms} head={0.22} />
+      <Arrows arrows={p.arrows} uniforms={uniforms} head={0.3} />
       <Lines lines={p.lines} />
       {p.sel && <Shell center={p.sel} radius={0.85} color={COLORS.mint} opacity={0.35} overlay />}
       {p.showShell && p.sel && <Shell center={p.sel} radius={m.rMax} color={COLORS.teal} opacity={0.12} grid />}

@@ -65,3 +65,25 @@ test('no horizontal overflow', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test('without WebGL the page says so and the numbers stay usable', async ({ page }) => {
+  await page.addInitScript(() => {
+    const orig = HTMLCanvasElement.prototype.getContext;
+    // @ts-expect-error test override
+    HTMLCanvasElement.prototype.getContext = function (type: string, ...rest: unknown[]) {
+      if (/webgl/.test(type)) return null;
+      return orig.call(this, type, ...rest);
+    };
+  });
+  await page.goto('/?frame=16');
+  await expect(page.getByText('3D view unavailable.')).toBeVisible();
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.100 Å');
+  await expect(page.locator('.lab__readouts dd').first()).toContainText('+0.0464 eV');
+});
+
+test('reduced motion is respected (no transitions)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const d = await page.locator('.lab__views button').first().evaluate((el) => getComputedStyle(el).transitionDuration);
+  expect(parseFloat(d)).toBeLessThan(0.001);
+});
