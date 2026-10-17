@@ -211,7 +211,7 @@ unchanged; scene renders, no overflow).
    after impostor-depth verification (§4, may be judged not worth it — record why).
 
 
-### Session 5 — 2026-10-17 22:16 → (see end) UTC
+### Session 5 — 2026-10-17 22:16 → 22:46 UTC
 
 **State found:** branch at `0fd7591` (session 4 handoff), working tree clean. Re-read BRIEF, HANDOFF, CLAUDE.md.
 
@@ -254,4 +254,32 @@ unchanged; scene renders, no overflow).
 `astro build` OK; Playwright desktop + mobile **50 passed, 2 skipped** (perf is mobile-only). Screenshots
 inspected: ZnO at 1440×1000, 1024×800, 390×844 (no horizontal overflow at any), Si 1440 picker/head, walk
 mode stage 7 desktop + mobile. Visual text dump of ZnO stages 1/4/5/6, rotation, trace and inspector: no Si
-assumptions remain. pytest not re-run (pipeline untouched this session; no venv in this container).
+assumptions remain.
+- `22036de` presentation mode hides the experiment picker (minimal controls; the link fixes the experiment).
+- README "Rendering decisions" also documents render pausing and per-experiment lazy data.
+
+**Final verification (22:45 UTC, after `22036de`):** astro check 0 errors; Vitest 75/75; build OK; Playwright
+desktop + mobile 50 passed / 2 skipped (perf mobile-only) at 22:40, then `experiments.spec` 12/12 and
+`lab.spec` 34/34 again after the last CSS change. **pytest 22/22** with a freshly downloaded checkpoint
+(`sha256sum` = 01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845, matches) — includes the fresh
+re-evaluation of stored frames for both experiments. Venv recipe as in session 1 (≈2 min; pytest ≈36 s).
+
+**Open problems / known gaps:**
+- Baseline ZnO forces (0.037 eV/Å) are below the 0.12 eV/Å arrow threshold, so the d = 0 ZnO scene shows no
+  arrows; the legend states the threshold and the readout note states the stored force, so this is honest, but
+  a session could consider a per-experiment threshold (it must stay stated in the legend and PNG export).
+- The rotation run for ZnO is stored at d = 0.100 Å (as for Si); fine, but the panel does not say why that frame.
+- Hyphen-minus may remain in a few less-visible numbers (trace tooltips, plot ticks); the main readouts,
+  stage 6, rotation and inspector now use U+2212.
+- Ambient occlusion: evaluated in SwiftShader only; if retried, use a multisampled target and a real GPU.
+
+**Next steps (session 6):**
+1. Re-verify (check, Vitest, build, Playwright desktop+mobile, pytest with checkpoint) and inspect screenshots at
+   1440/1024/390 for both `?exp=si-bond-stretch` and `?exp=zno-axial-bond`, walk and lab modes, presentation.
+2. Write the **final verification summary and remaining limitations** into `README.md` (brief §16) — replace the
+   placeholder section at its end. Use the numbers in the session 4/5 entries (tests, perf, checks: restoration,
+   FD h² convergence, rotation tolerances per experiment) and list limitations: precomputed only (no live
+   inference), two structures / one path each, no DFT comparison, ZnO geometry unrelaxed, AO not enabled,
+   WebGPU not adopted, perf measured on emulation (SwiftShader) not a physical phone.
+3. If time remains: per-experiment arrow threshold (see above, with legend/export text and tests), a sentence in
+   the rotation panel about the chosen frame, and a last sweep of hyphen-minus in trace tooltips/plot ticks.

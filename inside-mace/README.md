@@ -106,7 +106,10 @@ with DFT, so no number on the page is an error estimate.
 ## Rendering decisions
 
 - **Renderer.** The working WebGL renderer and impostor-sphere shaders from `atlas/src/three` are kept (brief:
-  migrating custom shaders to WebGPU is a separate decision). Render on demand, device-pixel ratio capped at 2.
+  migrating custom shaders to WebGPU is a separate decision). Render on demand, device-pixel ratio capped at 2;
+  a scene that is off screen or in a hidden tab stops rendering entirely and redraws once when it returns
+  (`data-rendering="paused"` on its container; checked in `e2e/render.spec.ts`). Only the selected experiment's
+  manifest is downloaded; frame chunks load per frame.
 - **Ambient occlusion (brief §4, optional) — evaluated and not enabled.** Session 5 tried N8AO (n8ao 2.0.1,
   ISC) as a three.js `EffectComposer` pass behind an off-by-default toggle. The prerequisite holds: the impostor
   fragment shader writes `gl_FragDepth` (`src/three/primitives.tsx`), so depth-reconstructed occlusion would see
