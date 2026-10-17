@@ -7,7 +7,8 @@ import type { Manifest } from './experiment';
 export const STAGES = ['species', 'neighbours', 'radial', 'messages', 'features', 'energy', 'forces'] as const;
 export type Stage = (typeof STAGES)[number];
 
-export const VIEWS = ['baseline', 'perturbed', 'difference'] as const;
+/** 'split' = baseline and perturbed side by side with synchronised cameras (desktop; one scene on narrow screens). */
+export const VIEWS = ['baseline', 'perturbed', 'difference', 'split'] as const;
 export type View = (typeof VIEWS)[number];
 
 export const MODES = ['lab', 'walk'] as const;

@@ -1,4 +1,5 @@
 // Copied from atlas/src/three/Stage.tsx (MLIP Atlas) for inside-mace; keep in sync deliberately, not automatically.
+// inside-mace change: optional `sync` (cameraSync.ts) links the orbit cameras of side-by-side Stages.
 // A Canvas configured for Atlas figures: render-on-demand, z-up orbit camera,
 // colour-managed output with no tone mapping (so the scene background matches
 // the page canvas exactly), and a static message when WebGL is unavailable.
@@ -8,6 +9,7 @@ import { OrbitControls } from '@react-three/drei';
 import { useEffect, useRef, type ReactNode } from 'react';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import type { CameraSync } from './cameraSync';
 
 export interface StageView {
   position: [number, number, number];
@@ -23,6 +25,7 @@ export function Stage({
   fov = 30,
   minDistance = 8,
   maxDistance = 140,
+  sync,
 }: {
   view: StageView;
   /** Change to animate back to `view`. */
@@ -34,6 +37,7 @@ export function Stage({
   fov?: number;
   minDistance?: number;
   maxDistance?: number;
+  sync?: CameraSync;
 }) {
   return (
     <Canvas
@@ -51,7 +55,7 @@ export function Stage({
       role="img"
     >
       <Background color={background} />
-      <Controls view={view} resetKey={resetKey} minDistance={minDistance} maxDistance={maxDistance} />
+      <Controls view={view} resetKey={resetKey} minDistance={minDistance} maxDistance={maxDistance} sync={sync} />
       {children}
     </Canvas>
   );
@@ -73,11 +77,13 @@ function Controls({
   resetKey,
   minDistance,
   maxDistance,
+  sync,
 }: {
   view: StageView;
   resetKey?: number;
   minDistance: number;
   maxDistance: number;
+  sync?: CameraSync;
 }) {
   const ref = useRef<OrbitControlsImpl>(null);
   const camera = useThree((s) => s.camera);
@@ -99,6 +105,29 @@ function Controls({
     invalidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
+
+  useEffect(() => {
+    const controls = ref.current;
+    if (!sync || !controls) return;
+    let applying = false;
+    const sub = sync.subscribe((p) => {
+      applying = true;
+      camera.position.set(...p.position);
+      controls.target.set(...p.target);
+      controls.update();
+      applying = false;
+      invalidate();
+    });
+    const onChange = () => {
+      if (applying) return;
+      sync.publish(sub.id, { position: camera.position.toArray() as [number, number, number], target: controls.target.toArray() as [number, number, number] });
+    };
+    controls.addEventListener('change', onChange);
+    return () => {
+      controls.removeEventListener('change', onChange);
+      sub.off();
+    };
+  }, [sync, camera, invalidate]);
 
   return (
     <OrbitControls

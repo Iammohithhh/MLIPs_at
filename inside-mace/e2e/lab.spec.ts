@@ -150,3 +150,21 @@ test('trace the change: predict, reveal stage by stage, exact zeros beyond the r
   await expect(trace.locator('figcaption')).toContainText('194 atoms changed, 22 exactly unchanged');
   expect(errors).toEqual([]);
 });
+
+test('side by side: two synchronised scenes on desktop, one scene on mobile', async ({ page }, info) => {
+  const errors = collectErrors(page);
+  await page.goto('/?frame=20&view=split');
+  if (info.project.name === 'mobile') {
+    await expect(page.locator('.lab__stage canvas')).toHaveCount(1);
+    await expect(page.getByRole('radio', { name: 'Side by side' })).toHaveCount(0);
+    await expect(page.getByRole('radio', { name: 'Perturbed' })).toHaveAttribute('aria-checked', 'true');
+  } else {
+    await expect(page.locator('.lab__stage canvas')).toHaveCount(2);
+    await expect(page.getByText('Baseline · d = 0')).toBeVisible();
+    await expect(page.getByText('Perturbed · d = +0.200 Å')).toBeVisible();
+    await page.getByRole('radio', { name: 'Difference' }).click();
+    await expect(page.locator('.lab__stage canvas')).toHaveCount(1);
+    await expect(page).toHaveURL(/view=difference/);
+  }
+  expect(errors).toEqual([]);
+});

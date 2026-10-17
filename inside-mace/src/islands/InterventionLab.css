@@ -133,7 +133,7 @@
   color: #10221e;
   background: var(--im-mint);
 }
-.lab__views button.is-on:last-child {
+.lab__views button.is-on.v-difference {
   background: var(--im-amber);
 }
 .lab__panel {
@@ -757,4 +757,40 @@
 }
 .trace__fig svg {
   max-width: 920px;
+}
+
+/* Side-by-side baseline | perturbed panes with synchronised cameras (desktop only). */
+.lab__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--im-stage-rule);
+}
+.lab__pane {
+  position: relative;
+  min-width: 0;
+  background: var(--im-stage);
+}
+.lab__pane-label {
+  position: absolute;
+  bottom: 3.6rem;
+  right: 0.6rem;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: var(--im-stage-2);
+  color: var(--im-mint);
+  border: 1px solid var(--im-stage-rule);
+}
+.lab__pane-label.is-pert {
+  color: var(--im-amber);
+}
+@media (max-width: 640px) {
+  /* Narrow screens: scale and legend sit below the scene instead of overlapping each other on it. */
+  .lab__scale,
+  .lab__legend {
+    position: static;
+    margin: 0.4rem 0.6rem;
+    max-width: none;
+  }
 }

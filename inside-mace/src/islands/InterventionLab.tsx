@@ -20,6 +20,7 @@ import { neighbourhood, bonds, graphEdges } from '../lib/scene';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
 import { Stage } from '../three/Stage';
+import { CameraSync } from '../three/cameraSync';
 import { Arrows, AtomPicker, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
 import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
@@ -67,6 +68,8 @@ export default function InterventionLab() {
   const [resetKey, setResetKey] = useState(0);
   const [camera, setCamera] = useState<CameraPreset>('overview');
   const reduced = usePrefersReducedMotion();
+  const wide = useWide();
+  const sync = useMemo(() => new CameraSync(), []);
 
   useEffect(() => {
     const r = decodeState(window.location.search.slice(1), m, CHECKPOINT);
@@ -83,9 +86,14 @@ export default function InterventionLab() {
   if (!s) return <div className="lab lab--loading" role="status">Loading the precomputed evaluations…</div>;
 
   const frame = s.frame;
-  const view: View = s.view;
+  const split = s.view === 'split' && wide;
+  // On narrow screens the side-by-side view shows one scene (the perturbed state); the toggle stays available.
+  const view: View = s.view === 'split' && !wide ? 'perturbed' : s.view;
   const shown = view === 'baseline' ? B : frame;
   const d = m.displacement.values[frame] ?? 0;
+  const sceneEdges = s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges;
+  const sceneShell = s.mode === 'walk' ? s.stage === 'neighbours' : showShell;
+  const sceneForces = s.mode !== 'walk' || s.stage === 'forces';
 
   return (
     <section className="lab" aria-labelledby="lab-title">
@@ -115,14 +123,27 @@ export default function InterventionLab() {
       <div className="lab__grid">
         <div className="lab__stage">
           <SceneGuard>
-            <Scene shown={shown} view={view} selected={s.atom} showEdges={s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges} showShell={s.mode === 'walk' ? s.stage === 'neighbours' : showShell} showForces={s.mode !== 'walk' || s.stage === 'forces'} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} />
+            {split ? (
+              <div className="lab__split">
+                {([B, frame] as const).map((k, side) => (
+                  <div key={side} className="lab__pane">
+                    <Scene shown={k} view={side === 0 ? 'baseline' : 'perturbed'} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} sync={sync} />
+                    <span className={`lab__pane-label mono${side === 1 ? ' is-pert' : ''}`}>
+                      {side === 0 ? 'Baseline · d = 0' : `Perturbed · d = ${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(3)} Å`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Scene shown={shown} view={view} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} />
+            )}
           </SceneGuard>
           <ForceScale />
           <ColourLegend mode={colourMode} layer={s.layer} />
           <div className="lab__views" role="radiogroup" aria-label="Comparison view">
-            {(['baseline', 'perturbed', 'difference'] as const).map((v) => (
-              <button key={v} role="radio" aria-checked={view === v} className={view === v ? 'is-on' : ''} onClick={() => set({ view: v })}>
-                {v === 'baseline' ? 'Baseline' : v === 'perturbed' ? 'Perturbed' : 'Difference'}
+            {(wide ? (['baseline', 'perturbed', 'difference', 'split'] as const) : (['baseline', 'perturbed', 'difference'] as const)).map((v) => (
+              <button key={v} role="radio" aria-checked={view === v || (split && v === 'split')} className={`${view === v || (split && v === 'split') ? 'is-on' : ''} v-${v}`} onClick={() => set({ view: v })}>
+                {v === 'baseline' ? 'Baseline' : v === 'perturbed' ? 'Perturbed' : v === 'difference' ? 'Difference' : 'Side by side'}
               </button>
             ))}
           </div>
@@ -213,6 +234,7 @@ function Scene(props: {
   camera: CameraPreset;
   reduced: boolean;
   onPick: (i: number) => void;
+  sync?: CameraSync;
 }) {
   const { shown, view, selected, showEdges, showShell, colourMode, layer } = props;
   const atoms = useMemo(() => neighbourhood(m, shown, DISPLAY_RADIUS) ?? [], [shown]);
@@ -289,11 +311,25 @@ function Scene(props: {
 
   return (
     <div className="lab__canvas">
-      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60}>
+      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync}>
         <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>
   );
+}
+
+/** Desktop-width check for the side-by-side view (brief §12: one main scene at a time on mobile). */
+function useWide(): boolean {
+  const q = '(min-width: 900px)';
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(q);
+    const on = () => setWide(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return wide;
 }
 
 type CameraPreset = 'overview' | 'environment' | 'axis';
