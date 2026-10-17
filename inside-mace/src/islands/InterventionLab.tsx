@@ -22,6 +22,7 @@ import { useExperiment } from '../lib/store';
 import { Stage } from '../three/Stage';
 import { Arrows, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
 import { usePrefersReducedMotion } from '../three/theme';
+import { FeatureInspector } from './FeatureInspector';
 import './InterventionLab.css';
 
 const m = parseManifest(raw);
@@ -138,6 +139,10 @@ export default function InterventionLab() {
           </div>
         </aside>
       </div>
+      <section className="lab__inspect" aria-labelledby="inspect-title">
+        <h3 id="inspect-title">Which parts of the model respond?</h3>
+        <FeatureInspector m={m} frame={frame} atom={s.atom} layer={s.layer} channel={s.channel} onChannel={(c) => set({ channel: c })} />
+      </section>
       <Plots frame={frame} onFrame={(k) => set({ frame: k })} d={d} />
       <p className="lab__scope">
         These are observed changes in a fixed model under a specified input perturbation. They are not explanations of chemical reasoning,

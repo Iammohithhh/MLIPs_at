@@ -264,3 +264,69 @@
   white-space: normal;
   line-height: 1.3;
 }
+.lab__inspect {
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
+  border-radius: var(--im-radius);
+  padding: 1rem;
+}
+.lab__inspect h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+.fi__what,
+.fi__note {
+  font-size: 0.8rem;
+  color: var(--im-stage-muted);
+  margin: 0 0 0.6rem;
+}
+.fi__row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.fi__rowlabel {
+  font: 0.75rem var(--im-mono);
+}
+.fi__cells {
+  display: grid;
+  grid-template-columns: repeat(32, minmax(0, 1fr));
+  gap: 1px;
+}
+@media (max-width: 640px) {
+  .fi__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fi__cells {
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+  }
+}
+.fi__cell {
+  aspect-ratio: 1;
+  min-height: 10px;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.fi__cell.is-on {
+  outline: 2px solid var(--im-stage-ink);
+  outline-offset: -1px;
+}
+.fi__readout {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  font-size: 0.78rem;
+  margin: 0.6rem 0;
+}
+.fi__readout dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1000px) {
+  .fi__cells {
+    grid-template-columns: repeat(64, minmax(0, 1fr));
+  }
+}

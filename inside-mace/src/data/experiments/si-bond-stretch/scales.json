@@ -1,0 +1,34 @@
+{
+ "format": "inside-mace-scales",
+ "schema": 1,
+ "experiment": "si-bond-stretch",
+ "layers": [
+  {
+   "h0": {
+    "value": 0.65478,
+    "change": 0.05891400000000001
+   },
+   "h1": {
+    "value": 0.021239,
+    "change": 0.021239
+   },
+   "Anorm": {
+    "value": 2.61,
+    "change": 0.7184
+   }
+  },
+  {
+   "h0": {
+    "value": 0.13044,
+    "change": 0.012374
+   },
+   "h1": null,
+   "Anorm": {
+    "value": 0.4073,
+    "change": 0.06230000000000002
+   }
+  }
+ ],
+ "definition": "max over evaluated frames and local-set atoms of |h| (value) and |h \u2212 h_baseline| (change)",
+ "script": "inside-mace/pipeline/inside_mace/scales.py"
+}
