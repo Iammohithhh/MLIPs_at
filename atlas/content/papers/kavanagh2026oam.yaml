@@ -1,0 +1,26 @@
+title: Fast and Accurate Equivariant Foundation Models for Atomistic Simulation
+topic: foundation-models-data
+authors:
+  - 'Kavanagh, S. R.'
+  - 'Tan, C. W.'
+  - 'Wang, M.'
+  - 'Descoteaux, M. L.'
+  - 'de Miranda Nascimento, G.'
+  - 'Unneberg, U.'
+  - 'Zichi, L.'
+  - 'Libbi, F.'
+  - 'Rivano, N.'
+  - 'Glover, A.'
+  - 'Bharadwaj, V.'
+  - 'Johansson, A.'
+  - 'Witt, W. C.'
+  - 'Musaelian, A.'
+  - 'Kozinsky, B.'
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2607.28461'
+edges:
+  - { type: extends, target: batzner2022nequip, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'NequIP and Allegro foundation potentials (MP, MPA, OAM data; S/M/L/XL sizes). Table 1: hyperparameters per size. Sec. VII: parity false (SO(3)-equivariant), OMat24 pre-training then MPA fine-tuning, isolated-atom energies as shifts. The packages are on Zenodo (10.5281/zenodo.18775904 for the 0.1 release used here).' }

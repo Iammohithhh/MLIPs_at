@@ -1,0 +1,9 @@
+# Architecture X-ray for NequIP (CPU). nequip and e3nn are pinned to the versions that wrote the
+# NequIP-OAM-S 0.1 package, so the rebuilt modules have exactly the packaged state. Torch from the CPU index first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1
+nequip==0.15.0
+e3nn==0.5.6
+ase==3.29.0
+pytest==9.1.1
+pyyaml==6.0.3

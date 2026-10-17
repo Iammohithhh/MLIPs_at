@@ -1,0 +1,12 @@
+title: The Stopping and Range of Ions in Matter
+topic: other
+authors:
+  - 'Ziegler, J. F.'
+  - 'Biersack, J. P.'
+year: 1985
+venue: 'Treatise on Heavy-Ion Science, Vol. 6, pp. 93–129 (Springer)'
+type: book
+identifiers:
+  doi: 10.1007/978-1-4615-8103-1_3
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-17, notes: 'Source of the ZBL universal screened-Coulomb repulsion. The functional form and the four screening coefficients used on the Atlas were checked against the LAMMPS pair_style zbl documentation and the nequip source (nn/pair_potential.py), not against the chapter itself. LAMMPS cites the Pergamon book by Ziegler, Biersack and Littmark (1985).' }

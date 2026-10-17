@@ -1,0 +1,9 @@
+statement: >-
+  NequIP-OAM-S adds a ZBL screened-Coulomb pair repulsion, multiplied by the same polynomial cutoff as its radial
+  basis (p = 5, 4.5 Å), to the learned site energies. The term is not small at bonding distances: about 1.5 eV per
+  atom in diamond silicon, about 5 eV per atom in wurtzite ZnO and 1.7–7.2 eV per atom in ethanol, which the
+  learned part offsets.
+grade: THEORY
+derivation: /models/x-ray/nequip/#zbl-h
+scope: { model_families: [nequip], checkpoints: [nequip-oam-s-0-1] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'ZBL module and its buffers read from the package; functional form from the nequip source (nn/pair_potential.py) and the LAMMPS pair_style zbl documentation. Per-atom sizes from the precomputed forward passes (PRECOMPUTED, float64).' }

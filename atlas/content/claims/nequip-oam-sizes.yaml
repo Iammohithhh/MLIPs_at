@@ -1,0 +1,10 @@
+statement: >-
+  The NequIP foundation models come in four sizes: Small (4.5 Å cutoff, l_max = 1, 128 and 64 features, 2 layers,
+  0.6 M parameters), Medium (6 Å, l_max = 2, 4 layers, 3.2 M), Large (6 Å, l_max = 3, 6 layers, 6.8 M) and
+  Extra-Large (6 Å, l_max = 4, 6 layers, 32.1 M).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kavanagh2026oam, locator: 'Table 1' }
+scope: { model_families: [nequip], checkpoints: [nequip-oam-s-0-1] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'The Small configuration matches what the Atlas read from the NequIP-OAM-S 0.1 package (616,360 trainable parameters).' }

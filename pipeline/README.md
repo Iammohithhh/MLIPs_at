@@ -53,6 +53,23 @@ curl -LO https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2023-12-
 ATLAS_XRAY_CHECKPOINT=2023-12-03-mace-128-L1_epoch-199.model ../.venv-xray/bin/python -m pytest -q tests/test_xray.py
 ```
 
+`xray_nequip.py` does the same for NequIP with the NequIP-OAM-S 0.1 package (Zenodo
+10.5281/zenodo.18775904, CC-BY-4.0), writing `atlas/src/data/xray/nequip-oam-s.json`: two message-passing
+layers, the gate, the per-type scale and shift and the ZBL repulsion are hooked separately, with a rotated and a
+mirrored copy of ethanol and three dimer scans. A `.nequip.zip` is a `torch.package` archive whose normal loading
+imports and runs the Python stored inside it; the script instead reads the pickled module tree with a restricted
+unpickler (tensors and inert stubs only), reads the architecture off that tree, rebuilds it with the installed
+`nequip` (pinned to the packaging version 0.15.0) and loads the tensors with `strict=True`.
+
+```bash
+python3 -m venv ../.venv-nequip
+../.venv-nequip/bin/pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+../.venv-nequip/bin/pip install -r requirements-xray-nequip.txt
+curl -L -o NequIP-OAM-S-0.1.nequip.zip https://zenodo.org/records/18775904/files/NequIP-OAM-S-0.1.nequip.zip
+../.venv-nequip/bin/python -m atlas_pipeline.xray_nequip NequIP-OAM-S-0.1.nequip.zip ../atlas/src/data/structures ../atlas/src/data/xray/nequip-oam-s.json
+ATLAS_NEQUIP_PACKAGE=NequIP-OAM-S-0.1.nequip.zip ../.venv-nequip/bin/python -m pytest -q tests/test_xray_nequip.py
+```
+
 ## Model Observatory
 
 `observatory.py` runs four released checkpoints trained on MPtrj (MACE-MP-0a medium, CHGNet

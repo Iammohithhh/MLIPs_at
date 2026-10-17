@@ -1,0 +1,10 @@
+statement: >-
+  The NequIP and Allegro foundation models are trained with parity: false, which restricts each rotation order l to a
+  single parity; the authors report a 1.5–2× speed-up with less than 3 % effect on accuracy and note that the
+  architecture is then SO(3)- rather than O(3)-equivariant.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kavanagh2026oam, locator: 'Sec. VII (Methods)' }
+scope: { model_families: [nequip, allegro], checkpoints: [nequip-oam-s-0-1] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'The paper describes the kept parity as that of the spherical harmonics; the NequIP-OAM-S package labels every irrep even (edge harmonics 1x0e+1x1e, as nequip 0.15 builds them for parity=False), which is the same restriction to one parity per l under a different label and leaves selection rule (7) unable to forbid 1 ⊗ 1 → 1 paths.' }

@@ -33,7 +33,7 @@ import {
   type TensorId,
   type Vec3,
   type XrayDoc,
-  type XraySystem,
+  type XrayGeometry,
 } from '~/lib/models/xray';
 
 // Architecture X-ray: the real intermediate tensors of one MACE-MP-0a forward pass,
@@ -57,7 +57,7 @@ function colorOf(sym: string, dark: boolean): [number, number, number] {
   return hexToLinearRgb('#' + c.map((v) => Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, '0')).join(''));
 }
 
-interface SceneAtom {
+export interface SceneAtom {
   /** Parent atom in the structure (periodic images share their parent's features). */
   parent: number;
   sym: string;
@@ -68,7 +68,7 @@ interface SceneAtom {
 }
 
 /** Atoms to draw: a molecule whole; a crystal as the centre atom and its neighbours within r_max. */
-function sceneAtoms(sys: XraySystem, centre: number): SceneAtom[] {
+export function sceneAtoms(sys: XrayGeometry, centre: number): SceneAtom[] {
   if (!sys.cell) {
     const c = sys.positions.reduce<Vec3>((a, p) => [a[0] + p[0] / sys.n, a[1] + p[1] / sys.n, a[2] + p[2] / sys.n], [0, 0, 0]);
     const inc = new Map(incomingEdges(sys, centre).map((e) => [e.j, e.e]));
@@ -82,7 +82,7 @@ function sceneAtoms(sys: XraySystem, centre: number): SceneAtom[] {
   ];
 }
 
-const fmt = (x: number, d = 3) => (Math.abs(x) < 5e-13 ? '0' : Math.abs(x) >= 1e-3 && Math.abs(x) < 1e4 ? x.toFixed(d) : x.toExponential(2));
+export const fmt = (x: number, d = 3) => (Math.abs(x) < 5e-13 ? '0' : Math.abs(x) >= 1e-3 && Math.abs(x) < 1e4 ? x.toFixed(d) : x.toExponential(2));
 
 export default function XrayExplorer({ steps }: { steps: XrayStep[] }) {
   const theme = useSceneTheme();
@@ -217,7 +217,7 @@ function XrayInner({
               theme={theme}
               atoms={shown}
               centre={centre}
-              stepId={stepId}
+              energyShell={stepId === 'energy'}
               values={values}
               signed={SIGNED(stepId, l)}
               vectors={vectors}
@@ -353,7 +353,7 @@ function XrayInner({
   );
 }
 
-function TensorStrip({
+export function TensorStrip({
   matrix,
   symbols,
   signed,
@@ -371,10 +371,11 @@ function TensorStrip({
   caption: string;
 }) {
   const rows = matrix.length;
+  const channels = matrix[0]?.length ?? CHANNELS;
   const max = Math.max(1e-12, ...matrix.flat().map(Math.abs));
   const W = 640;
   const left = 34;
-  const cw = (W - left) / CHANNELS;
+  const cw = (W - left) / channels;
   const ch = Math.max(9, Math.min(16, 150 / rows));
   const H = rows * ch + 18;
   return (
@@ -414,14 +415,14 @@ function TensorStrip({
         <rect x={left - 1} y={atom * ch - 0.5} width={W - left + 1} height={ch} className="xr-sel" />
         <text x={left} y={H - 4} className="xr-rowlab">k = 0</text>
         <text x={W} y={H - 4} className="xr-rowlab" textAnchor="end">
-          k = {CHANNELS - 1}
+          k = {channels - 1}
         </text>
       </svg>
     </figure>
   );
 }
 
-function EdgeTable({ sys, centre, value, label }: { sys: XraySystem; centre: number; value: (e: number) => number; label: string }) {
+export function EdgeTable({ sys, centre, value, label }: { sys: XrayGeometry; centre: number; value: (e: number) => number; label: string }) {
   const inc = incomingEdges(sys, centre);
   const max = Math.max(1e-12, ...inc.map((e) => Math.abs(value(e.e))));
   const shown = inc.slice(0, 14);
@@ -531,11 +532,11 @@ function RotationReadout({ check, rotated, doc }: { check: NonNullable<ReturnTyp
   );
 }
 
-function XrayScene({
+export function XrayScene({
   theme,
   atoms,
   centre,
-  stepId,
+  energyShell,
   values,
   signed,
   vectors,
@@ -548,7 +549,7 @@ function XrayScene({
   theme: SceneTheme;
   atoms: SceneAtom[];
   centre: number;
-  stepId: TensorId;
+  energyShell: boolean;
   values: number[] | null;
   signed: boolean;
   vectors: Vec3[] | null;
@@ -637,7 +638,7 @@ function XrayScene({
       {edges.length > 0 && <Lines lines={edges} />}
       {arrows.length > 0 && <Arrows arrows={arrows} uniforms={uniforms} head={0.3} />}
       {edgeValue && <Shell center={c0 as [number, number, number]} radius={rmax} color={theme.phys} opacity={0.22} grid />}
-      {stepId === 'energy' && <Shell center={c0 as [number, number, number]} radius={0.9} color={theme.verified} opacity={0.8} />}
+      {energyShell && <Shell center={c0 as [number, number, number]} radius={0.9} color={theme.verified} opacity={0.8} />}
     </>
   );
 }

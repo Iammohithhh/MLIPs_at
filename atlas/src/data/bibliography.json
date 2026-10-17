@@ -3885,6 +3885,58 @@
    "referenced_works": []
   }
  },
+ "kavanagh2026oam": {
+  "arxiv": {
+   "authors": [
+    "Seán R. Kavanagh",
+    "Chuin Wei Tan",
+    "Menghang Wang",
+    "Marc L. Descoteaux",
+    "Gabriel de Miranda Nascimento",
+    "Ulrik Unneberg",
+    "Laura Zichi",
+    "Francesco Libbi",
+    "Norma Rivano",
+    "Austin Glover",
+    "Vivek Bharadwaj",
+    "Anders Johansson",
+    "William C. Witt",
+    "Albert Musaelian",
+    "Boris Kozinsky"
+   ],
+   "id": "2607.28461v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2026-07-30",
+   "title": "Fast and Accurate Equivariant Foundation Models for Atomistic Simulation",
+   "updated": "2026-09-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kavanagh, S. R.' vs fetched ['kavanagh']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 0,
+   "id": "W7172030731",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "kellermann1940nacl": {
   "arxiv": null,
   "checks": [
@@ -8567,6 +8619,95 @@
     "W4409908894",
     "W4414912718",
     "W4415104596"
+   ]
+  }
+ },
+ "ziegler1985zbl": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1985; fetched [1985]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Ziegler, J. F.' vs fetched ['ziegler']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Ziegler",
+     "given": "James F."
+    },
+    {
+     "family": "Biersack",
+     "given": "Jochen P."
+    }
+   ],
+   "container": "Treatise on Heavy-Ion Science",
+   "doi": "10.1007/978-1-4615-8103-1_3",
+   "issue": null,
+   "page": "93-129",
+   "title": "The Stopping and Range of Ions in Matter",
+   "type": "book-chapter",
+   "volume": null,
+   "year": 1985
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 4217,
+   "id": "W4253056353",
+   "publication_year": 1985,
+   "referenced_works": [
+    "W649446846",
+    "W1480231107",
+    "W1492476048",
+    "W1559888302",
+    "W1574798849",
+    "W1595708041",
+    "W1676901196",
+    "W1973496189",
+    "W1978572573",
+    "W1989673590",
+    "W2009066351",
+    "W2017809842",
+    "W2023677861",
+    "W2029774455",
+    "W2031468950",
+    "W2036382602",
+    "W2055881008",
+    "W2056884654",
+    "W2068022481",
+    "W2073914312",
+    "W2082323317",
+    "W2091053189",
+    "W2094209999",
+    "W2094310143",
+    "W2097494835",
+    "W2110641502",
+    "W2119665082",
+    "W2156407052",
+    "W2170368796",
+    "W2253425693",
+    "W2263196060",
+    "W2977274996",
+    "W4205968889",
+    "W4238093188",
+    "W4240898424",
+    "W4252303867",
+    "W6600310979",
+    "W6601361027",
+    "W6810461179"
    ]
   }
  }

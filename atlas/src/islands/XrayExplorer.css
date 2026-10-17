@@ -112,3 +112,21 @@
     border-bottom: 1px solid var(--atlas-rule);
   }
 }
+
+/* NequIP energy split: learned and ZBL bars stacked per atom */
+.nq-split .mw-bar {
+  grid-template-columns: 3.2rem minmax(0, 1fr) auto;
+}
+.nq-pair {
+  display: grid;
+  gap: 2px;
+}
+.nq-pair .mw-track {
+  height: 0.45rem;
+}
+.mw-fill.nq-zbl {
+  background: var(--atlas-fail);
+}
+.xr-rot {
+  overflow-x: auto;
+}

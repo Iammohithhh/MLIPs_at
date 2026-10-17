@@ -1,0 +1,691 @@
+---
+import katex from 'katex';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import NequipXray, { type NequipStep } from '~/islands/NequipXray';
+import { katexOptions } from '~/lib/katex-options.mjs';
+import raw from '~/data/xray/nequip-oam-s.json';
+import {
+  besselFeature,
+  energyParts,
+  hasCrossProductPath,
+  parameterShares,
+  symmetryCheck,
+  tpPaths,
+  type NequipDoc,
+} from '~/lib/models/xray-nequip';
+
+const tex = (s: string) => katex.renderToString(s, { ...katexOptions, displayMode: true });
+const doc = raw as unknown as NequipDoc;
+const hp = doc.model.hyperparameters;
+const prov = doc.provenance as Record<string, string> & { rotation: { axis: number[]; angleDeg: number }; mirror: { normal: number[] } };
+const sys = (id: string) => doc.systems.find((s) => s.id === id)!;
+const ethanol = sys('ethanol');
+const si = sys('si-diamond');
+const rot = symmetryCheck(ethanol, 'rotated')!;
+const mir = symmetryCheck(ethanol, 'mirrored')!;
+const cross = hasCrossProductPath(doc);
+const [L1, L2] = ethanol.layers as [(typeof ethanol.layers)[0], (typeof ethanol.layers)[0]];
+const paths1 = tpPaths(L1);
+const paths2 = tpPaths(L2);
+const shares = parameterShares(doc);
+const scShare = shares.parts.find((p) => p.name.endsWith('conv.sc'))!;
+const p = hp.polynomial_cutoff_p;
+const N = hp.avg_num_neighbors;
+const w = hp.bessel_weights;
+const fmtInt = (x: number) => x.toLocaleString('en-GB');
+
+// Per-element means of the energy split in the three structures (eV per atom)
+const splitRows = doc.systems.flatMap((s) => {
+  const parts = energyParts(s);
+  const els = [...new Set(s.symbols)];
+  return els.map((el) => {
+    const mine = parts.filter((q) => q.sym === el);
+    const mean = (f: (q: (typeof mine)[0]) => number) => mine.reduce((a, q) => a + f(q), 0) / mine.length;
+    return { sys: s.label, el, count: mine.length, learned: mean((q) => q.learned), zbl: mean((q) => q.zbl), shift: mean((q) => q.shift) };
+  });
+});
+const siSplit = energyParts(si)[0]!;
+
+const steps: NequipStep[] = [
+  {
+    id: 'embed',
+    title: 'Type embedding x⁽⁰⁾',
+    eq: tex(String.raw`x^{(0)}_{i,c} = \sum_{z} W_{cz}\,\delta_{z z_i},\qquad c = 1,\dots,${hp.type_embed_num_features}`),
+    what: `A learned vector of ${hp.type_embed_num_features} scalars per element (${doc.model.numTypes} elements): every carbon starts identical whatever its surroundings. The same vector is reused by the layer-2 self-connection.`,
+    code: 'func.type_embed',
+  },
+  {
+    id: 'radial',
+    title: 'Radial basis B(r)',
+    eq: tex(String.raw`B_n(r) = \frac{2}{r_c}\,\frac{\sin(w_n \pi r / r_c)}{r}\; f_{\mathrm{env}}(r/r_c),\quad n = 1,\dots,${hp.num_bessels},\ r_c = ${hp.r_max}\,\text{\AA}`),
+    what: `Eq. (6), with frequencies w_n trained from their start at n (now ${w.map((x) => x.toFixed(2)).join(', ')}) and the envelope of degree p = ${p}. Bars: the selected function on each edge into the centre atom.`,
+    code: 'func.bessel_encode, func.factor',
+  },
+  {
+    id: 'sh',
+    title: 'Edge harmonics Y(r̂)',
+    eq: tex(String.raw`Y^{(0)} = 1,\qquad Y^{(1)}(\hat{\mathbf r}_{ij}) = \sqrt{3}\,\hat{\mathbf r}_{ij},\qquad \mathbf r_{ij} = \mathbf r_j - \mathbf r_i`),
+    what: `Eq. (4) with l ≤ 1: the bond direction as four numbers. Stored as ${hp.irreps_edge_sh}: the package gives every block an even label (parity: false).`,
+    code: 'func.spharm',
+  },
+  {
+    id: 'm1',
+    title: 'Layer 1 convolution m⁽¹⁾',
+    eq: tex(String.raw`m^{(1)}_{i,c,l} = \frac{1}{\sqrt{\bar N}} \sum_{j \in \mathcal N(i)} R^{(1)}_{c,l}(r_{ij})\; Y^{(l)}(\hat{\mathbf r}_{ij})\; \big(W_1 x^{(0)}_j\big)_c,\qquad l = 0, 1`),
+    what: `Eq. (8) for scalar inputs: two paths, ${paths1.map((q) => q.label).join(' and ')}. Each channel c of the neighbour gets its own learned radial weight per path (R from an MLP [${hp.radial_mlp_dims[0]!.join(', ')}]), and the sum is divided by √N̄ with N̄ = ${N.toFixed(2)}. The l = 1 block is a vector per channel: the arrows.`,
+    code: 'conv.tp_scatter (layer 0)',
+  },
+  {
+    id: 'h1',
+    title: 'Layer 1 features h⁽¹⁾ (after the gate)',
+    eq: tex(String.raw`\begin{gathered} h^{(1)}_i = \Big[\ \sigma\big(s_i\big)\ ,\ \sigma\big(g_i\big)\odot \mathbf v_i\ \Big] \\ (s_i, g_i, \mathbf v_i) = W_2\, m^{(1)}_i \end{gathered}`),
+    what: `A linear mix of the paths gives 192 scalars and 64 vectors; 128 scalars pass through SiLU, the other 64 become gates that scale the 64 vectors (σ = SiLU normalised to unit second moment). Result: ${L1.h.irreps}.`,
+    code: 'layer0_convnet (conv + equivariant_nonlin)',
+  },
+  {
+    id: 'm2',
+    title: 'Layer 2 convolution m⁽²⁾',
+    eq: tex(String.raw`m^{(2)}_{i,c} = \frac{1}{\sqrt{\bar N}} \sum_{j} \Big[ R_{c,0}(r_{ij})\,\big(W h^{(1)}_{j}\big)_{c,0} \;+\; R_{c,1}(r_{ij})\; Y^{(1)}(\hat{\mathbf r}_{ij}) \cdot \big(W h^{(1)}_{j}\big)_{c,1} \Big]`),
+    what: `Only scalars are produced, because the next step is the energy: ${paths2.map((q) => q.label).join(' and ')}. The second path is a dot product of a neighbour’s vector feature with the bond direction — the first place a bond angle enters (Fig. 1, path 1 ⊗ 1 → 0).`,
+    code: 'conv.tp_scatter (layer 1)',
+  },
+  {
+    id: 'h2',
+    title: 'Layer 2 features h⁽²⁾',
+    eq: tex(String.raw`h^{(2)}_i = \sigma\Big( W_2\, m^{(2)}_i + \mathrm{SC}\big(h^{(1)}_i \otimes x^{(0)}_i\big) \Big)`),
+    what: `A self-connection mixes the atom’s own layer-1 scalars with its ${hp.type_embed_num_features} type-embedding scalars (a fully connected tensor product: ${fmtInt(scShare.count)} weights, ${(100 * scShare.share).toFixed(0)} % of the model).`,
+    code: 'layer1_convnet (conv.linear_2 + conv.sc, gate)',
+  },
+  {
+    id: 'energy',
+    title: 'Site energies and forces',
+    eq: tex(String.raw`\begin{gathered} E_i = s(z_i)\, \mathbf w^{\top} h^{(2)}_i + \mu(z_i) + \tfrac12 \sum_{j} E_{\mathrm{ZBL}}(r_{ij})\, f_{\mathrm{env}}(r_{ij}/r_c) \\ \mathbf F_i = -\nabla_{\mathbf r_i} \textstyle\sum_j E_j \end{gathered}`),
+    what: 'Eq. (2) plus a fixed per-element scale s and shift μ (isolated-atom energy) and the ZBL nuclear repulsion. Bars: learned part and ZBL part per atom; arrows: forces from autograd.',
+    code: 'per_atom_energy_readout, per_type_energy_scale_shift, pair_potential',
+  },
+];
+
+const assumptions = [
+  { term: 'Model', value: `NequIP-OAM-S 0.1, ${doc.model.file} (${doc.model.licence}, Zenodo ${doc.model.doi}), SHA-256 ${doc.model.sha256.slice(0, 12)}…; architecture read from the package.` },
+  { term: 'Run', value: `One forward pass per structure on CPU in float64 (the package itself runs in float32) with nequip ${prov.nequip}, e3nn ${prov.e3nn}, PyTorch ${prov.torch}; tensors captured with forward hooks.` },
+  { term: 'Structures', value: `Gallery geometries, not relaxed: ethanol (G2, isolated), ZnO wurtzite and Si diamond (periodic). r_c = ${hp.r_max} Å.` },
+  { term: 'Stored', value: 'Messages per tensor-product path (norms and l = 1 vectors), features after the gate; 4 significant figures. |x| < 10⁻¹² is written as 0.' },
+  { term: 'Units', value: 'Energies in eV, forces in eV/Å; feature channels are dimensionless network activations.' },
+];
+
+// ---- Fig. 2: trained radial basis -------------------------------------------
+const W2 = 640;
+const H2 = 250;
+const pad = { l: 46, r: 14, t: 16, b: 34 };
+const rs = Array.from({ length: 181 }, (_, k) => 0.25 + (k * (hp.r_max - 0.25)) / 180);
+const curves = w.map((_, n) => rs.map((r) => besselFeature(r, n, w, hp.r_max, p)));
+const init = w.map((_, n) => rs.map((r) => besselFeature(r, n, w.map((_, m) => m + 1), hp.r_max, p)));
+const yMax2 = 1.6;
+const xr = (r: number) => pad.l + ((r - 0) / hp.r_max) * (W2 * 0.64 - pad.l - 10);
+const yb = (v: number) => pad.t + ((yMax2 - globalThis.Math.max(-yMax2, globalThis.Math.min(yMax2, v))) / (2 * yMax2)) * (H2 - pad.t - pad.b);
+const path = (ys: number[]) => ys.map((y, k) => `${k ? 'L' : 'M'}${xr(rs[k]!).toFixed(1)},${yb(y).toFixed(1)}`).join('');
+const siNN = globalThis.Math.min(...si.edges.vec.map((v) => globalThis.Math.hypot(...v)));
+const wx0 = W2 * 0.7;
+const wx = (n: number) => wx0 + 18 + ((n - 1) / 7) * (W2 - wx0 - 40);
+const wy = (v: number) => pad.t + ((9 - v) / 9) * (H2 - pad.t - pad.b);
+
+// ---- Fig. 3: dimers -----------------------------------------------------------
+const panelW = 205;
+const H3 = 230;
+const yMin3 = -6;
+const yMax3 = 12;
+const rMin3 = 0.6;
+const px = (k: number, r: number) => k * (panelW + 12) + 36 + ((r - rMin3) / (4.6 - rMin3)) * (panelW - 44);
+const py = (v: number) => 12 + ((yMax3 - v) / (yMax3 - yMin3)) * (H3 - 44);
+const dimers = doc.dimers.map((d, k) => {
+  const e0 = d.e0[0]! + d.e0[1]!;
+  const sel = d.r.map((r, i) => ({ r, i })).filter((q) => q.r >= rMin3);
+  const line = (ys: number[]) => sel.map((q, m) => `${m ? 'L' : 'M'}${px(k, q.r).toFixed(1)},${py(ys[q.i]!).toFixed(1)}`).join('');
+  const rel = (ys: number[]) => ys.map((y) => y - e0);
+  const iMin = d.total.indexOf(globalThis.Math.min(...d.total));
+  const at = (r: number) => d.r.findIndex((x) => globalThis.Math.abs(x - r) < 1e-9);
+  return {
+    k,
+    pair: d.pair,
+    total: line(rel(d.total)),
+    learned: line(rel(d.learned)),
+    zbl: line(d.zbl),
+    rMin: d.r[iMin]!,
+    eMin: d.total[iMin]! - e0,
+    zblAtMin: d.zbl[iMin]!,
+    zbl1: d.zbl[at(1.0)]!,
+    // steepest finite-difference slope of the total inside the last 0.5 Å before r_c (eV/Å)
+    edgeSlope: globalThis.Math.max(
+      ...d.r.slice(1).map((r, i) => (r > hp.r_max - 0.5 && r <= hp.r_max ? (d.total[i + 1]! - d.total[i]!) / (r - d.r[i]!) : 0)),
+    ),
+    edgeRise: d.total[at(hp.r_max)]! - d.total[at(hp.r_max - 0.2)]!,
+  };
+});
+
+// ---- Fig. 4: parameters --------------------------------------------------------
+const paramLabel = (name: string) =>
+  name
+    .replace('layer0_convnet.conv.', 'layer 1 · ')
+    .replace('layer1_convnet.conv.', 'layer 2 · ')
+    .replace('edge_mlp', 'radial MLP')
+    .replace('linear_1', 'linear in')
+    .replace('linear_2', 'linear out')
+    .replace(/\bsc$/, 'self-connection')
+    .replace('type_embed', 'type embedding')
+    .replace('bessel_encode', 'Bessel frequencies')
+    .replace('per_atom_energy_readout', 'readout');
+const paramRows = [...shares.parts].sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout
+  title="Architecture X-ray: NequIP"
+  description="The real intermediate tensors of one NequIP-OAM-S forward pass on ethanol, ZnO and silicon: trained radial basis, both convolutions path by path, the gate, the ZBL repulsion and exact rotation and mirror tests."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · <a href="/models/nequip/">NequIP</a> · <a href="/models/x-ray/">X-ray</a> · NequIP</p>
+      <h1 class="h-display">Architecture X-ray: NequIP</h1>
+      <p class="lede">
+        A released NequIP foundation model, opened up. Three structures were passed through NequIP-OAM-S and every tensor of
+        the forward pass was recorded — both convolutions path by path, the gate, the learned energy and the nuclear
+        repulsion added beside it.
+      </p>
+      <dl class="glance">
+        <div><dt>Architecture</dt><dd><a href="/models/nequip/">NequIP</a> <Cite id="batzner2022nequip" /></dd></div>
+        <div><dt>Checkpoint</dt><dd><a href="/models/checkpoints/">NequIP-OAM-S 0.1</a> <Cite id="kavanagh2026oam" /></dd></div>
+        <div><dt>Layers · features</dt><dd>{hp.num_layers} · {hp.feature_irreps_hidden.join(' → ')}</dd></div>
+        <div><dt>Cutoff</dt><dd>{hp.r_max} Å, {hp.num_bessels} trainable Bessel functions</dd></div>
+        <div><dt>Parameters</dt><dd>{fmtInt(shares.total)} (counted)</dd></div>
+        <div><dt>Compute</dt><dd>CPU, float64, offline</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="precomputed" /> Numbers come from this <strong>checkpoint’s</strong> weights on these structures. The
+        companion page opens <a href="/models/x-ray/">MACE-MP-0a</a>, a different architecture trained on different data.
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="Inside one NequIP-OAM-S forward pass" labels={['precomputed']} number={1} id="fig-xray" framed={false}>
+        <NequipXray client:visible steps={steps} />
+        <Fragment slot="caption">
+          Left: the structure, coloured by the selected channel of the selected tensor (blue: magnitude or positive value,
+          brown: negative), with l = 1 vectors as arrows; click an atom to centre it. Right: the dataflow with each tensor’s
+          real shape and its equation. Below: the tensor as atoms × channels; for the convolutions each tensor-product path
+          is a separate block. For ethanol, “Rotated” and “Mirrored” switch to two further forward passes.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          Equations (2), (4), (6) and (8) of <Cite id="batzner2022nequip" locator="Eqs. 2, 4, 6, 8 and the architecture list after Eq. 8" />;
+          checkpoint and its sizes from <Cite id="kavanagh2026oam" locator="Table 1; Sec. VII" />; ZBL from
+          <Cite id="ziegler1985zbl" />; tensors computed by <code>pipeline/atlas_pipeline/xray_nequip.py</code>.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="see-h">
+      <h2 id="see-h" class="h-section">What the X-ray shows</h2>
+
+      <h3 class="h-sub">1. Two layers, four paths</h3>
+      <p>
+        NequIP’s convolution couples a neighbour’s features with the bond’s spherical harmonics through Clebsch–Gordan
+        coefficients, keeping every output with l ≤ l<sub>max</sub> <Cite id="batzner2022nequip" locator="Eq. 8" />. With
+        l<sub>max</sub> = 1 and scalar inputs, layer 1 has two paths ({paths1.map((q) => q.label).join(', ')}); layer 2, which
+        only has to produce scalars, has two more ({paths2.map((q) => q.label).join(', ')}). The path 1 ⊗ 1 → 0 is a dot
+        product, Y⁽¹⁾(r̂<sub>ij</sub>) · h<sub>j</sub>: since h<sub>j</sub> is itself a weighted sum of the directions from j to
+        its own neighbours, this term contains cos θ for pairs of bonds — three-body information that a single distance-only
+        layer cannot hold (<a href="/models/schnet/">SchNet</a>). Choose “Layer 2 convolution”, path 1 ⊗ 1 → 0, in Fig. 1.
+      </p>
+
+      <h3 class="h-sub" id="mirror-h">2. Built without parity, yet exactly mirror-symmetric</h3>
+      <p>
+        The foundation models are trained with <code>parity: false</code>, which keeps one parity per l for speed and leaves an
+        architecture that is equivariant under rotations only <Cite id="kavanagh2026oam" locator="Sec. VII" />. This package
+        labels every block even ({hp.irreps_edge_sh}), so selection rule (7) no longer forbids a 1 ⊗ 1 → 1 coupling. For this
+        checkpoint, whether the energy can tell a molecule from its mirror image follows from two identities for a reflection
+        M (det M = −1):
+      </p>
+      <Math display tex={String.raw`(M\mathbf a)\cdot(M\mathbf b) = \mathbf a\cdot\mathbf b, \qquad (M\mathbf a)\times(M\mathbf b) = (\det M)\, M(\mathbf a\times\mathbf b)`} />
+      <p>
+        The harmonics are polynomials, Y⁽¹⁾(M r̂) = M Y⁽¹⁾(r̂), so every layer-1 vector transforms as h′ = M h, and the gate
+        only multiplies vectors by scalars. Layer 2 turns vectors into scalars by dot products, which are unchanged. A
+        mirror-sensitive scalar would need a cross product — a 1 ⊗ 1 → 1 path — and the paths listed above contain
+        {cross ? 'one' : 'none'}. So E(M r) = E(r) exactly for NequIP-OAM-S, by construction rather than by training. The two
+        real forward passes agree: |ΔE| = {mir.dE === 0 ? '0' : mir.dE.toExponential(1)} eV and the stored vectors satisfy
+        h′ = M h to the last stored digit (rotation: |ΔE| = {rot.dE.toExponential(0)} eV). <Badge label="theory" />
+      </p>
+      <Callout kind="caveat" title="Architecture ≠ checkpoint">
+        The argument uses this checkpoint’s two layers and l<sub>max</sub> = 1. The Medium, Large and Extra-Large models
+        (l<sub>max</sub> 2–4, 4–6 layers <Cite id="kavanagh2026oam" locator="Table 1" />) can contain 1 ⊗ 1 → 1 paths, and
+        nothing here shows whether their energies are mirror-blind. SevenNet-0, also built without parity, is not exactly:
+        see the <a href="/models/representation-map/#invariance-h">Representation Map</a>.
+      </Callout>
+
+      <h3 class="h-sub">3. Crystal symmetry zeros survive into the network</h3>
+      <p>
+        Every atom of diamond silicon sits at a centre of inversion of its environment, so any vector built from it must
+        vanish: all 64 vector channels of h⁽¹⁾ are exactly zero on all eight atoms and the forces are zero, whatever the
+        weights. In wurtzite ZnO the sites are polar and the vectors are not zero.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The radial basis after training" labels={['precomputed']} number={2} id="fig-radial">
+        <svg class="nq-plot" viewBox={`0 0 ${W2} ${H2}`} role="img" aria-label={`Left: the eight radial basis functions of NequIP-OAM-S on 0 to ${hp.r_max} Å with their trained frequencies. Right: trained frequencies ${w.map((x) => x.toFixed(2)).join(', ')} against their initial values 1 to 8.`}>
+          <line x1={pad.l} x2={xr(hp.r_max)} y1={yb(0)} y2={yb(0)} class="ax" />
+          <line x1={pad.l} x2={pad.l} y1={pad.t} y2={H2 - pad.b} class="ax" />
+          {[0, 1, 2, 3, 4].map((r) => (
+            <g>
+              <line x1={xr(r)} x2={xr(r)} y1={H2 - pad.b} y2={H2 - pad.b + 4} class="ax" />
+              <text x={xr(r)} y={H2 - pad.b + 16} text-anchor="middle" class="tk">{r}</text>
+            </g>
+          ))}
+          <text x={xr(hp.r_max / 2)} y={H2 - 4} text-anchor="middle" class="tk">r (Å)</text>
+          <text x={pad.l + 6} y={pad.t + 4} class="tk">B_n(r)·f_env</text>
+          {[-1, 0, 1].map((v) => (
+            <text x={pad.l - 6} y={yb(v) + 4} text-anchor="end" class="tk">{v}</text>
+          ))}
+          <line x1={xr(siNN)} x2={xr(siNN)} y1={pad.t} y2={H2 - pad.b} class="mark" />
+          <text x={xr(siNN) + 4} y={pad.t + 10} class="tk">Si–Si {siNN.toFixed(2)} Å</text>
+          {init.map((ys, n) => (n === 0 || n === 7 ? <path d={path(ys)} class="init" /> : null))}
+          {curves.map((ys, n) => (
+            <path d={path(ys)} class="basis" style={`opacity:${0.35 + (0.65 * (8 - n)) / 8}`} />
+          ))}
+          <line x1={wx0} x2={wx0} y1={pad.t} y2={H2 - pad.b} class="ax" />
+          <line x1={wx0} x2={W2 - 14} y1={H2 - pad.b} y2={H2 - pad.b} class="ax" />
+          <path d={`M${wx(1)},${wy(1)}L${wx(8)},${wy(8)}`} class="init" />
+          {w.map((x, k) => (
+            <g>
+              <circle cx={wx(k + 1)} cy={wy(x)} r="3.6" class="dot" />
+              <text x={wx(k + 1)} y={H2 - pad.b + 16} text-anchor="middle" class="tk">{k + 1}</text>
+            </g>
+          ))}
+          {[0, 4, 8].map((v) => (
+            <text x={wx0 - 6} y={wy(v) + 4} text-anchor="end" class="tk">{v}</text>
+          ))}
+          <text x={(wx0 + W2) / 2} y={H2 - 4} text-anchor="middle" class="tk">n</text>
+          <text x={wx0 + 6} y={pad.t + 4} class="tk">w_n (dots) vs start n (dashed)</text>
+        </svg>
+        <Fragment slot="caption">
+          Left: the eight radial functions B<sub>n</sub>(r)·f<sub>env</sub> as the network computes them (solid, darker for
+          lower n), and the n = 1 and n = 8 functions with untrained frequencies (dashed). Right: the frequencies after
+          training. The paper makes the Bessel frequencies trainable <Cite id="batzner2022nequip" locator="text after Eq. 6" />;
+          in this checkpoint they moved down for low n and spread out at the top (w₈ = {w[7]!.toFixed(2)}), shifting radial
+          resolution between short and long distances. The vertical line is the Si–Si bond in Fig. 1.
+        </Fragment>
+        <Fragment slot="source">
+          Curves computed at build time from the stored frequencies with the closed form tested against every stored edge
+          feature (<code>src/lib/models/xray-nequip.ts</code>); envelope degree p = {p}.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="zbl-h">
+      <h2 id="zbl-h" class="h-section">A physical prior beside the network: ZBL repulsion</h2>
+      <p>
+        Beside the learned site energies, the package carries a fixed pair term: the Ziegler–Biersack–Littmark (ZBL) screened
+        Coulomb repulsion between nuclei <Cite id="ziegler1985zbl" />, multiplied by the same envelope as the radial basis and
+        split equally between the two atoms:
+      </p>
+      <Math display tex={String.raw`E_{\mathrm{ZBL}}(r) = \frac{Z_i Z_j e^2}{4\pi\varepsilon_0\, r}\,\phi\!\left(\frac{r}{a}\right),\quad a = \frac{0.46850\ \text{\AA}}{Z_i^{0.23} + Z_j^{0.23}},\quad \phi(x) = \sum_{k=1}^{4} c_k\, e^{-d_k x}`} />
+      <p>
+        with (c<sub>k</sub>, d<sub>k</sub>) = (0.18175, 3.19980), (0.50986, 0.94229), (0.28022, 0.40290), (0.02817, 0.20162)
+        and Σc<sub>k</sub> = 1, so at short range it becomes the bare repulsion of two nuclei. The Atlas code evaluates
+        this formula and reproduces the network’s own ZBL output on every dimer distance and every crystal edge (tests in
+        <code>xray-nequip.test.ts</code>). The term does not switch off at bonding distances: it is cut only by the envelope
+        at {hp.r_max} Å.
+      </p>
+      <div class="table-wrap">
+        <table class="ck prov split">
+          <thead>
+            <tr><th>Structure</th><th>Element</th><th class="num">learned s·wᵀh</th><th class="num">ZBL</th><th class="num">shift μ</th></tr>
+          </thead>
+          <tbody>
+            {splitRows.map((r) => (
+              <tr>
+                <td>{r.sys}</td>
+                <td>{r.el} ({r.count})</td>
+                <td class="num">{r.learned.toFixed(2)}</td>
+                <td class="num">+{r.zbl.toFixed(2)}</td>
+                <td class="num">{r.shift.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="prose-note">
+        Mean per-atom split in eV, from the forward passes of Fig. 1 (<Badge label="precomputed" />). In diamond silicon the
+        prior adds {siSplit.zbl.toFixed(2)} eV per atom at the equilibrium bond length, and the network’s learned part
+        ({siSplit.learned.toFixed(2)} eV) more than cancels it. Like all site energies these are bookkeeping, not observables.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Dimer curves: learned part, ZBL part and their sum" labels={['precomputed']} number={3} id="fig-dimers">
+        <svg class="nq-plot" viewBox={`0 0 ${3 * (panelW + 12)} ${H3}`} role="img" aria-label={`Energies of the ${doc.dimers.map((d) => d.pair).join(', ')} dimers relative to separated atoms: total, learned part and ZBL part, from ${rMin3} to 4.6 Å.`}>
+          <defs>
+            {dimers.map((d) => (
+              <clipPath id={`clip-${d.k}`}>
+                <rect x={px(d.k, rMin3)} y={py(yMax3)} width={px(d.k, 4.6) - px(d.k, rMin3)} height={py(yMin3) - py(yMax3)} />
+              </clipPath>
+            ))}
+          </defs>
+          {dimers.map((d) => (
+            <g>
+              <line x1={px(d.k, rMin3)} x2={px(d.k, 4.6)} y1={py(0)} y2={py(0)} class="ax" />
+              <line x1={px(d.k, rMin3)} x2={px(d.k, rMin3)} y1={py(yMax3)} y2={py(yMin3)} class="ax" />
+              <line x1={px(d.k, hp.r_max)} x2={px(d.k, hp.r_max)} y1={py(yMax3)} y2={py(yMin3)} class="mark" />
+              {[1, 2, 3, 4].map((r) => (
+                <text x={px(d.k, r)} y={py(yMin3) + 14} text-anchor="middle" class="tk">{r}</text>
+              ))}
+              {d.k === 0 && [-5, 0, 5, 10].map((v) => <text x={px(0, rMin3) - 5} y={py(v) + 4} text-anchor="end" class="tk">{v}</text>)}
+              <text x={px(d.k, 2.6)} y={py(yMax3) + 12} text-anchor="middle" class="lb">{d.pair}</text>
+              <g clip-path={`url(#clip-${d.k})`}>
+                <path d={d.zbl} class="zbl" />
+                <path d={d.learned} class="learned" />
+                <path d={d.total} class="total" />
+              </g>
+              <circle cx={px(d.k, d.rMin)} cy={py(d.eMin)} r="3" class="dot" />
+            </g>
+          ))}
+          <text x={px(1, 2.6)} y={H3 - 2} text-anchor="middle" class="tk">r (Å); E − E(separated atoms) in eV</text>
+        </svg>
+        <Fragment slot="caption">
+          Ink: the model’s dimer energy; blue: the learned part; brown: ZBL. Dots mark the minimum of each curve
+          ({dimers.map((d) => `${d.pair} ${d.rMin.toFixed(2)} Å, ${d.eMin.toFixed(2)} eV`).join('; ')}), where ZBL still
+          contributes {dimers.map((d) => d.zblAtMin.toFixed(2)).join(', ')} eV. Inside about 1 Å ZBL grows steeply and the
+          learned part does not follow it; at 1 Å the prior alone is {dimers.map((d) => `${d.zbl1.toFixed(1)}`).join(', ')} eV.
+          Every curve joins the separated-atom energy exactly at r<sub>c</sub> (grey line), but not always gently: Si–Si
+          climbs {dimers[0]!.edgeRise.toFixed(2)} eV over the last 0.2 Å, with slopes up to
+          {dimers[0]!.edgeSlope.toFixed(0)} eV/Å on the 0.05 Å grid, because the envelope must pull a still-large learned
+          energy to zero. An isolated Si₂ at 4.4 Å is far from the crystals the model was trained on, so this describes the
+          checkpoint in vacuum, not silicon. No reference calculation is shown: this is what the model computes, not a test
+          of its accuracy.
+        </Fragment>
+        <Fragment slot="source">
+          Forward passes of isolated dimers in steps of 0.05 Å from 0.3 to 4.6 Å (<code>xray_nequip.dimer_scan</code>); ZBL
+          reproduced by the closed form above.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <div class="wide fig-wrap">
+      <Figure title="Where the 0.6 M parameters are" labels={['precomputed']} number={4} id="fig-params">
+        <div class="nq-params" role="img" aria-label={`Trainable parameters by module; the layer-2 self-connection holds ${fmtInt(scShare.count)} of ${fmtInt(shares.total)}.`}>
+          {paramRows.map((q) => (
+            <div class="nq-prow">
+              <span class="nq-pname">{paramLabel(q.name)}</span>
+              <span class="nq-ptrack"><span class="nq-pfill" style={`width:${(100 * q.count) / paramRows[0]!.count}%`} /></span>
+              <span class="nq-pval">{fmtInt(q.count)}</span>
+            </div>
+          ))}
+        </div>
+        <Fragment slot="caption">
+          Trainable parameters of the rebuilt model, {fmtInt(shares.total)} in all (the paper gives 0.6 M for the Small model
+          <Cite id="kavanagh2026oam" locator="Table 1" />). {(100 * scShare.share).toFixed(0)} % sit in one place: the layer-2
+          self-connection, which couples 128 + 64 features with the 32 type-embedding scalars. The convolutions themselves
+          are small, because each path uses one radial weight per channel. The authors note that the parameter count is
+          sensitive to the size of the type embedding but speed and accuracy much less so
+          <Cite id="kavanagh2026oam" locator="Sec. VII" />.
+        </Fragment>
+        <Fragment slot="source">Counted on the rebuilt modules (<code>xray_nequip.parameter_counts</code>); fixed buffers (scales, shifts, ZBL constants) excluded.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="how-h">
+      <h2 id="how-h" class="h-section">How the tensors were obtained</h2>
+      <ul class="facts">
+        <li>
+          <strong>Safe loading.</strong> A <code>.nequip.zip</code> is a <code>torch.package</code> archive: loading it normally
+          imports the Python source stored inside it and runs it. The pipeline never does. It reads the pickled module tree
+          with a restricted unpickler that yields only tensors and inert placeholders, reads the architecture (irreps, cutoff,
+          Bessel count, envelope degree, neighbour normalisation, ZBL) off that tree, builds a fresh model with the
+          installed <code>nequip</code> {prov.nequip} — the version that wrote the package — and loads the tensors with
+          <code>strict=True</code>. The only pickled values the fresh model regenerates itself are the fixed weight scalings
+          of the radial MLPs, and they are checked to match.
+        </li>
+        <li>
+          <strong>Hooks.</strong> On the type embedding, the radial basis, the harmonics, each layer’s radial MLP and
+          tensor-product scatter, each layer’s output after the gate, the readout, the scale and shift and the ZBL term.
+        </li>
+        <li>
+          <strong>Checks.</strong> Pipeline tests rerun the rotation and mirror tests, the isolated-atom identity (no edges →
+          E = μ exactly, since SiLU(0) = 0 and no layer has a bias) and the energy split; site tests repeat them on the stored
+          file and reproduce the Bessel features and ZBL energies from closed forms.
+        </li>
+        <li>
+          <strong>Paper versus checkpoint.</strong> The 2022 paper used an envelope with p = 6, a ResNet-style update and
+          learnable per-species scale and shift <Cite id="batzner2022nequip" locator="text after Eq. 6; architecture list; Methods" />.
+          This checkpoint uses p = {p}, no residual update, a self-connection only in its second layer, fixed scales and shifts
+          (the shifts are isolated-atom energies <Cite id="kavanagh2026oam" locator="Sec. VII" />), a ZBL term and even-only
+          irreps.
+        </li>
+      </ul>
+      <div class="table-wrap">
+        <table class="ck prov">
+          <tbody>
+            <tr><th>Package file</th><td><a href={doc.model.url}>{doc.model.file}</a> (Zenodo {doc.model.doi}, {doc.model.licence})</td></tr>
+            <tr><th>SHA-256</th><td><code>{doc.model.sha256}</code></td></tr>
+            <tr><th>Packaged with</th><td>{Object.entries(doc.model.packagedWith).map(([k, v]) => `${k} ${v}`).join(' · ')}</td></tr>
+            <tr><th>Software</th><td>nequip {prov.nequip} · e3nn {prov.e3nn} · PyTorch {prov.torch} · ASE {prov.ase}</td></tr>
+            <tr><th>Precision · device</th><td>{prov.dtype} · {prov.device}</td></tr>
+            <tr><th>Stored precision</th><td>{prov.rounding}</td></tr>
+            <tr><th>Script</th><td><code>{prov.script}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="lim-h">
+      <h2 id="lim-h" class="h-section">What this page is not</h2>
+      <p>
+        Not an interpretation of individual channels, which are learned basis directions with no assigned meaning. Not a
+        measure of accuracy: no reference calculation is shown, and NequIP-OAM-S was trained on periodic inorganic data
+        (OMat24, then MPtrj and sAlex), so the ethanol run is there for its clean symmetry tests. Not a live run: the tensors
+        were computed once, offline, for these geometries. And not the larger NequIP models, whose extra layers and higher
+        l<sub>max</sub> add paths this checkpoint does not have.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block h3 {
+    margin-block: 1.5rem 0.5rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .prov {
+    border-collapse: collapse;
+    font: 0.84rem/1.45 var(--font-sans);
+    width: 100%;
+  }
+  .prov th,
+  .prov td {
+    text-align: left;
+    padding: 0.45rem 1rem 0.45rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    vertical-align: top;
+  }
+  .prov th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+    white-space: nowrap;
+  }
+  .prov code {
+    overflow-wrap: anywhere;
+  }
+  .split .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .prose-note {
+    font: 0.9rem/1.55 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .nq-plot {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .nq-plot .ax {
+    stroke: var(--atlas-ink-muted);
+    stroke-width: 1;
+  }
+  .nq-plot .mark {
+    stroke: var(--atlas-rule);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 3;
+  }
+  .nq-plot .tk {
+    font: 11px var(--font-sans);
+    fill: var(--atlas-ink-muted);
+  }
+  .nq-plot .lb {
+    font: 600 12px var(--font-sans);
+    fill: var(--atlas-ink);
+  }
+  .nq-plot .basis {
+    fill: none;
+    stroke: var(--atlas-arch);
+    stroke-width: 1.5;
+  }
+  .nq-plot .init {
+    fill: none;
+    stroke: var(--atlas-ink-muted);
+    stroke-width: 1.2;
+    stroke-dasharray: 4 3;
+  }
+  .nq-plot .dot {
+    fill: var(--atlas-arch);
+  }
+  .nq-plot .total {
+    fill: none;
+    stroke: var(--atlas-ink);
+    stroke-width: 2;
+  }
+  .nq-plot .learned {
+    fill: none;
+    stroke: var(--atlas-arch);
+    stroke-width: 1.5;
+  }
+  .nq-plot .zbl {
+    fill: none;
+    stroke: var(--atlas-fail);
+    stroke-width: 1.5;
+  }
+  .nq-params {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.4rem 0;
+  }
+  .nq-prow {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) minmax(0, 1fr) 5.5rem;
+    gap: 0.6rem;
+    align-items: center;
+    font: 0.8rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .nq-ptrack {
+    height: 0.6rem;
+    background: var(--atlas-surface);
+    border-radius: 0.3rem;
+    overflow: hidden;
+  }
+  .nq-pfill {
+    display: block;
+    height: 100%;
+    min-width: 1px;
+    background: var(--atlas-arch);
+  }
+  .nq-pval {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 560px) {
+    .nq-prow {
+      grid-template-columns: 7.5rem minmax(0, 1fr) 4.5rem;
+    }
+  }
+</style>

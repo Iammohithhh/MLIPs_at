@@ -18,6 +18,15 @@ export interface XrayLayer {
   siteEnergy: number[];
 }
 
+/** The geometry the shared X-ray views need (both the MACE and the NequIP files provide it). */
+export interface XrayGeometry {
+  symbols: string[];
+  positions: Vec3[];
+  cell: Vec3[] | null;
+  n: number;
+  edges: { count: number; src: number[]; dst: number[]; vec: Vec3[] };
+}
+
 export interface XraySystem {
   id: string;
   label: string;
@@ -188,7 +197,7 @@ export function mostVariedChannel(sys: XraySystem, id: TensorId, l: number): num
 }
 
 /** Incoming edges of atom i (messages that land on i), with the neighbour's image position. */
-export function incomingEdges(sys: XraySystem, i: number): { e: number; j: number; r: number; from: Vec3 }[] {
+export function incomingEdges(sys: XrayGeometry, i: number): { e: number; j: number; r: number; from: Vec3 }[] {
   const out: { e: number; j: number; r: number; from: Vec3 }[] = [];
   const p = sys.positions[i]!;
   for (let e = 0; e < sys.edges.count; e++) {

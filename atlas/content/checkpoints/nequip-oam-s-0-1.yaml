@@ -1,0 +1,24 @@
+name: NequIP-OAM-S 0.1
+family: nequip
+implementation: nequip
+version: mir-group/NequIP-OAM-S:0.1
+release: { date: 2026-02-25, source: kavanagh2026oam }
+elements: 89
+parameters: { total: 616360 }
+training:
+  - stage: pretraining
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: 'OAM protocol: first trained on OMat24 alone (Kavanagh et al. Sec. III).'
+  - stage: finetuning
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Then fine-tuned on MPA = MPtrj + sAlex (subsampled Alexandria; not yet recorded in the Atlas) for compatibility with Materials Project settings (Sec. III).'
+outputs: [energy, forces, stress]
+licence: CC-BY-4.0 (Zenodo record)
+weights: { url: 'https://zenodo.org/records/18775904/files/NequIP-OAM-S-0.1.nequip.zip', sha256: 63d4bafd872850a014fd21dedeea416b61173a17750dee0b2b8dd2b126f407aa }
+claims: [nequip-oam-sizes, nequip-oam-parity-false, nequip-oam-s-mirror-exact, nequip-oam-s-zbl]
+review:
+  status: draft
+  last_checked: 2026-10-17
+  notes: 'Downloaded and read by the Atlas pipeline (pipeline/atlas_pipeline/xray_nequip.py) without executing the package: r_c 4.5 Å, 8 trainable Bessel functions, polynomial cutoff p = 5, 32-dimensional type embedding, two layers with hidden irreps 128x0e+64x1e then 128x0e, edge harmonics 1x0e+1x1e, average neighbour count 25.59, per-type scales and shifts and a ZBL pair term; 616,360 trainable parameters counted on the rebuilt model (Table 1 of the paper: 0.6 M). Packaged with nequip 0.15.0, e3nn 0.5.6 and torch 2.7.0 (package_metadata.txt). Release date from nequip.net; Zenodo lists the packages under version 0.1a.'

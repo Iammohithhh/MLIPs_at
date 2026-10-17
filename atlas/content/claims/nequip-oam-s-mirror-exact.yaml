@@ -1,0 +1,9 @@
+statement: >-
+  Although NequIP-OAM-S is built without parity, its energy is exactly invariant under reflections: with l_max = 1
+  and two layers, its only tensor-product paths are 0 ⊗ 0 → 0 and 0 ⊗ 1 → 1 (layer 1) and 0 ⊗ 0 → 0 and 1 ⊗ 1 → 0
+  (layer 2), so no cross product, and hence no pseudoscalar, can form. Mirrored ethanol gives the same energy to
+  float64 precision and l = 1 features that transform as polar vectors.
+grade: THEORY
+derivation: /models/x-ray/nequip/#mirror-h
+scope: { model_families: [nequip], checkpoints: [nequip-oam-s-0-1] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Paths read from the rebuilt model; mirror test in pipeline/tests/test_xray_nequip.py and on the stored forward passes. Does not carry over to the M, L and XL models, whose l_max ≥ 2 and 4–6 layers admit 1 ⊗ 1 → 1 paths (not tested here).' }
