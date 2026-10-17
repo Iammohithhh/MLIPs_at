@@ -3,8 +3,8 @@
 **Move one atom. Trace what changes inside the model.**
 
 An interactive, static instrument that follows a real MACE checkpoint (MACE-MP-0a medium) from atomic
-geometry to energy and forces, and lets you move one atom of a periodic silicon crystal along an evaluated
-path to see what changes inside the model. A second project in this repository, separate from the MLIP Atlas
+geometry to energy and forces, and lets you move one atom of a periodic crystal (silicon, or wurtzite zinc
+oxide) along an evaluated path to see what changes inside the model. A second project in this repository, separate from the MLIP Atlas
 in `atlas/` (see [BRIEF.md](BRIEF.md) for the owner's brief and [HANDOFF.md](HANDOFF.md) for the build log).
 
 Every number on the page is a **precomputed** model evaluation (label: *Precomputed model evaluations;
@@ -30,6 +30,7 @@ On Linux the Playwright config uses `/opt/pw-browsers/chromium` with SwiftShader
 
 | Part | What it shows | Source of numbers |
 |---|---|---|
+| Experiment picker | Si (bond stretch) or ZnO (axial Zn–O bond); `exp` in the URL; each experiment's manifest is a separate lazily loaded chunk | `index.json`, `manifest.json` |
 | Atom Intervention Lab | Moved atom's 6 Å neighbourhood (minimum image), displacement slider snapping to 25 evaluated frames, baseline / perturbed / difference / side by side (synchronised cameras, desktop), force arrows with a stated scale, colour by feature change | `manifest.json` frames |
 | Guided walkthrough | Seven stages (species → neighbours → radial/angular → aggregation → higher-order features → site energies → forces), each with plain text, what changed, KaTeX equation, mace-torch 0.3.16 file:line locators and recorded tensors | `manifest.json`, `frames/NN.json` |
 | Architecture diagram | The checkpoint's actual blocks and shapes; linked to the walkthrough stage | checkpoint hyperparameters |
@@ -44,7 +45,7 @@ validated and an obsolete or unsupported link is restored as far as possible wit
 
 ## Reproduce the data
 
-The data in `src/data/experiments/si-bond-stretch/` was generated on CPU in float64 by
+The data in `src/data/experiments/si-bond-stretch/` and `src/data/experiments/zno-axial-bond/` was generated on CPU in float64 by
 `pipeline/inside_mace/intervention.py`; see [pipeline/README.md](pipeline/README.md). In short:
 
 ```bash
@@ -55,20 +56,30 @@ python -m venv .venv
 curl -L -o ckpt.model https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2023-12-03-mace-128-L1_epoch-199.model
 .venv/bin/python -m inside_mace.intervention ckpt.model ../../atlas/src/data/structures ../src/data/experiments
 .venv/bin/python -m inside_mace.scales ../src/data/experiments/si-bond-stretch
+.venv/bin/python -m inside_mace.scales ../src/data/experiments/zno-axial-bond
 INSIDE_MACE_CHECKPOINT=ckpt.model .venv/bin/python -m pytest -q tests
 ```
 
 The checkpoint (SHA-256 `01bfe221…35845`, verified before use) is loaded with a restricted unpickler copied
 from `pipeline/atlas_pipeline/xray.py`; it is never unpickled as code. Versions: mace-torch 0.3.16, e3nn
-0.4.4, torch 2.14.1+cpu, ase 3.29.0. A full run takes about 5–6 minutes on a laptop-class CPU.
+0.4.4, torch 2.14.1+cpu, ase 3.29.0. The Si run takes about 5–6 minutes on a laptop-class CPU; ZnO about
+twice that (300 atoms). A fourth argument to `inside_mace.intervention` regenerates only the named experiment ids.
 
-**Experiment.** Si diamond 3×3×3 supercell (216 atoms, cubic cell 16.29 Å, periodic). Atom 105 moves along
+**Experiment 1 (`si-bond-stretch`).** Si diamond 3×3×3 supercell (216 atoms, cubic cell 16.29 Å, periodic). Atom 105 moves along
 the unit vector towards its bonded neighbour 106 (a [111] bond direction); d > 0 shortens that bond.
 25 frames, d = −0.300 … +0.300 Å in 0.025 Å steps. Storage: energies in full float64; forces, site energies
 and positions to 1e-7; features to 5 significant figures; change norms to 4; |x| < 1e-12 written as 0.
+Every Si site has tetrahedral symmetry, so the baseline forces and layer-1 l = 1 features are zero.
+
+**Experiment 2 (`zno-axial-bond`).** Wurtzite ZnO, `ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21,
+u=0.382)`, 5×5×3 supercell (300 atoms, periodic). Zn atom 150 (nearest the supercell centre) moves along the
+unit vector towards its axial O neighbour 149 (−c, [0001]); d > 0 shortens that Zn–O bond. Same 25 frames and
+storage. The geometry was **not relaxed with the model**: the baseline already carries a force of 0.0371 eV/Å
+along c on every atom and its layer-1 l = 1 features are not zero; the page derives these statements from the
+stored run and never claims symmetry zeros for it.
 
 **Domain.** MACE-MP-0 was trained on MPtrj (Materials Project PBE/PBE+U relaxations), which includes
-crystalline silicon; small displacements of a bulk Si atom are inside that domain. Nothing here is compared
+crystalline silicon and wurtzite ZnO (mp-2133); small displacements of a bulk atom stay close to that domain. Nothing here is compared
 with DFT, so no number on the page is an error estimate.
 
 ## Interpretation limits
@@ -80,7 +91,7 @@ with DFT, so no number on the page is an error estimate.
   the difference of two norms. Internal feature scales differ between layers and irreps, so each block has its
   own axis and colour scale; heights are not compared across blocks.
 - Relative change divides by max(‖h_baseline‖, 0.05 × median baseline norm), so blocks that vanish by
-  symmetry (layer-1 l = 1 features in the perfect crystal) cannot blow up the ratio.
+  symmetry (layer-1 l = 1 features in the perfect Si crystal) cannot blow up the ratio.
 - Site energies Eᵢ are a model-internal partition of the total energy; they are not measurable. Forces are
   −∂E/∂rᵢ of the **total** energy, not the slope of an atom's own site energy (the trace view shows atoms
   whose force changes while their site energy does not).
@@ -89,7 +100,7 @@ with DFT, so no number on the page is an error estimate.
   architecture: two message-passing layers with r_max = 6 Å.
 - A plotted zero means: below 10⁻¹² for feature norms (pipeline write threshold), equal to 10⁻⁷ for stored
   energies and forces.
-- One checkpoint, one structure, one displacement path. Nothing here establishes the model's accuracy or
+- One checkpoint, two structures, one displacement path each. Nothing here establishes the model's accuracy or
   reliability, and the model does not "understand" chemistry.
 
 ## Layout
