@@ -147,7 +147,7 @@ describe('geometry', () => {
     const c = m.structure.cell;
     for (let i = 0; i < 3; i++)
       for (let j = 0; j < 3; j++) {
-        const v = c[i]![0] * inv[0][j] + c[i]![1] * inv[1][j] + c[i]![2] * inv[2][j];
+        const v = c[i]![0] * inv[0]![j]! + c[i]![1] * inv[1]![j]! + c[i]![2] * inv[2]![j]!;
         expect(v).toBeCloseTo(i === j ? 1 : 0, 10);
       }
     const p = m.structure.positions;

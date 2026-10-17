@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import InterventionLab from '../islands/InterventionLab.tsx';
+import manifest from '../data/experiments/si-bond-stretch/manifest.json';
+const p = manifest.provenance as Record<string, unknown>;
+---
+
+<Base
+  title="Inside an atomic prediction — MACE"
+  description="Follow a real MACE checkpoint from atomic geometry to energy and forces. Then change one atom and inspect the difference."
+>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow mono">MACE: Inside the Prediction</p>
+      <h1>Inside an atomic prediction.</h1>
+      <p class="lede">
+        Follow a real MACE checkpoint from atomic geometry to energy and forces. Then change one atom and inspect the difference.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#lab">Move an atom</a>
+      </div>
+    </header>
+    <div id="lab" class="page__lab">
+      <InterventionLab client:only="react">
+        <noscript slot="fallback">This instrument needs JavaScript and WebGL.</noscript>
+      </InterventionLab>
+    </div>
+    <section class="provenance" aria-labelledby="prov">
+      <h2 id="prov">What was computed</h2>
+      <dl class="mono">
+        <dt>Checkpoint</dt><dd>{String(p.checkpoint)} ({String(p.file)}, {String(p.licence)}), trained on {String(p.trainingData)}</dd>
+        <dt>SHA-256</dt><dd>{String(p.sha256)}</dd>
+        <dt>Packages</dt><dd>mace-torch {String(p['mace-torch'])}, e3nn {String(p.e3nn)}, torch {String(p.torch)}, ase {String(p.ase)}</dd>
+        <dt>Device · dtype</dt><dd>{String(p.device)} · {String(p.dtype)}</dd>
+        <dt>Structure</dt><dd>Si diamond, {manifest.structure.supercell.join('×')} supercell, {manifest.structure.n} atoms, periodic in x, y, z</dd>
+        <dt>Displacement</dt><dd>{manifest.displacement.definition}</dd>
+        <dt>Regenerate</dt><dd>{String(p.command)}</dd>
+        <dt>Data schema</dt><dd>{manifest.format} v{manifest.schema}</dd>
+      </dl>
+      <p>
+        Domain: MACE-MP-0 was trained on Materials Project PBE/PBE+U relaxation data, which contains crystalline silicon; small
+        displacements of a bulk Si atom are inside that domain. Nothing here is compared with a DFT reference, so no value on this page is an
+        error estimate.
+      </p>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 1.25rem clamp(1rem, 3vw, 2rem) 4rem;
+    display: grid;
+    gap: 1.5rem;
+  }
+  .eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--atlas-phys);
+  }
+  h1 {
+    margin: 0.2rem 0 0.4rem;
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .lede {
+    margin: 0;
+    max-width: 44rem;
+    font-size: 1.1rem;
+    color: var(--atlas-ink-muted);
+  }
+  .hero__actions {
+    margin-top: 0.9rem;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--im-stage);
+    color: var(--im-mint);
+  }
+  .provenance {
+    border-top: 1px solid var(--atlas-rule);
+    padding-top: 1rem;
+    font-size: 0.9rem;
+  }
+  .provenance dl {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.3rem 1rem;
+    font-size: 0.78rem;
+  }
+  .provenance dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+</style>

@@ -1,0 +1,262 @@
+/* Intervention Lab layout: the scene is the anchor; controls and measured outputs sit beside it
+   on desktop and below it on mobile. */
+.lab {
+  display: grid;
+  gap: 1rem;
+}
+.lab--loading {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  background: var(--im-stage);
+  color: var(--im-stage-muted);
+  border-radius: var(--im-radius);
+}
+.lab__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+.lab__head h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  letter-spacing: -0.01em;
+}
+.lab__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.status-pre {
+  color: var(--atlas-phys);
+}
+.status-ck {
+  color: var(--atlas-ink-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.lab__issues {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid var(--atlas-caveat);
+  background: var(--atlas-surface-2);
+  color: var(--atlas-ink);
+}
+.lab__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21rem;
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .lab__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.lab__stage {
+  position: relative;
+  background: var(--im-stage);
+  border-radius: var(--im-radius);
+  overflow: hidden;
+  color: var(--im-stage-ink);
+}
+.lab__canvas {
+  height: min(68vh, 640px);
+  min-height: 340px;
+}
+.lab__canvas canvas {
+  touch-action: none;
+}
+.lab__scale,
+.lab__legend {
+  position: absolute;
+  left: 0.75rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--im-stage-ink);
+  background: rgb(20 26 25 / 0.82);
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  max-width: calc(100% - 1.5rem);
+}
+.lab__scale {
+  bottom: 3.4rem;
+}
+.lab__legend {
+  bottom: 0.75rem;
+}
+.lab__legend-note {
+  color: var(--im-stage-muted);
+}
+.lab__scale-bar {
+  display: inline-block;
+  height: 3px;
+  background: var(--im-mint);
+}
+.swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+}
+.ramp {
+  display: inline-block;
+  width: 5rem;
+  height: 0.6rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--im-atom), var(--im-amber));
+}
+.lab__views {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  border: 1px solid var(--im-stage-rule);
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--im-stage-2);
+}
+.lab__views button {
+  font: 600 0.8rem var(--im-font);
+  color: var(--im-stage-muted);
+  background: transparent;
+  border: 0;
+  padding: 0.5rem 0.8rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+.lab__views button.is-on {
+  color: #10221e;
+  background: var(--im-mint);
+}
+.lab__views button.is-on:last-child {
+  background: var(--im-amber);
+}
+.lab__panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule);
+  border-radius: var(--im-radius);
+  padding: 1rem;
+}
+.lab__disp-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.lab__disp-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 2.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.4rem 0;
+}
+.lab__disp-row button,
+.lab__actions button {
+  min-height: 2.5rem;
+  font: 600 0.9rem var(--im-font);
+  border: 1px solid var(--atlas-rule-strong);
+  background: var(--atlas-surface-2);
+  color: var(--atlas-ink);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.lab__disp-row input {
+  width: 100%;
+  accent-color: var(--im-amber);
+}
+.lab__disp-value {
+  display: block;
+  font-size: 1.25rem;
+  color: var(--im-amber-ink);
+}
+.lab__disp-frame {
+  font-size: 0.75rem;
+  color: var(--atlas-ink-faint);
+}
+.lab__hint,
+.lab__scope,
+.lab__plot figcaption {
+  font-size: 0.8rem;
+  color: var(--atlas-ink-muted);
+  margin: 0.3rem 0 0;
+}
+.lab__readouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 0;
+}
+.lab__readouts dt {
+  font-size: 0.72rem;
+  color: var(--atlas-ink-muted);
+}
+.lab__readouts dd {
+  margin: 0;
+  font-size: 1rem;
+}
+.lab__readouts dd.delta {
+  color: var(--im-amber-ink);
+}
+.lab__toggles {
+  border: 1px solid var(--atlas-rule);
+  border-radius: 5px;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+}
+.lab__toggles select {
+  font: inherit;
+  max-width: 100%;
+}
+.lab__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.lab__actions button {
+  padding: 0 0.8rem;
+}
+.lab__plots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+.lab__plot {
+  margin: 0;
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule);
+  border-radius: var(--im-radius);
+  padding: 0.6rem;
+}
+.lab__plot svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.lab__plot .axis {
+  stroke: var(--atlas-rule-strong);
+}
+.lab__plot .cursor {
+  stroke: var(--im-amber);
+  stroke-dasharray: 3 3;
+}
+.lab__plot .pt {
+  fill: var(--atlas-phys);
+  cursor: pointer;
+}
+.lab__plot .pt.is-on {
+  fill: var(--im-amber);
+  stroke: var(--atlas-ink);
+  stroke-width: 1.2;
+}
+.lab__plot .tick,
+.lab__plot .missing {
+  font: 10px var(--im-mono);
+  fill: var(--atlas-ink-muted);
+}

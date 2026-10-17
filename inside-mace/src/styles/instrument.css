@@ -1,0 +1,122 @@
+/* Inside MACE — instrument styling.
+   Starts from the MLIP Atlas tokens (atlas/src/styles/global.css: warm paper canvas, charcoal ink,
+   desaturated accents) and adds the instrument stage: deep mineral graphite with restrained mint/teal
+   for selection and structure, and warm amber for baseline → intervention differences (brief §3).
+   Text tokens are ≥ 4.5:1 on their surfaces. The scene reads its colours from these tokens. */
+
+:root {
+  color-scheme: light;
+  /* reading surfaces (Atlas) */
+  --atlas-canvas: #f6f4ef;
+  --atlas-surface: #fbfaf7;
+  --atlas-surface-2: #eeebe4;
+  --atlas-ink: #2b323c;
+  --atlas-ink-muted: #545c67;
+  --atlas-ink-faint: #646b75;
+  --atlas-rule: #e2ded5;
+  --atlas-rule-strong: #c9c4b9;
+  --atlas-arch: #3f5d96;
+  --atlas-phys: #3a7069;
+  --atlas-lit: #6b5a8c;
+  --atlas-caveat: #8c5f25;
+  --atlas-fail: #9f4740;
+  --atlas-verified: #44704f;
+
+  /* instrument stage (dark in both themes: the experiment chamber) */
+  --im-stage: #141a19;
+  --im-stage-2: #1b2321;
+  --im-stage-rule: #2c3734;
+  --im-stage-ink: #dde5e2;
+  --im-stage-muted: #9fb0ab;
+  --im-mint: #6fd3bd;
+  --im-teal: #3a9f8c;
+  --im-amber: #f0a945;
+  --im-amber-ink: #8a5a14;
+  --im-atom: #a9b4b8;
+
+  --im-font: 'Inter Variable', system-ui, sans-serif;
+  --im-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --im-radius: 6px;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --atlas-canvas: #181b20;
+  --atlas-surface: #1e2228;
+  --atlas-surface-2: #252a31;
+  --atlas-ink: #d3d7dc;
+  --atlas-ink-muted: #a7adb5;
+  --atlas-ink-faint: #8f969f;
+  --atlas-rule: #2e333b;
+  --atlas-rule-strong: #414750;
+  --atlas-phys: #74b3a9;
+  --atlas-caveat: #d6a35c;
+  --atlas-fail: #e08a80;
+  --im-amber-ink: #f0b860;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--atlas-canvas);
+  color: var(--atlas-ink);
+  font-family: var(--im-font);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--atlas-canvas);
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--atlas-phys);
+}
+
+:focus-visible {
+  outline: 2px solid var(--im-mint);
+  outline-offset: 2px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font: 600 0.68rem/1 var(--im-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3em 0.55em;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.mono {
+  font-family: var(--im-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
