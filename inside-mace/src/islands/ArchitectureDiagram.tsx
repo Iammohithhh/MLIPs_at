@@ -3,7 +3,10 @@
 // atlas/src/data/xray/mace-mp-0a-medium.json), not a generic network cartoon. Selecting a walkthrough
 // stage emphasises the blocks it covers; clicking a block selects its stage. Built from HTML boxes so it
 // reflows to a vertical stack on narrow screens instead of shrinking.
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import type { Stage } from '../lib/urlState';
+import { usePrefersReducedMotion } from '../three/theme';
 
 interface Block {
   id: string;
@@ -56,8 +59,23 @@ const ROWS: { label: string; blocks: Block[] }[] = [
 ];
 
 export function ArchitectureDiagram({ stage, onStage }: { stage: Stage | null; onStage: (s: Stage) => void }) {
+  const ref = useRef<HTMLElement | null>(null);
+  const reduced = usePrefersReducedMotion();
+  // GSAP settles the blocks of the newly selected stage into their emphasised state together (no stagger: the
+  // blocks of one stage are not computed one after another in the order of an animation).
+  useEffect(() => {
+    const fig = ref.current;
+    if (!fig || reduced || stage === null) return;
+    const on = fig.querySelectorAll('.arch__block.is-on');
+    if (on.length === 0) return;
+    const tween = gsap.fromTo(on, { scale: 0.97 }, { scale: 1, duration: 0.3, ease: 'back.out(2)', clearProps: 'transform' });
+    return () => {
+      tween.kill();
+      gsap.set(on, { clearProps: 'transform' });
+    };
+  }, [stage, reduced]);
   return (
-    <figure className="arch" aria-label="MACE-MP-0a medium computation graph">
+    <figure ref={ref} className="arch" aria-label="MACE-MP-0a medium computation graph">
       <ol className="arch__rows">
         {ROWS.map((row) => (
           <li key={row.label} className="arch__row">

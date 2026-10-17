@@ -2,7 +2,9 @@
 // representations differ from the baseline, plotted against each atom's baseline distance from the moved
 // atom. Every point is a stored float64 difference from the precomputed run; zeros (at the stored
 // precision, see trace.ts) are drawn on their own line, not as small values. The step order is computational dependency, not runtime.
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { usePrefersReducedMotion } from '../three/theme';
 import type { Manifest } from '../lib/experiment';
 import { baselineDistances, stageRange, summarise, tracePoints, TRACE_STAGES, type TracePoint, type TraceStageKey } from '../lib/trace';
 
@@ -44,6 +46,21 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
   const hidden = predictOn && q && guess[qKey] === undefined && frame !== B;
 
   const go = (k: number) => setStep(Math.max(0, Math.min(TRACE_STAGES.length - 1, k)));
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const reduced = usePrefersReducedMotion();
+  // GSAP fades in the lane that has just been revealed. All of its atoms appear together: a stagger by distance
+  // would suggest that the change travels outward over time, which the model does not do (brief §3, §9).
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg || reduced || hidden) return;
+    const els = svg.querySelectorAll(`[data-lane="${cur.key}"] .trace__reveal`);
+    if (els.length === 0) return;
+    const tween = gsap.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power1.out', clearProps: 'opacity' });
+    return () => {
+      tween.kill();
+      gsap.set(els, { clearProps: 'opacity' });
+    };
+  }, [cur.key, hidden, reduced, frame]);
 
   return (
     <section className="trace" aria-labelledby="trace-title">
@@ -84,7 +101,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
         <Predict q={q} answer={guess[qKey]} onAnswer={(a) => setGuess((g) => ({ ...g, [qKey]: a }))} pts={points[cur.key]} />
       )}
       <figure className="trace__fig">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Change by stage against distance from the moved atom, revealed up to stage ${step + 1}`}>
+        <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Change by stage against distance from the moved atom, revealed up to stage ${step + 1}`}>
           {[m.rMax, 2 * m.rMax].map((r, i) => (
             <g key={r}>
               <line x1={x(r)} x2={x(r)} y1={PAD.t - 8} y2={H - PAD.b} className="trace__cut" />
@@ -106,7 +123,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
             };
             const zeroY = y0 + LANE - 12;
             return (
-              <g key={s.key} className={`trace__lane${li === step ? ' is-on' : ''}${revealed ? '' : ' is-hidden'}`}>
+              <g key={s.key} data-lane={s.key} className={`trace__lane${li === step ? ' is-on' : ''}${revealed ? '' : ' is-hidden'}`}>
                 <rect x={PAD.l - 4} y={y0} width={W - PAD.l - PAD.r + 8} height={LANE - 4} className="trace__bg" />
                 <text x={6} y={y0 + 16} className="trace__lane-title">
                   {li + 1}. {s.title}
@@ -118,12 +135,13 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
                   zero →
                 </text>
                 {revealed && (
-                  <text x={6} y={y0 + 46} className="trace__lane-sum">
+                  <text x={6} y={y0 + 46} className="trace__lane-sum trace__reveal">
                     {sum.changed} changed
                   </text>
                 )}
-                {revealed &&
-                  points[s.key].map((p) =>
+                {revealed && (
+                  <g className="trace__reveal">
+                  {points[s.key].map((p) =>
                     p.value === null ? (
                       <text key={p.atom} x={x(p.r0)} y={zeroY + 3} className="trace__missing" textAnchor="middle">
                         ×
@@ -143,6 +161,8 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
                       </circle>
                     ),
                   )}
+                  </g>
+                )}
                 {!revealed && (
                   <text x={(PAD.l + W) / 2} y={y0 + LANE / 2} textAnchor="middle" className="trace__lane-unit">
                     {li === step ? 'answer the question above to reveal' : 'not revealed yet'}

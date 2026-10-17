@@ -145,7 +145,7 @@ Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below i
 | Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
 | Unit / numerics (Vitest, 9 files) | `npm test` | **75 / 75 passed** |
 | Static build | `npx astro build` | OK, 1 page |
-| Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **50 passed, 2 skipped** (the perf test runs on the mobile project only); plus the new `e2e/colour.spec.ts` 2 / 2 |
+| Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **50 passed, 2 skipped** (the perf test runs on the mobile project only); after session 6's additions (`e2e/colour.spec.ts`, `e2e/motion.spec.ts`, phone layout) **56 passed, 2 skipped** |
 | Pipeline (pytest, with the checkpoint) | `INSIDE_MACE_CHECKPOINT=ckpt.model python -m pytest -q tests` | **22 / 22 passed** (28.7 s), checkpoint `sha256sum` = `01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845` (matches the pinned hash) |
 | Screenshots | `node` + Playwright, inspected by eye | ZnO difference and side by side at 1440×1000, ZnO walkthrough stage 5 at 1024×800, ZnO perturbed at 390×844, Si presentation step 3 at 1440×900: scene renders, labels legible, `scrollWidth − innerWidth = 0` (no horizontal overflow), 0 page errors |
 
@@ -163,7 +163,7 @@ Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below i
 | Every number belongs to the selected frame | chunks carry `experiment` and `k` and are rejected on mismatch; Playwright checks readouts against stored values per frame | pass |
 | Missing data never becomes zero | schema keeps `null`; failed frames carry no numbers (pytest); UI shows "—" / alerts (Vitest, Playwright) | pass |
 | Shared URLs restore state | Vitest (`urlState`) + Playwright (round trip, invalid values reported, unknown experiment) | pass |
-| Browser: walkthrough, atom selection, displacement, views, reset, sharing, keyboard, mobile, reduced motion, WebGL failure, runtime errors, overflow | `e2e/lab.spec.ts`, `e2e/experiments.spec.ts`, `e2e/render.spec.ts`, `e2e/colour.spec.ts` | pass (see table above) |
+| Browser: walkthrough, atom selection, displacement, views, reset, sharing, keyboard, mobile, reduced motion, WebGL failure, runtime errors, overflow | `e2e/lab.spec.ts`, `e2e/experiments.spec.ts`, `e2e/render.spec.ts`, `e2e/colour.spec.ts`, `e2e/motion.spec.ts` | pass (see table above) |
 | Mobile interaction performance | `e2e/perf.spec.ts`: Pixel 7 emulation, 4× CPU throttle, SwiftShader (session 5 numbers) | Si interactive 1.65–1.73 s, frame step median 0.28–0.34 s, worst 1.0–1.1 s, heap 33 MB; ZnO interactive 2.0–2.2 s, median 0.27–0.37 s, worst 1.0–1.1 s, heap 32 MB |
 
 ## Brief §16 status (honest)
@@ -184,7 +184,7 @@ Done means implemented **and** verified by the checks above.
 | Still-image export (§14, "if feasible") | **Done** | PNG with title, settings, units, legends, status, attribution, source URL |
 | Tests and verification summary | **Done** | this section |
 | Explanation of remaining limitations | **Done** | below |
-| GSAP coordinated transitions | **Partial** | GSAP drives camera-preset transitions (`src/three/Stage.tsx`), instant under reduced motion; annotation/diagram transitions are CSS, not GSAP. ScrollTrigger deliberately not used (brief: only where scrolling helps) |
+| GSAP coordinated transitions | **Done** | GSAP drives camera-preset transitions (`src/three/Stage.tsx`), the architecture-diagram stage emphasis (`ArchitectureDiagram.tsx`) and the trace-lane reveal (`TraceChange.tsx`); no stagger by distance or layer, so no motion suggests propagation or runtime; all skipped under reduced motion (`e2e/motion.spec.ts`). ScrollTrigger deliberately not used (brief: only where scrolling helps) |
 | Optional ambient occlusion (§4) | **Evaluated, not enabled** | see "Rendering decisions" |
 | Measurement on a physical phone (§15 "representative mobile device or emulation") | **Partial** | emulation only (Pixel 7 profile, CPU throttle, SwiftShader); no physical device was available |
 | Arbitrary-geometry live inference | **Not done (out of scope by design)** | the brief calls it a separate extension; the page never claims live computation |
