@@ -1039,3 +1039,47 @@
 .rot__key .kR {
   font-weight: 600;
 }
+
+/* Experiment picker (LabLoader): two compact cards above the instrument. */
+.exp-pick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+}
+.exp-pick__label {
+  font-family: var(--im-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--im-stage-muted);
+  margin-right: 0.25rem;
+}
+.exp-pick button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-height: 44px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--im-stage-rule);
+  border-radius: var(--im-radius);
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.exp-pick button.is-on {
+  border-color: var(--im-mint);
+  box-shadow: inset 0 0 0 1px var(--im-mint);
+}
+.exp-pick button:focus-visible {
+  outline: 2px solid var(--im-mint);
+  outline-offset: 2px;
+}
+.exp-pick__n {
+  font-size: 0.72rem;
+  color: var(--im-stage-muted);
+}

@@ -3,7 +3,8 @@
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { useMemo, useState } from 'react';
-import { CODE_PACKAGE, STAGE_INFO } from '../lib/stages';
+import type { Manifest } from '../lib/experiment';
+import { CODE_PACKAGE, STAGE_INFO, stagesFor } from '../lib/stages';
 import type { Stage } from '../lib/urlState';
 
 export function StageNav({ stage, onStage }: { stage: Stage; onStage: (s: Stage) => void }) {
@@ -23,15 +24,16 @@ export function StageNav({ stage, onStage }: { stage: Stage; onStage: (s: Stage)
   );
 }
 
-export function StageDetail({ stage, onStage }: { stage: Stage; onStage: (s: Stage) => void }) {
+export function StageDetail({ m, stage, onStage }: { m: Manifest; stage: Stage; onStage: (s: Stage) => void }) {
   const [technical, setTechnical] = useState(false);
-  const i = STAGE_INFO.findIndex((s) => s.id === stage);
-  const s = STAGE_INFO[i]!;
+  const stages = useMemo(() => stagesFor(m), [m]);
+  const i = stages.findIndex((s) => s.id === stage);
+  const s = stages[i]!;
   const html = useMemo(() => katex.renderToString(s.tex, { displayMode: true, throwOnError: false, output: 'htmlAndMathml' }), [s.tex]);
   return (
     <article className="sd" aria-live="polite">
       <p className="sd__step mono">
-        Stage {s.n} of {STAGE_INFO.length}
+        Stage {s.n} of {stages.length}
       </p>
       <h3>{s.title}</h3>
       <p className="sd__plain">{s.plain}</p>
@@ -65,10 +67,10 @@ export function StageDetail({ stage, onStage }: { stage: Stage; onStage: (s: Sta
         </div>
       )}
       <div className="sd__nav">
-        <button disabled={i === 0} onClick={() => onStage(STAGE_INFO[i - 1]!.id)}>
+        <button disabled={i === 0} onClick={() => onStage(stages[i - 1]!.id)}>
           ← Previous
         </button>
-        <button disabled={i === STAGE_INFO.length - 1} onClick={() => onStage(STAGE_INFO[i + 1]!.id)}>
+        <button disabled={i === stages.length - 1} onClick={() => onStage(stages[i + 1]!.id)}>
           Next stage →
         </button>
       </div>

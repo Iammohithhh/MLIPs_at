@@ -262,8 +262,10 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
         </div>
         <p className="ev__note">
           F = −[E(r + h) − E(r − h)] / 2h, every energy a full model evaluation in float64. The error falls about tenfold for each
-          3.3× smaller h, the h² behaviour of central differences, so truncation error dominates at these step sizes. At d = 0 the moved atom’s force is zero by
-          symmetry, yet its finite difference is not exactly zero at large h because the energy well is asymmetric (cubic term).
+          3.3× smaller h, the h² behaviour of central differences, so truncation error dominates at these step sizes.{' '}
+          {baselineFacts(m).forceFree
+            ? 'At d = 0 the moved atom’s predicted force is zero, yet its finite difference is not exactly zero at large h because the energy well is asymmetric (cubic term).'
+            : `At d = 0 this unrelaxed geometry already carries a predicted force (largest ${baselineFacts(m).maxForce.toFixed(3)} eV/Å), and the finite difference reproduces it.`}
         </p>
       </div>
     );

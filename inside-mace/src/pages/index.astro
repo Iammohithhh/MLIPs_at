@@ -1,8 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import InterventionLab from '../islands/LabLoader.tsx';
-import manifest from '../data/experiments/si-bond-stretch/manifest.json';
-const p = manifest.provenance as Record<string, unknown>;
+import si from '../data/experiments/si-bond-stretch/manifest.json';
+import zno from '../data/experiments/zno-axial-bond/manifest.json';
+import { experimentInfo } from '../lib/experimentInfo';
+// Build-time only: the provenance of every committed experiment (the island loads its data separately).
+const runs = [si, zno].map((m) => ({ m, p: m.provenance as Record<string, unknown>, info: experimentInfo(m.id)! }));
+const p = runs[0]!.p;
 ---
 
 <Base
@@ -33,15 +37,25 @@ const p = manifest.provenance as Record<string, unknown>;
         <dt>SHA-256</dt><dd>{String(p.sha256)}</dd>
         <dt>Packages</dt><dd>mace-torch {String(p['mace-torch'])}, e3nn {String(p.e3nn)}, torch {String(p.torch)}, ase {String(p.ase)}</dd>
         <dt>Device · dtype</dt><dd>{String(p.device)} · {String(p.dtype)}</dd>
-        <dt>Structure</dt><dd>Si diamond, {manifest.structure.supercell.join('×')} supercell, {manifest.structure.n} atoms, periodic in x, y, z</dd>
-        <dt>Displacement</dt><dd>{manifest.displacement.definition}</dd>
-        <dt>Regenerate</dt><dd>{String(p.command)}</dd>
-        <dt>Data schema</dt><dd>{manifest.format} v{manifest.schema}</dd>
       </dl>
+      {runs.map(({ m, p: q, info }) => (
+        <div class="provenance__run">
+          <h3 id={`prov-${m.id}`}>{m.title}</h3>
+          <dl class="mono">
+            <dt>Experiment id</dt><dd>{m.id}</dd>
+            <dt>Structure</dt><dd>{info.structure}, {m.structure.supercell.join('×')} supercell, {m.structure.n} atoms, periodic in x, y, z</dd>
+            <dt>Geometry source</dt><dd>{info.geometrySource}</dd>
+            <dt>Displacement</dt><dd>{m.displacement.definition}</dd>
+            <dt>Frames</dt><dd>{m.frames.length} evaluated, {m.frames.filter((f) => f.status === 'ok').length} ok</dd>
+            <dt>Regenerate</dt><dd>{String(q.command)}</dd>
+            <dt>Data schema</dt><dd>{m.format} v{m.schema}</dd>
+          </dl>
+          <p>Domain: {info.domain}</p>
+        </div>
+      ))}
       <p>
-        Domain: MACE-MP-0 was trained on Materials Project PBE/PBE+U relaxation data, which contains crystalline silicon; small
-        displacements of a bulk Si atom are inside that domain. Nothing here is compared with a DFT reference, so no value on this page is an
-        error estimate.
+        MACE-MP-0 was trained on Materials Project PBE/PBE+U relaxation data. Nothing here is compared with a DFT reference, so no value on this
+        page is an error estimate.
       </p>
     </section>
   </main>
@@ -113,6 +127,10 @@ const p = manifest.provenance as Record<string, unknown>;
     grid-template-columns: max-content minmax(0, 1fr);
     gap: 0.3rem 1rem;
     font-size: 0.78rem;
+  }
+  .provenance__run h3 {
+    font-size: 1rem;
+    margin: 1.2rem 0 0.4rem;
   }
   .provenance dd {
     margin: 0;

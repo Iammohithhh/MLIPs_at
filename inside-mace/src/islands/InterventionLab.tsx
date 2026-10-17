@@ -38,7 +38,7 @@ import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
 const DISPLAY_RADIUS = 6.0; // Å: moved atom, its graph neighbours within r_max
-const FORCE_SCALE = 0.5; // Å of arrow per eV/Å: the largest stored force (|F| = 4.7 eV/Å, moved atom at d = +0.3 Å) draws as a 2.3 Å arrow
+const FORCE_SCALE = 0.5; // Å of arrow per eV/Å: the largest stored forces (moved atom at d = +0.3 Å) are 4.7 eV/Å in Si and 6.3 eV/Å in ZnO, i.e. 2.3 Å and 3.1 Å arrows
 
 // Everything the instrument derives from one experiment's manifest, shared through context so the same
 // components serve any committed experiment (the experiment is fixed for the lifetime of the instrument).
@@ -264,7 +264,7 @@ function LabBody() {
           {views}
         </div>
         <aside className="lab__panel">
-          {s.mode === 'walk' && <StageDetail stage={s.stage} onStage={(st) => set({ stage: st })} />}
+          {s.mode === 'walk' && <StageDetail m={m} stage={s.stage} onStage={(st) => set({ stage: st })} />}
           {s.mode === 'walk' && <StageEvidence m={m} stage={s.stage} frame={frame} atom={s.atom} />}
           <Displacement frame={frame} onFrame={(k) => set({ frame: k })} />
           <Readouts frame={frame} atom={s.atom} />
@@ -432,7 +432,7 @@ function Scene(props: {
 
   return (
     <div className="lab__canvas">
-      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0], m.displacement.axis)} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync} preserveDrawingBuffer>
+      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0], m.displacement.axis)} resetKey={props.resetKey} background={COLORS.stage} label={`${ELEMENT_DISPLAY[m.structure.symbols[m.displacement.atom] ?? ""]?.name ?? "Atomic"} neighbourhood of the moved atom (${experimentInfo(m.id)?.crystal ?? m.title}) with force arrows`} minDistance={6} maxDistance={60} sync={props.sync} preserveDrawingBuffer>
         <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>

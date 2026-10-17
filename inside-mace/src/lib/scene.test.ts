@@ -41,7 +41,7 @@ describe('neighbourhood (periodic images)', () => {
   });
 });
 
-import { STAGE_INFO } from './stages';
+import { STAGE_INFO, stagesFor } from './stages';
 import { STAGES } from './urlState';
 
 describe('walkthrough stages', () => {
@@ -55,7 +55,7 @@ describe('walkthrough stages', () => {
   });
   it('neighbour count in the stage text matches the data', () => {
     const n = neighbourhood(m, B, m.rMax)!.length - 1;
-    expect(STAGE_INFO[1]!.changed).toContain(`${n} neighbours`);
+    expect(stagesFor(m)[1]!.changed).toContain(`${n} neighbours`);
     const hyper = m.provenance.hyperparameters as { num_bessel: number; avg_num_neighbors: number };
     expect(STAGE_INFO[2]!.changed).toContain(`${hyper.num_bessel} radial Bessel values`);
     expect(STAGE_INFO[3]!.plain).toContain(hyper.avg_num_neighbors.toFixed(2));

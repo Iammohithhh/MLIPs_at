@@ -8,6 +8,7 @@
 // or atoms are stored. The walkthrough island (next sessions) renders these; this module is the
 // single source of the stage text so beginner and technical views never diverge.
 
+import { mic, norm, type Manifest } from './experiment';
 import type { Stage } from './urlState';
 
 export interface StageInfo {
@@ -35,7 +36,7 @@ export const STAGE_INFO: StageInfo[] = [
     n: 1,
     title: 'Species and coordinates',
     plain: 'The model receives only each atom’s element and position, plus the periodic cell.',
-    changed: 'Starting point: 216 Si atoms, positions in Å, periodic in x, y and z.',
+    changed: 'Starting point: %N% atoms (%COMP%), positions in Å, periodic in x, y and z.',
     tex: String.raw`h_i^{(0)} = W_{\text{embed}}\, \mathrm{onehot}(Z_i)`,
     code: [{ file: 'mace/modules/models.py', line: 501, symbol: 'ScaleShiftMACE.forward: node_embedding' }],
     data: 'baseline.embed (moved atom)',
@@ -46,7 +47,7 @@ export const STAGE_INFO: StageInfo[] = [
     n: 2,
     title: 'Neighbour graph',
     plain: 'Every pair of atoms closer than 6 Å becomes a directed graph edge; this is a cutoff rule, not a chemical bond.',
-    changed: 'Atoms become a graph: each Si atom has 46 neighbours within r_max (periodic images included).',
+    changed: 'Atoms become a graph: the moved %EL% atom has %NB% neighbours within r_max at the baseline (periodic images included).',
     tex: String.raw`\mathcal{N}(i) = \{\, j : \lVert \mathbf r_j - \mathbf r_i + \mathbf S_{ij} \rVert < r_{\max} = 6\ \text{Å} \,\}`,
     code: [{ file: 'mace/data/neighborhood.py', line: 7, symbol: 'get_neighborhood' }],
     data: 'frames/*.json edgesIntoMoved.src, .shift, .vec',
@@ -94,7 +95,7 @@ export const STAGE_INFO: StageInfo[] = [
     ],
     data: 'frames/*.json layers[t].h0, .h1; manifest frames[].change',
     shape: 'layer 1: [local, 128] + [local, 128, 3]; layer 2: [local, 128]',
-    subset: 'All 128 channels, for the moved atom and its first two neighbour shells; change norms for all 216 atoms.',
+    subset: 'All 128 channels, for the moved atom and its first two neighbour shells; change norms for all %N% atoms.',
   },
   {
     id: 'energy',
@@ -108,7 +109,7 @@ export const STAGE_INFO: StageInfo[] = [
       { file: 'mace/modules/models.py', line: 577, symbol: 'scale_shift; total_energy = e0 + inter_e' },
     ],
     data: 'manifest frames[].nodeEnergy, .site, .energy',
-    shape: '[216] eV per frame; total in eV',
+    shape: '[%N%] eV per frame; total in eV',
   },
   {
     id: 'forces',
@@ -119,6 +120,33 @@ export const STAGE_INFO: StageInfo[] = [
     tex: String.raw`\mathbf F_i = -\frac{\partial E}{\partial \mathbf r_i} = -\sum_{j} \frac{\partial E_j}{\partial \mathbf r_i}\ \ne\ -\frac{\partial E_i}{\partial \mathbf r_i}`,
     code: [{ file: 'mace/modules/utils.py', line: 22, symbol: 'compute_forces: −autograd.grad(E, positions)' }],
     data: 'manifest frames[].forces; checks.finiteDifference',
-    shape: '[216, 3] eV/Å per frame',
+    shape: '[%N%, 3] eV/Å per frame',
   },
 ];
+
+/** Graph neighbours of `atom` within r_max at the baseline (minimum image; the cells are wider than 2·r_max). */
+export function baselineNeighbourCount(m: Manifest, atom: number): number {
+  const P = m.structure.positions;
+  const ri = P[atom]!;
+  let n = 0;
+  for (let j = 0; j < P.length; j++) if (j !== atom && norm(mic(m, ri as [number, number, number], P[j] as [number, number, number])) < m.rMax) n++;
+  return n;
+}
+
+/**
+ * The stage texts for one experiment: counts, element and shapes come from the manifest, so no stage
+ * sentence assumes the silicon run.
+ */
+export function stagesFor(m: Manifest): StageInfo[] {
+  const counts = new Map<string, number>();
+  for (const sym of m.structure.symbols) counts.set(sym, (counts.get(sym) ?? 0) + 1);
+  const comp = [...counts].map(([sym, c]) => `${c} ${sym}`).join(', ');
+  const atom = m.displacement.atom;
+  const fill = (t: string) =>
+    t
+      .replaceAll('%N%', String(m.structure.n))
+      .replaceAll('%COMP%', comp)
+      .replaceAll('%EL%', m.structure.symbols[atom] ?? '?')
+      .replaceAll('%NB%', String(baselineNeighbourCount(m, atom)));
+  return STAGE_INFO.map((s) => ({ ...s, changed: fill(s.changed), shape: fill(s.shape), subset: s.subset === undefined ? undefined : fill(s.subset) }));
+}
