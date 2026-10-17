@@ -1,0 +1,67 @@
+import { expect, test, type Page } from '@playwright/test';
+
+function collectErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => {
+    if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text());
+  });
+  return errors;
+}
+
+test('opens on a real interaction with checkpoint and status visible', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Inside an atomic prediction.' })).toBeVisible();
+  await expect(page.getByText('Precomputed model evaluations; interactive inspection')).toBeVisible();
+  await expect(page.getByText(/mace-mp-0a-medium · sha256 01bfe221/)).toBeVisible();
+  await expect(page.locator('canvas')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('displacement snaps to evaluated frames and updates numbers and URL', async ({ page }) => {
+  await page.goto('/');
+  const out = page.locator('output.lab__disp-value');
+  await expect(out).toContainText('d = +0.000 Å');
+  await expect(page.locator('.lab__readouts dd').first()).toContainText('0.0000 eV');
+  await page.getByRole('button', { name: 'Next evaluated frame' }).click();
+  await expect(out).toContainText('d = +0.025 Å');
+  await expect(page).toHaveURL(/frame=13/);
+  // ΔE for frame 13 from the manifest: +0.002634 eV
+  await expect(page.locator('.lab__readouts dd').first()).toContainText('+0.0026 eV');
+});
+
+test('keyboard operates the slider', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#disp').focus();
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = −0.050 Å');
+});
+
+test('baseline / perturbed / difference views and reset', async ({ page }) => {
+  await page.goto('/?frame=20');
+  for (const name of ['Baseline', 'Difference', 'Perturbed']) {
+    await page.getByRole('radio', { name }).click();
+    await expect(page.getByRole('radio', { name })).toHaveAttribute('aria-checked', 'true');
+  }
+  await page.getByRole('button', { name: 'Reset experiment' }).click();
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.000 Å');
+});
+
+test('shared URL restores the same state; bad values are reported, not shown', async ({ page }) => {
+  await page.goto('/?v=1&exp=si-bond-stretch&ckpt=mace-mp-0a-medium&frame=4&view=difference&ch=17');
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = −0.200 Å');
+  await expect(page.getByRole('radio', { name: 'Difference' })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText('channel 17, l = 0')).toBeVisible();
+  await page.goto('/?frame=999');
+  await expect(page.getByRole('alert')).toContainText('out of range');
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.000 Å');
+});
+
+test('no horizontal overflow', async ({ page }) => {
+  await page.goto('/?frame=20');
+  await page.waitForTimeout(1000);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
