@@ -135,7 +135,7 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
    README + interpretation limits + reproduction; move manifest to lazy fetch.
 
 
-### Session 4 — 2026-10-17 21:16 → 22:05 UTC
+### Session 4 — 2026-10-17 21:16 → 21:57 UTC
 
 **State found:** the log had only session 1's entry, but `git log` shows a second batch of commits (19:20–19:39 UTC,
 `ac53b8b` … `c2285ee`: Trace the change with predict-before-reveal, side-by-side synced scenes, architecture diagram,
@@ -176,7 +176,7 @@ astro check 0 errors, Vitest 35/35, Playwright desktop+mobile 34/34.
   `experimentInfo.vectorsVanishReason` is set **and** the stored baseline vectors are zero) and the FeatureInspector
   l = 1 note gated the same way. Re-verified: check 0 errors, Vitest 66/66, Playwright 35 passed.
 
-**Verified at the end (21:49 UTC):** `astro check` 0 errors; Vitest 66/66 (7 files); `astro build` OK; Playwright
+**Verified at the end (21:55 UTC, after the last code commit `a646d35`):** `astro check` 0 errors; Vitest 66/66 (7 files); `astro build` OK; Playwright
 desktop + mobile 35 passed, 1 skipped (perf runs on mobile only); pytest 22/22 with `INSIDE_MACE_CHECKPOINT` (fresh
 re-evaluation of a stored frame matches for **both** experiments). Screenshots 1440×1000 and 390×844 inspected (Si page
 unchanged; scene renders, no overflow).
