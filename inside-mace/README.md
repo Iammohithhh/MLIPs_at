@@ -135,7 +135,77 @@ inside-mace/
   e2e/                         Playwright browser checks
 ```
 
-## Verification summary and remaining limitations
+## Verification summary
 
-Kept up to date in [HANDOFF.md](HANDOFF.md) during the build; the final summary is written here by the last
-build session.
+Final re-verification by build session 6 on 2026-10-17 (23:16–23:30 UTC, Linux cloud container, Node via `npm ci`,
+Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below is a real run in that session.
+
+| Check | Command | Result |
+|---|---|---|
+| Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
+| Unit / numerics (Vitest, 9 files) | `npm test` | **75 / 75 passed** |
+| Static build | `npx astro build` | OK, 1 page |
+| Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **50 passed, 2 skipped** (the perf test runs on the mobile project only); plus the new `e2e/colour.spec.ts` 2 / 2 |
+| Pipeline (pytest, with the checkpoint) | `INSIDE_MACE_CHECKPOINT=ckpt.model python -m pytest -q tests` | **22 / 22 passed** (28.7 s), checkpoint `sha256sum` = `01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845` (matches the pinned hash) |
+| Screenshots | `node` + Playwright, inspected by eye | ZnO difference and side by side at 1440×1000, ZnO walkthrough stage 5 at 1024×800, ZnO perturbed at 390×844, Si presentation step 3 at 1440×900: scene renders, labels legible, `scrollWidth − innerWidth = 0` (no horizontal overflow), 0 page errors |
+
+**What the tests establish (brief §15).**
+
+| Brief §15 item | Where it is checked | Stored result |
+|---|---|---|
+| Baseline restoration reproduces the original outputs | pipeline re-evaluates d = 0 after the sweep; pytest + Vitest (`experiments.test.ts`) | Si and ZnO: \|ΔE\| = 0.0 eV, max \|ΔF\| = 0.0 eV/Å |
+| Stored outputs agree with source computations | pytest `test_stored_baseline_matches_a_fresh_evaluation` (fresh MACE run vs stored frame, both experiments) | within the documented storage precision (forces 1e-7 eV/Å, energies full float64) |
+| Energy changes computed consistently | Vitest + pytest: ΔE = E(frame) − E(baseline) from stored energies; ΣEᵢ = E | pass |
+| Force conventions | Vitest + pytest: F = −∂E/∂r; slope of E(d) vs F·û along the path; ΣF = 0 in a periodic cell | pass |
+| Finite differences | central differences of the **total** energy, h = 1e-2, 3e-3, 1e-3, 3e-4 Å, at d = 0 and d = +0.100 Å; error falls ∝ h² | Si moved atom: 4.6e-7 (d = 0) and 9.9e-7 eV/Å (d = +0.1) at h = 3e-4; ZnO moved atom: 7.3e-7 and 1.1e-6 eV/Å. Below h ≈ 1e-3 Å round-off in float64 energies (~1e-10 eV) limits components that are near zero, which is why the h² test uses the non-zero components |
+| Rotation uses the correct transformation | positions **and** cell rotated by R (50° about (1, 2, 3)), model re-run; compared with F → RF, h(l=0) → h, h(l=1) → R h (e3nn 0.4 orders l = 1 components as x, y, z, so D¹(R) = R; see `L1_TO_XYZ` in `pipeline/inside_mace/capture.py` — the residuals below confirm it) | Si: \|ΔE\| = 0.0, F 3.4e-14, h0 7.8e-16, h1 5.2e-16; ZnO: \|ΔE\| = 0.0, F 3.1e-14, h0 1.3e-15, h1 5.2e-16 |
+| Atom and periodic-image identity | pytest + Vitest: moved atom keeps its index and moves exactly d·û; local set and edges by minimum image | pass |
+| Every number belongs to the selected frame | chunks carry `experiment` and `k` and are rejected on mismatch; Playwright checks readouts against stored values per frame | pass |
+| Missing data never becomes zero | schema keeps `null`; failed frames carry no numbers (pytest); UI shows "—" / alerts (Vitest, Playwright) | pass |
+| Shared URLs restore state | Vitest (`urlState`) + Playwright (round trip, invalid values reported, unknown experiment) | pass |
+| Browser: walkthrough, atom selection, displacement, views, reset, sharing, keyboard, mobile, reduced motion, WebGL failure, runtime errors, overflow | `e2e/lab.spec.ts`, `e2e/experiments.spec.ts`, `e2e/render.spec.ts`, `e2e/colour.spec.ts` | pass (see table above) |
+| Mobile interaction performance | `e2e/perf.spec.ts`: Pixel 7 emulation, 4× CPU throttle, SwiftShader (session 5 numbers) | Si interactive 1.65–1.73 s, frame step median 0.28–0.34 s, worst 1.0–1.1 s, heap 33 MB; ZnO interactive 2.0–2.2 s, median 0.27–0.37 s, worst 1.0–1.1 s, heap 32 MB |
+
+## Brief §16 status (honest)
+
+Done means implemented **and** verified by the checks above.
+
+| Deliverable / criterion | Status | Notes |
+|---|---|---|
+| Working flagship page | **Done** | `src/pages/index.astro`; hero with "Move an atom" / "Walk me through it", checkpoint and status always visible |
+| Complete guided real-model walkthrough (7 stages) | **Done** | plain sentence, what changed, KaTeX equation on demand, mace-torch 0.3.16 file:line, recorded tensors per stage, linked architecture diagram |
+| Atom Intervention Lab with evaluated data | **Done** | Si and ZnO, 25 evaluated frames each, baseline / perturbed / difference / side by side, colour by feature change, response plots, channel heatmaps |
+| Trace the change + predict before revealing (§9) | **Done** | dependency order, not timing; stage highlights at atom level (per-edge contributions are not stored, so edges are not animated individually) |
+| Real rotation comparison (§10) | **Done** | separately evaluated rotated runs at d = 0 and d = +0.100 Å; camera rotation vs input rotation stated |
+| Reproducible data-generation instructions | **Done** | "Reproduce the data" above and `pipeline/README.md`; regeneration re-run by earlier sessions, fresh-evaluation pytest passes |
+| Documentation of interpretation limits | **Done** | "Interpretation limits" above, and on the page next to the views |
+| Shared-state URLs | **Done** | all state keys validated; obsolete/unsupported values reported |
+| Presentation-ready demonstration states | **Done** | `?present=1&demo=1…5`, captions computed from stored data |
+| Still-image export (§14, "if feasible") | **Done** | PNG with title, settings, units, legends, status, attribution, source URL |
+| Tests and verification summary | **Done** | this section |
+| Explanation of remaining limitations | **Done** | below |
+| GSAP coordinated transitions | **Partial** | GSAP drives camera-preset transitions (`src/three/Stage.tsx`), instant under reduced motion; annotation/diagram transitions are CSS, not GSAP. ScrollTrigger deliberately not used (brief: only where scrolling helps) |
+| Optional ambient occlusion (§4) | **Evaluated, not enabled** | see "Rendering decisions" |
+| Measurement on a physical phone (§15 "representative mobile device or emulation") | **Partial** | emulation only (Pixel 7 profile, CPU throttle, SwiftShader); no physical device was available |
+| Arbitrary-geometry live inference | **Not done (out of scope by design)** | the brief calls it a separate extension; the page never claims live computation |
+| Blender cover image / promotional artwork | **Not done** | optional in the brief |
+| A screen recording of the demonstration | **Not done** | the scripted 5-step sequence exists (`?present=1&demo=1…5`); recording it is left to the owner |
+
+## Remaining limitations
+
+- **Precomputed only.** Every output comes from a CPU run of MACE-MP-0a medium stored in this repository; there is
+  no live inference, and positions between evaluated frames are never shown with numbers.
+- **Two structures, one path each,** 25 frames at 0.025 Å spacing within ±0.3 Å. Other atoms can be selected and
+  inspected, but only the stored atom moves.
+- **No reference calculation.** Nothing is compared with DFT; no number is an accuracy or error estimate.
+- **ZnO geometry is unrelaxed** (ideal wurtzite inputs a, c, u), so its baseline carries a model force of
+  0.0371 eV/Å along c; the page says so and shows the Difference view as the clean comparison. The 0.12 eV/Å arrow
+  threshold hides those small baseline arrows (at 0.5 Å per eV/Å they would be 0.02 Å long); the value is quoted
+  in the readout note instead.
+- **Stored intermediates are a subset:** full h features and message block norms for the local set (moved atom and
+  first two shells) per frame, radial/SH values for edges into the moved atom only, and change norms for every
+  atom. Per-edge message contributions and full A tensors are not stored, which bounds what the trace can animate.
+- **Rendering:** WebGL with the Atlas impostor shaders; WebGPU not adopted (brief: separate decision); AO not
+  enabled; performance measured under emulation (SwiftShader), not on a physical phone or real GPU.
+- **Browsers:** checked in Chromium (Linux) only in the cloud sessions; the `edge` Playwright project exists for the
+  owner's Windows machine but was not run here.
