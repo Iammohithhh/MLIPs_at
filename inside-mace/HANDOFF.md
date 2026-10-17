@@ -296,3 +296,54 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
    WebGPU not adopted, perf measured on emulation (SwiftShader) not a physical phone.
 3. If time remains: a Playwright check that colour-by-change on ZnO renders the bond partner amber (pixel sample)
    and a final screenshot pass of every view (baseline/perturbed/difference/side by side) for ZnO.
+
+
+### Session 6 (final) — 2026-10-17 23:15 → ~23:50 UTC
+
+**State found:** branch at `0f7c0b7` (session 5 handoff), clean. Re-read BRIEF, HANDOFF, CLAUDE.md, README.
+Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK, Playwright desktop + mobile 50 passed /
+2 skipped, pytest 22/22 with a freshly downloaded checkpoint (`sha256sum` 01bfe221…35845, matches).
+
+**Done (commits on `claude/inside-mace`):**
+- `6bb2e06` `e2e/colour.spec.ts`: pixel classification of the scene canvas proves the session-5 colour-by-change fix —
+  ZnO at d = 0 by element: ~29 k brick-red O pixels; by change: 0 red pixels; at d = +0.3 Å amber pixels rise well above
+  the baseline's (the amber path marker). Desktop + mobile.
+- `ef1503c` README: final verification summary (commands and real results), table of how each brief §15 check is
+  covered with the stored numbers (restoration, FD h² convergence per experiment, rotation residuals), an honest
+  brief §16 status table (done / partial / not done) and remaining limitations.
+- `dd3af52` phones: scene height min(50svh, 420px), so scene, slider, d and ΔE fit one Pixel 7 screen (slider was a
+  full screen below the structure). Screenshot-checked.
+- `1d9ab09` GSAP now also drives the architecture-diagram stage emphasis and the trace-lane reveal (no stagger by
+  distance/layer, so nothing suggests propagation or runtime; off under reduced motion); `e2e/motion.spec.ts` records
+  the inline styles GSAP writes (present with motion, none with reduced motion).
+- `b8ee000` Difference view: the scale caption says "force-change arrows ΔFᵢ = Fᵢ(d) − Fᵢ(0)" with an amber swatch
+  (it said "force arrows" with a teal swatch while the arrows are amber ΔF); same for the PNG export legend (Vitest +
+  Playwright assertions). `npm run record:demo` (`record/demo.record.ts`, `playwright.record.config.ts`): drives the
+  5-step presentation sequence for both experiments, asserts each step, saves a still per step into `recordings/`
+  (git-ignored); `RECORD_VIDEO=1` adds a .webm.
+- `2273bd3` stage-7 finite-difference evidence: one card per stored check; the h-columns were hidden behind a
+  horizontal scroll in the ~300 px side panel. Browser check reads the Si d = +0.1 Å, h = 3e-4 Å error (9.8e−7).
+- `6860305` stage-2/3 edge table fits the panel (Y₁ column was clipped).
+- Final commit: README verification numbers from the last full run; this entry.
+
+**Verified at the end (23:38–23:41 UTC, after the last code change):** astro check 0 errors / 0 warnings; Vitest
+76/76 (9 files); build OK; Playwright desktop + mobile **56 passed, 2 skipped** (perf mobile-only, passed);
+`npm run record:demo` 2/2; pytest 22/22 with the checkpoint (fresh re-evaluation of stored frames, both experiments).
+Overflow sweep: 0 px at 320, 768, 844 (landscape), 1024, 1920 widths for walk stage 7, ZnO split, ZnO presentation.
+
+**Open problems / known gaps (also in README "Brief §16 status" and "Remaining limitations"):**
+- No video file: Playwright's ffmpeg (`/opt/pw-browsers/ffmpeg-1013/ffmpeg-linux`) is missing in the cloud container
+  (exact error: `browserContext.newPage: Executable doesn't exist at /opt/pw-browsers/ffmpeg-1013/ffmpeg-linux`);
+  `/usr/bin/ffmpeg` exists but is not what Playwright uses. Owner can run `npx playwright install ffmpeg` then
+  `RECORD_VIDEO=1 npm run record:demo`, or screen-record `?present=1&demo=1`.
+- Performance measured under emulation (SwiftShader, CPU throttle) only; `edge` Playwright project not run here.
+- Precomputed only; two experiments, one path each; no DFT reference; ZnO baseline unrelaxed (stated on the page).
+- Minor: exponents in the inspector's l = 1 readout (e.g. "−3.0e-8") keep an ASCII hyphen after the "e".
+
+**Next steps (for whoever continues):**
+1. Record the demonstration video on the owner's machine (`--project=edge` / `RECORD_VIDEO=1`) and check it frame by frame.
+2. Measure on a physical phone; if AO is reconsidered, use a multisampled target on a real GPU (README "Rendering decisions").
+3. Possible extensions (each needs real runs, never invented data): a third experiment (e.g. a surface or a defect
+   with the same storage format), a relaxed ZnO baseline as a separate experiment, per-edge message contributions in the
+   chunks so the trace can animate individual edges, a CPU inference service for arbitrary displacements (brief §8
+   "separate extension").
