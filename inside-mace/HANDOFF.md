@@ -187,8 +187,7 @@ unchanged; scene renders, no overflow).
   data-derived (each would be false for ZnO):
   `src/lib/stages.ts:38` ("216 Si atoms"), `:49` ("46 neighbours" — compute from the chunk's edge count), `:97`, `:111`,
   `:122` (shapes `[216]`); `src/islands/StageEvidence.tsx` stage-7 note (~line 260, "zero by symmetry" for the FD row);
-  `src/islands/ArchitectureDiagram.tsx:54`
-  (`[216, 3]` → `m.structure.n`); `src/pages/index.astro:36,42–43` (Structure / Domain → `experimentInfo`);
+  (`ArchitectureDiagram` force shape is now the structure-independent `[N atoms, 3]`); `src/pages/index.astro:36,42–43` (Structure / Domain → `experimentInfo`);
   `InterventionLab.tsx` FORCE_SCALE comment (ZnO max |F| 6.25 eV/Å → 3.1 Å arrow; fine, but the comment is Si-specific);
   scene `label="Silicon neighbourhood…"`; check `TraceChange.tsx`/`trace.ts` "exact zeros" wording for a baseline
   with non-zero vectors; Si-only claims in README "Experiment"/"Domain".

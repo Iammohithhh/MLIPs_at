@@ -51,7 +51,7 @@ const ROWS: { label: string; blocks: Block[] }[] = [
   },
   {
     label: 'Forces',
-    blocks: [{ id: 'F', stage: 'forces', title: 'Fᵢ = −∂E/∂rᵢ by automatic differentiation through every block above', shape: 'eV/Å, [216, 3]' }],
+    blocks: [{ id: 'F', stage: 'forces', title: 'Fᵢ = −∂E/∂rᵢ by automatic differentiation through every block above', shape: 'eV/Å, [N atoms, 3]' }],
   },
 ];
 
