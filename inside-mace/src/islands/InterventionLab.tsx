@@ -20,7 +20,7 @@ import { neighbourhood, bonds, graphEdges } from '../lib/scene';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
 import { Stage } from '../three/Stage';
-import { Arrows, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
+import { Arrows, AtomPicker, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
 import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
 import { SceneGuard } from './SceneGuard';
@@ -33,6 +33,11 @@ const DISPLAY_RADIUS = 6.0; // Å: moved atom, its graph neighbours within r_max
 const FORCE_SCALE = 1.0; // Å of arrow per eV/Å
 const B = m.displacement.baselineIndex;
 const moved = m.displacement.atom;
+// Atoms with full channel data (moved atom + first two shells), labelled by baseline distance.
+const LOCAL_OPTIONS = (neighbourhood(m, B, 4.0) ?? []).map((a) => ({
+  index: a.index,
+  label: a.index === moved ? `${a.index}: moved atom` : `${a.index}: ${a.r0.toFixed(2)} Å${a.index === m.displacement.partner ? ' (bond partner)' : ''}`,
+}));
 
 const COLORS = {
   stage: '#141a19',
@@ -134,6 +139,17 @@ export default function InterventionLab() {
               <select value={colourMode} onChange={(e) => setColourMode(e.target.value as 'element' | 'change')}>
                 <option value="element">by element (Si)</option>
                 <option value="change">by feature change, layer {s.layer + 1} scalars</option>
+              </select>
+            </label>
+            <label>
+              Atom{' '}
+              <select value={s.atom} onChange={(e) => set({ atom: Number(e.target.value) })} aria-label="Selected atom">
+                {LOCAL_OPTIONS.map((o) => (
+                  <option key={o.index} value={o.index}>
+                    {o.label}
+                  </option>
+                ))}
+                {!LOCAL_OPTIONS.some((o) => o.index === s.atom) && <option value={s.atom}>atom {s.atom} (picked in scene)</option>}
               </select>
             </label>
             <label>
@@ -257,7 +273,7 @@ function Scene(props: {
   return (
     <div className="lab__canvas">
       <Stage view={{ position: [16, -20, 11], target: [0, 0, 0] }} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60}>
-        <SceneContents buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
+        <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>
   );
@@ -271,12 +287,14 @@ function SceneContents(p: {
   lines: ColoredLine[];
   sel: Vec3 | null;
   showShell: boolean;
+  onPick: (i: number | null) => void;
 }) {
   // Hooks that need the R3F context live inside <Stage>.
   const uniforms = useShadingUniforms(COLORS.stage, true, 14, 40);
   return (
     <>
       <ImpostorAtoms buffers={p.buffers} version={p.version} uniforms={uniforms} />
+      <AtomPicker positions={p.buffers.positions} radii={p.buffers.radii} count={p.buffers.count} onPick={p.onPick} />
       <Sticks segments={p.sticks} uniforms={uniforms} />
       <Arrows arrows={p.arrows} uniforms={uniforms} head={0.3} />
       <Lines lines={p.lines} />

@@ -110,3 +110,11 @@ test('guided walkthrough: seven stages, equation on demand, URL keeps the stage'
   await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.025 Å');
   expect(errors).toEqual([]);
 });
+
+test('atom selection updates readouts and URL', async ({ page }) => {
+  await page.goto('/?frame=16');
+  await page.getByLabel('Selected atom', { exact: true }).selectOption('106');
+  await expect(page).toHaveURL(/atom=106/);
+  await expect(page.getByText('|F| on atom 106')).toBeVisible();
+  await expect(page.getByText(/Layer 1 features h of atom 106/)).toBeVisible();
+});

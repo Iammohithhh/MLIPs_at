@@ -236,6 +236,7 @@
 }
 .lab__plot svg {
   width: 100%;
+  max-height: 260px;
   height: auto;
   display: block;
 }
@@ -257,7 +258,7 @@
 }
 .lab__plot .tick,
 .lab__plot .missing {
-  font: 10px var(--im-mono);
+  font: 7px var(--im-mono);
   fill: var(--atlas-ink-muted);
 }
 .lab__status .label {
