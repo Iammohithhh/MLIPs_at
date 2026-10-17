@@ -209,3 +209,49 @@ unchanged; scene renders, no overflow).
    "zero by symmetry" text; URL round-trip; switching experiments), screenshots at 1440/1024/390 widths.
 5. Then the remaining brief items: final README verification summary + limitations (session 6), optional subtle AO only
    after impostor-depth verification (§4, may be judged not worth it — record why).
+
+
+### Session 5 — 2026-10-17 22:16 → (see end) UTC
+
+**State found:** branch at `0fd7591` (session 4 handoff), working tree clean. Re-read BRIEF, HANDOFF, CLAUDE.md.
+
+**Done (commits on `claude/inside-mace`):**
+- `fb88044` **ZnO is reachable on the page.** `LabLoader` reads `exp` from the URL (validated against
+  `index.json`; unknown id → Si plus the existing "experiment … is not available" alert), loads only that
+  experiment's manifest via `import.meta.glob` (lazy), and shows an experiment picker (two cards, `aria-pressed`,
+  44 px targets). Switching keeps mode/stage/view/presentation and drops atom/frame/ch/layer (`switchQuery`); the
+  lab remounts keyed by id. `stagesFor(m)` in `stages.ts` fills atom count, composition, moved element and the
+  moved atom's baseline neighbour count (minimum image; equals the stored edge count: Si 46, ZnO 76 — tested);
+  `StageDetail` takes `m`. Stage-7 FD note: "zero at d = 0" only when `baselineFacts(m).forceFree`, otherwise
+  quotes the stored baseline force. Scene aria-label per element/crystal. `index.astro` provenance lists every
+  committed experiment (structure, geometry source, displacement, frames ok, command, schema, domain).
+  New `src/lib/stages.test.ts`, `e2e/experiments.spec.ts`.
+- `6b75893` readout note when the baseline is not a model minimum (ZnO: stored F·û = +0.0371 eV/Å at d = 0;
+  derived from stored forces; absent for Si — tested both ways).
+- `5dda4a7` README covers both experiments (ZnO geometry, unrelaxed baseline, regeneration, domain).
+- `7e6bb58` hero actions keep the current exp/atom/frame/view when switching mode (`src/lib/heroLink.ts` + test;
+  plain links without JS).
+- `d8c31dc` lab mode switch restyled as a joined segmented control (removes the "two identical button rows"
+  duplication noted by session 4); light experiment cards, selected one on the stage colour.
+- `d8f1ce4` demo-sequence unit tests + presentation-mode browser check for ZnO (no zero-force claim; stored numbers).
+- `c13e521` **Ambient occlusion (brief §4) evaluated, not enabled** — N8AO 2.0.1 as an EffectComposer pass:
+  impostor depth is correct (gl_FragDepth), but on the ZnO scene mean luminance 40.381 → 40.376 (no visible AO)
+  while the composer target lost MSAA (11 % of pixels changed, all thin edges/halo aliasing). Code and
+  dependency removed; reasoning recorded in README "Rendering decisions".
+- `bb39423` scenes pause (`frameloop="never"`) when off screen (IntersectionObserver) or the tab is hidden, and
+  redraw once on return; `data-rendering` attribute; `e2e/render.spec.ts`. Verified: frame changed while paused →
+  on return the canvas is pixel-identical to a fresh load of that state (0 of 579 464 px differ).
+- `4714672` perf spec runs for both experiments. Pixel 7, 4× CPU, SwiftShader: Si interactive 1.65–1.73 s,
+  frame step median 0.28–0.34 s, worst 1.0–1.1 s, heap 33 MB; ZnO interactive 2.0–2.2 s, median 0.27–0.37 s,
+  worst 1.0–1.1 s, heap 32 MB.
+- `931b27b` the InterventionLab chunk no longer imports the Si manifest (manifest is a required prop).
+- `6882d27`, `36b6b42` true minus signs in stage-6 energies, rotation comparison and channel readouts; missing
+  stage-6 values shown as "—".
+- `40fc854` lab heading sub-line names the selected experiment (title, structure, supercell, n, and
+  "baseline forces zero" vs "unrelaxed baseline (carries forces)" from the stored run).
+
+**Verified (22:41 UTC, after `36b6b42`):** `astro check` 0 errors (45 files); Vitest 75/75 (10 files);
+`astro build` OK; Playwright desktop + mobile **50 passed, 2 skipped** (perf is mobile-only). Screenshots
+inspected: ZnO at 1440×1000, 1024×800, 390×844 (no horizontal overflow at any), Si 1440 picker/head, walk
+mode stage 7 desktop + mobile. Visual text dump of ZnO stages 1/4/5/6, rotation, trace and inspector: no Si
+assumptions remain. pytest not re-run (pipeline untouched this session; no venv in this container).
