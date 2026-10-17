@@ -132,12 +132,12 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
       <dl className="fi__readout mono">
         <dt>channel {channel}, l = 0</dt>
         <dd>
-          {hb[channel]!.toPrecision(4)} → {hf[channel]!.toPrecision(4)} (Δ {diff[channel]!.toPrecision(3)})
+          {mn(hb[channel]!.toPrecision(4))} → {mn(hf[channel]!.toPrecision(4))} (Δ {mn(diff[channel]!.toPrecision(3))})
         </dd>
         <dt>channel {channel}, l = 1 (x, y, z)</dt>
         <dd>
           {v1b && v1f
-            ? `(${v1b.map((x) => x.toPrecision(2)).join(', ')}) → (${v1f.map((x) => x.toPrecision(2)).join(', ')})`
+            ? `(${v1b.map((x) => mn(x.toPrecision(2))).join(', ')}) → (${v1f.map((x) => mn(x.toPrecision(2))).join(', ')})`
             : 'none: the last layer of this checkpoint carries scalar features only'}
         </dd>
       </dl>
@@ -149,4 +149,9 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
       )}
     </div>
   );
+}
+
+/** True minus sign for displayed numbers (U+2212). */
+function mn(t: string): string {
+  return t.replace(/^-/, '−');
 }

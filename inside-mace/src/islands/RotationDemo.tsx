@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import type { Manifest, Vec3 } from '../lib/experiment';
 import { loadChunk, type FrameChunk } from './FeatureInspector';
 
-const f3 = (v: readonly number[]) => `(${v.map((x) => (Math.abs(x) < 5e-5 ? '0.0000' : x.toFixed(4))).join(', ')})`;
+/** True minus sign for displayed numbers (U+2212), as in the rest of the instrument. */
+const mn = (t: string) => t.replace(/^-/, '−');
+const f3 = (v: readonly number[]) => `(${v.map((x) => (Math.abs(x) < 5e-5 ? '0.0000' : mn(x.toFixed(4)))).join(', ')})`;
 const apply = (R: readonly (readonly number[])[], v: readonly number[]): Vec3 =>
   [0, 1, 2].map((i) => R[i]![0]! * v[0]! + R[i]![1]! * v[1]! + R[i]![2]! * v[2]!) as Vec3;
 
@@ -48,7 +50,7 @@ function RotGlyph({ title, unit, v, Rv, vRot, axis, angle }: { title: string; un
         <circle cx={c} cy={c} r={2} className="rot__axis" />
       </svg>
       <figcaption>
-        {title}: turns by {angle}° about the axis; the part along the axis stays {dot(v, a).toFixed(3)} → {dot(vRot, a).toFixed(3)} {unit}
+        {title}: turns by {angle}° about the axis; the part along the axis stays {mn(dot(v, a).toFixed(3))} → {mn(dot(vRot, a).toFixed(3))} {unit}
       </figcaption>
     </figure>
   );
@@ -84,7 +86,7 @@ export function RotationDemo({ m, channel }: { m: Manifest; channel: number }) {
       <dl className="rot__grid mono">
         <dt>Total energy</dt>
         <dd>
-          {f.energy.toFixed(6)} eV → {run.energy.toFixed(6)} eV; |ΔE| = {run.energyAbsDiff.toExponential(1)} eV <b>invariant</b>
+          {mn(f.energy.toFixed(6))} eV → {mn(run.energy.toFixed(6))} eV; |ΔE| = {run.energyAbsDiff.toExponential(1)} eV <b>invariant</b>
         </dd>
         <dt>Force on moved atom</dt>
         <dd>
@@ -93,7 +95,7 @@ export function RotationDemo({ m, channel }: { m: Manifest; channel: number }) {
         </dd>
         <dt>Layer 1 scalar, ch {channel}</dt>
         <dd>
-          {h0 === null || h0rot === null ? (err ? 'not available' : '…') : `${h0.toPrecision(5)} → ${h0rot.toPrecision(5)}`}; max over all atoms and channels{' '}
+          {h0 === null || h0rot === null ? (err ? 'not available' : '…') : `${mn(h0.toPrecision(5))} → ${mn(h0rot.toPrecision(5))}`}; max over all atoms and channels{' '}
           {Math.max(...run.h0InvarianceMaxAbs).toExponential(1)} <b>invariant</b>
         </dd>
         <dt>Layer 1 vector, ch {channel}</dt>
