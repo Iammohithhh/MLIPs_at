@@ -48,3 +48,16 @@ describe('experiment info', () => {
     expect(composition(mZnO)).toEqual([{ symbol: 'Zn', count: 150 }, { symbol: 'O', count: 150 }]);
   });
 });
+
+describe('demonstration captions per experiment', () => {
+  it('claim zero baseline forces for Si only, and quote the stored force for ZnO', async () => {
+    const { demoSteps } = await import('./demo');
+    expect(demoSteps(mSi)[0]!.caption).toContain('A periodic silicon crystal (216 atoms)');
+    expect(demoSteps(mSi)[0]!.caption).toContain('zero by symmetry');
+    const z = demoSteps(mZnO)[0]!.caption;
+    expect(z).toContain('zinc oxide (wurtzite) crystal (300 atoms)');
+    expect(z).not.toContain('zero');
+    expect(z).toContain('largest 0.037 eV/Å');
+    expect(demoSteps(mZnO)[1]!.caption).toContain('it pushes back');
+  });
+});

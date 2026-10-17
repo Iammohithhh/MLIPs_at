@@ -21,6 +21,10 @@ export const ELEMENT_DISPLAY: Record<string, ElementDisplay> = {
 };
 
 export interface ExperimentInfo {
+  /** Short name of the crystal for captions, e.g. "silicon crystal". */
+  crystal: string;
+  /** Why a force-free baseline is force-free; used only when the stored baseline forces are zero. */
+  forceFreeReason: string | null;
   /** Prose description of the structure, e.g. for the provenance list and the exported figure. */
   structure: string;
   /** Where the geometry comes from and whether it was relaxed with the model. */
@@ -34,6 +38,8 @@ export interface ExperimentInfo {
 
 const INFO: Record<string, ExperimentInfo> = {
   'si-bond-stretch': {
+    crystal: 'silicon crystal',
+    forceFreeReason: 'In the perfect crystal every predicted force is zero by symmetry, so no arrows are drawn.',
     structure: 'Si diamond',
     geometrySource: "ase.build.bulk('Si', 'diamond', a=5.431, cubic=True) from atlas/src/data/structures/si-diamond.json; every atom sits on a site of tetrahedral (Td) symmetry, so every baseline force vanishes by symmetry (the lattice constant was not optimised with this model)",
     bondCutoff: 2.6, // Si–Si nearest neighbour 2.35 Å, second shell 3.84 Å
@@ -41,6 +47,8 @@ const INFO: Record<string, ExperimentInfo> = {
     domain: 'MPtrj (Materials Project PBE/PBE+U relaxations) contains crystalline silicon; small displacements of a bulk Si atom are inside that domain.',
   },
   'zno-axial-bond': {
+    crystal: 'zinc oxide (wurtzite) crystal',
+    forceFreeReason: null,
     structure: 'ZnO wurtzite',
     geometrySource: "ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21, u=0.382) from atlas/src/data/structures/zno-wurtzite.json; a, c and u are inputs and the cell was not relaxed with this model",
     bondCutoff: 2.3, // Zn–O 1.975 (basal) and 1.990 Å (axial); Zn–Zn and O–O ≥ 3.2 Å
@@ -81,4 +89,15 @@ export function composition(m: Manifest): { symbol: string; count: number }[] {
   const counts = new Map<string, number>();
   for (const s of m.structure.symbols) counts.set(s, (counts.get(s) ?? 0) + 1);
   return [...counts].map(([symbol, count]) => ({ symbol, count }));
+}
+
+/**
+ * The demonstration's opening sentence about the baseline forces. A "zero" claim is made only when the
+ * stored forces are zero; otherwise the stored largest force is quoted and the geometry is called unrelaxed.
+ */
+export function baselineForceSentence(m: Manifest): string {
+  const f = baselineFacts(m);
+  const reason = experimentInfo(m.id)?.forceFreeReason ?? null;
+  if (f.forceFree) return reason ?? 'Every predicted force on the baseline geometry is zero to storage precision, so no arrows are drawn.';
+  return `This geometry was not relaxed with the model, so the baseline already carries predicted forces (largest ${f.maxForce.toFixed(3)} eV/Å); the comparison is always against them.`;
 }

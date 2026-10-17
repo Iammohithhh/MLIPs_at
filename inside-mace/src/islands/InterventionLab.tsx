@@ -17,7 +17,8 @@ import {
   type Manifest,
   type Vec3,
 } from '../lib/experiment';
-import { neighbourhood, bonds, graphEdges } from '../lib/scene';
+import { neighbourhood, bonds, graphEdges, BOND_CUTOFF } from '../lib/scene';
+import { ELEMENT_DISPLAY, composition, experimentInfo } from '../lib/experimentInfo';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
 import { demoSteps } from '../lib/demo';
@@ -357,7 +358,7 @@ function Scene(props: {
   const { shown, view, selected, showEdges, showShell, colourMode, layer } = props;
   const { m, moved } = useLab();
   const atoms = useMemo(() => neighbourhood(m, shown, DISPLAY_RADIUS) ?? [], [m, shown]);
-  const bondPairs = useMemo(() => bonds(atoms), [atoms]);
+  const bondPairs = useMemo(() => bonds(atoms, experimentInfo(m.id)?.bondCutoff ?? BOND_CUTOFF), [m, atoms]);
   const scaleMax = useMemo(() => blockScaleMax(m, layer, 'h0') ?? 1, [m, layer]);
 
   const buffers = useMemo<AtomBuffers>(() => {
@@ -367,12 +368,13 @@ function Scene(props: {
     const colors = new Float32Array(n * 3);
     const metal = new Float32Array(n);
     const ao = new Float32Array(n);
-    const base = linear(COLORS.atom);
+    const elementColour = (i: number) => linear(ELEMENT_DISPLAY[m.structure.symbols[i] ?? '']?.color ?? COLORS.atom);
     const amber = linear(COLORS.amber);
     const mint = linear(COLORS.mint);
     atoms.forEach((a, i) => {
       positions.set(a.pos, i * 3);
       radii[i] = a.index === moved ? 0.62 : 0.5;
+      const base = elementColour(a.index);
       let c = base;
       if (colourMode === 'change') {
         const v = featureChange(m, shown, layer, 'h0', a.index);
@@ -383,7 +385,7 @@ function Scene(props: {
       ao[i] = 0.85 + 0.15 * Math.max(0, 1 - a.r0 / DISPLAY_RADIUS);
     });
     return { positions, radii, colors, metal, ao, count: n };
-  }, [atoms, colourMode, layer, shown, scaleMax]);
+  }, [m, atoms, colourMode, layer, shown, scaleMax]);
 
   const sticks = useMemo<Segment[]>(() => {
     const c = linear('#59656a');
@@ -506,8 +508,15 @@ function ColourLegend({ mode, layer }: { mode: 'element' | 'change'; layer: numb
   if (mode === 'element')
     return (
       <div className="lab__legend">
-        <span className="swatch" style={{ background: COLORS.atom }} /> Si <span className="swatch" style={{ background: COLORS.mint }} /> moved atom
-        <span className="lab__legend-note">edges: model graph (r &lt; {m.rMax} Å), sticks: Si–Si bonds &lt; 2.6 Å</span>
+        {composition(m).map(({ symbol }) => (
+          <span key={symbol}>
+            <span className="swatch" style={{ background: ELEMENT_DISPLAY[symbol]?.color ?? COLORS.atom }} /> {symbol}{' '}
+          </span>
+        ))}
+        <span className="swatch" style={{ background: COLORS.mint }} /> moved atom
+        <span className="lab__legend-note">
+          edges: model graph (r &lt; {m.rMax} Å), sticks: {experimentInfo(m.id)?.bondLabel ?? `bonds < ${BOND_CUTOFF} Å`}
+        </span>
       </div>
     );
   const max = blockScaleMax(m, layer, 'h0');

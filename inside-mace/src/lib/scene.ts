@@ -47,16 +47,16 @@ export function graphEdges(m: Manifest, k: number, atoms: SceneAtom[], i: number
     .sort((a, b) => a.r - b.r);
 }
 
-/** Chemical-bond sticks for the diamond lattice drawn from a documented distance criterion. */
+/** Chemical-bond sticks drawn from a documented distance criterion (default: the Si diamond lattice; per experiment in experimentInfo.ts). */
 export const BOND_CUTOFF = 2.6; // Å; Si–Si nearest neighbour 2.35 Å, second shell 3.84 Å
 
-export function bonds(atoms: SceneAtom[]): [number, number][] {
+export function bonds(atoms: SceneAtom[], cutoff = BOND_CUTOFF): [number, number][] {
   const out: [number, number][] = [];
   for (let a = 0; a < atoms.length; a++)
     for (let b = a + 1; b < atoms.length; b++) {
       const p = atoms[a]!.pos;
       const q = atoms[b]!.pos;
-      if (norm([p[0] - q[0], p[1] - q[1], p[2] - q[2]]) < BOND_CUTOFF) out.push([a, b]);
+      if (norm([p[0] - q[0], p[1] - q[1], p[2] - q[2]]) < cutoff) out.push([a, b]);
     }
   return out;
 }

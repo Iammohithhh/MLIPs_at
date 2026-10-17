@@ -3,6 +3,7 @@
 // manifest, never typed in by hand. Pure module, covered by demo.test.ts.
 import { axialForce, energyChange, type Manifest } from './experiment';
 import type { ExperimentState } from './urlState';
+import { baselineForceSentence, experimentInfo } from './experimentInfo';
 
 export interface DemoStep {
   n: number;
@@ -19,6 +20,12 @@ function signed(x: number | null, digits: number, unit: string): string {
   return `${x >= 0 ? '+' : '−'}${Math.abs(x).toFixed(digits)} ${unit}`;
 }
 
+/** Describes the stored force direction relative to the displacement, from its sign (never assumed). */
+function pushes(f: number | null, d: number): string {
+  if (f === null) return 'its force is not available';
+  return Math.sign(f) === -Math.sign(d) ? 'it pushes back' : 'it pushes further along the path';
+}
+
 export function demoSteps(m: Manifest): DemoStep[] {
   const B = m.displacement.baselineIndex;
   const last = m.frames.length - 1;
@@ -29,14 +36,14 @@ export function demoSteps(m: Manifest): DemoStep[] {
     {
       n: 1,
       title: 'The structure and its predicted forces',
-      caption: `A periodic silicon crystal (${m.structure.n} atoms) evaluated by a real MACE checkpoint. In the perfect crystal every predicted force is zero by symmetry, so no arrows are drawn.`,
+      caption: `A periodic ${experimentInfo(m.id)?.crystal ?? 'crystal'} (${m.structure.n} atoms) evaluated by a real MACE checkpoint. ${baselineForceSentence(m)}`,
       state: { frame: B, view: 'perturbed', atom, mode: 'lab' },
       colour: 'element',
     },
     {
       n: 2,
       title: 'Move one atom along the evaluated path',
-      caption: `Atom ${atom} moved ${Math.abs(d).toFixed(3)} Å along ${m.displacement.axisLabel} (evaluated frame ${last + 1} of ${m.frames.length}). The force on it along the path is now ${signed(axialForce(m, last), 2, 'eV/Å')}: it pushes back.`,
+      caption: `Atom ${atom} moved ${Math.abs(d).toFixed(3)} Å along ${m.displacement.axisLabel} (evaluated frame ${last + 1} of ${m.frames.length}). The force on it along the path is now ${signed(axialForce(m, last), 2, 'eV/Å')}: ${pushes(axialForce(m, last), d)}.`,
       state: { frame: last, view: 'perturbed', atom, mode: 'lab' },
       colour: 'element',
     },
