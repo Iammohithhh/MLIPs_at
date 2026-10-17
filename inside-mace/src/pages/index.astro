@@ -48,6 +48,11 @@ const p = manifest.provenance as Record<string, unknown>;
 </Base>
 
 <style>
+  /* Presentation mode (set by the island): only the instrument stays on the page. */
+  :global(body.is-present) .hero,
+  :global(body.is-present) .provenance {
+    display: none;
+  }
   .page {
     max-width: 1320px;
     margin: 0 auto;

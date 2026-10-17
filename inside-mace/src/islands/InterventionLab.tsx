@@ -19,6 +19,7 @@ import {
 import { neighbourhood, bonds, graphEdges } from '../lib/scene';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
+import { demoSteps } from '../lib/demo';
 import { Stage } from '../three/Stage';
 import { CameraSync } from '../three/cameraSync';
 import { Arrows, AtomPicker, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
@@ -34,6 +35,7 @@ import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
 const m = parseManifest(raw);
+const DEMO = demoSteps(m);
 const CHECKPOINT = String(m.provenance.checkpoint);
 const DISPLAY_RADIUS = 6.0; // Å: moved atom, its graph neighbours within r_max
 const FORCE_SCALE = 0.5; // Å of arrow per eV/Å: the largest stored force (|F| = 4.7 eV/Å, moved atom at d = +0.3 Å) draws as a 2.3 Å arrow
@@ -84,6 +86,21 @@ export default function InterventionLab() {
     window.history.replaceState(null, '', `${window.location.pathname}?${q}`);
   }, [s]);
 
+  const demo = s?.demo ?? 0;
+  useEffect(() => {
+    const step = DEMO[demo - 1];
+    if (!step) return;
+    set(step.state);
+    setColourMode(step.colour);
+    setCamera('overview');
+    setResetKey((x) => x + 1);
+  }, [demo, set]);
+
+  const present = s?.present ?? false;
+  useEffect(() => {
+    document.body.classList.toggle('is-present', present);
+  }, [present]);
+
   if (!s) return <div className="lab lab--loading" role="status">Loading the precomputed evaluations…</div>;
 
   const frame = s.frame;
@@ -95,6 +112,84 @@ export default function InterventionLab() {
   const sceneEdges = s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges;
   const sceneShell = s.mode === 'walk' ? s.stage === 'neighbours' : showShell;
   const sceneForces = s.mode !== 'walk' || s.stage === 'forces';
+  const scene = (
+    <SceneGuard>
+      {split ? (
+        <div className="lab__split">
+          {([B, frame] as const).map((k, side) => (
+            <div key={side} className="lab__pane">
+              <Scene shown={k} view={side === 0 ? 'baseline' : 'perturbed'} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} sync={sync} />
+              <span className={`lab__pane-label mono${side === 1 ? ' is-pert' : ''}`}>
+                {side === 0 ? 'Baseline · d = 0' : `Perturbed · d = ${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(3)} Å`}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Scene shown={shown} view={view} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} />
+      )}
+    </SceneGuard>
+  );
+
+  const views = (
+    <div className="lab__views" role="radiogroup" aria-label="Comparison view">
+      {(wide ? (['baseline', 'perturbed', 'difference', 'split'] as const) : (['baseline', 'perturbed', 'difference'] as const)).map((v) => (
+        <button key={v} role="radio" aria-checked={view === v || (split && v === 'split')} className={`${view === v || (split && v === 'split') ? 'is-on' : ''} v-${v}`} onClick={() => set({ view: v })}>
+          {v === 'baseline' ? 'Baseline' : v === 'perturbed' ? 'Perturbed' : v === 'difference' ? 'Difference' : 'Side by side'}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (s.present) {
+    const step = DEMO[s.demo - 1];
+    const fullHref = `?${encodeState({ ...s, present: false, demo: 0 })}`;
+    return (
+      <section className="lab lab--present" aria-labelledby="lab-title">
+        <header className="lab__head">
+          <h2 id="lab-title">Move one atom. Trace what changes inside the model.</h2>
+          <div className="lab__status">
+            <span className="label status-pre">Precomputed model evaluations; interactive inspection</span>
+            <span className="label status-ck mono">{CHECKPOINT} · sha256 {String(m.provenance.sha256).slice(0, 8)}…</span>
+          </div>
+        </header>
+        <div className="lab__stage lab__stage--present">
+          {scene}
+          <ForceScale />
+          <ColourLegend mode={colourMode} layer={s.layer} />
+          {views}
+        </div>
+        <div className="present__bar">
+          <p className="present__caption" aria-live="polite">
+            {step ? (
+              <>
+                <span className="present__n mono">
+                  {step.n}/{DEMO.length}
+                </span>{' '}
+                <strong>{step.title}.</strong> {!wide && step.captionNarrow ? step.captionNarrow : step.caption}
+              </>
+            ) : (
+              <>
+                d = {d >= 0 ? '+' : '−'}
+                {Math.abs(d).toFixed(3)} Å, evaluated frame {frame + 1} of {m.frames.length}. ΔE = {fmt(energyChange(m, frame), 3, 'eV')}.
+              </>
+            )}
+          </p>
+          <div className="present__nav" role="group" aria-label="Demonstration steps">
+            <button onClick={() => set({ demo: Math.max(1, s.demo - 1) })} disabled={s.demo <= 1}>
+              ← Previous
+            </button>
+            <button onClick={() => set({ demo: Math.min(DEMO.length, s.demo + 1) })} disabled={s.demo >= DEMO.length}>
+              Next →
+            </button>
+            <a href={fullHref} onClick={(e) => { e.preventDefault(); set({ present: false, demo: 0 }); }}>
+              Open the full instrument
+            </a>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="lab" aria-labelledby="lab-title">
@@ -123,31 +218,10 @@ export default function InterventionLab() {
       {s.mode === 'walk' && <StageNav stage={s.stage} onStage={(st) => set({ stage: st })} />}
       <div className="lab__grid">
         <div className="lab__stage">
-          <SceneGuard>
-            {split ? (
-              <div className="lab__split">
-                {([B, frame] as const).map((k, side) => (
-                  <div key={side} className="lab__pane">
-                    <Scene shown={k} view={side === 0 ? 'baseline' : 'perturbed'} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} sync={sync} />
-                    <span className={`lab__pane-label mono${side === 1 ? ' is-pert' : ''}`}>
-                      {side === 0 ? 'Baseline · d = 0' : `Perturbed · d = ${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(3)} Å`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <Scene shown={shown} view={view} selected={s.atom} showEdges={sceneEdges} showShell={sceneShell} showForces={sceneForces} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} />
-            )}
-          </SceneGuard>
+          {scene}
           <ForceScale />
           <ColourLegend mode={colourMode} layer={s.layer} />
-          <div className="lab__views" role="radiogroup" aria-label="Comparison view">
-            {(wide ? (['baseline', 'perturbed', 'difference', 'split'] as const) : (['baseline', 'perturbed', 'difference'] as const)).map((v) => (
-              <button key={v} role="radio" aria-checked={view === v || (split && v === 'split')} className={`${view === v || (split && v === 'split') ? 'is-on' : ''} v-${v}`} onClick={() => set({ view: v })}>
-                {v === 'baseline' ? 'Baseline' : v === 'perturbed' ? 'Perturbed' : v === 'difference' ? 'Difference' : 'Side by side'}
-              </button>
-            ))}
-          </div>
+          {views}
         </div>
         <aside className="lab__panel">
           {s.mode === 'walk' && <StageDetail stage={s.stage} onStage={(st) => set({ stage: st })} />}
@@ -194,6 +268,7 @@ export default function InterventionLab() {
           <div className="lab__actions">
             <button onClick={() => set({ frame: B, view: 'perturbed', atom: moved })}>Reset experiment</button>
             <button onClick={() => { setCamera('overview'); setResetKey((x) => x + 1); }}>Reset camera</button>
+            <button onClick={() => set({ present: true, demo: 1 })}>Presentation mode</button>
           </div>
           <div className="lab__actions" role="group" aria-label="Camera presets">
             {(Object.keys(PRESET_LABEL) as CameraPreset[]).map((c) => (

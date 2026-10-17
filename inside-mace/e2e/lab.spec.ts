@@ -185,3 +185,24 @@ test('walkthrough stage 5 shows baseline and frame feature strips for a local at
   await expect(page.locator('.ev').getByText(/Layer 1, 128 vectors \(l = 1\): length/)).toBeVisible();
   await expect(page.locator('.ev').getByText(/Layer 2, 128 scalars/)).toBeVisible();
 });
+
+test('presentation mode: scripted demonstration steps, status visible, link back to the full instrument', async ({ page }, info) => {
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Presentation mode' }).click();
+  await expect(page).toHaveURL(/present=1/);
+  await expect(page.getByRole('heading', { name: 'Inside an atomic prediction.' })).toBeHidden();
+  await expect(page.getByText('Precomputed model evaluations; interactive inspection')).toBeVisible();
+  await expect(page.locator('.present__caption')).toContainText('1/5');
+  await page.getByRole('button', { name: 'Next →' }).click();
+  await expect(page.locator('.present__caption')).toContainText('2/5');
+  await expect(page).toHaveURL(/frame=24/);
+  await page.getByRole('button', { name: 'Next →' }).click();
+  await page.getByRole('button', { name: 'Next →' }).click();
+  await expect(page.locator('.present__caption')).toContainText('ΔE = +0.575 eV');
+  await expect(page.locator('.lab__stage canvas')).toHaveCount(info.project.name === 'mobile' ? 1 : 2);
+  await page.getByRole('link', { name: 'Open the full instrument' }).click();
+  await expect(page.getByRole('heading', { name: 'Inside an atomic prediction.' })).toBeVisible();
+  await expect(page).not.toHaveURL(/present=1/);
+  expect(errors).toEqual([]);
+});

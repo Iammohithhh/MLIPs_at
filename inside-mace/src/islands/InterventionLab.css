@@ -903,3 +903,69 @@
   font-size: 0.65rem;
   color: var(--atlas-ink-muted);
 }
+
+/* Presentation mode (?present=1): large scene, captions, minimal controls. */
+.lab--present .lab__canvas {
+  height: min(74vh, 820px);
+}
+.lab__stage--present {
+  min-height: 0;
+}
+.present__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1.2rem;
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
+  border-radius: var(--im-radius);
+  padding: 0.8rem 1rem;
+}
+.present__caption {
+  margin: 0;
+  flex: 1 1 32rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+.present__n {
+  color: var(--im-amber);
+}
+.present__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.present__nav button,
+.present__nav a {
+  background: var(--im-stage-2);
+  color: var(--im-stage-ink);
+  border: 1px solid var(--im-stage-rule);
+  border-radius: 5px;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+.present__nav button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.present__nav a {
+  border-color: var(--im-mint);
+  color: var(--im-mint);
+}
+@media (max-width: 640px) {
+  .lab--present .lab__canvas {
+    height: 56vh;
+    min-height: 300px;
+  }
+  .present__caption {
+    font-size: 0.95rem;
+  }
+}

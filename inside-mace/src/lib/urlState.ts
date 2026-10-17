@@ -26,7 +26,13 @@ export interface ExperimentState {
   layer: number;
   channel: number;
   view: View;
+  /** Presentation mode: large scene, minimal controls, captions (brief §14). */
+  present: boolean;
+  /** Step of the scripted demonstration sequence, 1…DEMO_STEPS; 0 = none. */
+  demo: number;
 }
+
+export const DEMO_STEPS = 5;
 
 export const CHANNELS = 128;
 
@@ -42,6 +48,8 @@ export function defaultState(m: Manifest, checkpoint: string): ExperimentState {
     layer: 0,
     channel: 0,
     view: 'perturbed',
+    present: false,
+    demo: 0,
   };
 }
 
@@ -57,6 +65,8 @@ export function encodeState(s: ExperimentState): string {
   p.set('layer', String(s.layer));
   p.set('ch', String(s.channel));
   p.set('view', s.view);
+  if (s.present) p.set('present', '1');
+  if (s.demo > 0) p.set('demo', String(s.demo));
   return p.toString();
 }
 
@@ -115,6 +125,12 @@ export function decodeState(query: string, m: Manifest, checkpoint: string): Dec
 
   const view = p.get('view');
   if (view !== null) (VIEWS as readonly string[]).includes(view) ? (s.view = view as View) : issues.push(`unknown view “${view}”`);
+
+  const present = p.get('present');
+  if (present !== null) present === '1' || present === '0' ? (s.present = present === '1') : issues.push(`unknown presentation flag “${present}”`);
+
+  const demo = int(p.get('demo'));
+  if (p.has('demo')) demo !== null && demo >= 0 && demo <= DEMO_STEPS ? (s.demo = demo) : issues.push('demonstration step out of range');
 
   return { state: s, issues };
 }
