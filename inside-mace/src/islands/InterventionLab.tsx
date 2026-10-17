@@ -30,7 +30,7 @@ import './InterventionLab.css';
 const m = parseManifest(raw);
 const CHECKPOINT = String(m.provenance.checkpoint);
 const DISPLAY_RADIUS = 6.0; // Å: moved atom, its graph neighbours within r_max
-const FORCE_SCALE = 1.0; // Å of arrow per eV/Å
+const FORCE_SCALE = 0.5; // Å of arrow per eV/Å: the largest stored force (|F| = 4.7 eV/Å, moved atom at d = +0.3 Å) draws as a 2.3 Å arrow
 const B = m.displacement.baselineIndex;
 const moved = m.displacement.atom;
 // Atoms with full channel data (moved atom + first two shells), labelled by baseline distance.
@@ -61,6 +61,7 @@ export default function InterventionLab() {
   const [showShell, setShowShell] = useState(false);
   const [colourMode, setColourMode] = useState<'element' | 'change'>('element');
   const [resetKey, setResetKey] = useState(0);
+  const [camera, setCamera] = useState<CameraPreset>('overview');
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function InterventionLab() {
       <div className="lab__grid">
         <div className="lab__stage">
           <SceneGuard>
-            <Scene shown={shown} view={view} selected={s.atom} showEdges={s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges} showShell={s.mode === 'walk' ? s.stage === 'neighbours' : showShell} showForces={s.mode !== 'walk' || s.stage === 'forces'} colourMode={colourMode} layer={s.layer} resetKey={resetKey} reduced={reduced} onPick={(i) => set({ atom: i })} />
+            <Scene shown={shown} view={view} selected={s.atom} showEdges={s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges} showShell={s.mode === 'walk' ? s.stage === 'neighbours' : showShell} showForces={s.mode !== 'walk' || s.stage === 'forces'} colourMode={colourMode} layer={s.layer} resetKey={resetKey} camera={camera} reduced={reduced} onPick={(i) => set({ atom: i })} />
           </SceneGuard>
           <ForceScale />
           <ColourLegend mode={colourMode} layer={s.layer} />
@@ -165,7 +166,14 @@ export default function InterventionLab() {
           </fieldset>
           <div className="lab__actions">
             <button onClick={() => set({ frame: B, view: 'perturbed', atom: moved })}>Reset experiment</button>
-            <button onClick={() => setResetKey((x) => x + 1)}>Reset camera</button>
+            <button onClick={() => { setCamera('overview'); setResetKey((x) => x + 1); }}>Reset camera</button>
+          </div>
+          <div className="lab__actions" role="group" aria-label="Camera presets">
+            {(Object.keys(PRESET_LABEL) as CameraPreset[]).map((c) => (
+              <button key={c} aria-pressed={camera === c} onClick={() => { setCamera(c); setResetKey((x) => x + 1); }}>
+                {PRESET_LABEL[c]}
+              </button>
+            ))}
           </div>
         </aside>
       </div>
@@ -194,6 +202,7 @@ function Scene(props: {
   colourMode: 'element' | 'change';
   layer: number;
   resetKey: number;
+  camera: CameraPreset;
   reduced: boolean;
   onPick: (i: number) => void;
 }) {
@@ -241,7 +250,7 @@ function Scene(props: {
       const f = view === 'difference' ? forceChange(m, props.shown, a.index) : force(m, props.shown, a.index);
       if (!f) continue;
       const mag = norm(f);
-      if (mag * FORCE_SCALE < 0.06) continue;
+      if (mag < 0.12) continue;
       out.push({ a: a.pos, b: [a.pos[0] + f[0] * FORCE_SCALE, a.pos[1] + f[1] * FORCE_SCALE, a.pos[2] + f[2] * FORCE_SCALE], color: view === 'difference' ? amber : teal, radius: 0.075 });
     }
     return out;
@@ -272,11 +281,27 @@ function Scene(props: {
 
   return (
     <div className="lab__canvas">
-      <Stage view={{ position: [16, -20, 11], target: [0, 0, 0] }} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60}>
+      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60}>
         <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>
   );
+}
+
+type CameraPreset = 'overview' | 'environment' | 'axis';
+const PRESET_LABEL: Record<CameraPreset, string> = { overview: 'Overview', environment: 'Selected environment', axis: 'Side-on to the path' };
+
+/** Camera presets keep z up; 'axis' looks perpendicular to the displacement axis so the motion is in the image plane. */
+function cameraView(preset: CameraPreset, sel: Vec3): { position: [number, number, number]; target: [number, number, number] } {
+  if (preset === 'environment') return { position: [sel[0] + 7, sel[1] - 9, sel[2] + 5], target: sel };
+  if (preset === 'axis') {
+    const u = m.displacement.axis;
+    // perpendicular to û, as horizontal as possible
+    const p: Vec3 = [-u[1], u[0], 0];
+    const n = Math.hypot(p[0], p[1]) || 1;
+    return { position: [(p[0] / n) * 24, (p[1] / n) * 24, 4], target: [0, 0, 0] };
+  }
+  return { position: [16, -20, 11], target: [0, 0, 0] };
 }
 
 function SceneContents(p: {
@@ -307,8 +332,8 @@ function SceneContents(p: {
 function ForceScale() {
   return (
     <div className="lab__scale" aria-label={`Force scale: ${FORCE_SCALE} Å of arrow per 1 eV/Å`}>
-      <span className="lab__scale-bar" style={{ width: '48px' }} />
-      <span className="mono">arrow length: 1 Å = 1 eV/Å</span>
+      <span className="lab__scale-bar" style={{ width: '24px' }} aria-hidden="true" />
+      <span className="mono">force arrows: {FORCE_SCALE} Å of length per eV/Å (in scene units, not screen pixels); arrows under 0.12 eV/Å hidden</span>
     </div>
   );
 }

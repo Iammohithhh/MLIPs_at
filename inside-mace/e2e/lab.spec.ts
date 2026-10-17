@@ -14,6 +14,7 @@ test('opens on a real interaction with checkpoint and status visible', async ({ 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Inside an atomic prediction.' })).toBeVisible();
   await expect(page.getByText('Precomputed model evaluations; interactive inspection')).toBeVisible();
+  await expect(page.getByText(/force arrows: 0.5 Å of length per eV\/Å/)).toBeVisible();
   await expect(page.getByText(/mace-mp-0a-medium · sha256 01bfe221/)).toBeVisible();
   await expect(page.locator('canvas')).toBeVisible();
   expect(errors).toEqual([]);
