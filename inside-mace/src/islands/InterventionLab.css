@@ -71,6 +71,14 @@
 .lab__canvas canvas {
   touch-action: none;
 }
+/* Phones (brief §12): keep the displacement slider within reach of the scene, so the scene, its scale caption and
+   the slider fit in about one screen instead of the slider sitting a full screen below the structure. */
+@media (max-width: 640px) {
+  .lab__canvas {
+    height: min(50svh, 420px);
+    min-height: 280px;
+  }
+}
 .lab__scale,
 .lab__legend {
   position: absolute;
