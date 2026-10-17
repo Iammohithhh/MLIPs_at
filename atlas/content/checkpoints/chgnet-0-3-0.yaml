@@ -1,0 +1,16 @@
+name: CHGNet 0.3.0
+family: chgnet
+implementation: chgnet
+version: 0.3.0
+release: { date: 2023-10-22, source: deng2023chgnet }
+parameters: { total: 412525 }
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Not the model of the paper (0.2.0): the 0.3.0 README lists an atom-graph cutoff raised to 6 Å (bond graph 3 Å), added normalisation layers and a fix for a discontinuity when no bond graph is present.'
+outputs: [energy, forces, stress, magnetic-moments]
+licence: BSD-3-Clause (LBNL variant)
+weights: { url: 'https://github.com/CederGroupHub/chgnet/tree/main/chgnet/pretrained/0.3.0', sha256: d14ab7c0f093efe64b60a7bcd540bca10e74fb7f46c86108a079af60524659d1 }
+claims: [chgnet-graphs, chgnet-magmom-charge]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Settings and date from chgnet/pretrained/0.3.0/README.md (chgnet 0.4.2 wheel): 4 atom convolutions, 64-wide atom, bond and angle features, layer-normalised readout, site-energy MLP [64, 64, 64] applied before averaging (mlp_first). Parameter count and SHA-256 of chgnet_0.3.0_e29f68s314m37.pth.tar computed here by loading the checkpoint (CPU). Used in the Observatory and on the Representation Map.' }

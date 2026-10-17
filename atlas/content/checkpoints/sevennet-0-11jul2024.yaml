@@ -12,5 +12,5 @@ training:
 outputs: [energy, forces, stress]
 licence: 'MIT (repository LICENSE at commit 209339d); Matbench Discovery lists GPL-3.0 for this checkpoint'
 weights: { url: 'https://github.com/MDIL-SNU/SevenNet/raw/main/sevenn/pretrained_potentials/SevenNet_0__11Jul2024/checkpoint_sevennet_0.pth' }
-claims: [sevennet-0-paper-model]
+claims: [sevennet-0-paper-model, sevennet-0-so3-not-o3]
 review: { status: draft, last_checked: 2026-10-17, notes: 'Settings from pre_train.yaml: cutoff 5.0 Å (XPLOR cutoff function from 4.5 Å), 5 convolution layers, lmax 2, irreps 128x0e+64x1e+32x2e, 8 Bessel functions, radial MLP [64, 64], self_connection_type linear, avg_num_neigh 35.99. Parameter count from the Matbench Discovery model card (snapshot 2026-10-03). Forces and stress as gradients of the energy. Also used in the Atlas Observatory. Release source points to the family paper; the checkpoint itself is described in its README (sevenn/pretrained_potentials/SevenNet_0__11Jul2024). Not downloaded here.' }

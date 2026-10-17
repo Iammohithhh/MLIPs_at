@@ -80,6 +80,22 @@ curl -LO https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/force
 Run the models one after another: four PyTorch processes on four cores oversubscribe threads
 and slow each other down by orders of magnitude.
 
+### Representation Map
+
+`representation.py` passes every atom of a 98-structure reference set (and its rotated and mirrored
+copies) through six models and writes `atlas/src/data/representation/map.json`. Each family runs in
+its Observatory environment; the partials (`.npz`, raw features, not committed) are merged with numpy:
+
+```bash
+../.venv-obs-mace/bin/python -m atlas_pipeline.representation extract mace 2023-12-03-mace-128-L1_epoch-199.model 2023-12-10-mace-128-L0_energy_epoch-249.model mace.npz
+../.venv-obs-chgnet/bin/python -m atlas_pipeline.representation extract chgnet chgnet.npz
+../.venv-obs-sevenn/bin/python -m atlas_pipeline.representation extract sevennet sevennet.npz
+../.venv-obs-orb/bin/python -m atlas_pipeline.representation extract orb orb-mptraj-only-v2-20241014.ckpt orb.npz
+../.venv-obs-orb/bin/python -m atlas_pipeline.representation merge ../atlas/src/data/representation/map.json mace.npz chgnet.npz sevennet.npz orb.npz
+```
+
+About ten minutes on four CPU cores (one thread per model).
+
 ### Cleavage-energy benchmark tables
 
 `cleavage.py` parses Tables 1–2 of Mehdizadeh & Schindler (arXiv:2508.21663v1) from the arXiv HTML into

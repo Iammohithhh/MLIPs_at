@@ -11,5 +11,5 @@ locality: { kind: message-passing, note: 'Orb-v3: 6 Å, at most 20 or 120 neighb
 symmetry: learned
 body_order: Unrestricted (MLP node and edge updates).
 implementations: [orb-models]
-claims: [orb-gns-architecture, orb-v3-edge-basis, orb-direct-forces-augmentation, orb-v3-variants, orb-v3-neighbour-limit, orb-neighbour-limit-ties, orb-equigrad, equigrad-net-torque, orb-v3-energy-drift, orb-v3-omat-aimd-only]
+claims: [orb-gns-architecture, orb-v3-edge-basis, orb-direct-forces-augmentation, orb-v3-variants, orb-v3-neighbour-limit, orb-neighbour-limit-ties, orb-equigrad, equigrad-net-torque, orb-v3-energy-drift, orb-v3-omat-aimd-only, representation-orb-rotation]
 review: { status: draft, last_checked: 2026-10-16, notes: 'Architecture details read from the arXiv HTML of both papers and from orb-models at commit 1794f85 (2026-09-26).' }

@@ -1,0 +1,16 @@
+name: Orb v2 (MPtrj only)
+family: orb
+implementation: orb-models
+version: orb-mptraj-only-v2-20241014
+release: { date: 2024-10-14, source: neumann2024orb }
+parameters: { total: 25213601 }
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Fine-tuned on MPtrj only (pretrained.py docstring: "trained on MPTraj"); the paper describes a denoising-diffusion pretraining phase on relaxed structures, not itemised for this checkpoint, so no pretraining stage is recorded.'
+outputs: [energy, forces, stress]
+licence: Apache-2.0
+weights: { url: 'https://orbitalmaterials-public-models.s3.us-west-1.amazonaws.com/forcefields/orb-mptraj-only-v2-20241014.ckpt', sha256: 9e6722a31b0c274f7fe3bc37e06f78991dcb29e07001e76184c61da0f32c43b9 }
+claims: [orb-gns-architecture, orb-direct-forces-augmentation, orb-neighbour-limit-ties, representation-orb-rotation]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Settings from orb_models/forcefield/pretrained.py (orb-models 0.7.0): orb_v2_architecture with 15 message-passing steps, 256-wide latents, 6 Å radius and at most 20 neighbours; forces and stress from direct heads (DirectForcefieldRegressor), not gradients. Parameter count and SHA-256 computed here by loading the checkpoint (CPU). Date from the file name. Used in the Observatory and on the Representation Map.' }

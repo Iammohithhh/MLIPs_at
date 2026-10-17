@@ -1,0 +1,9 @@
+statement: >-
+  Orb-v3 latent embeddings are not rotation-invariant: rotating a BaCeO₃ structure makes them diverge, and Orb-v3
+  fails to identify symmetry-equivalent atoms that equivariant models (MACE) place at zero distance.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: li2026platonic, locator: 'arXiv v1, Sec. 2.4, Fig. 5f,g', quote: 'rotating the BaCeO3 structure causes the Orb-v3 embeddings to diverge rather than remain invariant' }
+scope: { model_families: [orb], checkpoints: [orb-v3-conservative-inf-omat] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read from the arXiv v1 HTML. The Atlas Representation Map measures the same effect for Orb v2 (MPtrj only) on its own reference set; that is a separate, precomputed result, not this paper''s.' }

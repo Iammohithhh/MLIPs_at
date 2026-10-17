@@ -5,13 +5,20 @@ import { Stage } from '~/three/Stage';
 import { CellBox, ImpostorAtoms, Shell, linear, mixRGB, useShadingUniforms, type AtomBuffers } from '~/three/primitives';
 import { useSceneTheme, type SceneTheme } from '~/three/theme';
 import { elementColor } from '~/lib/structure/elements';
-import { CLASS_LABELS, elementClass, nnOverlap, pairOf, projection, type ElementClass, type MapModel, type RepresentationMap as Data } from '~/lib/representation';
+import { CLASS_LABELS, elementClass, logPosition, nnOverlap, pairMatrix, projection, type ElementClass, type MapModel, type PairMetric, type RepresentationMap as Data } from '~/lib/representation';
 
-// Representation Map: real MACE latent features of 552 reference environments, precomputed on CPU by
-// pipeline/atlas_pipeline/representation.py, shown as linked 2D maps (one per model) and a 3D view of the
-// selected environment. Nothing is computed in the browser except selections and colours.
+// Representation Map: real latent features of six models (three MACE, CHGNet, SevenNet, Orb) for 562 reference
+// environments, precomputed on CPU by pipeline/atlas_pipeline/representation.py, shown as linked 2D maps (one
+// per model), an agreement matrix, an invariance strip and a 3D view of the selected environment. Nothing is
+// computed in the browser except selections and colours.
 
-type ColourBy = 'class' | 'kind' | 'cn';
+type ColourBy = 'class' | 'kind' | 'cn' | 'rot';
+// Log axis of the invariance strip (10^-15 … 10^2 d_ref: float64 rounding to Orb's mirror outliers) and of the
+// 'rotation drift' colouring (10^-6 … 10^1: float32 rounding stays grey).
+const LOG_LO = -15;
+const LOG_HI = 2;
+const COL_LO = -6;
+const COL_HI = 1;
 const SPACES = [
   { id: 'raw', label: 'Raw features' },
   { id: '3', label: 'Anchored, K = 3' },
@@ -21,7 +28,7 @@ const SPACES = [
 ];
 const CLASS_ORDER: ElementClass[] = ['alkali', 'alkaline-earth', 'transition', 'p-metal', 'metalloid', 'nonmetal', 'halogen'];
 const KIND_ORDER = ['crystal', 'surface', 'defect', 'molecule'] as const;
-const R_MAX = 6; // Å, MACE-MP cutoff (read from the checkpoints)
+const R_MAX = 6; // Å: MACE-MP, CHGNet 0.3.0 and Orb v2 atom-graph cutoff (SevenNet-0 uses 5 Å)
 
 function palette(theme: SceneTheme): string[] {
   return [theme.fail, theme.caveat, theme.arch, theme.lit, theme.phys, theme.inkMuted, theme.ink];
@@ -53,8 +60,12 @@ export default function RepresentationMap() {
   const colourOf = useMemo(() => {
     if (!data) return () => theme.inkMuted;
     const pal = palette(theme);
-    return (e: number): string => {
+    return (e: number, m: MapModel): string => {
       const env = data.environments[e]!;
+      if (colourBy === 'rot') {
+        const t = logPosition(m.invariance.rot_env[e]!, COL_LO, COL_HI);
+        return `color-mix(in oklab, ${theme.fail} ${Math.round(100 * t)}%, ${theme.ruleStrong})`;
+      }
       if (colourBy === 'class') return pal[CLASS_ORDER.indexOf(elementClass(env.el)!)]!;
       if (colourBy === 'kind') return pal[KIND_ORDER.indexOf(data.structures[env.s]!.kind)]!;
       const t = Math.min(1, env.cn / 12);
@@ -62,12 +73,12 @@ export default function RepresentationMap() {
     };
   }, [data, colourBy, theme]);
 
-  if (!data) return <div className="lab rep-loading">Loading 552 environments × 3 models…</div>;
+  if (!data) return <div className="lab rep-loading">Loading 562 environments × 6 models…</div>;
 
   const env = data.environments[sel]!;
   const st = data.structures[env.s]!;
   const anchors = space === 'raw' ? [] : data.anchors[space]!;
-  const [medium, small, random] = data.models as [MapModel, MapModel, MapModel];
+  const medium = data.models[0]!;
   const show = hover ?? sel;
   const showEnv = data.environments[show]!;
   const showSt = data.structures[showEnv.s]!;
@@ -92,6 +103,9 @@ export default function RepresentationMap() {
           <button type="button" aria-pressed={colourBy === 'cn'} onClick={() => setColourBy('cn')}>
             coordination
           </button>
+          <button type="button" aria-pressed={colourBy === 'rot'} onClick={() => setColourBy('rot')}>
+            rotation drift
+          </button>
         </div>
       </div>
       <Legend theme={theme} colourBy={colourBy} />
@@ -115,7 +129,7 @@ export default function RepresentationMap() {
       <p className="rep-hint" aria-live="polite">
         {hover !== null ? 'Hovering: ' : 'Selected: '}
         <strong>{showEnv.el}</strong> in {showSt.title} {showEnv.mult > 1 ? `(${showEnv.mult} identical atoms)` : ''} · coordination {showEnv.cn}.
-        Click a point to select it in all three maps; rings mark its ten nearest neighbours in each model’s raw feature space. Points beyond the 1st–99th percentile are drawn at the edge.
+        Click a point to select it in all six maps; rings mark its ten nearest neighbours in each model’s raw feature space. Points beyond the 1st–99th percentile are drawn at the edge.
       </p>
       <div className="lab-split lab-split--wide">
         <div className="lab-stage lab-stage--short">
@@ -144,7 +158,7 @@ export default function RepresentationMap() {
                 {m.id !== 'medium' ? <small>shares {Math.round(nnOverlap(medium, m, sel) * m.nn[sel]!.length)} of 10 with medium</small> : null}
               </p>
               <ul>
-                {m.nn[sel]!.slice(0, 5).map((j) => {
+                {m.nn[sel]!.slice(0, 3).map((j) => {
                   const e = data.environments[j]!;
                   return (
                     <li key={j}>
@@ -157,15 +171,19 @@ export default function RepresentationMap() {
               </ul>
             </div>
           ))}
-          <Agreement data={data} space={space} medium={medium} small={small} random={random} />
         </div>
+      </div>
+      <div className="rep-lower">
+        <Agreement data={data} space={space} theme={theme} />
+        <Invariance data={data} sel={sel} theme={theme} onSelect={setSel} />
       </div>
     </div>
   );
 }
 
+const SHORT: Record<string, string> = { medium: 'MACE medium', small: 'MACE small', random: 'Untrained MACE', chgnet: 'CHGNet', sevennet: 'SevenNet-0', orb: 'Orb v2' };
 function shortName(m: MapModel): string {
-  return m.trained ? m.name : 'Untrained MACE';
+  return SHORT[m.id] ?? m.name;
 }
 
 function viewFor(st: Data['structures'][number]) {
@@ -196,11 +214,17 @@ function Legend({ theme, colourBy }: { theme: SceneTheme; colourBy: ColourBy }) 
       ? CLASS_ORDER.map((c, i) => ({ label: CLASS_LABELS[c], colour: pal[i]! }))
       : colourBy === 'kind'
         ? KIND_ORDER.map((k, i) => ({ label: k, colour: pal[i]! }))
-        : [
-            { label: 'coordination 0', colour: theme.caveat },
-            { label: '6', colour: `color-mix(in oklab, ${theme.arch} 50%, ${theme.caveat})` },
-            { label: '12+', colour: theme.arch },
-          ];
+        : colourBy === 'cn'
+          ? [
+              { label: 'coordination 0', colour: theme.caveat },
+              { label: '6', colour: `color-mix(in oklab, ${theme.arch} 50%, ${theme.caveat})` },
+              { label: '12+', colour: theme.arch },
+            ]
+          : [
+              { label: `moves ≤ 10⁻⁶ d_ref under rotation`, colour: theme.ruleStrong },
+              { label: '10⁻³ d_ref', colour: `color-mix(in oklab, ${theme.fail} ${Math.round(100 * logPosition(1e-3, COL_LO, COL_HI))}%, ${theme.ruleStrong})` },
+              { label: '≥ 10 d_ref (each map coloured by its own model)', colour: theme.fail },
+            ];
   return (
     <ul className="rep-legend" aria-label="Colour key">
       {items.map((it) => (
@@ -233,7 +257,7 @@ function MapPanel({
   sel: number;
   hover: number | null;
   anchors: number[];
-  colourOf: (e: number) => string;
+  colourOf: (e: number, m: MapModel) => string;
   theme: SceneTheme;
   onSelect: (e: number) => void;
   onHover: (e: number | null) => void;
@@ -259,7 +283,7 @@ function MapPanel({
         <strong>{shortName(model)}</strong>
         <small>
           PC1 {Math.round(100 * p.var[0])}%, PC2 {Math.round(100 * p.var[1])}%
-          {space !== 'raw' && model.id !== 'medium' ? ` · Procrustes vs medium ${p.procrustes!.toFixed(2)}` : ''}
+          {space !== 'raw' && model.id !== 'medium' ? ` · Procrustes vs MACE medium ${p.procrustes!.toFixed(2)}` : ` · ${model.dim} features`}
         </small>
       </figcaption>
       <svg
@@ -271,7 +295,7 @@ function MapPanel({
         <rect x={0} y={0} width={W} height={H} className="rep-bg" />
         {anchors.map((e) => {
           const [x, y] = p.xy[e]!;
-          return <rect key={`a${e}`} x={X(x) - 5} y={Y(y) - 5} width={10} height={10} transform={`rotate(45 ${X(x)} ${Y(y)})`} className="rep-anchor" style={{ stroke: colourOf(e) }} onClick={() => onSelect(e)} />;
+          return <rect key={`a${e}`} x={X(x) - 5} y={Y(y) - 5} width={10} height={10} transform={`rotate(45 ${X(x)} ${Y(y)})`} className="rep-anchor" style={{ stroke: colourOf(e, model) }} onClick={() => onSelect(e)} />;
         })}
         {p.xy.map(([x, y], e) => (
             <circle
@@ -279,7 +303,7 @@ function MapPanel({
               cx={X(x)}
               cy={Y(y)}
               r={2.2 + 0.5 * Math.sqrt(data.environments[e]!.mult)}
-              style={{ fill: colourOf(e), opacity: hover !== null && hover !== e ? 0.55 : 0.85 }}
+              style={{ fill: colourOf(e, model), opacity: hover !== null && hover !== e ? 0.55 : 0.85 }}
               onMouseEnter={() => onHover(e)}
               onClick={() => onSelect(e)}
             />
@@ -295,39 +319,153 @@ function MapPanel({
   );
 }
 
-function Agreement({ data, space, medium, small, random }: { data: Data; space: string; medium: MapModel; small: MapModel; random: MapModel }) {
-  const rows: Array<[MapModel, MapModel]> = [
-    [medium, small],
-    [medium, random],
-    [small, random],
-  ];
+const METRICS: Array<{ id: 'cka' | 'mknn_raw' | 'mknn_k'; label: string }> = [
+  { id: 'cka', label: 'linear CKA' },
+  { id: 'mknn_raw', label: 'mutual 10-NN, raw' },
+  { id: 'mknn_k', label: 'mutual 10-NN, anchored' },
+];
+
+function Agreement({ data, space, theme }: { data: Data; space: string; theme: SceneTheme }) {
+  const [metric, setMetric] = useState<'cka' | 'mknn_raw' | 'mknn_k'>('cka');
   const k = space === 'raw' ? '100' : space;
+  const key: PairMetric = metric === 'mknn_k' ? `mknn_${k}` : metric;
+  const M = pairMatrix(data, key);
+  const n = data.models.length;
+  const C = 34;
+  const L = 98;
+  const T = 74;
   return (
-    <table className="rep-table">
-      <thead>
-        <tr>
-          <th>pair</th>
-          <th>CKA (raw)</th>
-          <th>mutual 10-NN, raw</th>
-          <th>mutual 10-NN, K = {k}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map(([a, b]) => {
-          const p = pairOf(data, a.id, b.id)!;
+    <section className="rep-panel" aria-labelledby="rep-agree-h">
+      <h4 className="rep-h" id="rep-agree-h">
+        Agreement between models
+      </h4>
+      <div className="seg" role="group" aria-label="Agreement metric">
+        {METRICS.map((m) => (
+          <button key={m.id} type="button" aria-pressed={metric === m.id} onClick={() => setMetric(m.id)}>
+            {m.id === 'mknn_k' ? `${m.label}, K = ${k}` : m.label}
+          </button>
+        ))}
+      </div>
+      <svg viewBox={`0 0 ${L + n * C + 40} ${T + n * C + 4}`} className="rep-matrix" role="img" aria-label={`Matrix of ${key} between the ${n} models.`}>
+        {data.models.map((m, i) => (
+          <g key={m.id}>
+            <text x={L - 6} y={T + i * C + C / 2 + 4} textAnchor="end" className="rep-mx-label">
+              {shortName(m)}
+            </text>
+            <text x={0} y={0} transform={`translate(${L + i * C + C / 2 + 4} ${T - 6}) rotate(-50)`} className="rep-mx-label">
+              {shortName(m)}
+            </text>
+          </g>
+        ))}
+        {M.map((row, i) =>
+          row.map((v, j) => (
+            <g key={`${i}-${j}`}>
+              <rect
+                x={L + j * C + 1}
+                y={T + i * C + 1}
+                width={C - 2}
+                height={C - 2}
+                rx={3}
+                style={{ fill: i === j ? theme.ruleStrong : `color-mix(in oklab, ${theme.arch} ${Math.round(100 * Math.max(0, v))}%, ${theme.canvas})` }}
+              >
+                <title>{`${data.models[i]!.name} / ${data.models[j]!.name}: ${v.toFixed(3)}`}</title>
+              </rect>
+              {i !== j ? (
+                <text x={L + j * C + C / 2} y={T + i * C + C / 2 + 4} textAnchor="middle" className="rep-mx-val" style={{ fill: v > 0.55 ? theme.canvas : theme.ink }}>
+                  {v.toFixed(2).replace(/^0/, '')}
+                </text>
+              ) : null}
+            </g>
+          )),
+        )}
+      </svg>
+      <p className="rep-note">
+        {metric === 'cka'
+          ? 'Linear CKA of the raw features (Eq. 2): unchanged by rotating or scaling either space; 1 for identical geometry.'
+          : metric === 'mknn_raw'
+            ? 'Fraction of each environment’s ten nearest neighbours the two models share, in raw feature space.'
+            : `The same overlap after the anchor transform of Eq. (1) with K = ${k} anchors (follows the feature-space buttons above).`}
+      </p>
+    </section>
+  );
+}
+
+function Invariance({ data, sel, theme, onSelect }: { data: Data; sel: number; theme: SceneTheme; onSelect: (e: number) => void }) {
+  const [test, setTest] = useState<'rot' | 'ref' | 'equiv'>('rot');
+  const W = 460;
+  const L = 90;
+  const R = 12;
+  const ROW = 30;
+  const T = 8;
+  const H = T + data.models.length * ROW + 30;
+  const X = (v: number) => L + logPosition(v, LOG_LO, LOG_HI) * (W - L - R);
+  const ticks = [];
+  for (let k = LOG_LO; k <= LOG_HI; k++) if (k % 3 === 0 || k === LOG_HI) ticks.push(k);
+  const rot = data.source.rotation;
+  return (
+    <section className="rep-panel" aria-labelledby="rep-inv-h">
+      <h4 className="rep-h" id="rep-inv-h">
+        Do environments that should not move, move?
+      </h4>
+      <div className="seg" role="group" aria-label="Invariance test">
+        <button type="button" aria-pressed={test === 'rot'} onClick={() => setTest('rot')}>
+          rigid rotation ({rot.angle_deg}°)
+        </button>
+        <button type="button" aria-pressed={test === 'ref'} onClick={() => setTest('ref')}>
+          mirror image
+        </button>
+        <button type="button" aria-pressed={test === 'equiv'} onClick={() => setTest('equiv')}>
+          symmetry-equivalent atoms
+        </button>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="rep-strip" role="img" aria-label="Feature displacement per environment and model, on a log scale in units of the median nearest-neighbour distance.">
+        {ticks.map((k) => (
+          <g key={k}>
+            <line x1={X(10 ** k)} x2={X(10 ** k)} y1={T} y2={H - 22} className={k === 0 ? 'rep-strip-one' : 'rep-strip-grid'} />
+            <text x={X(10 ** k)} y={H - 8} textAnchor="middle" className="rep-mx-label">
+              {k === 0 ? '1' : k === 1 ? '10' : k === 2 ? '100' : `1e${k}`}
+            </text>
+          </g>
+        ))}
+        {data.models.map((m, r) => {
+          const vals = test === 'rot' ? m.invariance.rot_env : test === 'ref' ? m.invariance.ref_env : m.invariance.equiv_env;
+          const y = T + r * ROW + ROW / 2;
+          const summ = m.invariance[test];
           return (
-            <tr key={`${a.id}-${b.id}`}>
-              <td>
-                {a.id} / {b.id}
-              </td>
-              <td className={a.trained && b.trained ? 'is-high' : undefined}>{p.cka.toFixed(2)}</td>
-              <td>{p.mknn_raw.toFixed(2)}</td>
-              <td>{p.mknn_anchored[k]!.toFixed(2)}</td>
-            </tr>
+            <g key={m.id}>
+              <text x={L - 8} y={y + 4} textAnchor="end" className="rep-mx-label">
+                {shortName(m)}
+              </text>
+              {vals.map((v, e) =>
+                test === 'equiv' && data.environments[e]!.mult === 1 ? null : (
+                  <circle
+                    key={e}
+                    cx={X(v)}
+                    cy={y + (((e * 7919) % 13) - 6) * 0.9}
+                    r={2}
+                    style={{ fill: e === sel ? theme.fail : theme.arch, opacity: e === sel ? 1 : 0.4 }}
+                    onClick={() => onSelect(e)}
+                  >
+                    <title>{`${data.environments[e]!.el} in ${data.structures[data.environments[e]!.s]!.title}: ${v.toExponential(1)} d_ref`}</title>
+                  </circle>
+                ),
+              )}
+              {summ.n > 0 ? <line x1={X(summ.median)} x2={X(summ.median)} y1={y - 9} y2={y + 9} className="rep-strip-med" style={{ stroke: theme.ink }} /> : null}
+              <circle cx={X(vals[sel]!)} cy={y} r={5} className="rep-sel" style={{ stroke: theme.fail, fill: 'none' }} />
+            </g>
           );
         })}
-      </tbody>
-    </table>
+      </svg>
+      <p className="rep-note">
+        {test === 'rot'
+          ? `Each dot is one environment: how far its feature vector moves when the whole structure (and cell) is rotated by ${rot.angle_deg}° about (${rot.axis.join(', ')}). `
+          : test === 'ref'
+            ? 'Each dot is one environment: how far its feature vector moves when the structure is replaced by its mirror image (z → −z). Distances are unchanged; only handedness flips. '
+            : 'Each dot is one environment with symmetry-equivalent copies in its structure (identical neighbour lists within 25 Å, mirror images included): the largest distance between their feature vectors. '}
+        Unit d_ref: the median distance from an environment to its nearest distinct one in the same model. Black tick: median; red ring:
+        the selected environment. Near 10⁻¹³: float64 rounding (MACE); near 10⁻⁵: float32 rounding (CHGNet, SevenNet). Exact zeros sit at the left edge. Clicking a dot selects it.
+      </p>
+    </section>
   );
 }
 

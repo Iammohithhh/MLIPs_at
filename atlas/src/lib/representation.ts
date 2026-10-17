@@ -25,11 +25,36 @@ export interface MapProjection {
   var: [number, number];
   procrustes?: number;
 }
+export interface InvarianceSummary {
+  n: number;
+  median: number;
+  p95: number;
+  max: number;
+}
+/** Feature displacement of environments that should not move, in units of d_ref (the median distance from an
+ * environment to its nearest distinct one in the same model's raw space). */
+export interface MapInvariance {
+  d_ref: number;
+  equiv: InvarianceSummary;
+  rot: InvarianceSummary;
+  ref: InvarianceSummary;
+  /** Per environment: largest displacement among its symmetry-equivalent atoms (0 when it has one atom). */
+  equiv_env: number[];
+  /** Per environment: displacement of its first atom after a rigid rotation of the whole structure. */
+  rot_env: number[];
+  /** Per environment: displacement of its first atom after a mirror reflection (z → −z) of the structure. */
+  ref_env: number[];
+}
 export interface MapModel {
   id: string;
   name: string;
+  family: 'mace' | 'chgnet' | 'sevennet' | 'orb';
   checkpoint: string | null;
   trained: boolean;
+  data: string | null;
+  feature: string;
+  dim: number;
+  invariance: MapInvariance;
   raw: MapProjection;
   /** Ten nearest neighbours of each environment in the model's raw feature space. */
   nn: number[][];
@@ -43,7 +68,12 @@ export interface MapPair {
   mknn_anchored: Record<string, number>;
 }
 export interface RepresentationMap {
-  source: Record<string, unknown> & { k_nn: number; checkpoints: Record<string, { name: string; sha256: string }> };
+  source: Record<string, unknown> & {
+    k_nn: number;
+    checkpoints: Record<string, { name: string | null; sha256: string | null; package: string }>;
+    rotation: { axis: number[]; angle_deg: number };
+    reflection: string;
+  };
   structures: MapStructure[];
   environments: MapEnv[];
   anchors: Record<string, number[]>;
@@ -108,3 +138,25 @@ export function pairOf(map: RepresentationMap, a: string, b: string): MapPair | 
 
 /** Total number of atoms the environments stand for (environments × multiplicity). */
 export const atomCount = (map: RepresentationMap) => map.environments.reduce((t, e) => t + e.mult, 0);
+
+export type PairMetric = 'cka' | 'mknn_raw' | `mknn_${string}`;
+
+/** Symmetric model × model matrix of one agreement metric (1 on the diagonal), in map.models order. */
+export function pairMatrix(map: RepresentationMap, metric: PairMetric): number[][] {
+  const ids = map.models.map((m) => m.id);
+  return ids.map((a) =>
+    ids.map((b) => {
+      if (a === b) return 1;
+      const p = pairOf(map, a, b)!;
+      if (metric === 'cka') return p.cka;
+      if (metric === 'mknn_raw') return p.mknn_raw;
+      return p.mknn_anchored[metric.slice(5)]!;
+    }),
+  );
+}
+
+/** Position of a non-negative value on a log axis from 10^lo to 10^hi (0 and anything below 10^lo sit at 0). */
+export function logPosition(v: number, lo: number, hi: number): number {
+  if (!(v > 0)) return 0;
+  return Math.min(1, Math.max(0, (Math.log10(v) - lo) / (hi - lo)));
+}

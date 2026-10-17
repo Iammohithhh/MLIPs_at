@@ -14,5 +14,5 @@ symmetry: equivariant
 body_order: 'As NequIP: two-body messages whose tensor products build higher body order with depth.'
 extends: [nequip]
 implementations: [sevennet]
-claims: [sevennet-ghost-communication, sevennet-force-decomposition, sevennet-weak-scaling, sevennet-strong-scaling, sevennet-other-architectures, sevennet-0-paper-model, sevennet-mf-architecture, sevennet-mf-shallow-shift, sevennet-mf-data-efficiency, sevennet-mf-0-soft-phonons]
+claims: [sevennet-ghost-communication, sevennet-force-decomposition, sevennet-weak-scaling, sevennet-strong-scaling, sevennet-other-architectures, sevennet-0-paper-model, sevennet-mf-architecture, sevennet-mf-shallow-shift, sevennet-mf-data-efficiency, sevennet-mf-0-soft-phonons, sevennet-0-so3-not-o3]
 review: { status: draft, last_checked: 2026-10-17, notes: 'Read both papers (arXiv HTML) and the repository at commit 209339d.' }
