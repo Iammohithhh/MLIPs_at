@@ -3,43 +3,65 @@
 // lazy-loaded per frame. Colour scales are fixed per layer and block over all frames (scales.json).
 
 import { useEffect, useState } from 'react';
-import scales from '../data/experiments/si-bond-stretch/scales.json';
 import type { Manifest } from '../lib/experiment';
 
-const loaders = import.meta.glob<{ default: FrameChunk }>('../data/experiments/si-bond-stretch/frames/*.json');
+// Every experiment's frame chunks are separate lazy modules; only the selected experiment's frames are fetched.
+const loaders = import.meta.glob<{ default: FrameChunk }>('../data/experiments/*/frames/*.json');
+// Fixed colour scales per experiment (small; bundled).
+const scaleFiles = import.meta.glob<{ default: Scales }>('../data/experiments/*/scales.json', { eager: true });
+
+interface BlockScale {
+  value: number;
+  change: number;
+}
+interface Scales {
+  experiment: string;
+  layers: { h0: BlockScale; h1: BlockScale | null; Anorm: BlockScale }[];
+}
+
+export function scalesFor(id: string): Scales | null {
+  return scaleFiles[`../data/experiments/${id}/scales.json`]?.default ?? null;
+}
 
 export interface FrameChunk {
+  experiment: string;
   k: number;
   d: number;
   local: number[];
   layers: { h0: number[][]; h1: number[][][] | null; Anorm: number[][][] }[];
 }
 
-const cache = new Map<number, Promise<FrameChunk>>();
-export function loadChunk(k: number): Promise<FrameChunk> {
-  let p = cache.get(k);
+const cache = new Map<string, Promise<FrameChunk>>();
+/** The lazy per-frame chunk of experiment `id`; rejects (never resolves to placeholder data) when it is missing or belongs to another experiment or frame. */
+export function loadChunk(id: string, k: number): Promise<FrameChunk> {
+  const key = `../data/experiments/${id}/frames/${String(k).padStart(2, '0')}.json`;
+  let p = cache.get(key);
   if (!p) {
-    const key = `../data/experiments/si-bond-stretch/frames/${String(k).padStart(2, '0')}.json`;
     const loader = loaders[key];
-    p = loader ? loader().then((x) => x.default) : Promise.reject(new Error(`no data for frame ${k}`));
-    cache.set(k, p);
+    p = loader
+      ? loader().then((x) => {
+          if (x.default.experiment !== id || x.default.k !== k) throw new Error(`frame chunk ${key} does not belong to ${id} frame ${k}`);
+          return x.default;
+        })
+      : Promise.reject(new Error(`no data for ${id} frame ${k}`));
+    cache.set(key, p);
   }
   return p;
 }
 
-function useChunk(k: number): { data: FrameChunk | null; error: string | null } {
+function useChunk(id: string, k: number): { data: FrameChunk | null; error: string | null } {
   const [state, setState] = useState<{ data: FrameChunk | null; error: string | null }>({ data: null, error: null });
   useEffect(() => {
     let live = true;
     setState({ data: null, error: null });
-    loadChunk(k).then(
+    loadChunk(id, k).then(
       (data) => live && setState({ data, error: null }),
       (e: unknown) => live && setState({ data: null, error: String(e) }),
     );
     return () => {
       live = false;
     };
-  }, [k]);
+  }, [id, k]);
   return state;
 }
 
@@ -75,10 +97,10 @@ function Heat({ values, max, label, channel, onChannel }: { values: number[]; ma
 
 export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: { m: Manifest; frame: number; atom: number; layer: number; channel: number; onChannel: (c: number) => void }) {
   const B = m.displacement.baselineIndex;
-  const base = useChunk(B);
-  const cur = useChunk(frame);
+  const base = useChunk(m.id, B);
+  const cur = useChunk(m.id, frame);
   const row = m.local.indexOf(atom);
-  const sc = scales.layers[layer];
+  const sc = scalesFor(m.id)?.layers[layer];
 
   if (row < 0)
     return (
@@ -88,7 +110,8 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
       </p>
     );
   if (base.error || cur.error) return <p className="fi__note" role="alert">Could not load the frame data: {base.error ?? cur.error}</p>;
-  if (!base.data || !cur.data || !sc) return <p className="fi__note" role="status">Loading channel values for this frame…</p>;
+  if (!sc) return <p className="fi__note" role="alert">No fixed colour scales are stored for this experiment, so no heatmap is drawn.</p>;
+  if (!base.data || !cur.data) return <p className="fi__note" role="status">Loading channel values for this frame…</p>;
 
   const hb = base.data.layers[layer]!.h0[row]!;
   const hf = cur.data.layers[layer]!.h0[row]!;

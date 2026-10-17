@@ -60,8 +60,8 @@ export function RotationDemo({ m, channel }: { m: Manifest; channel: number }) {
   const [chunk, setChunk] = useState<FrameChunk | null>(null);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => {
-    loadChunk(run.frame).then(setChunk, (e: unknown) => setErr(String(e)));
-  }, [run.frame]);
+    loadChunk(m.id, run.frame).then(setChunk, (e: unknown) => setErr(String(e)));
+  }, [m.id, run.frame]);
   const atom = m.displacement.atom;
   const f = m.frames[run.frame];
   if (!f || f.status !== 'ok') return null;

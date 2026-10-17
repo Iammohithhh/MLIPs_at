@@ -10,7 +10,7 @@ function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
   const [c, setC] = useState<EdgeChunk | null>(null);
   useEffect(() => {
     let live = true;
-    loadChunk(frame).then((x) => live && setC(x as EdgeChunk), () => live && setC(null));
+    loadChunk(m.id, frame).then((x) => live && setC(x as EdgeChunk), () => live && setC(null));
     return () => {
       live = false;
     };
@@ -68,8 +68,8 @@ function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
   const [b, setB] = useState<FrameChunk | null>(null);
   useEffect(() => {
     let live = true;
-    loadChunk(frame).then((x) => live && setC(x), () => live && setC(null));
-    loadChunk(m.displacement.baselineIndex).then((x) => live && setB(x), () => live && setB(null));
+    loadChunk(m.id, frame).then((x) => live && setC(x), () => live && setC(null));
+    loadChunk(m.id, m.displacement.baselineIndex).then((x) => live && setB(x), () => live && setB(null));
     return () => {
       live = false;
     };
@@ -127,8 +127,8 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
   const [b, setB] = useState<FeatureChunk | null>(null);
   useEffect(() => {
     let live = true;
-    loadChunk(frame).then((x) => live && setC(x as FeatureChunk), () => live && setC(null));
-    loadChunk(m.displacement.baselineIndex).then((x) => live && setB(x as FeatureChunk), () => live && setB(null));
+    loadChunk(m.id, frame).then((x) => live && setC(x as FeatureChunk), () => live && setC(null));
+    loadChunk(m.id, m.displacement.baselineIndex).then((x) => live && setB(x as FeatureChunk), () => live && setB(null));
     return () => {
       live = false;
     };
