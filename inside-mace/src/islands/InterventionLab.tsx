@@ -27,6 +27,7 @@ import { SceneGuard } from './SceneGuard';
 import { ResponsePlots } from './ResponsePlots';
 import { RotationDemo } from './RotationDemo';
 import { StageEvidence } from './StageEvidence';
+import { TraceChange } from './TraceChange';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
@@ -186,6 +187,7 @@ export default function InterventionLab() {
         <ResponsePlots m={m} atom={s.atom} frame={frame} onFrame={(k) => set({ frame: k })} />
         <FeatureInspector m={m} frame={frame} atom={s.atom} layer={s.layer} channel={s.channel} onChannel={(c) => set({ channel: c })} />
       </section>
+      <TraceChange m={m} frame={frame} atom={s.atom} onFrame={(k) => set({ frame: k, view: 'perturbed' })} onAtom={(i) => set({ atom: i })} />
       <Plots frame={frame} onFrame={(k) => set({ frame: k })} d={d} />
       <RotationDemo m={m} channel={s.channel} />
       <p className="lab__scope">

@@ -593,3 +593,168 @@
   aspect-ratio: 1;
   outline: 1px solid var(--atlas-rule);
 }
+
+/* Trace the change (TraceChange.tsx) */
+.trace {
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
+  border-radius: var(--im-radius);
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+.trace__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+}
+.trace__head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.trace__lede,
+.trace__note,
+.trace__sentence,
+.trace__empty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--im-stage-muted);
+  max-width: 72ch;
+}
+.trace__sentence {
+  color: var(--im-stage-ink);
+}
+.trace__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+.trace__controls button,
+.trace__empty button,
+.trace__predict-btns button {
+  background: var(--im-stage-2);
+  color: var(--im-stage-ink);
+  border: 1px solid var(--im-stage-rule);
+  border-radius: 5px;
+  padding: 0.35rem 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  min-height: 2.25rem;
+}
+.trace__controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.trace__controls button.is-done {
+  border-color: var(--im-teal);
+}
+.trace__controls button.is-on {
+  border-color: var(--im-amber);
+  color: var(--im-amber);
+}
+.trace__n {
+  font-family: var(--im-mono);
+  opacity: 0.7;
+}
+.trace__predict-toggle {
+  font-size: 0.8rem;
+  color: var(--im-stage-muted);
+  margin-left: auto;
+}
+.trace__predict {
+  border-left: 3px solid var(--im-amber);
+  background: var(--im-stage-2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 5px 5px 0;
+  font-size: 0.85rem;
+}
+.trace__predict p {
+  margin: 0 0 0.4rem;
+}
+.trace__predict-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.trace__predict-result {
+  color: var(--im-stage-ink);
+}
+.trace__fig {
+  margin: 0;
+}
+.trace__fig svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.trace__fig figcaption {
+  font-size: 0.75rem;
+  color: var(--im-stage-muted);
+  margin-top: 0.3rem;
+}
+.trace__bg {
+  fill: var(--im-stage-2);
+  stroke: var(--im-stage-rule);
+}
+.trace__lane.is-on .trace__bg {
+  stroke: var(--im-amber);
+}
+.trace__lane {
+  transition: opacity 0.35s ease;
+}
+.trace__lane.is-hidden {
+  opacity: 0.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  .trace__lane {
+    transition: none;
+  }
+}
+.trace__lane-title {
+  fill: var(--im-stage-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+.trace__lane-unit,
+.trace__tick,
+.trace__cut-label {
+  fill: var(--im-stage-muted);
+  font-size: 10px;
+}
+.trace__lane-sum {
+  fill: var(--im-amber);
+  font-size: 10.5px;
+}
+.trace__cut {
+  stroke: var(--im-teal);
+  stroke-dasharray: 3 3;
+}
+.trace__pt {
+  fill: var(--im-amber);
+  fill-opacity: 0.8;
+  cursor: pointer;
+}
+.trace__zero {
+  fill: none;
+  stroke: var(--im-stage-muted);
+  cursor: pointer;
+}
+.trace__pt.is-sel,
+.trace__zero.is-sel {
+  stroke: var(--im-mint, #6fd3bd);
+  stroke-width: 2;
+}
+.trace__pt.is-moved {
+  fill: var(--im-mint, #6fd3bd);
+}
+.trace__missing {
+  fill: var(--atlas-caveat, #e07a5f);
+  font-size: 10px;
+}
+.trace__fig svg {
+  max-width: 920px;
+}

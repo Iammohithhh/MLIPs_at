@@ -131,3 +131,22 @@ test('rotation comparison shows invariant energy and rotated force', async ({ pa
   await expect(rot).toContainText(/Layer 1 vector, ch 3/);
   await expect(rot).toContainText(/rotated run \(/);
 });
+
+test('trace the change: predict, reveal stage by stage, exact zeros beyond the reach', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto('/?frame=24');
+  const trace = page.locator('section.trace');
+  await trace.scrollIntoViewIfNeeded();
+  await expect(trace.getByText('Precomputed · frame 25, d = +0.300 Å')).toBeVisible();
+  await trace.getByRole('button', { name: /Layer 1 features/ }).click();
+  await expect(trace.getByText(/answer the question above to reveal/)).toBeVisible();
+  await trace.getByRole('button', { name: 'Yes, they change' }).click();
+  await expect(trace.getByRole('status')).toContainText('Computed: 0 of 169 atoms beyond 6 Å changed');
+  await trace.getByRole('button', { name: /^5 Forces/ }).click();
+  await trace.getByRole('button', { name: 'No, exactly unchanged' }).click();
+  await expect(trace.getByRole('status')).toContainText('the answer for this frame is yes');
+  await trace.getByRole('checkbox', { name: 'Predict before revealing' }).uncheck();
+  await trace.getByRole('button', { name: /Layer 2 features/ }).click();
+  await expect(trace.locator('figcaption')).toContainText('194 atoms changed, 22 exactly unchanged');
+  expect(errors).toEqual([]);
+});
