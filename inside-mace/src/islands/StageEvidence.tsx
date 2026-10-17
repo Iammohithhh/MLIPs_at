@@ -1,6 +1,7 @@
 // Recorded evidence shown with each stage of the walkthrough (all values from the precomputed frame chunks).
 import { useEffect, useState } from 'react';
 import { norm, okFrameAt, type Manifest } from '../lib/experiment';
+import { baselineFacts, experimentInfo } from '../lib/experimentInfo';
 import type { Stage } from '../lib/urlState';
 import { loadChunk, type FrameChunk } from './FeatureInspector';
 
@@ -98,8 +99,9 @@ function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
         })}
       </dl>
       <p className="ev__note">
-        Norms of the stored per-channel norms (|A| over m, then over channels). In the perfect crystal the l = 1 and l = 2 blocks vanish by the
-        site’s tetrahedral symmetry, while l = 3 does not; displacing the atom switches the lower ones on.
+        Norms of the stored per-channel norms (|A| over m, then over channels).
+        {symmetricBaseline(m) &&
+          ' In the perfect crystal the l = 1 and l = 2 blocks vanish by the site’s tetrahedral symmetry, while l = 3 does not; displacing the atom switches the lower ones on.'}
       </p>
     </div>
   );
@@ -165,10 +167,16 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
       <p className="ev__note">
         Each new feature is a learned linear mix of products of up to three aggregated tensors A (correlation order ν = 3), so one
         feature can depend on up to three neighbours jointly (four-body terms) in a single layer. The vector channels are rotation-equivariant, so only
-        their lengths are drawn here, not their directions. In the perfect crystal the layer-1 vectors vanish by symmetry (stored values below 10⁻¹² are written as 0).
+        their lengths are drawn here, not their directions.
+        {symmetricBaseline(m) && ' In the perfect crystal the layer-1 vectors vanish by symmetry (stored values below 10⁻¹² are written as 0).'}
       </p>
     </div>
   );
+}
+
+/** Symmetry sentences are shown only for an experiment that documents the reason and whose stored baseline vectors are zero. */
+function symmetricBaseline(m: Manifest): boolean {
+  return Boolean(experimentInfo(m.id)?.vectorsVanishReason) && baselineFacts(m).vectorsVanish === true;
 }
 
 export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: Stage; frame: number; atom: number }) {
@@ -176,6 +184,8 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
   if (!f) return null;
   if (stage === 'species') {
     const v = m.baseline.embed;
+    const el = m.structure.symbols[m.displacement.atom] ?? '';
+    const sym = m.structure.symbols[atom] ?? '';
     const max = Math.max(...v.map(Math.abs));
     const p = m.structure.positions[atom]!;
     return (
@@ -184,14 +194,17 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
           Input for atom {atom}: {m.structure.symbols[atom]} at ({(atom === m.displacement.atom ? f.movedPosition : p).map((x) => x.toFixed(3)).join(', ')}) Å
         </p>
         <p className="ev__note">
-          Initial features h⁽⁰⁾ of a Si atom: {v.length} learned numbers selected by the element alone (identical for every Si atom, independent of
-          position). Colour ±{max.toPrecision(2)}.
+          Initial features h⁽⁰⁾ of a {el} atom (the moved atom’s element): {v.length} learned numbers selected by the element alone (identical for
+          every {el} atom, independent of position). Colour ±{max.toPrecision(2)}.
+          {sym !== el && ` Atom ${atom} is ${sym}; its embedding is not stored, so it is not shown.`}
         </p>
-        <span className="ev__embed" role="img" aria-label={`${v.length} embedding values of Si`}>
-          {v.map((x, c) => (
-            <span key={c} title={`channel ${c}: ${x.toPrecision(4)}`} style={{ background: x >= 0 ? `rgb(240 169 69 / ${Math.abs(x) / max})` : `rgb(58 159 140 / ${Math.abs(x) / max})` }} />
-          ))}
-        </span>
+        {sym === el && (
+          <span className="ev__embed" role="img" aria-label={`${v.length} embedding values of ${el}`}>
+            {v.map((x, c) => (
+              <span key={c} title={`channel ${c}: ${x.toPrecision(4)}`} style={{ background: x >= 0 ? `rgb(240 169 69 / ${Math.abs(x) / max})` : `rgb(58 159 140 / ${Math.abs(x) / max})` }} />
+            ))}
+          </span>
+        )}
       </div>
     );
   }
@@ -207,8 +220,8 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
         <p className="ev__title">This frame (d = {f.d.toFixed(3)} Å)</p>
         <dl className="mono">
           <dt>E_{atom} (site)</dt>
-          <dd>{ei?.toFixed(5)} eV, of which E₀(Si) = {e0?.toFixed(5)} eV is a fixed per-element reference</dd>
-          <dt>Σᵢ Eᵢ, 216 atoms</dt>
+          <dd>{ei?.toFixed(5)} eV, of which E₀({m.structure.symbols[atom]}) = {e0?.toFixed(5)} eV is a fixed per-element reference</dd>
+          <dt>Σᵢ Eᵢ, {m.structure.n} atoms</dt>
           <dd>{sum.toFixed(5)} eV</dd>
           <dt>E (model total)</dt>
           <dd>{f.energy.toFixed(5)} eV</dd>

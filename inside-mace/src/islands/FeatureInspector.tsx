@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Manifest } from '../lib/experiment';
+import { baselineFacts, experimentInfo } from '../lib/experimentInfo';
 
 // Every experiment's frame chunks are separate lazy modules; only the selected experiment's frames are fetched.
 const loaders = import.meta.glob<{ default: FrameChunk }>('../data/experiments/*/frames/*.json');
@@ -140,10 +141,10 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
             : 'none: the last layer of this checkpoint carries scalar features only'}
         </dd>
       </dl>
-      {v1b && v1b.every((x) => x === 0) && (
+      {v1b && v1b.every((x) => x === 0) && baselineFacts(m).vectorsVanish && experimentInfo(m.id)?.vectorsVanishReason && (
         <p className="fi__note">
-          At the baseline every l = 1 channel of every atom is zero (|h| &lt; 10⁻¹² in float64): each Si site in a perfect diamond lattice has tetrahedral
-          symmetry, so no vector feature can point anywhere. Moving the atom breaks that symmetry and the vectors appear.
+          At the baseline every l = 1 channel of every atom is zero (|h| &lt; 10⁻¹² in float64): {experimentInfo(m.id)!.vectorsVanishReason}. Moving the atom
+          breaks that symmetry and the vectors appear.
         </p>
       )}
     </div>

@@ -171,6 +171,10 @@ astro check 0 errors, Vitest 35/35, Playwright desktop+mobile 34/34.
 - `edadd9c`, `fd3b1e5`, `93ea6bf`: element colours per atom, legend swatches from the composition, bond label, colour
   option text, demo step-1 caption (zero-force claim only if stored forces are zero; else quotes the largest stored force
   and says the geometry is unrelaxed), step-2 "pushes back" derived from the sign, PNG-export text per experiment.
+- Last commit of the session: StageEvidence (embedding labelled with the moved atom's element and hidden when the
+  selected atom is another element; E₀(element); Σᵢ Eᵢ over m.structure.n atoms; Td-symmetry sentences only when
+  `experimentInfo.vectorsVanishReason` is set **and** the stored baseline vectors are zero) and the FeatureInspector
+  l = 1 note gated the same way. Re-verified: check 0 errors, Vitest 66/66, Playwright 35 passed.
 
 **Verified at the end (21:49 UTC):** `astro check` 0 errors; Vitest 66/66 (7 files); `astro build` OK; Playwright
 desktop + mobile 35 passed, 1 skipped (perf runs on mobile only); pytest 22/22 with `INSIDE_MACE_CHECKPOINT` (fresh
@@ -182,9 +186,8 @@ unchanged; scene renders, no overflow).
   `exp=zno-axial-bond` as "not available". Before exposing it, these Si-only texts must become per-experiment or
   data-derived (each would be false for ZnO):
   `src/lib/stages.ts:38` ("216 Si atoms"), `:49` ("46 neighbours" — compute from the chunk's edge count), `:97`, `:111`,
-  `:122` (shapes `[216]`); `src/islands/StageEvidence.tsx:102` (Td symmetry: l = 1, 2 A-norms zero), `:168`, `:187–190`
-  ("Si embedding" → moved element), `:210` (E₀(Si)), `:211` ("216 atoms"), `:253`; `src/islands/FeatureInspector.tsx:122`
-  (l = 1 zero at baseline → gate on `baselineFacts(m).vectorsVanish`); `src/islands/ArchitectureDiagram.tsx:54`
+  `:122` (shapes `[216]`); `src/islands/StageEvidence.tsx` stage-7 note (~line 260, "zero by symmetry" for the FD row);
+  `src/islands/ArchitectureDiagram.tsx:54`
   (`[216, 3]` → `m.structure.n`); `src/pages/index.astro:36,42–43` (Structure / Domain → `experimentInfo`);
   `InterventionLab.tsx` FORCE_SCALE comment (ZnO max |F| 6.25 eV/Å → 3.1 Å arrow; fine, but the comment is Si-specific);
   scene `label="Silicon neighbourhood…"`; check `TraceChange.tsx`/`trace.ts` "exact zeros" wording for a baseline

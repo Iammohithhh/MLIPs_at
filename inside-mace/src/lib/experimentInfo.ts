@@ -27,6 +27,8 @@ export interface ExperimentInfo {
   crystal: string;
   /** Why a force-free baseline is force-free; used only when the stored baseline forces are zero. */
   forceFreeReason: string | null;
+  /** Why layer-1 vector (and l = 1, 2 message) blocks vanish at the baseline; shown only when the stored values are zero. */
+  vectorsVanishReason: string | null;
   /** Prose description of the structure, e.g. for the provenance list and the exported figure. */
   structure: string;
   /** Where the geometry comes from and whether it was relaxed with the model. */
@@ -42,6 +44,7 @@ const INFO: Record<string, ExperimentInfo> = {
   'si-bond-stretch': {
     crystal: 'silicon crystal',
     forceFreeReason: 'In the perfect crystal every predicted force is zero by symmetry, so no arrows are drawn.',
+    vectorsVanishReason: 'each Si site in a perfect diamond lattice has tetrahedral symmetry, so no vector feature can point anywhere',
     structure: 'Si diamond',
     geometrySource: "ase.build.bulk('Si', 'diamond', a=5.431, cubic=True) from atlas/src/data/structures/si-diamond.json; every atom sits on a site of tetrahedral (Td) symmetry, so every baseline force vanishes by symmetry (the lattice constant was not optimised with this model)",
     bondCutoff: 2.6, // Si–Si nearest neighbour 2.35 Å, second shell 3.84 Å
@@ -51,6 +54,7 @@ const INFO: Record<string, ExperimentInfo> = {
   'zno-axial-bond': {
     crystal: 'zinc oxide (wurtzite) crystal',
     forceFreeReason: null,
+    vectorsVanishReason: null,
     structure: 'ZnO wurtzite',
     geometrySource: "ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21, u=0.382) from atlas/src/data/structures/zno-wurtzite.json; a, c and u are inputs and the cell was not relaxed with this model",
     bondCutoff: 2.3, // Zn–O 1.975 (basal) and 1.990 Å (axial); Zn–Zn and O–O ≥ 3.2 Å
