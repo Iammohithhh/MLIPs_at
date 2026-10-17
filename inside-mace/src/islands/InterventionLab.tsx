@@ -82,6 +82,11 @@ const COLORS = {
   edge: '#5f7f78',
 };
 
+/** True minus sign (U+2212) for a formatted number. */
+function mn(t: string): string {
+  return t.replace(/^-/, '−');
+}
+
 function fmt(x: number | null, digits = 3, unit = ''): string {
   if (x === null || !Number.isFinite(x)) return '—';
   const s = Math.abs(x) < 10 ** -digits && x !== 0 ? x.toExponential(2) : x.toFixed(digits);
@@ -636,19 +641,19 @@ function Plots({ frame, onFrame, d }: { frame: number; onFrame: (k: number) => v
                 ) : (
                   <circle key={k} cx={x(vals[k]!)} cy={y(v)} r={k === frame ? 4.5 : 2.6} className={k === frame ? 'pt is-on' : 'pt'} onClick={() => onFrame(k)}>
                     <title>
-                      d = {vals[k]!.toFixed(3)} Å: {v.toPrecision(4)}
+                      d = {mn(vals[k]!.toFixed(3))} Å: {mn(v.toPrecision(4))}
                     </title>
                   </circle>
                 ),
               )}
               <text x={pad.l - 6} y={y(hi) + 4} className="tick" textAnchor="end">
-                {hi.toPrecision(2)}
+                {mn(hi.toPrecision(2))}
               </text>
               <text x={pad.l - 6} y={y(lo) + 4} className="tick" textAnchor="end">
-                {lo.toPrecision(2)}
+                {mn(lo.toPrecision(2))}
               </text>
               <text x={x(vals[0]!)} y={H - 10} className="tick" textAnchor="start">
-                {vals[0]!.toFixed(2)}
+                {mn(vals[0]!.toFixed(2))}
               </text>
               <text x={x(vals.at(-1)!)} y={H - 10} className="tick" textAnchor="end">
                 +{vals.at(-1)!.toFixed(2)} Å

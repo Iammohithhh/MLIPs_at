@@ -44,7 +44,7 @@ export function ResponsePlots({ m, atom, frame, onFrame }: { m: Manifest; atom: 
           <figure key={sr.key} className="rp__panel">
             <figcaption>
               <span>{sr.title}</span>
-              <span className="mono rp__val">{cur === null || cur === undefined ? 'no data' : `${cur.toPrecision(3)} ${sr.unit}`}</span>
+              <span className="mono rp__val">{cur === null || cur === undefined ? 'no data' : `${cur.toPrecision(3).replace(/^-/, '−')} ${sr.unit}`}</span>
             </figcaption>
             <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${sr.title} against displacement, range ${lo.toPrecision(2)} to ${hi.toPrecision(2)} ${sr.unit}`}>
               <line x1={pad.l} x2={W - pad.r} y1={y(0)} y2={y(0)} className="axis" />
@@ -56,7 +56,7 @@ export function ResponsePlots({ m, atom, frame, onFrame }: { m: Manifest; atom: 
               )}
             </svg>
             <p className="rp__range mono">
-              {lo.toPrecision(2)} … {hi.toPrecision(2)} {sr.unit}
+              {lo.toPrecision(2).replace(/^-/, '−')} … {hi.toPrecision(2).replace(/^-/, '−')} {sr.unit}
             </p>
           </figure>
         );
