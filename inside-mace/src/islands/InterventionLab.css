@@ -56,6 +56,9 @@
 }
 .lab__stage {
   position: relative;
+  /* Do not stretch to the side panel's height: the canvas has a fixed height, so a stretched stage left an
+     empty dark band under the scene (most visible in side-by-side view). */
+  align-self: start;
   background: var(--im-stage);
   border-radius: var(--im-radius);
   overflow: hidden;
@@ -773,7 +776,7 @@
 }
 .lab__pane-label {
   position: absolute;
-  bottom: 3.6rem;
+  top: 3.9rem; /* below the view switch, clear of the scale and legend captions at the bottom */
   right: 0.6rem;
   font-size: 0.72rem;
   padding: 0.2rem 0.45rem;
