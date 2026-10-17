@@ -81,6 +81,8 @@ export function RotationDemo({ m, channel }: { m: Manifest; channel: number }) {
       <p className="rot__lede">
         Turning the camera only changes your view. Here the <em>model input</em> itself was rotated — every position and the cell, by{' '}
         {rot.angleDeg}° about ({rot.axis.join(', ')}) — and the checkpoint was run again (frame d = {f.d.toFixed(3)} Å).{' '}
+        {rot.runs.length > 1 &&
+          `Rotated runs are stored for ${rot.runs.map((r) => `d = ${mn(m.displacement.values[r.frame]!.toFixed(3))} Å`).join(' and ')}; the displaced one is shown because its force and vector features are non-zero, so their rotation is visible.`}{' '}
         <span className="label">Precomputed</span>
       </p>
       <dl className="rot__grid mono">
