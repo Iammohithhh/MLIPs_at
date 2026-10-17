@@ -114,7 +114,9 @@ def read_checkpoint(path: Path) -> tuple[dict, dict]:
     return tensors, {"avg_num_neighbors": float(inter0["avg_num_neighbors"]), "radial_MLP": list(inter0["radial_MLP"])}
 
 
-def build_model(path: Path):
+def build_model(path: Path, load_weights: bool = True):
+    """Rebuild the checkpoint's architecture; with load_weights=False the weights stay at their
+    random initialisation (seed them with torch.manual_seed first): an untrained control."""
     from e3nn import o3
     from mace import modules
 
@@ -127,7 +129,8 @@ def build_model(path: Path):
         "num_polynomial_cutoff": int(sd["radial_embedding.cutoff_fn.p"]),
         "max_ell": 3,
         "num_interactions": int(sd["num_interactions"]),
-        "hidden_irreps": "128x0e+128x1o",
+        # L1 checkpoints (medium) carry an l = 1 symmetric contraction; L0 ones (small) do not.
+        "hidden_irreps": "128x0e+128x1o" if "products.0.symmetric_contractions.contractions.1.weights_max" in sd else "128x0e",
         "MLP_irreps": "16x0e",
         "correlation": 3,
         "avg_num_neighbors": extra["avg_num_neighbors"],
@@ -156,6 +159,9 @@ def build_model(path: Path):
         atomic_inter_scale=hyper["atomic_inter_scale"],
         atomic_inter_shift=hyper["atomic_inter_shift"],
     )
+    if not load_weights:
+        model.eval()
+        return model, hyper
     own = model.state_dict()
     unexpected = sorted(set(sd) - set(own))
     missing = sorted(set(own) - set(sd))

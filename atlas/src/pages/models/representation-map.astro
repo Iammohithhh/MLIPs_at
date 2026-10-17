@@ -1,0 +1,182 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Cite from '~/components/Cite.astro';
+import RepresentationMap from '~/islands/RepresentationMap';
+import raw from '~/data/representation/map.json';
+import { atomCount, pairOf, type RepresentationMap as Data } from '~/lib/representation';
+
+const map = raw as unknown as Data;
+const nEnv = map.environments.length;
+const nStruct = map.structures.length;
+const nAtoms = atomCount(map);
+const ms = pairOf(map, 'medium', 'small')!;
+const mr = pairOf(map, 'medium', 'random')!;
+const sr = pairOf(map, 'small', 'random')!;
+const small = map.models.find((m) => m.id === 'small')!;
+const random = map.models.find((m) => m.id === 'random')!;
+const f2 = (x: number) => x.toFixed(2);
+const procr = (m: typeof small) => Object.entries(m.anchored).map(([k, p]) => ({ k, v: p.procrustes ?? 0 }));
+const range = (m: typeof small) => {
+  const v = procr(m).map((x) => x.v);
+  return `${f2(globalThis.Math.min(...v))}–${f2(globalThis.Math.max(...v))}`;
+};
+const kinds = ['crystal', 'surface', 'defect', 'molecule'].map((k) => ({ k, n: map.structures.filter((s) => s.kind === k).length }));
+const ckMed = map.source.checkpoints.medium!;
+const ckSmall = map.source.checkpoints.small!;
+
+const assumptions = [
+  { term: 'Reference set', value: `${nStruct} structures built with ASE: ${kinds.map((x) => `${x.n} ${x.k}${x.n === 1 ? '' : 's'}`).join(', ')}. Crystals are ideal, rattled (σ = 0.05 and 0.15 Å) and 5% compressed; lattice constants are inputs, not results. ${nAtoms} atoms, of which ${nEnv} have distinct environments within 6 Å; identical ones are one point.` },
+  { term: 'Features', value: 'The invariant (0e) node features after each of the two interactions, concatenated: 256 numbers per atom for every model. For the medium model the l = 1 channels of the first layer are left out.' },
+  { term: 'Models', value: 'MACE-MP-0a medium and small (MIT; both trained on MPtrj), and the medium architecture with random weights from torch.manual_seed(0). Checkpoint tensors read without executing pickled code; SHA-256 recorded in the data file.' },
+  { term: 'Maps', value: 'PCA to two components (no UMAP: it distorts global distances). Anchored maps: cosine similarity to K anchor environments chosen round-robin over elements with a fixed seed, the same anchors for every model, then PCA and an orthogonal Procrustes rotation onto the medium model’s map.' },
+  { term: 'Not shown', value: 'Other architectures (Orb, SevenNet, CHGNet), your own structure (needs live inference), and which training data covers which region.' },
+];
+---
+
+<BaseLayout
+  title="Representation Map"
+  description="Real MACE latent features of a reference set of atomic environments, precomputed on CPU: linked 2D maps for two trained checkpoints and an untrained control, the anchor-based relative representation, agreement metrics, and a 3D view of every environment."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Representation Map</p>
+      <h1 class="h-display">Representation Map</h1>
+      <p class="lede">
+        Inside every message-passing potential, each atom ends as a vector of learned numbers from which its energy is read. Two models
+        trained on the same data learn different coordinates for those vectors, so they cannot be compared directly; a recent study
+        compares them through their similarity to shared reference environments and finds a common geometry across seven foundation models
+        <Cite id="li2026platonic" locator="Abstract; Figs. 1, 3" />. This page applies that method, on CPU, to the features of {nEnv} atomic
+        environments from two MACE checkpoints and from the same architecture left untrained.
+      </p>
+    </header>
+
+    <section class="block" aria-labelledby="what-h">
+      <h2 id="what-h" class="h-section">What is being compared</h2>
+      <p>
+        MACE builds each atom’s features in two interactions of 6 Å each; the readout turns the invariant channels into the site energy
+        (<a href="/models/mace/">MACE page</a>, <a href="/models/x-ray/">Architecture X-ray</a>). We take those invariant channels after each
+        interaction, 256 numbers per atom, from MACE-MP-0a medium and small. Both were trained on MPtrj
+        <Cite id="batatia2023foundation" />; they differ in that medium also carries l = 1 equivariant channels between layers. Raw features
+        of different models live in unrelated coordinates: Li and Walsh found this even for MACE-MP-0 variants with the same data and
+        objective <Cite id="li2026platonic" locator="Results; Fig. 1" />. Their remedy re-expresses every feature by its cosine similarity to
+        K anchor environments, the same environments in every model <Cite id="li2026platonic" locator="Eqs. (1)–(2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`\mathbf z_i = \big[\cos(\mathbf e_i, \mathbf a_1),\ \dots,\ \cos(\mathbf e_i, \mathbf a_K)\big]^{\mathsf T}, \qquad \cos(\mathbf e, \mathbf a) = \frac{\mathbf e^{\mathsf T}\mathbf a}{\lVert\mathbf e\rVert\,\lVert\mathbf a\rVert}`} />
+      <p>
+        The new coordinates no longer depend on how a model happens to orient or scale its latent space, only on which environments it finds
+        alike. To compare whole spaces without any anchors we also use linear centred kernel alignment, which is unchanged by rotating or
+        scaling either space and equals 1 for identical geometry, and the overlap of each environment’s ten nearest neighbours:
+      </p>
+      <Math display number="2" tex={String.raw`\mathrm{CKA}(X, Y) = \frac{\lVert Y_c^{\mathsf T} X_c\rVert_F^2}{\lVert X_c^{\mathsf T} X_c\rVert_F\, \lVert Y_c^{\mathsf T} Y_c\rVert_F}, \qquad \mathrm{mkNN} = \frac{1}{N}\sum_i \frac{\lvert \mathcal N_k^X(i) \cap \mathcal N_k^Y(i)\rvert}{k}`} />
+      <p class="small">
+        X<sub>c</sub>, Y<sub>c</sub>: the feature matrices (atoms × channels) with each column’s mean removed. Both quantities are checked on
+        synthetic data in <code>pipeline/tests/test_representation.py</code> (CKA = 1 under rotation and scaling, mkNN = 1 for a rotated copy).
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Three models, one set of environments" labels={['precomputed']} id="fig-map" framed={false}>
+        <RepresentationMap client:visible />
+        <Fragment slot="caption">
+          Each point is one atomic environment, placed by PCA of one model’s features. Raw maps are in each model’s own coordinates; anchored
+          maps use Eq. (1) and are rotated onto the medium map, so they can be compared by eye. Select an environment to see it in 3D and to see
+          which environments each model puts nearest to it.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">Features from CPU forward passes of <code>{ckMed.name}</code> (SHA-256 {ckMed.sha256.slice(0, 12)}…) and <code>{ckSmall.name}</code> ({ckSmall.sha256.slice(0, 12)}…) by <code>pipeline/atlas_pipeline/representation.py</code>; method from <Cite id="li2026platonic" locator="Eqs. (1)–(2)" />. Analysis functions tested in <code>pipeline/tests/test_representation.py</code>, the data file in <code>src/lib/representation.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="read-h">
+      <h2 id="read-h" class="h-section">What the map shows, and what it does not</h2>
+      <p>
+        <strong>Trained features agree more with each other than with an untrained network.</strong> The linear CKA between medium and
+        small is {f2(ms.cka)}; between either and the random network it is {f2(mr.cka)} and {f2(sr.cka)}. After the anchor transform the
+        small model’s map lands on the medium map with a Procrustes similarity of {range(small)} over K = 3 to 100; the untrained model’s with
+        {range(random)}. This matches the direction of Li and Walsh’s result on seven models and 282,847 environments, where an untrained MACE
+        showed no chemical organisation <Cite id="li2026platonic" locator="Fig. 3b,c" />, but with two checkpoints of one family and {nEnv}
+        environments it is a demonstration of the method, not a measurement of convergence. Look at the untrained model’s anchored
+        maps: its environments pile up in tight knots, each at the anchor from its own structure, with nothing arranging the knots by
+        chemistry; the trained models spread the same environments into families of elements and bonding.
+      </p>
+      <p>
+        <strong>Nearest-neighbour overlap is high for every pair, the untrained one included</strong> ({f2(ms.mknn_raw)}, {f2(mr.mknn_raw)}
+        and {f2(sr.mknn_raw)} in raw space). Our reference set is built from rattled and compressed copies of each crystal, and any network
+        that keeps element and geometry information, trained or not, puts those copies next to each other. On this set the metric rewards how
+        the set was made. Li and Walsh, on a broad set of real crystals, report the opposite pattern: global alignment high, local
+        neighbourhood agreement low <Cite id="li2026platonic" locator="Fig. 4a,b" />. A reference set has to be chosen for the question it is
+        meant to answer.
+      </p>
+      <Callout kind="caveat" title="Architecture ≠ checkpoint ≠ dataset">
+        <p>
+          Medium and small share an architecture family and a training set, so their agreement says nothing about architectures trained on
+          other data. The published comparison found the largest distances between OMat24-trained and MPtrj-trained models and between
+          equivariant and non-equivariant ones <Cite id="li2026platonic" locator="Fig. 4c" />. Distances in these maps are distances between
+          learned features, not energy differences, and a point far from the training data is not necessarily predicted badly, nor one
+          near it predicted well.
+        </p>
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="next-h">
+      <h2 id="next-h" class="h-section">Extending the map</h2>
+      <p>
+        The pipeline runs on CPU in about a minute for this set. Adding models means adding feature extractors: the
+        <a href="/observatory/">Observatory</a> already runs CHGNet, SevenNet-0 and Orb v2 on CPU in separate environments, and the same
+        structures could be passed through them. Placing a visitor’s own structure on the map needs a forward pass at request time, which the
+        Atlas does not run without a CPU inference service. Colouring by training-set coverage needs the training structures’ features, which
+        is a larger computation than this page’s.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The relative (“Platonic”) representation of foundation MLIPs: <Cite id="li2026platonic" />.</li>
+        <li>MACE-MP-0 and its checkpoints: <Cite id="batatia2023foundation" />; <a href="https://github.com/ACEsuit/mace-mp">ACEsuit/mace-mp</a> (MIT).</li>
+        <li>Data: <code>atlas/src/data/representation/map.json</code> (structures, environments, 2D maps, neighbour lists and agreement metrics).</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

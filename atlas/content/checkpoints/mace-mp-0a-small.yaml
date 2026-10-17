@@ -1,0 +1,16 @@
+name: MACE-MP-0a small (2023-12-10)
+family: mace
+implementation: mace
+version: 2023-12-10-mace-128-L0_energy_epoch-249.model
+release: { date: 2023-12-10, source: batatia2023foundation }
+elements: 89
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: Same training data as MACE-MP-0a medium; invariant (L0) hidden features, 128 channels, two interactions, 6 Å cutoff (read from the checkpoint tensors by the Atlas pipeline).
+outputs: [energy, forces, stress]
+licence: MIT
+weights: { url: 'https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2023-12-10-mace-128-L0_energy_epoch-249.model', sha256: 2ddb079cee0e131eaaf6912ba581b394551ead283e95c99cfe78c605d10b5736 }
+claims: [repmap-trained-vs-random]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Listed as the small MACE-MP-0a model in the mace-mp README (MIT). The SHA-256 was computed by the Atlas on download; no published hash was found to compare it with. Used in the Representation Map.' }

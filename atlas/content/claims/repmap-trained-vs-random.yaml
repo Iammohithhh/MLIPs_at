@@ -1,0 +1,8 @@
+statement: >-
+  On the Atlas reference set, the invariant features of MACE-MP-0a medium and small have a markedly higher linear CKA with each
+  other than either has with the same architecture left untrained, and after the anchor transform the small model's 2D map aligns
+  with the medium map far better than the untrained model's does (values on the page, read from the precomputed file).
+grade: TOY_DEMO
+derivation: /models/representation-map/#fig-map
+scope: { checkpoints: [mace-mp-0a-medium, mace-mp-0a-small], model_families: [mace] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Atlas computation, not a published result; numbers are read from the precomputed file on the page, not typed. A 552-environment set: a demonstration of the method, not a measurement of convergence.' }

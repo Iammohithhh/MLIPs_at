@@ -1,4 +1,4 @@
-# Architecture X-ray precompute (CPU). Separate from requirements.txt because mace-torch
+# Architecture X-ray and Representation Map precompute (CPU). Separate from requirements.txt because mace-torch
 # constrains numpy. Install torch from the CPU index first:
 #   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
 torch==2.14.1

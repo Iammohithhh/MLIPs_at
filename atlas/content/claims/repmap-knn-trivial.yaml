@@ -1,0 +1,8 @@
+statement: >-
+  On the Atlas reference set, mutual 10-nearest-neighbour overlap between trained and untrained MACE features is above 0.8: the
+  rattled and compressed copies of each crystal are each other's nearest neighbours in any of these feature spaces, so this metric
+  rewards the construction of the set, not learned chemistry.
+grade: TOY_DEMO
+derivation: /models/representation-map/#fig-map
+scope: { model_families: [mace] }
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,187 @@
+/* Representation Map: three linked 2D maps and a 3D view of the selected environment. */
+
+.rep-loading {
+  padding: 2rem;
+  font: 0.9rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.rep-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem 0.4rem;
+}
+.rep-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  margin: 0;
+  padding: 0.2rem 1rem 0.5rem;
+  list-style: none;
+  font: 0.76rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.rep-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.rep-legend .dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+}
+.rep-legend .diamond {
+  width: 0.55rem;
+  height: 0.55rem;
+  transform: rotate(45deg);
+  border: 1.5px solid var(--atlas-ink);
+}
+.rep-maps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--atlas-rule);
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.rep-map {
+  margin: 0;
+  padding: 0.6rem 0.7rem 0.4rem;
+  min-width: 0;
+}
+.rep-map + .rep-map {
+  border-left: 1px solid var(--atlas-rule);
+}
+.rep-map figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 0.6rem;
+  font: 0.8rem var(--font-sans);
+  color: var(--atlas-ink);
+}
+.rep-map figcaption small {
+  color: var(--atlas-ink-muted);
+}
+.rep-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+.rep-map .rep-bg {
+  fill: var(--atlas-canvas);
+}
+.rep-map .rep-anchor {
+  fill: none;
+  stroke-width: 1.6;
+}
+.rep-map .rep-nn-ring,
+.rep-map .rep-hover,
+.rep-map .rep-sel {
+  fill: none;
+  pointer-events: none;
+}
+.rep-map .rep-nn-ring {
+  stroke-width: 1.1;
+}
+.rep-map .rep-sel {
+  stroke-width: 2.6;
+}
+.rep-map .rep-hover {
+  stroke-width: 1.5;
+  stroke-dasharray: 2 2;
+}
+.rep-hint {
+  margin: 0;
+  padding: 0.6rem 1rem;
+  min-height: 2.6rem;
+  font: 0.82rem/1.45 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.rep-hint strong {
+  color: var(--atlas-ink);
+}
+.rep-side {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  padding: 0.9rem 1rem;
+  min-width: 0;
+}
+.rep-h {
+  margin: 0;
+  font: 600 0.75rem var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--atlas-arch);
+}
+.rep-nn-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 0.6rem;
+  margin: 0;
+  font: 600 0.8rem var(--font-sans);
+}
+.rep-nn-head small {
+  font-weight: 400;
+  color: var(--atlas-ink-muted);
+}
+.rep-nn ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0.3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rep-nn button {
+  font: 0.72rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: var(--atlas-canvas);
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.35rem;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+}
+.rep-nn button:hover,
+.rep-nn button:focus-visible {
+  border-color: var(--atlas-arch);
+}
+.rep-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.3rem;
+  font: 0.78rem/1.4 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.rep-table th,
+.rep-table td {
+  padding: 0.3rem 0.4rem 0.3rem 0;
+  border-bottom: 1px solid var(--atlas-rule);
+  text-align: right;
+}
+.rep-table th:first-child,
+.rep-table td:first-child {
+  text-align: left;
+}
+.rep-table th {
+  font-size: 0.68rem;
+  color: var(--atlas-ink-faint);
+  font-weight: 600;
+}
+.rep-table .is-high {
+  color: var(--atlas-verified);
+  font-weight: 700;
+}
+
+@media (max-width: 860px) {
+  .rep-maps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rep-map + .rep-map {
+    border-left: 0;
+    border-top: 1px solid var(--atlas-rule);
+  }
+}

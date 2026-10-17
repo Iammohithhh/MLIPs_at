@@ -1,0 +1,12 @@
+statement: >-
+  Li and Walsh projected the atomic embeddings of seven foundation MLIPs (three MACE-MP-0 sizes, MACE and SevenNet trained on
+  OMat24, and two Orb-v3 models) onto cosine similarities to a shared set of anchor environments and found a common geometry:
+  raw embeddings are incompatible coordinate systems even for MACE-MP-0 variants with the same training data, while the anchored
+  representations align globally (high Procrustes scores, highest among MACE variants) but agree poorly locally (low mutual
+  kNN overlap), with the non-equivariant Orb-v3 models the most distinct; an untrained MACE showed no chemical structure.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: li2026platonic, locator: 'arXiv v1, Results; Eqs. (1)–(2); Figs. 1, 3, 4' }
+scope: { model_families: [mace, orb, sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

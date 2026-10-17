@@ -4676,6 +4676,65 @@
    "referenced_works": []
   }
  },
+ "li2026platonic": {
+  "arxiv": {
+   "authors": [
+    "Zhenzhu Li",
+    "Aron Walsh"
+   ],
+   "id": "2512.05349v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-12-05",
+   "title": "Platonic representation of foundation machine learning interatomic potentials",
+   "updated": "2025-12-05"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2025, 2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Li, Z.' vs fetched ['li', 'li']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Li",
+     "given": "Zhenzhu"
+    },
+    {
+     "family": "Walsh",
+     "given": "Aron"
+    }
+   ],
+   "container": "Nature Machine Intelligence",
+   "doi": "10.1038/s42256-026-01235-7",
+   "issue": "5",
+   "page": "830-840",
+   "title": "Platonic representation of foundation machine learning interatomic potentials",
+   "type": "journal-article",
+   "volume": "8",
+   "year": 2026
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 6,
+   "id": "W4417142359",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "lyddane1941lst": {
   "arxiv": null,
   "checks": [

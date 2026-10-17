@@ -1,0 +1,14 @@
+title: Representation Map of three MACE models on a reference set of environments
+question: Do two independently trained MACE checkpoints organise atomic environments alike, and how does that compare with the same architecture left untrained?
+kind: figure
+status: PRECOMPUTED
+tier: T5
+page: /models/representation-map/
+assumptions:
+  - { term: Reference set, value: '98 structures built with ASE (22 crystals, each ideal, rattled by σ = 0.05 and 0.15 Å, and 5% compressed; three slabs; a Cu vacancy; six G2 molecules): 1039 atoms, 552 distinct environments after merging identical ones.' }
+  - { term: Features, value: 'Invariant node features after each of the two interactions (256 per atom), from a CPU forward pass with the checkpoint tensors read without unpickling code (atlas_pipeline.representation).' }
+  - { term: Analysis, value: 'PCA to 2D; relative representation by cosine similarity to K stratified anchors (Li & Walsh Eq. 1); orthogonal Procrustes onto the medium map; linear CKA; mutual 10-nearest-neighbour overlap.' }
+concepts: []
+checkpoints: [mace-mp-0a-medium, mace-mp-0a-small]
+claims: [repmap-trained-vs-random, repmap-knn-trivial]
+review: { status: draft, last_checked: 2026-10-17 }
