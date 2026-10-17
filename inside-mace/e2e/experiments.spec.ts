@@ -47,3 +47,14 @@ test('an unknown experiment id falls back to silicon and says so', async ({ page
   await expect(page.getByRole('alert')).toContainText('experiment “ethanol” is not available');
   await expect(page.getByRole('button', { name: /Si · bond stretch/ })).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('the hero actions switch mode and keep the experiment and frame', async ({ page }) => {
+  await page.goto('/?exp=zno-axial-bond&mode=lab&frame=20');
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.200 Å');
+  await page.getByRole('link', { name: 'Walk me through it' }).click();
+  await expect(page).toHaveURL(/exp=zno-axial-bond/);
+  await expect(page).toHaveURL(/mode=walk/);
+  await expect(page.getByText('Stage 1 of 7')).toBeVisible();
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.200 Å');
+  await expect(page.getByRole('button', { name: /ZnO · axial Zn–O bond/ })).toHaveAttribute('aria-pressed', 'true');
+});
