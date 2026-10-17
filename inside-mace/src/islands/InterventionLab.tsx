@@ -280,7 +280,7 @@ function LabBody() {
             <label>
               Colour{' '}
               <select value={colourMode} onChange={(e) => setColourMode(e.target.value as 'element' | 'change')}>
-                <option value="element">by element (Si)</option>
+                <option value="element">by element ({composition(m).map((c) => c.symbol).join(', ')})</option>
                 <option value="change">by feature change, layer {s.layer + 1} scalars</option>
               </select>
             </label>
