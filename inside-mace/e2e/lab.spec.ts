@@ -107,6 +107,12 @@ test('guided walkthrough: seven stages, equation on demand, URL keeps the stage'
   await expect(page.locator('.sd__eq .katex')).toBeVisible();
   await expect(page.getByText(/mace\/modules\/utils.py:22/)).toBeVisible();
   await expect(page.getByText(/autograd force vs central finite difference/)).toBeVisible();
+  // every stored check shows its finite-difference errors inside the panel (Si moved atom, d = +0.100 Å, h = 3e-4 Å: 9.8e−7)
+  await expect(page.locator('.ev__fd li')).toHaveCount(6);
+  const smallest = page.locator('.ev__fd li').nth(3).locator('dd').last();
+  await expect(smallest).toHaveText('9.8e−7');
+  await smallest.scrollIntoViewIfNeeded();
+  await expect(smallest).toBeInViewport({ ratio: 1 });
   await page.getByRole('navigation', { name: 'Computation stages' }).getByRole('button', { name: /Neighbour graph/ }).click();
   await expect(page.getByText('Stage 2 of 7')).toBeVisible();
   await expect(page.getByText(/46 edges \(r < 6 Å\) end on the moved atom/)).toBeVisible();

@@ -588,6 +588,33 @@
   color: var(--atlas-ink-muted);
   margin: 0.4rem 0 0;
 }
+.ev__fd {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.ev__fd li {
+  border: 1px solid var(--atlas-rule);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+}
+.ev__fd-head {
+  margin: 0;
+  font-weight: 600;
+}
+.ev__fd-val {
+  margin: 0.1rem 0 0.25rem;
+}
+.ev .ev__fd-steps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+.ev__fd-steps dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
 .ev__strip {
   display: inline-grid;
   grid-template-columns: repeat(10, 0.7rem);

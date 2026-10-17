@@ -234,32 +234,33 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
     return (
       <div className="ev">
         <p className="ev__title">Check: autograd force vs central finite difference of the total energy</p>
-        <div className="ev__scroll">
-          <table className="mono">
-            <thead>
-              <tr>
-                <th>frame d</th>
-                <th>component</th>
-                <th>autograd (eV/Å)</th>
-                {m.checks.finiteDifference[0]!.steps.map((s) => (
-                  <th key={s.h}>|Δ| at h = {s.h} Å</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {m.checks.finiteDifference.map((r) => (
-                <tr key={`${r.frame}-${r.atom}`}>
-                  <td>{m.displacement.values[r.frame]!.toFixed(3)}</td>
-                  <td>{r.label}</td>
-                  <td>{Math.abs(r.analytic) < 1e-12 ? '0' : r.analytic.toFixed(6)}</td>
-                  {r.steps.map((s) => (
-                    <td key={s.h}>{s.absDiff === 0 ? '0' : s.absDiff.toExponential(1)}</td>
+        {/* One card per stored check, so every column stays readable in the narrow side panel (a wide table hid
+            the finite-difference columns behind a horizontal scroll). */}
+        <ol className="ev__fd">
+          {m.checks.finiteDifference.map((r) => {
+            const d = m.displacement.values[r.frame]!;
+            return (
+              <li key={`${r.frame}-${r.atom}`}>
+                <p className="ev__fd-head">
+                  d = {d > 0 ? '+' : d < 0 ? '−' : ''}
+                  {Math.abs(d).toFixed(3)} Å · {r.label} (atom {r.atom})
+                </p>
+                <p className="ev__fd-val mono">
+                  autograd F = {Math.abs(r.analytic) < 1e-12 ? '0' : r.analytic.toFixed(6).replace('-', '−')} eV/Å
+                </p>
+                <dl className="ev__fd-steps mono" aria-label="absolute difference between finite difference and autograd, by step h">
+                  {r.steps.map((st) => (
+                    <div key={st.h}>
+                      <dt>{st.h}</dt>
+                      <dd>{st.absDiff === 0 ? '0' : st.absDiff.toExponential(1).replace('e-', 'e−')}</dd>
+                    </div>
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </dl>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="ev__note">In each card: top row the step h in Å, below it |F_FD − F_autograd| in eV/Å.</p>
         <p className="ev__note">
           F = −[E(r + h) − E(r − h)] / 2h, every energy a full model evaluation in float64. The error falls about tenfold for each
           3.3× smaller h, the h² behaviour of central differences, so truncation error dominates at these step sizes.{' '}
