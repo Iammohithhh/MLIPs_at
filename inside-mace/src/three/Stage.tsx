@@ -1,12 +1,13 @@
 // Copied from atlas/src/three/Stage.tsx (MLIP Atlas) for inside-mace; keep in sync deliberately, not automatically.
-// inside-mace changes: `preserveDrawingBuffer` (for still-image export); optional `sync` (cameraSync.ts) links the orbit cameras of side-by-side Stages.
+// inside-mace changes: `preserveDrawingBuffer` (for still-image export); optional `sync` (cameraSync.ts) links the orbit cameras of side-by-side Stages;
+// rendering pauses (frameloop 'never') while the canvas is off screen or the tab is hidden, and redraws once on return.
 // A Canvas configured for Atlas figures: render-on-demand, z-up orbit camera,
 // colour-managed output with no tone mapping (so the scene background matches
 // the page canvas exactly), and a static message when WebGL is unavailable.
 
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
@@ -43,10 +44,14 @@ export function Stage({
   /** Keep the last frame readable so the canvas can be exported as an image. */
   preserveDrawingBuffer?: boolean;
 }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const visible = useOnScreen(canvasRef);
   return (
     <Canvas
+      ref={canvasRef}
+      data-rendering={visible ? 'on-demand' : 'paused'}
       flat
-      frameloop="demand"
+      frameloop={visible ? 'demand' : 'never'}
       dpr={[1, 2]}
       gl={{ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer }}
       camera={{ position: view.position, fov, near: 0.5, far: 600, up: [0, 0, 1] }}
@@ -59,12 +64,42 @@ export function Stage({
       role="img"
     >
       <Background color={background} />
+      <RedrawOnReturn visible={visible} />
       <Controls view={view} resetKey={resetKey} minDistance={minDistance} maxDistance={maxDistance} sync={sync} />
       {children}
     </Canvas>
   );
 }
 
+
+/** True while the element intersects the viewport and the document is visible (brief §15: pause hidden work). */
+function useOnScreen(ref: React.RefObject<HTMLElement | null>): boolean {
+  const [inView, setInView] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((entries) => setInView(entries.some((e) => e.isIntersecting)), { rootMargin: '100px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+  useEffect(() => {
+    const on = () => setPageVisible(document.visibilityState !== 'hidden');
+    on();
+    document.addEventListener('visibilitychange', on);
+    return () => document.removeEventListener('visibilitychange', on);
+  }, []);
+  return inView && pageVisible;
+}
+
+/** State may change while paused (e.g. the slider below a scrolled-away scene); draw once when visible again. */
+function RedrawOnReturn({ visible }: { visible: boolean }) {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    if (visible) invalidate();
+  }, [visible, invalidate]);
+  return null;
+}
 
 function Background({ color }: { color: string }) {
   const scene = useThree((s) => s.scene);
