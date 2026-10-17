@@ -2,6 +2,7 @@
 // that snaps to evaluated frames, baseline / perturbed / difference views, and linked energy and force
 // plots. All numbers come from the precomputed MACE-MP-0a medium evaluations in the manifest.
 
+import { fmtSigned } from '../lib/format';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   axialForce,
@@ -87,11 +88,7 @@ function mn(t: string): string {
   return t.replace(/^-/, '−');
 }
 
-function fmt(x: number | null, digits = 3, unit = ''): string {
-  if (x === null || !Number.isFinite(x)) return '—';
-  const s = Math.abs(x) < 10 ** -digits && x !== 0 ? x.toExponential(2) : x.toFixed(digits);
-  return `${x > 0 ? '+' : x < 0 ? '−' : ''}${s.replace('-', '')}${unit ? ` ${unit}` : ''}`;
-}
+const fmt = fmtSigned;
 
 export default function InterventionLab({ manifest }: { manifest: Manifest }) {
   const lab = useMemo(() => makeLab(manifest), [manifest]);

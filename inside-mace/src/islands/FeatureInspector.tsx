@@ -153,5 +153,5 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
 
 /** True minus sign for displayed numbers (U+2212). */
 function mn(t: string): string {
-  return t.replace(/^-/, '−');
+  return t.replace(/-/g, '−');
 }
