@@ -1,5 +1,5 @@
 // Copied from atlas/src/three/Stage.tsx (MLIP Atlas) for inside-mace; keep in sync deliberately, not automatically.
-// inside-mace change: optional `sync` (cameraSync.ts) links the orbit cameras of side-by-side Stages.
+// inside-mace changes: `preserveDrawingBuffer` (for still-image export); optional `sync` (cameraSync.ts) links the orbit cameras of side-by-side Stages.
 // A Canvas configured for Atlas figures: render-on-demand, z-up orbit camera,
 // colour-managed output with no tone mapping (so the scene background matches
 // the page canvas exactly), and a static message when WebGL is unavailable.
@@ -26,6 +26,7 @@ export function Stage({
   minDistance = 8,
   maxDistance = 140,
   sync,
+  preserveDrawingBuffer = false,
 }: {
   view: StageView;
   /** Change to animate back to `view`. */
@@ -38,13 +39,15 @@ export function Stage({
   minDistance?: number;
   maxDistance?: number;
   sync?: CameraSync;
+  /** Keep the last frame readable so the canvas can be exported as an image. */
+  preserveDrawingBuffer?: boolean;
 }) {
   return (
     <Canvas
       flat
       frameloop="demand"
       dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer }}
       camera={{ position: view.position, fov, near: 0.5, far: 600, up: [0, 0, 1] }}
       onCreated={({ scene, camera }) => {
         scene.background = new THREE.Color(background);

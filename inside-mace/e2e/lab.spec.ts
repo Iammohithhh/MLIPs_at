@@ -206,3 +206,17 @@ test('presentation mode: scripted demonstration steps, status visible, link back
   await expect(page).not.toHaveURL(/present=1/);
   expect(errors).toEqual([]);
 });
+
+test('still-image export downloads a PNG of the current state', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto('/?frame=24&view=split');
+  await page.waitForTimeout(1500);
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Save image (PNG)' }).click()]);
+  expect(dl.suggestedFilename()).toBe('inside-mace.png');
+  const path = await dl.path();
+  const fs = await import('node:fs');
+  const buf = fs.readFileSync(path!);
+  expect(buf.subarray(1, 4).toString()).toBe('PNG');
+  expect(buf.length).toBeGreaterThan(50_000);
+  expect(errors).toEqual([]);
+});

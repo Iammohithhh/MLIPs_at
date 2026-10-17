@@ -20,6 +20,7 @@ import { neighbourhood, bonds, graphEdges } from '../lib/scene';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
 import { demoSteps } from '../lib/demo';
+import { figureText, type FigureText } from '../lib/figureText';
 import { Stage } from '../three/Stage';
 import { CameraSync } from '../three/cameraSync';
 import { Arrows, AtomPicker, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShadingUniforms, type AtomBuffers, type ColoredLine, type Segment } from '../three/primitives';
@@ -269,6 +270,7 @@ export default function InterventionLab() {
             <button onClick={() => set({ frame: B, view: 'perturbed', atom: moved })}>Reset experiment</button>
             <button onClick={() => { setCamera('overview'); setResetKey((x) => x + 1); }}>Reset camera</button>
             <button onClick={() => set({ present: true, demo: 1 })}>Presentation mode</button>
+            <button onClick={() => exportPng(figureText(m, s, colourMode, FORCE_SCALE, window.location.href))}>Save image (PNG)</button>
           </div>
           <div className="lab__actions" role="group" aria-label="Camera presets">
             {(Object.keys(PRESET_LABEL) as CameraPreset[]).map((c) => (
@@ -388,7 +390,7 @@ function Scene(props: {
 
   return (
     <div className="lab__canvas">
-      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync}>
+      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync} preserveDrawingBuffer>
         <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>
@@ -596,4 +598,86 @@ function Plots({ frame, onFrame, d }: { frame: number; onFrame: (k: number) => v
       })}
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// Still-image export: the visible scene canvas(es) plus title, settings, units, legends, status and source.
+
+function wrap(ctx: CanvasRenderingContext2D, text: string, width: number): string[] {
+  const out: string[] = [];
+  let line = '';
+  for (const w of text.split(' ')) {
+    const t = line ? `${line} ${w}` : w;
+    if (ctx.measureText(t).width > width && line) {
+      out.push(line);
+      line = w;
+    } else line = t;
+  }
+  if (line) out.push(line);
+  return out;
+}
+
+export function exportPng(t: FigureText): void {
+  const canvases = [...document.querySelectorAll<HTMLCanvasElement>('.lab__stage canvas')];
+  if (!canvases.length) return;
+  const W = 1800;
+  const M = 48;
+  const gap = 6;
+  const sceneW = W - 2 * M;
+  const cw = (sceneW - gap * (canvases.length - 1)) / canvases.length;
+  const ch = Math.round(cw * (canvases[0]!.height / canvases[0]!.width));
+  const out = document.createElement('canvas');
+  const ctx = out.getContext('2d');
+  if (!ctx) return;
+  const mono = '"JetBrains Mono Variable", ui-monospace, monospace';
+  const sans = '"Inter Variable", system-ui, sans-serif';
+  ctx.font = `600 40px ${sans}`;
+  const titleLines = wrap(ctx, t.title, sceneW);
+  ctx.font = `22px ${mono}`;
+  const textLines = [...t.settings, ...t.legend].flatMap((l) => wrap(ctx, l, sceneW));
+  ctx.font = `20px ${sans}`;
+  const footLines = [...wrap(ctx, t.attribution, sceneW), ...wrap(ctx, `Source: ${t.source}`, sceneW)];
+  const H = M + titleLines.length * 50 + 46 + ch + 24 + textLines.length * 32 + 16 + footLines.length * 28 + M;
+  out.width = W;
+  out.height = H;
+  ctx.fillStyle = COLORS.stage;
+  ctx.fillRect(0, 0, W, H);
+  let y = M + 38;
+  ctx.fillStyle = '#dde5e2';
+  ctx.font = `600 40px ${sans}`;
+  for (const l of titleLines) {
+    ctx.fillText(l, M, y);
+    y += 50;
+  }
+  ctx.font = `600 20px ${mono}`;
+  ctx.fillStyle = COLORS.mint;
+  ctx.fillText(t.status.toUpperCase(), M, y);
+  y += 26;
+  canvases.forEach((c, i) => {
+    ctx.drawImage(c, M + i * (cw + gap), y, cw, ch);
+    const label = canvases.length > 1 ? t.panes[i] : undefined;
+    if (label) {
+      ctx.font = `600 22px ${mono}`;
+      ctx.fillStyle = i === 0 ? COLORS.mint : COLORS.amber;
+      ctx.fillText(label, M + i * (cw + gap) + 16, y + ch - 18);
+    }
+  });
+  y += ch + 40;
+  ctx.font = `22px ${mono}`;
+  ctx.fillStyle = '#dde5e2';
+  for (const l of textLines) {
+    ctx.fillText(l, M, y);
+    y += 32;
+  }
+  y += 8;
+  ctx.font = `20px ${sans}`;
+  ctx.fillStyle = '#9fb0ab';
+  for (const l of footLines) {
+    ctx.fillText(l, M, y);
+    y += 28;
+  }
+  const a = document.createElement('a');
+  a.download = 'inside-mace.png';
+  a.href = out.toDataURL('image/png');
+  a.click();
 }
