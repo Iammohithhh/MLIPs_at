@@ -70,9 +70,9 @@ def zno_axial_bond() -> dict:
         "partner_rule": "axial",
         "axis_label": "[0001] (c axis) — towards the axial O neighbour",
         "displacements": [round(-0.30 + 0.025 * k, 4) for k in range(25)],  # Å; 0 is the baseline
-        # Local set: moved Zn, its 4 O neighbours (1.975 Å basal ×3, 1.990 Å axial) and the 12 Zn
-        # second neighbours (3.20–3.25 Å). Distinct distances differ slightly, so a distance cutoff
-        # is used instead of counting distinct shells.
+        # Local set (18 atoms): moved Zn, its 4 O neighbours (1.975 Å basal ×3, 1.990 Å axial), the
+        # 12 Zn second neighbours (3.21–3.25 Å) and the O 3.22 Å along c on the far side. Distinct
+        # distances differ slightly, so a distance cutoff is used instead of counting shells.
         "local_cutoff": 3.4,
     }
 

@@ -7,6 +7,12 @@
    "title": "Silicon: push one atom along a Si\u2013Si bond",
    "n": 216,
    "frames": 25
+  },
+  {
+   "id": "zno-axial-bond",
+   "title": "Zinc oxide: push one Zn along its axial Zn\u2013O bond",
+   "n": 300,
+   "frames": 25
   }
  ]
 }
