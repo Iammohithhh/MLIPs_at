@@ -58,3 +58,14 @@ test('the hero actions switch mode and keep the experiment and frame', async ({ 
   await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.200 Å');
   await expect(page.getByRole('button', { name: /ZnO · axial Zn–O bond/ })).toHaveAttribute('aria-pressed', 'true');
 });
+
+test('presentation mode on ZnO: captions from the ZnO run, status and checkpoint visible', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
+  await page.goto('/?exp=zno-axial-bond&present=1&demo=1');
+  await expect(page.getByText(/zinc oxide \(wurtzite\) crystal \(300 atoms\)/)).toBeVisible();
+  await expect(page.getByText(/not relaxed with the model/)).toBeVisible();
+  await expect(page.getByText('Precomputed model evaluations; interactive inspection')).toBeVisible();
+  await expect(page.getByText(/mace-mp-0a-medium · sha256 01bfe221/)).toBeVisible();
+  expect(errors).toEqual([]);
+});

@@ -32,3 +32,24 @@ describe('demonstration sequence', () => {
     expect(r.issues).toHaveLength(2);
   });
 });
+
+import znoRaw from '../data/experiments/zno-axial-bond/manifest.json';
+
+describe('demonstration sequence for the unrelaxed ZnO run', () => {
+  const z = parseManifest(znoRaw);
+  const steps = demoSteps(z);
+  const last = z.frames.length - 1;
+  it('step 1 does not claim zero forces and quotes the stored largest baseline force', () => {
+    expect(steps[0]!.caption).not.toMatch(/zero/);
+    expect(steps[0]!.caption).toContain('not relaxed');
+    const f = okFrameAt(z, z.displacement.baselineIndex)!;
+    const max = Math.max(...f.forces.map((v) => Math.hypot(...v)));
+    expect(steps[0]!.caption).toContain(`${max.toFixed(3)} eV/Å`);
+  });
+  it('captions quote the stored ZnO numbers and URLs carry the experiment id', () => {
+    expect(steps[3]!.caption).toContain(`+${energyChange(z, last)!.toFixed(3)} eV`);
+    expect(steps[1]!.caption).toContain(`−${Math.abs(axialForce(z, last)!).toFixed(2)} eV/Å`);
+    const zck = String(z.provenance.checkpoint);
+    expect(encodeState({ ...defaultState(z, zck), ...steps[1]!.state, present: true, demo: 2 })).toContain('exp=zno-axial-bond');
+  });
+});
