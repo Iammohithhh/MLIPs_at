@@ -3,7 +3,6 @@
 // plots. All numbers come from the precomputed MACE-MP-0a medium evaluations in the manifest.
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import raw from '../data/experiments/si-bond-stretch/manifest.json';
 import {
   axialForce,
   blockScaleMax,
@@ -12,7 +11,6 @@ import {
   force,
   forceChange,
   norm,
-  parseManifest,
   siteEnergyChange,
   type Manifest,
   type Vec3,
@@ -75,8 +73,6 @@ function useLab(): Lab {
   return lab;
 }
 
-const DEFAULT_MANIFEST = parseManifest(raw);
-
 const COLORS = {
   stage: '#141a19',
   atom: '#a9b4b8',
@@ -92,7 +88,7 @@ function fmt(x: number | null, digits = 3, unit = ''): string {
   return `${x > 0 ? '+' : x < 0 ? '−' : ''}${s.replace('-', '')}${unit ? ` ${unit}` : ''}`;
 }
 
-export default function InterventionLab({ manifest = DEFAULT_MANIFEST }: { manifest?: Manifest }) {
+export default function InterventionLab({ manifest }: { manifest: Manifest }) {
   const lab = useMemo(() => makeLab(manifest), [manifest]);
   return (
     <LabContext.Provider value={lab}>
