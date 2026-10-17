@@ -39,4 +39,82 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
 <!-- Each session appends: session #, start/stop time, what was done (with commit hashes),
      verified results (test/build output), open problems, and the exact next steps. -->
 
-_No sessions have run yet._
+
+### Session 1 — 2026-10-17 18:15 → 18:55 UTC
+
+**Done (commits on `claude/inside-mace`):**
+- `8c6a260` Scaffold `inside-mace/` (Astro 7 + React + TS strict; `astro.config.mjs` adapted from Atlas, without
+  Tailwind/MDX/content-integrity). Copied with origin notes: `src/three/*` (atlas/src/three), `src/lib/katex-options.mjs`,
+  `vitest.config.ts`, `tsconfig.json`, `pipeline/inside_mace/capture.py` (= pipeline/atlas_pipeline/xray.py, restricted
+  unpickler + hooks), `pipeline/requirements.txt` (= requirements-xray.txt). `package-lock.json` generated on Linux.
+- Pipeline `pipeline/inside_mace/intervention.py` and its **real data** in `src/data/experiments/si-bond-stretch/`:
+  MACE-MP-0a medium (SHA-256 verified 01bfe221…5845), float64, CPU, mace-torch 0.3.16 / e3nn 0.4.4 / torch 2.14.1+cpu /
+  ase 3.29.0. Si diamond 3×3×3 supercell (216 atoms, cell 16.29 Å > 2·r_max). Moved atom = 105 (nearest the cell centre),
+  axis = unit vector to bonded partner 106 (a [111]-type bond direction; d > 0 shortens that bond). 25 frames,
+  d = −0.300…+0.300 Å in 0.025 Å steps; all 25 evaluated OK (~4 s each). Per frame: energy (full float64), dE, forces,
+  node energies, per-layer readout site terms, per-atom feature-block difference norms for all 216 atoms; lazy chunk
+  `frames/NN.json` (~212 KB) with full h (l=0: 128 ch; l=1: 128×3 for layer 1; layer 2 is scalar-only) and message block
+  norms A for the 17-atom local set (moved atom + first two shells) and radial (46×10) / SH (46×16) of the 46 edges into the
+  moved atom. Checks stored: baseline restoration (re-evaluation: ΔE = 0, ΔF = 0), finite differences (h = 1e-2…3e-4 Å,
+  central, error ∝ h², 9.9e-7 eV/Å at h=3e-4 for the moved atom), rotated input (positions + cell rotated by 50° about
+  (1,2,3)): |ΔE| = 0.0, force equivariance 3e-14, h0 invariance 8e-16, h1 equivariance 5e-16.
+  Observed physics: anharmonic well; ΔE(+0.3) = 0.575 eV vs ΔE(−0.3) = 0.304 eV (compression stiffer); F·û restoring.
+  Layer-1 l=1 features are exactly zero (<1e-12) at the baseline for every atom (Td site symmetry) and appear on displacement.
+- `pipeline/inside_mace/scales.py` → `scales.json` (fixed heatmap colour scales over all frames, derived from chunks).
+- `13263c7` `src/lib/experiment.ts` (zod schema, frame snapping, null-not-zero accessors, ΔE/ΔF/site-energy changes,
+  feature-change metric definitions incl. relative change with a floor of 0.05·median baseline norm, MIC geometry),
+  `src/lib/urlState.ts` (validated URL state: v, exp, ckpt, mode, atom, frame, stage, layer, ch, view; issues reported).
+- `c065a8d`, `a56e7ef`, `7ae111e`, `27b5e2a`, `a6fec2f`: page `src/pages/index.astro` with hero (headline, two actions),
+  `InterventionLab.tsx` (3D neighbourhood within 6 Å by minimum image, moved atom halo, displacement path, graph edges
+  labelled as model edges ≠ bonds, Si–Si sticks <2.6 Å, force arrows 1 Å = 1 eV/Å, baseline/perturbed/difference,
+  colour-by-feature-change with legend, slider + ± buttons snapping to frames, readouts, reset experiment/camera, URL
+  sync), `FeatureInspector.tsx` (128-channel heatmaps baseline / frame / difference, channel selection, l=1 readout),
+  `SceneGuard.tsx` (WebGL detection + error boundary → static fallback), `StagePanel.tsx` + `src/lib/stages.ts` (seven
+  stages: plain sentence, what changed, KaTeX equation on demand, recorded tensor, mace-torch 0.3.16 file:line locators —
+  verified against site-packages), "Walk me through it" mode with stage-driven scene overlays.
+- `3e3df60`, `7a7e1d6`, plus Playwright suite `e2e/lab.spec.ts` + `playwright.config.ts`.
+
+**Verified (this session):**
+- `npx astro check` 0 errors; `npm test` (Vitest) 24/24 pass; `npx astro build` OK.
+- pytest `inside-mace/pipeline/tests`: 11 passed, 1 skipped; with `INSIDE_MACE_CHECKPOINT=…` the re-evaluation test
+  (stored frame vs fresh model run) passed.
+- Playwright (Chromium /opt/pw-browsers/chromium, swiftshader), projects desktop + mobile (Pixel 7): 18/18 pass —
+  status visible, displacement snapping + URL, keyboard slider, views + reset, shared URL restore + invalid values,
+  no horizontal overflow, WebGL-unavailable fallback, reduced motion, guided walkthrough 1→7 with KaTeX and code locator.
+- Screenshots inspected at 1440×1000 and 390×844 (desktop and mobile both render the scene, no overflow).
+
+**Environment notes for next sessions:**
+- Python venv: `python3 -m venv /home/user/venv-mace && pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+  && pip install -r inside-mace/pipeline/requirements.txt` (~2 min). Checkpoint downloads from the GitHub release URL fine.
+  Full pipeline run ≈ 5.5 min on this CPU.
+- `astro preview` in Astro 7 detaches into a background server in non-interactive shells (and only one may run); the
+  Playwright config therefore serves `dist/` with `python3 -m http.server`. Run `npx astro build` before `npx playwright test
+  --project=desktop --project=mobile`.
+
+**Open problems / known gaps:**
+- Walk mode: scene overlays only toggle edges/shell/arrows per stage; the stage-specific tensor views (radial/SH bars for
+  edges into the moved atom, A-norm per l, site-energy bars, force decomposition) are not built yet. Scene-toggle
+  checkboxes do not reflect walk-mode overrides.
+- No "Trace the change" reveal sequence (brief §9), no "Predict before revealing" prompt, no GSAP transitions yet.
+- Rotation demonstration (§10) data exists in the manifest (`checks.rotation`, incl. rotated local features) but has no UI.
+- No camera presets (overview / selected environment / comparison) or synchronised side-by-side baseline|perturbed
+  cameras (§7 asks for both states together with synced cameras; currently a toggle).
+- Atom picking in the scene is wired (`onPick`) but `AtomPicker` is not mounted yet; atom selection only via URL.
+- Plot tick text scales with SVG width (large on desktop); plots need axis labels/units in-figure and a linked
+  per-atom ΔEᵢ plot; feature-change-vs-d per layer plot ("which parts respond") still missing.
+- Presentation mode, still-image export, scripted demo sequence, README (incl. interpretation limits), mobile
+  performance measurement, render pausing when hidden, lazy loading of manifest (648 KB, currently bundled) — not done.
+- Only one experiment (Si). ZnO (wurtzite) second experiment would show a two-species case; ethanol not planned
+  (domain mismatch) — if added, must carry the mismatch caveat.
+
+**Next steps (in dependency order):**
+1. Mount `AtomPicker` in the scene; selected-neighbour highlight; atom info in the panel. Camera presets + side-by-side
+   synced baseline|perturbed views (desktop), single scene with toggle (mobile).
+2. Stage-specific inspectors for walk mode using the chunk data (edges radial/SH, A norms by l, h heatmap, site energy
+   bars with ΣEᵢ = E, force = −∂E/∂r with FD table from `checks.finiteDifference`).
+3. "Trace the change" sequence (stage-by-stage highlight of per-atom change norms, layer 1 → layer 2 → site energies →
+   forces; labelled as a dependency explanation, not timing), optional predict-before-reveal.
+4. Rotation demonstration panel from `checks.rotation` (camera rotation vs input rotation; E invariant, F → RF, h0
+   invariant, h1 → R h1 with the stored rotated local features).
+5. Presentation mode (`?present=1`), PNG export with title/settings/units/status/attribution, demo-sequence script,
+   README + interpretation limits + reproduction; move manifest to lazy fetch.
