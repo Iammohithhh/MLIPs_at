@@ -1147,3 +1147,11 @@
 body.is-present .exp-pick {
   display: none;
 }
+
+/* Desktop: the scene stays in view while the side panel (controls, walkthrough text) scrolls past it. */
+@media (min-width: 901px) and (min-height: 640px) {
+  .lab__grid > .lab__stage {
+    position: sticky;
+    top: 0.75rem;
+  }
+}
