@@ -1,4 +1,4 @@
-// Recorded evidence shown with the energy and forces stages of the walkthrough.
+// Recorded evidence shown with each stage of the walkthrough (all values from the precomputed frame chunks).
 import { useEffect, useState } from 'react';
 import { norm, okFrameAt, type Manifest } from '../lib/experiment';
 import type { Stage } from '../lib/urlState';
@@ -105,6 +105,72 @@ function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
   );
 }
 
+type FeatureChunk = FrameChunk & { layers: { h0: number[][]; h1: number[][][] | null }[] };
+
+/** One row of 128 cells, diverging colour (teal < 0 < amber) or sequential for non-negative norms. */
+function Cells({ v, max, label, signed }: { v: number[]; max: number; label: string; signed: boolean }) {
+  return (
+    <span className="ev__embed" role="img" aria-label={label}>
+      {v.map((x, c) => (
+        <span
+          key={c}
+          title={`channel ${c}: ${x.toPrecision(4)}`}
+          style={{ background: !signed || x >= 0 ? `rgb(240 169 69 / ${max > 0 ? Math.abs(x) / max : 0})` : `rgb(58 159 140 / ${Math.abs(x) / max})` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom: number }) {
+  const [c, setC] = useState<FeatureChunk | null>(null);
+  const [b, setB] = useState<FeatureChunk | null>(null);
+  useEffect(() => {
+    let live = true;
+    loadChunk(frame).then((x) => live && setC(x as FeatureChunk), () => live && setC(null));
+    loadChunk(m.displacement.baselineIndex).then((x) => live && setB(x as FeatureChunk), () => live && setB(null));
+    return () => {
+      live = false;
+    };
+  }, [frame, m]);
+  const row = m.local.indexOf(atom);
+  if (row < 0) return <p className="ev__note">Full feature vectors are stored for the moved atom and its first two shells only; pick one of those atoms.</p>;
+  if (!c || !b) return <p className="ev__note">Loading feature data…</p>;
+  const blocks: { key: string; title: string; base: number[]; cur: number[]; signed: boolean }[] = [];
+  c.layers.forEach((L, t) => {
+    const B0 = b.layers[t]!;
+    blocks.push({ key: `${t}s`, title: `Layer ${t + 1}, 128 scalars h⁽${t + 1}⁾ (l = 0)`, base: B0.h0[row]!, cur: L.h0[row]!, signed: true });
+    if (L.h1 && B0.h1)
+      blocks.push({ key: `${t}v`, title: `Layer ${t + 1}, 128 vectors (l = 1): length |h| per channel`, base: B0.h1[row]!.map(norm), cur: L.h1[row]!.map(norm), signed: false });
+  });
+  return (
+    <div className="ev">
+      <p className="ev__title">
+        Atom {atom}: baseline vs this frame (d = {c.d.toFixed(3)} Å)
+      </p>
+      {blocks.map((bl) => {
+        const max = Math.max(...bl.base.map(Math.abs), ...bl.cur.map(Math.abs));
+        return (
+          <div key={bl.key} className="ev__feat">
+            <p className="ev__note">
+              {bl.title}; colour {bl.signed ? '±' : '0 –'} {max === 0 ? '0 (all exactly zero)' : max.toPrecision(3)}, shared by both rows
+            </p>
+            <span className="ev__rowlabel mono">baseline</span>
+            <Cells v={bl.base} max={max} signed={bl.signed} label={`${bl.title}, baseline`} />
+            <span className="ev__rowlabel mono">d = {c.d.toFixed(3)} Å</span>
+            <Cells v={bl.cur} max={max} signed={bl.signed} label={`${bl.title}, this frame`} />
+          </div>
+        );
+      })}
+      <p className="ev__note">
+        Each new feature is a learned linear mix of products of up to three aggregated tensors A (correlation order ν = 3), so one
+        feature can depend on up to three neighbours jointly (four-body terms) in a single layer. The vector channels are rotation-equivariant, so only
+        their lengths are drawn here, not their directions. In the perfect crystal the layer-1 vectors are exactly zero by symmetry.
+      </p>
+    </div>
+  );
+}
+
 export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: Stage; frame: number; atom: number }) {
   const f = okFrameAt(m, frame);
   if (!f) return null;
@@ -129,6 +195,7 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
       </div>
     );
   }
+  if (stage === 'features') return <FeatureEvidence m={m} frame={frame} atom={atom} />;
   if (stage === 'messages') return <MessageEvidence m={m} frame={frame} atom={atom} />;
   if (stage === 'radial' || stage === 'neighbours') return <EdgeEvidence m={m} frame={frame} />;
   if (stage === 'energy') {

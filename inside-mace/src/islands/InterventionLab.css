@@ -892,3 +892,14 @@
     transition: none;
   }
 }
+.ev__feat {
+  margin-top: 0.5rem;
+}
+.ev__feat .ev__embed {
+  margin-top: 0.15rem;
+  margin-bottom: 0.25rem;
+}
+.ev__rowlabel {
+  font-size: 0.65rem;
+  color: var(--atlas-ink-muted);
+}
