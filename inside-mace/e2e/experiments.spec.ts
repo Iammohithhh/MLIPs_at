@@ -12,6 +12,8 @@ test('a ZnO link restores the ZnO experiment with its own numbers and texts', as
   // ΔE(frame 24) = +0.707558 eV
   await expect(page.locator('.lab__readouts dd').first()).toContainText('+0.7076 eV');
   await expect(page.getByRole('alert')).toHaveCount(0);
+  // unrelaxed input: stored baseline F·û on the moved Zn = +0.0371 eV/Å
+  await expect(page.locator('.lab__baseline-note')).toContainText('+0.0371 eV/Å at d = 0');
   await expect(page.locator('.lab').first()).not.toContainText('zero by symmetry');
   await expect(page.locator('.lab').first()).not.toContainText(/216 (Si )?atoms|\[216/);
   expect(errors).toEqual([]);
@@ -37,6 +39,7 @@ test('switching experiments keeps the mode, resets the frame, and updates the UR
   await page.getByRole('button', { name: /Si · bond stretch/ }).click();
   await expect(page).toHaveURL(/exp=si-bond-stretch/);
   await expect(page.getByRole('button', { name: /Si · bond stretch/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.lab__baseline-note')).toHaveCount(0); // Si baseline forces are zero
 });
 
 test('an unknown experiment id falls back to silicon and says so', async ({ page }) => {

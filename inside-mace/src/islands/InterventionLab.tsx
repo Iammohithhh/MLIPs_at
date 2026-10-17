@@ -18,7 +18,7 @@ import {
   type Vec3,
 } from '../lib/experiment';
 import { neighbourhood, bonds, graphEdges, BOND_CUTOFF } from '../lib/scene';
-import { ELEMENT_DISPLAY, composition, experimentInfo } from '../lib/experimentInfo';
+import { ELEMENT_DISPLAY, baselineFacts, composition, experimentInfo } from '../lib/experimentInfo';
 import { decodeState, encodeState, type View } from '../lib/urlState';
 import { useExperiment } from '../lib/store';
 import { demoSteps } from '../lib/demo';
@@ -569,8 +569,11 @@ function Readouts({ frame, atom }: { frame: number; atom: number }) {
   const F = force(m, frame, atom);
   const dEi = siteEnergyChange(m, frame, atom);
   const fa = axialForce(m, frame);
+  const facts = useMemo(() => baselineFacts(m), [m]);
+  const fa0 = axialForce(m, m.displacement.baselineIndex);
   return (
-    <dl className="lab__readouts">
+    <>
+      <dl className="lab__readouts">
       <div>
         <dt>ΔE total</dt>
         <dd className="mono delta">{fmt(dE, 4, 'eV')}</dd>
@@ -587,7 +590,14 @@ function Readouts({ frame, atom }: { frame: number; atom: number }) {
         <dt>ΔEᵢ, atom {atom} site energy</dt>
         <dd className="mono delta">{fmt(dEi, 4, 'eV')}</dd>
       </div>
-    </dl>
+      </dl>
+      {!facts.forceFree && (
+        <p className="lab__baseline-note">
+          The baseline is not a minimum of this model: the unrelaxed input already carries forces (on the moved atom F·û = {fmt(fa0, 4, 'eV/Å')} at d = 0;
+          largest {facts.maxForce.toFixed(4)} eV/Å). Forces here are totals; the Difference view shows only the change caused by the move.
+        </p>
+      )}
+    </>
   );
 }
 

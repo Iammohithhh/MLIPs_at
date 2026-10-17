@@ -1083,3 +1083,20 @@
   font-size: 0.72rem;
   color: var(--im-stage-muted);
 }
+@media (max-width: 600px) {
+  .exp-pick {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .exp-pick__label {
+    grid-column: 1 / -1;
+  }
+}
+.lab__baseline-note {
+  margin: 0.5rem 0 0;
+  padding: 0.45rem 0.6rem;
+  border-left: 3px solid var(--im-amber);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--atlas-ink-muted);
+}
