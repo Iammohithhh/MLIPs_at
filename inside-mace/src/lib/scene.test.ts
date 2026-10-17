@@ -40,3 +40,24 @@ describe('neighbourhood (periodic images)', () => {
     expect(bondCount).toBe(4);
   });
 });
+
+import { STAGE_INFO } from './stages';
+import { STAGES } from './urlState';
+
+describe('walkthrough stages', () => {
+  it('cover the seven URL stages in order, each with an equation and an implementation locator', () => {
+    expect(STAGE_INFO.map((s) => s.id)).toEqual([...STAGES]);
+    for (const s of STAGE_INFO) {
+      expect(s.tex.length).toBeGreaterThan(5);
+      expect(s.code.length).toBeGreaterThan(0);
+      expect(/[\x07\x08\x0b\x0c]/.test(s.tex)).toBe(false); // no TeX escapes lost to string processing
+    }
+  });
+  it('neighbour count in the stage text matches the data', () => {
+    const n = neighbourhood(m, B, m.rMax)!.length - 1;
+    expect(STAGE_INFO[1]!.changed).toContain(`${n} neighbours`);
+    const hyper = m.provenance.hyperparameters as { num_bessel: number; avg_num_neighbors: number };
+    expect(STAGE_INFO[2]!.changed).toContain(`${hyper.num_bessel} radial Bessel values`);
+    expect(STAGE_INFO[3]!.plain).toContain(hyper.avg_num_neighbors.toFixed(2));
+  });
+});
