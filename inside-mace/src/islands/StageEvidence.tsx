@@ -220,11 +220,11 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
         <p className="ev__title">This frame (d = {f.d.toFixed(3)} Å)</p>
         <dl className="mono">
           <dt>E_{atom} (site)</dt>
-          <dd>{ei?.toFixed(5)} eV, of which E₀({m.structure.symbols[atom]}) = {e0?.toFixed(5)} eV is a fixed per-element reference</dd>
+          <dd>{eV5(ei)} eV, of which E₀({m.structure.symbols[atom]}) = {eV5(e0)} eV is a fixed per-element reference</dd>
           <dt>Σᵢ Eᵢ, {m.structure.n} atoms</dt>
-          <dd>{sum.toFixed(5)} eV</dd>
+          <dd>{eV5(sum)} eV</dd>
           <dt>E (model total)</dt>
-          <dd>{f.energy.toFixed(5)} eV</dd>
+          <dd>{eV5(f.energy)} eV</dd>
         </dl>
         <p className="ev__note">Site energies are a model-internal partition of E, not separately measurable quantities.</p>
       </div>
@@ -271,4 +271,9 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
     );
   }
   return null;
+}
+
+/** Energy to 5 decimals with a true minus sign; missing values are shown as missing, never as 0. */
+function eV5(x: number | null | undefined): string {
+  return x === null || x === undefined || !Number.isFinite(x) ? '—' : x.toFixed(5).replace('-', '−');
 }
