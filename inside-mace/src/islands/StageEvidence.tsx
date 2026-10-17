@@ -153,7 +153,7 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
         return (
           <div key={bl.key} className="ev__feat">
             <p className="ev__note">
-              {bl.title}; colour {bl.signed ? '±' : '0 –'} {max === 0 ? '0 (all exactly zero)' : max.toPrecision(3)}, shared by both rows
+              {bl.title}; colour {bl.signed ? '±' : '0 –'} {max === 0 ? '0 (all below 10⁻¹², stored as 0)' : max.toPrecision(3)}, shared by both rows
             </p>
             <span className="ev__rowlabel mono">baseline</span>
             <Cells v={bl.base} max={max} signed={bl.signed} label={`${bl.title}, baseline`} />
@@ -165,7 +165,7 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
       <p className="ev__note">
         Each new feature is a learned linear mix of products of up to three aggregated tensors A (correlation order ν = 3), so one
         feature can depend on up to three neighbours jointly (four-body terms) in a single layer. The vector channels are rotation-equivariant, so only
-        their lengths are drawn here, not their directions. In the perfect crystal the layer-1 vectors are exactly zero by symmetry.
+        their lengths are drawn here, not their directions. In the perfect crystal the layer-1 vectors vanish by symmetry (stored values below 10⁻¹² are written as 0).
       </p>
     </div>
   );

@@ -143,11 +143,11 @@ test('trace the change: predict, reveal stage by stage, exact zeros beyond the r
   await trace.getByRole('button', { name: 'Yes, they change' }).click();
   await expect(trace.getByRole('status')).toContainText('Computed: 0 of 169 atoms beyond 6 Å changed');
   await trace.getByRole('button', { name: /^5 Forces/ }).click();
-  await trace.getByRole('button', { name: 'No, exactly unchanged' }).click();
+  await trace.getByRole('button', { name: 'No, unchanged' }).click();
   await expect(trace.getByRole('status')).toContainText('the answer for this frame is yes');
   await trace.getByRole('checkbox', { name: 'Predict before revealing' }).uncheck();
   await trace.getByRole('button', { name: /Layer 2 features/ }).click();
-  await expect(trace.locator('figcaption')).toContainText('194 atoms changed, 22 exactly unchanged');
+  await expect(trace.locator('figcaption')).toContainText('194 atoms changed, 22 unchanged');
   expect(errors).toEqual([]);
 });
 

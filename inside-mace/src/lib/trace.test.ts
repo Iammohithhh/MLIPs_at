@@ -43,7 +43,7 @@ describe('trace the change: receptive field of the two-layer, r_max = 6 Å model
     const F = tracePoints(m, last, 'force', r0s);
     for (const i of far) {
       expect(siteEnergyChange(m, last, i)).toBe(0);
-      expect(F[i]!.value!).toBeGreaterThan(1e-8); // far above float64 round-off (~1e-14 eV/Å)
+      expect(F[i]!.value!).toBeGreaterThan(1e-6); // well above the stored force precision (1e-7 eV/Å)
     }
   });
 

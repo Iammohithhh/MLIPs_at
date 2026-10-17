@@ -4,8 +4,10 @@
 // Each stage reports one non-negative number per atom, keyed to the atom's baseline distance from the
 // moved atom (minimum image). The sequence is an order of computational dependency
 // (geometry → layer 1 → layer 2 → site energies → forces), not a timing or propagation measurement.
-// Exact zeros are kept as exact zeros (the stored float64 difference is bitwise 0), so the view can
-// distinguish "did not change at all" from "changed by a small amount". Missing data is null, never 0.
+// Zeros are kept as zeros so the view can distinguish "no change at the stored precision" from "changed
+// by a small amount". What a zero means differs by stage (`zero` below): feature change norms are computed
+// in float64 by the pipeline and written as 0 when below 1e-12; site energies and forces are stored to
+// 1e-7, so their zero means equal at that precision. Missing data is null, never 0.
 
 import { featureChange, forceChange, mic, norm, okFrameAt, siteEnergyChange, type Manifest } from './experiment';
 
@@ -17,11 +19,14 @@ export interface TraceStage {
   quantity: string;
   unit: string;
   sentence: string;
+  /** What a plotted zero means for this stage. */
+  zero: string;
 }
 
 export const TRACE_STAGES: TraceStage[] = [
   {
     key: 'edges',
+    zero: 'no graph edge to the moved atom in either geometry',
     title: 'Graph edges',
     quantity: '|Δr| of the graph edge between atom i and the moved atom',
     unit: 'Å',
@@ -29,6 +34,7 @@ export const TRACE_STAGES: TraceStage[] = [
   },
   {
     key: 'layer1',
+    zero: 'below 10⁻¹² (written as 0 by the pipeline)',
     title: 'Layer 1 features',
     quantity: '‖Δh⁽¹⁾ᵢ‖, 128 scalar channels',
     unit: 'model units',
@@ -36,6 +42,7 @@ export const TRACE_STAGES: TraceStage[] = [
   },
   {
     key: 'layer2',
+    zero: 'below 10⁻¹² (written as 0 by the pipeline)',
     title: 'Layer 2 features',
     quantity: '‖Δh⁽²⁾ᵢ‖, 128 scalar channels',
     unit: 'model units',
@@ -43,6 +50,7 @@ export const TRACE_STAGES: TraceStage[] = [
   },
   {
     key: 'site',
+    zero: 'equal to the stored precision of 10⁻⁷ eV',
     title: 'Site energies',
     quantity: '|ΔEᵢ|, change of atom i’s energy contribution',
     unit: 'eV',
@@ -50,6 +58,7 @@ export const TRACE_STAGES: TraceStage[] = [
   },
   {
     key: 'force',
+    zero: 'equal to the stored precision of 10⁻⁷ eV/Å',
     title: 'Forces',
     quantity: '‖ΔFᵢ‖, change of the force on atom i',
     unit: 'eV/Å',

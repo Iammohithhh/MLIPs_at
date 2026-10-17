@@ -1,7 +1,7 @@
 // "Trace the change" (brief §9): for the selected evaluated frame, reveal stage by stage which atoms'
 // representations differ from the baseline, plotted against each atom's baseline distance from the moved
-// atom. Every point is a stored float64 difference from the precomputed run; exact zeros are drawn as
-// zeros, not as small values. The step order is computational dependency, not runtime.
+// atom. Every point is a stored float64 difference from the precomputed run; zeros (at the stored
+// precision, see trace.ts) are drawn on their own line, not as small values. The step order is computational dependency, not runtime.
 import { useMemo, useState } from 'react';
 import type { Manifest } from '../lib/experiment';
 import { baselineDistances, stageRange, summarise, tracePoints, TRACE_STAGES, type TracePoint, type TraceStageKey } from '../lib/trace';
@@ -17,7 +17,7 @@ function questions(rMax: number): Partial<Record<TraceStageKey, Question>> {
   return {
     layer1: { ask: `Will the layer-1 features of atoms farther than r_max = ${rMax} Å from the moved atom change?`, group: (r) => r >= rMax, groupLabel: `atoms beyond ${rMax} Å` },
     layer2: { ask: `Will the layer-2 features of atoms between ${rMax} and ${2 * rMax} Å change?`, group: (r) => r >= rMax && r < 2 * rMax, groupLabel: `atoms between ${rMax} and ${2 * rMax} Å` },
-    force: { ask: `The farthest atoms in this cell (beyond ${2 * rMax} Å) keep exactly the same site energy. Will the force on them change?`, group: (r) => r >= 2 * rMax, groupLabel: `atoms beyond ${2 * rMax} Å` },
+    force: { ask: `The farthest atoms in this cell (beyond ${2 * rMax} Å) keep the same site energy (the architecture cannot reach them). Will the force on them change?`, group: (r) => r >= 2 * rMax, groupLabel: `atoms beyond ${2 * rMax} Å` },
   };
 }
 
@@ -57,7 +57,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
       </p>
       {frame === B ? (
         <p className="trace__empty">
-          At the baseline (d = 0) every difference is exactly zero. <button onClick={() => onFrame(m.frames.length - 1)}>Move to d = +{m.displacement.values.at(-1)!.toFixed(3)} Å</button>{' '}
+          At the baseline (d = 0) every difference is zero. <button onClick={() => onFrame(m.frames.length - 1)}>Move to d = +{m.displacement.values.at(-1)!.toFixed(3)} Å</button>{' '}
           <button onClick={() => onFrame(0)}>Move to d = −{Math.abs(m.displacement.values[0]!).toFixed(3)} Å</button>
         </p>
       ) : null}
@@ -115,7 +115,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
                   log scale, {s.unit}
                 </text>
                 <text x={6} y={zeroY + 3} className="trace__lane-unit">
-                  exactly 0 →
+                  zero →
                 </text>
                 {revealed && (
                   <text x={6} y={y0 + 46} className="trace__lane-sum">
@@ -138,7 +138,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
                         onClick={() => onAtom(p.atom)}
                       >
                         <title>
-                          atom {p.atom}, {p.r0.toFixed(2)} Å: {p.value === 0 ? 'exactly 0' : `${p.value.toPrecision(3)} ${s.unit}`}
+                          atom {p.atom}, {p.r0.toFixed(2)} Å: {p.value === 0 ? `0 (${s.zero})` : `${p.value.toPrecision(3)} ${s.unit}`}
                         </title>
                       </circle>
                     ),
@@ -162,8 +162,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
         </svg>
         <figcaption>
           {cur.quantity}. {sumLine(summarise(points[cur.key]))} Each lane has its own fixed log axis (smallest to largest non-zero value
-          over all {m.frames.length - 1} displaced frames); lanes are different quantities and are not compared by height. Dots on the lower line
-          are bitwise-zero differences. Click a dot to select that atom.
+          over all {m.frames.length - 1} displaced frames); lanes are different quantities and are not compared by height. Dots on the lower line are zero: {cur.zero}. Click a dot to select that atom.
         </figcaption>
       </figure>
       <p className="trace__note">
@@ -176,7 +175,7 @@ export function TraceChange({ m, frame, atom, onFrame, onAtom }: { m: Manifest; 
 }
 
 function sumLine(s: ReturnType<typeof summarise>): string {
-  const parts = [`${s.changed} atoms changed`, `${s.exactZero} exactly unchanged`];
+  const parts = [`${s.changed} atoms changed`, `${s.exactZero} unchanged`];
   if (s.missing) parts.push(`${s.missing} without data`);
   return `${parts.join(', ')}${s.reach !== null ? `; farthest changed atom ${s.reach.toFixed(2)} Å away` : ''}.`;
 }
@@ -191,7 +190,7 @@ function Predict({ q, answer, onAnswer, pts }: { q: Question; answer: 'yes' | 'n
       {answer === undefined ? (
         <div className="trace__predict-btns">
           <button onClick={() => onAnswer('yes')}>Yes, they change</button>
-          <button onClick={() => onAnswer('no')}>No, exactly unchanged</button>
+          <button onClick={() => onAnswer('no')}>No, unchanged</button>
         </div>
       ) : (
         <p className="trace__predict-result" role="status">
