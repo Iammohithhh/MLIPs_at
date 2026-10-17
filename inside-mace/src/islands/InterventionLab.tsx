@@ -25,6 +25,7 @@ import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
 import { SceneGuard } from './SceneGuard';
 import { ResponsePlots } from './ResponsePlots';
+import { RotationDemo } from './RotationDemo';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
@@ -184,6 +185,7 @@ export default function InterventionLab() {
         <FeatureInspector m={m} frame={frame} atom={s.atom} layer={s.layer} channel={s.channel} onChannel={(c) => set({ channel: c })} />
       </section>
       <Plots frame={frame} onFrame={(k) => set({ frame: k })} d={d} />
+      <RotationDemo m={m} channel={s.channel} />
       <p className="lab__scope">
         These are observed changes in a fixed model under a specified input perturbation. They are not explanations of chemical reasoning,
         confidence estimates, prediction errors, or calibrated importance.

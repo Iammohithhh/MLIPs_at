@@ -99,6 +99,9 @@ export const manifestSchema = z.object({
           forceEquivarianceMaxAbs: z.number(),
           h0InvarianceMaxAbs: z.array(z.number()),
           h1EquivarianceMaxAbs: z.array(z.number().nullable()),
+          local: z.object({
+            layers: z.array(z.object({ h0: z.array(z.array(z.number())), h1: z.array(z.array(vec3)).nullable() })),
+          }),
         }),
       ),
     }),

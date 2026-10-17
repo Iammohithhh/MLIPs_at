@@ -494,3 +494,42 @@
   font-size: 0.75rem;
   color: var(--im-stage-muted);
 }
+.rot {
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule);
+  border-radius: var(--im-radius);
+  padding: 1rem;
+}
+.rot h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+}
+.rot__lede,
+.rot__note {
+  font-size: 0.85rem;
+  color: var(--atlas-ink-muted);
+  margin: 0 0 0.6rem;
+}
+.rot__lede .label {
+  color: var(--atlas-phys);
+}
+.rot__grid {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.35rem 1rem;
+  font-size: 0.75rem;
+  margin: 0 0 0.6rem;
+}
+.rot__grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.rot__grid b {
+  color: var(--atlas-verified);
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .rot__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

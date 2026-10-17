@@ -119,3 +119,12 @@ test('atom selection updates readouts and URL', async ({ page }) => {
   await expect(page.getByText('|F| on atom 106')).toBeVisible();
   await expect(page.getByText(/Layer 1 features h of atom 106/)).toBeVisible();
 });
+
+test('rotation comparison shows invariant energy and rotated force', async ({ page }) => {
+  await page.goto('/?ch=3');
+  const rot = page.getByRole('region', { name: 'What changes when the coordinate frame changes?' });
+  await expect(rot).toContainText('invariant');
+  await expect(rot).toContainText('rotates with the input');
+  await expect(rot).toContainText(/Layer 1 vector, ch 3/);
+  await expect(rot).toContainText(/rotated run \(/);
+});
