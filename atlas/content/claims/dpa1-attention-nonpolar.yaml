@@ -1,0 +1,9 @@
+statement: >-
+  The gate r̂_j · r̂_k of DPA-1's attention is linear in each neighbour direction, and with a single species the softmax weights
+  and values depend only on distances, so at a site where every radial shell has zero dipole the attention update vanishes before
+  layer normalisation and DPA-1's descriptor equals DeepPot-SE's form on the same embeddings: in ideal fcc and hcp it cannot
+  separate the two until a shell present in only one of them enters the cutoff.
+grade: THEORY
+derivation: /models/dpa/#attention-derivation
+scope: { model_families: [dpa] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'For Eqs. (6)–(10) as written in DPA-1 arXiv v4, with one species. Checked numerically in dpa.test.ts. Not checked against the DeePMD-kit implementation, whose attention options may differ.' }

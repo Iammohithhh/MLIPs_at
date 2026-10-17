@@ -1,0 +1,10 @@
+statement: >-
+  In an ablation on high-entropy-alloy data, the type embedding and the attention layers substantially improved DPA-1's accuracy
+  over DeepPot-SE, while the angular gate R̂ R̂ᵀ gave a smaller but not negligible improvement; replacing the network embedding
+  with Gaussian kernels lowered accuracy slightly and made the model non-smooth under periodic boundary conditions.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: zhang2024dpa1, locator: 'arXiv v4, App. A; Table A.1' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

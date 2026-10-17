@@ -1,0 +1,16 @@
+name: DPA-3.1-MPtrj
+family: dpa
+implementation: deepmd-kit
+version: v0.3
+release: { date: 2025-06-05, source: zhang2026dpa3 }
+parameters: { total: 4810679 }
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: '24 layers, cutoffs 6.0 Å (bonds) and 4.5 Å (angles); AdamW, 120 epochs, batch size 64 (Matbench Discovery model card).'
+outputs: [energy, forces, stress]
+licence: LGPL-3.0 (code and checkpoint, per the Matbench Discovery model card)
+weights: { url: 'https://figshare.com/files/55141124' }
+claims: [dpa3-ligs]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Model card models/deepmd/dpa-3.1-mptrj.yml in Matbench Discovery at commit 6ffd807 (lifecycle: superseded by DPA-4.0-Pro-MPtrj). Cutoffs agree with the MPtrj columns of Table S-9 in the paper. Not downloaded.' }

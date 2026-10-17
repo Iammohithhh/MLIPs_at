@@ -16,6 +16,7 @@ const PAGES: ReadonlyMap<string, string> = new Map([
   ['uma', 'esen-uma'],
   ['grace', 'grace'],
   ['sevennet', 'sevennet'],
+  ['dpa', 'dpa'],
 ]);
 
 export const MODEL_PAGES: ReadonlySet<string> = new Set(PAGES.keys());

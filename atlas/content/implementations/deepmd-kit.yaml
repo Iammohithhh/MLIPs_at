@@ -1,0 +1,7 @@
+name: DeePMD-kit
+repo: https://github.com/deepmodeling/deepmd-kit
+language: Python and C++ (LAMMPS, i-PI, GROMACS and other interfaces)
+framework: pytorch
+licence: LGPL-3.0-or-later
+families: [dpa]
+review: { status: draft, last_checked: 2026-10-17, notes: 'README and LICENSE read at commit cc7fdd7 (master, 2026-10-17): TensorFlow, PyTorch, JAX and Paddle backends (framework recorded as PyTorch, the backend of the DPA-2/DPA-3 checkpoints); DPA3 training and inference from version 3.1.0 (DPA-3 paper, Data availability).' }

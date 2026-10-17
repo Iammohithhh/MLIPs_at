@@ -1,0 +1,20 @@
+title: Pretraining of attention-based deep learning potential model for molecular simulation
+topic: foundation-models-data
+authors:
+  - 'Zhang, D.'
+  - 'Bi, H.'
+  - 'Dai, F.-Z.'
+  - 'Jiang, W.'
+  - 'Liu, X.'
+  - 'Zhang, L.'
+  - 'Wang, H.'
+year: 2024
+venue: npj Computational Materials 10, 94
+type: article
+identifiers:
+  doi: 10.1038/s41524-024-01278-7
+  arxiv: '2208.08236'
+edges:
+  - { type: extends, target: zhang2018deeppotse, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v4 (PDF, 15 Sep 2023; six authors there, seven in the journal version): Sec. II, Eqs. (1)–(12), Fig. 1, Sec. III, App. A (Table A.1 ablation). Equation numbers follow arXiv v4.' }

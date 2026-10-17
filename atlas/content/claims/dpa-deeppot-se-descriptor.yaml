@@ -1,0 +1,10 @@
+statement: >-
+  DeepPot-SE maps each neighbour j of atom i to a row R̃_j = s(r_ij)(1, x_ij/r_ij, y_ij/r_ij, z_ij/r_ij), with s(r) = 1/r
+  switched to zero between r_cs and r_c by a cosine, embeds s(r_ij) with a network G (depending on both species) and forms
+  the descriptor D_i = (G¹)ᵀ R̃ R̃ᵀ G², with G² the first M₂ columns of G¹; the paper reports M₁ ≈ 100 and M₂ ≈ 4 working well.
+grade: THEORY
+sources:
+  - { paper: zhang2018deeppotse, locator: 'arXiv v2, Sec. 3.3, Eqs. (8)–(11)' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

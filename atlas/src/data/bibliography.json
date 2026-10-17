@@ -271,7 +271,9 @@
    "drautz2019ace",
    "kim2024multifidelity",
    "riebesell2023matbench",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "zhang2024dpa1",
+   "zhang2024dpa2"
   ],
   "crossref": {
    "article_number": "184110",
@@ -977,7 +979,9 @@
    "behler2007generalized",
    "drautz2019ace",
    "gasteiger2020dimenet",
-   "schutt2017schnet"
+   "schutt2017schnet",
+   "zhang2018deepmd",
+   "zhang2018deeppotse"
   ],
   "crossref": {
    "article_number": "2453",
@@ -1574,7 +1578,8 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
-   "drautz2019ace"
+   "drautz2019ace",
+   "zhang2018deepmd"
   ],
   "crossref": {
    "article_number": "021036",
@@ -2018,7 +2023,8 @@
   ],
   "cites": [
    "behler2007generalized",
-   "schutt2017schnet"
+   "schutt2017schnet",
+   "zhang2018deepmd"
   ],
   "crossref": {
    "article_number": null,
@@ -2481,7 +2487,9 @@
    "chanussot2020oc20",
    "chen2022m3gnet",
    "deng2023chgnet",
-   "focassio2024surfaces"
+   "focassio2024surfaces",
+   "wang2018deepmdkit",
+   "zhang2024dpa1"
   ],
   "crossref": {
    "article_number": "9",
@@ -4549,7 +4557,8 @@
    "drautz2019ace",
    "geiger2022e3nn",
    "schutt2017schnet",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "zhang2018deepmd"
   ],
   "crossref": {
    "article_number": "579",
@@ -5796,7 +5805,8 @@
   "cites": [
    "behler2007generalized",
    "behler2011symmetry",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "zhang2018deepmd"
   ],
   "crossref": {
    "article_number": null,
@@ -6261,7 +6271,8 @@
   ],
   "cites": [
    "behler2007generalized",
-   "wang2025cpmlff"
+   "wang2025cpmlff",
+   "zhang2018deepmd"
   ],
   "crossref": {
    "article_number": "10636",
@@ -6635,6 +6646,100 @@
    ]
   }
  },
+ "wang2018deepmdkit": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Wang, H.' vs fetched ['wang']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "zhang2018deepmd"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Wang",
+     "given": "Han"
+    },
+    {
+     "family": "Zhang",
+     "given": "Linfeng"
+    },
+    {
+     "family": "Han",
+     "given": "Jiequn"
+    },
+    {
+     "family": "E",
+     "given": "Weinan"
+    }
+   ],
+   "container": "Computer Physics Communications",
+   "doi": "10.1016/j.cpc.2018.03.016",
+   "issue": null,
+   "page": "178-184",
+   "title": "DeePMD-kit: A deep learning package for many-body potential energy representation and molecular dynamics",
+   "type": "journal-article",
+   "volume": "228",
+   "year": 2018
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 2141,
+   "id": "W2775708988",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W26088913",
+    "W753012316",
+    "W1537479324",
+    "W1966078827",
+    "W2019465613",
+    "W2025444507",
+    "W2029413789",
+    "W2041778475",
+    "W2046001409",
+    "W2051381895",
+    "W2070753604",
+    "W2083415705",
+    "W2104489082",
+    "W2147993766",
+    "W2150981663",
+    "W2163681071",
+    "W2186615578",
+    "W2230728100",
+    "W2257979135",
+    "W2402144811",
+    "W2470768373",
+    "W2527189750",
+    "W2541404351",
+    "W2557283755",
+    "W2585152223",
+    "W2728789193",
+    "W2742127985",
+    "W2755837508",
+    "W2768213699",
+    "W2914695977",
+    "W2919115771",
+    "W2950094539",
+    "W6601630192"
+   ]
+  }
+ },
  "wang2025cpmlff": {
   "arxiv": null,
   "checks": [
@@ -6656,7 +6761,8 @@
   ],
   "cites": [
    "batzner2022nequip",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "wang2018deepmdkit"
   ],
   "crossref": {
    "article_number": null,
@@ -6933,6 +7039,765 @@
     "W4230299717",
     "W4285719527"
    ]
+  }
+ },
+ "zhang2018deepmd": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhang, L.' vs fetched ['zhang']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "stillinger1985sw",
+   "wang2018deepmdkit"
+  ],
+  "crossref": {
+   "article_number": "143001",
+   "authors": [
+    {
+     "family": "Zhang",
+     "given": "Linfeng"
+    },
+    {
+     "family": "Han",
+     "given": "Jiequn"
+    },
+    {
+     "family": "Wang",
+     "given": "Han"
+    },
+    {
+     "family": "Car",
+     "given": "Roberto"
+    },
+    {
+     "family": "E",
+     "given": "Weinan"
+    }
+   ],
+   "container": "Physical Review Letters",
+   "doi": "10.1103/physrevlett.120.143001",
+   "issue": "14",
+   "page": null,
+   "title": "Deep Potential Molecular Dynamics: A Scalable Model with the Accuracy of Quantum Mechanics",
+   "type": "journal-article",
+   "volume": "120",
+   "year": 2018
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 2265,
+   "id": "W2742127985",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W26088913",
+    "W1976499671",
+    "W1976828279",
+    "W1978375794",
+    "W1981368803",
+    "W2005944647",
+    "W2008423326",
+    "W2025444507",
+    "W2025625972",
+    "W2033086537",
+    "W2037782625",
+    "W2046001409",
+    "W2047116215",
+    "W2051381895",
+    "W2059885388",
+    "W2070753604",
+    "W2083415705",
+    "W2086634221",
+    "W2094888156",
+    "W2104489082",
+    "W2141847807",
+    "W2147993766",
+    "W2155155530",
+    "W2160544821",
+    "W2163681071",
+    "W2230728100",
+    "W2470768373",
+    "W2527189750",
+    "W2541404351",
+    "W2547447472",
+    "W2585152223",
+    "W2604272474",
+    "W2607662938",
+    "W2728789193",
+    "W2755837508",
+    "W2757803490",
+    "W2775708988",
+    "W2990138404",
+    "W3005892601",
+    "W3101095095",
+    "W3101908277",
+    "W4247950230"
+   ]
+  }
+ },
+ "zhang2018deeppotse": {
+  "arxiv": {
+   "authors": [
+    "Linfeng Zhang",
+    "Jiequn Han",
+    "Han Wang",
+    "Wissam A. Saidi",
+    "Roberto Car",
+    "Weinan E"
+   ],
+   "id": "1805.09003v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2018-05-23",
+   "title": "End-to-end Symmetry Preserving Inter-atomic Potential Energy Model for Finite and Extended Systems",
+   "updated": "2018-12-20"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhang, L.' vs fetched ['zhang']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "wang2018deepmdkit",
+   "zhang2018deepmd"
+  ],
+  "crossref": null,
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 151,
+   "id": "W2804359235",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W1534043326",
+    "W1810694562",
+    "W2000500676",
+    "W2003975937",
+    "W2025444507",
+    "W2029413789",
+    "W2033086537",
+    "W2058085399",
+    "W2083415705",
+    "W2104489082",
+    "W2230728100",
+    "W2314192151",
+    "W2326166120",
+    "W2470768373",
+    "W2512140015",
+    "W2527189750",
+    "W2606780347",
+    "W2620687153",
+    "W2620906374",
+    "W2621355768",
+    "W2728789193",
+    "W2742127985",
+    "W2775708988",
+    "W2789825107",
+    "W2952433032",
+    "W2963711743",
+    "W2964121744",
+    "W2974176966",
+    "W3102449990",
+    "W4394667618"
+   ]
+  }
+ },
+ "zhang2024dpa1": {
+  "arxiv": {
+   "authors": [
+    "Duo Zhang",
+    "Hangrui Bi",
+    "Fu-Zhi Dai",
+    "Wanrun Jiang",
+    "Linfeng Zhang",
+    "Han Wang"
+   ],
+   "id": "2208.08236v4",
+   "primary_category": "physics.chem-ph",
+   "published": "2022-08-17",
+   "title": "DPA-1: Pretraining of Attention-based Deep Potential Model for Molecular Simulation",
+   "updated": "2023-09-15"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2022, 2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhang, D.' vs fetched ['zhang', 'zhang']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "chanussot2020oc20",
+   "chen2022m3gnet",
+   "drautz2019ace",
+   "musaelian2023allegro",
+   "schutt2017schnet",
+   "zhang2018deepmd",
+   "zhang2018deeppotse"
+  ],
+  "crossref": {
+   "article_number": "94",
+   "authors": [
+    {
+     "family": "Zhang",
+     "given": "Duo"
+    },
+    {
+     "family": "Bi",
+     "given": "Hangrui"
+    },
+    {
+     "family": "Dai",
+     "given": "Fu-Zhi"
+    },
+    {
+     "family": "Jiang",
+     "given": "Wanrun"
+    },
+    {
+     "family": "Liu",
+     "given": "Xinzijian"
+    },
+    {
+     "family": "Zhang",
+     "given": "Linfeng"
+    },
+    {
+     "family": "Wang",
+     "given": "Han"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-024-01278-7",
+   "issue": "1",
+   "page": null,
+   "title": "Pretraining of attention-based deep learning potential model for molecular simulation",
+   "type": "journal-article",
+   "volume": "10",
+   "year": 2024
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 107,
+   "id": "W4396708749",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W26088913",
+    "W1668732012",
+    "W1972135189",
+    "W1981368803",
+    "W1992985800",
+    "W2018763953",
+    "W2025444507",
+    "W2046001409",
+    "W2058727322",
+    "W2080635178",
+    "W2083415705",
+    "W2085588820",
+    "W2117539524",
+    "W2230728100",
+    "W2541404351",
+    "W2585152223",
+    "W2626778328",
+    "W2726670313",
+    "W2742127985",
+    "W2749006386",
+    "W2785813126",
+    "W2788775653",
+    "W2804359235",
+    "W2898391453",
+    "W2910857709",
+    "W2954088480",
+    "W2968558338",
+    "W3006005697",
+    "W3030163527",
+    "W3031696893",
+    "W3039596418",
+    "W3080970554",
+    "W3093149769",
+    "W3093999435",
+    "W3096619549",
+    "W3124564697",
+    "W3126533621",
+    "W3132277775",
+    "W3166597321",
+    "W3189164715",
+    "W3205158828",
+    "W3206711231",
+    "W3212386989",
+    "W4200077759",
+    "W4200453695",
+    "W4226325017",
+    "W4226530413",
+    "W4282041110",
+    "W4283743489",
+    "W4298178320",
+    "W4310135808",
+    "W4319162181",
+    "W4319865391",
+    "W4323304388"
+   ]
+  }
+ },
+ "zhang2024dpa2": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhang, D.' vs fetched ['zhang']"
+   }
+  ],
+  "cites": [
+   "batatia2023foundation",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "chanussot2020oc20",
+   "chen2022m3gnet",
+   "deng2023chgnet",
+   "musaelian2023allegro",
+   "schutt2017schnet",
+   "zhang2018deepmd",
+   "zhang2018deeppotse",
+   "zhang2024dpa1"
+  ],
+  "crossref": {
+   "article_number": "293",
+   "authors": [
+    {
+     "family": "Zhang",
+     "given": "Duo"
+    },
+    {
+     "family": "Liu",
+     "given": "Xinzijian"
+    },
+    {
+     "family": "Zhang",
+     "given": "Xiangyu"
+    },
+    {
+     "family": "Zhang",
+     "given": "Chengqian"
+    },
+    {
+     "family": "Cai",
+     "given": "Chun"
+    },
+    {
+     "family": "Bi",
+     "given": "Hangrui"
+    },
+    {
+     "family": "Du",
+     "given": "Yiming"
+    },
+    {
+     "family": "Qin",
+     "given": "Xuejian"
+    },
+    {
+     "family": "Peng",
+     "given": "Anyang"
+    },
+    {
+     "family": "Huang",
+     "given": "Jiameng"
+    },
+    {
+     "family": "Li",
+     "given": "Bowen"
+    },
+    {
+     "family": "Shan",
+     "given": "Yifan"
+    },
+    {
+     "family": "Zeng",
+     "given": "Jinzhe"
+    },
+    {
+     "family": "Zhang",
+     "given": "Yuzhi"
+    },
+    {
+     "family": "Liu",
+     "given": "Siyuan"
+    },
+    {
+     "family": "Li",
+     "given": "Yifan"
+    },
+    {
+     "family": "Chang",
+     "given": "Junhan"
+    },
+    {
+     "family": "Wang",
+     "given": "Xinyan"
+    },
+    {
+     "family": "Zhou",
+     "given": "Shuo"
+    },
+    {
+     "family": "Liu",
+     "given": "Jianchuan"
+    },
+    {
+     "family": "Luo",
+     "given": "Xiaoshan"
+    },
+    {
+     "family": "Wang",
+     "given": "Zhenyu"
+    },
+    {
+     "family": "Jiang",
+     "given": "Wanrun"
+    },
+    {
+     "family": "Wu",
+     "given": "Jing"
+    },
+    {
+     "family": "Yang",
+     "given": "Yudi"
+    },
+    {
+     "family": "Yang",
+     "given": "Jiyuan"
+    },
+    {
+     "family": "Yang",
+     "given": "Manyi"
+    },
+    {
+     "family": "Gong",
+     "given": "Fu-Qiang"
+    },
+    {
+     "family": "Zhang",
+     "given": "Linshuang"
+    },
+    {
+     "family": "Shi",
+     "given": "Mengchao"
+    },
+    {
+     "family": "Dai",
+     "given": "Fu-Zhi"
+    },
+    {
+     "family": "York",
+     "given": "Darrin M."
+    },
+    {
+     "family": "Liu",
+     "given": "Shi"
+    },
+    {
+     "family": "Zhu",
+     "given": "Tong"
+    },
+    {
+     "family": "Zhong",
+     "given": "Zhicheng"
+    },
+    {
+     "family": "Lv",
+     "given": "Jian"
+    },
+    {
+     "family": "Cheng",
+     "given": "Jun"
+    },
+    {
+     "family": "Jia",
+     "given": "Weile"
+    },
+    {
+     "family": "Chen",
+     "given": "Mohan"
+    },
+    {
+     "family": "Ke",
+     "given": "Guolin"
+    },
+    {
+     "family": "E",
+     "given": "Weinan"
+    },
+    {
+     "family": "Zhang",
+     "given": "Linfeng"
+    },
+    {
+     "family": "Wang",
+     "given": "Han"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-024-01493-2",
+   "issue": "1",
+   "page": null,
+   "title": "DPA-2: a large atomic model as a multi-task learner",
+   "type": "journal-article",
+   "volume": "10",
+   "year": 2024
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 153,
+   "id": "W4405574099",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W26088913",
+    "W285749399",
+    "W1981368803",
+    "W1992985800",
+    "W2000798385",
+    "W2005069114",
+    "W2007361815",
+    "W2007395042",
+    "W2009359866",
+    "W2025444507",
+    "W2028009294",
+    "W2029413789",
+    "W2046001409",
+    "W2064090982",
+    "W2083222334",
+    "W2083415705",
+    "W2104489082",
+    "W2163922914",
+    "W2197007850",
+    "W2230728100",
+    "W2510182739",
+    "W2527189750",
+    "W2541355428",
+    "W2541404351",
+    "W2585152223",
+    "W2726670313",
+    "W2730137807",
+    "W2742127985",
+    "W2776192919",
+    "W2785813126",
+    "W2788775653",
+    "W2804359235",
+    "W2896457183",
+    "W2898391453",
+    "W2900144772",
+    "W2954088480",
+    "W2963334464",
+    "W2963512530",
+    "W2964121744",
+    "W2968558338",
+    "W3006005697",
+    "W3080970554",
+    "W3093999435",
+    "W3096619549",
+    "W3097147261",
+    "W3124564697",
+    "W3166597321",
+    "W4224861596",
+    "W4225405705",
+    "W4225585143",
+    "W4226530413",
+    "W4282041110",
+    "W4283641078",
+    "W4283743489",
+    "W4287586570",
+    "W4289793942",
+    "W4290875097",
+    "W4298178320",
+    "W4310135808",
+    "W4318035807",
+    "W4319162181",
+    "W4319865391",
+    "W4323304388",
+    "W4361865389",
+    "W4381713642",
+    "W4382469015",
+    "W4382657017",
+    "W4383995031",
+    "W4386216378",
+    "W4386740800",
+    "W4387106042",
+    "W4387635006",
+    "W4387964204",
+    "W4388639434",
+    "W4389132751",
+    "W4389818315",
+    "W4393981245",
+    "W4396708749",
+    "W4416191329",
+    "W6912991590",
+    "W7133221810"
+   ]
+  }
+ },
+ "zhang2026dpa3": {
+  "arxiv": {
+   "authors": [
+    "Duo Zhang",
+    "Anyang Peng",
+    "Chun Cai",
+    "Wentao Li",
+    "Yuanchang Zhou",
+    "Jinzhe Zeng",
+    "Mingyu Guo",
+    "Chengqian Zhang",
+    "Bowen Li",
+    "Hong Jiang",
+    "Tong Zhu",
+    "Weile Jia",
+    "Linfeng Zhang",
+    "Han Wang"
+   ],
+   "id": "2506.01686v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2025-06-02",
+   "title": "A Graph Neural Network for the Era of Large Atomistic Models",
+   "updated": "2026-01-23"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2025, 2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhang, D.' vs fetched ['zhang', 'zhang']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": "276",
+   "authors": [
+    {
+     "family": "Zhang",
+     "given": "Duo"
+    },
+    {
+     "family": "Peng",
+     "given": "Anyang"
+    },
+    {
+     "family": "Cai",
+     "given": "Chun"
+    },
+    {
+     "family": "Li",
+     "given": "Wentao"
+    },
+    {
+     "family": "Zhou",
+     "given": "Yuanchang"
+    },
+    {
+     "family": "Zeng",
+     "given": "Jinzhe"
+    },
+    {
+     "family": "Guo",
+     "given": "Mingyu"
+    },
+    {
+     "family": "Zhang",
+     "given": "Chengqian"
+    },
+    {
+     "family": "Li",
+     "given": "Bowen"
+    },
+    {
+     "family": "Jiang",
+     "given": "Hong"
+    },
+    {
+     "family": "Zhu",
+     "given": "Tong"
+    },
+    {
+     "family": "Jia",
+     "given": "Weile"
+    },
+    {
+     "family": "Zhang",
+     "given": "Linfeng"
+    },
+    {
+     "family": "Wang",
+     "given": "Han"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-026-02146-2",
+   "issue": "1",
+   "page": null,
+   "title": "A graph neural network for the era of large atomistic models",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2026
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 17,
+   "id": "W4417114399",
+   "publication_year": 2026,
+   "referenced_works": []
   }
  }
 }

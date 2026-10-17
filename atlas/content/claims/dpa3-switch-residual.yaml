@@ -1,0 +1,10 @@
+statement: >-
+  DPA-3's switch s(r) = exp(−exp(C(r − r_cs)/r_cs)) is not zero at r_c: with C = 20, r_cs = 5.3 Å and r_c = 6.0 Å it is
+  exp(−exp(20 · 0.7/5.3)) ≈ 8 × 10⁻⁷ there, so the weight steps to zero by that amount.
+grade: THEORY
+sources:
+  - { paper: zhang2026dpa3, locator: 'arXiv v3, Methods 4.3, Eq. (9)' }
+derivation: /models/dpa/#fig-smooth
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Evaluated from the paper''s formula and settings; not checked against the DeePMD-kit implementation.' }

@@ -1,0 +1,619 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import DpaDescriptors from '~/islands/DpaDescriptors';
+import DpaSmoothness from '~/islands/DpaSmoothness';
+import DpaBias from '~/islands/DpaBias';
+import si from '~/data/structures/si-diamond.json';
+import nacl from '~/data/structures/nacl-rocksalt.json';
+import cu from '~/data/structures/cu-fcc.json';
+import zno from '~/data/structures/zno-wurtzite.json';
+import quartz from '~/data/structures/sio2-alpha-quartz.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { graphCounts } from '~/lib/models/three-body';
+import { DPA31_3M } from '~/lib/models/dpa';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+// Build-time table: the line-graph series DPA-3 works on, per atom, in five gallery crystals with the
+// cutoffs of DPA-3.1-3M (6.0 / 4.0 Å) and DPA-3.1-MPtrj (6.0 / 4.5 Å).
+const crystals: Array<[string, unknown]> = [
+  ['Si (diamond)', si],
+  ['NaCl (rock salt)', nacl],
+  ['Cu (fcc)', cu],
+  ['ZnO (wurtzite)', zno],
+  ['SiO₂ (α-quartz)', quartz],
+];
+const ligs = crystals.map(([name, s]) => {
+  const st = s as Structure;
+  return {
+    name,
+    bonds: graphCounts(st, DPA31_3M.rcBond).bondsPerAtom,
+    angles40: graphCounts(st, DPA31_3M.rcAngle).anglesPerAtom,
+    angles45: graphCounts(st, 4.5).anglesPerAtom,
+  };
+});
+
+const ck3m = (await getEntry('checkpoints', 'dpa-3-1-3m'))!.data as Checkpoint;
+const ckMp = (await getEntry('checkpoints', 'dpa-3-1-mptrj'))!.data as Checkpoint;
+const board = snapshot.models.filter((m) => m.family_dir === 'deepmd');
+
+const descAssumptions = [
+  { term: 'Environments', value: 'fcc Cu and hcp Cu with the ideal c/a = √(8/3), both with fcc Cu’s nearest-neighbour distance d = 3.615/√2 = 2.556 Å, built from exact lattice vectors (hcp Cu is not an observed phase; it is the textbook partner of fcc). Molecular pairs: three or four neighbours at 2.2 Å, r_c = 4 Å. One species throughout.' },
+  { term: 'Radial weight', value: 's(r) = w(r)/r with DPA-1/DPA-2’s quintic switch from r_cs = (5.3/6) r_c to r_c, for all three descriptors.' },
+  { term: 'DeepPot-SE', value: 'Embedding G: 1 → 12 → 16 (tanh), M₁ = 16, M₂ = 4, D = (Gᵀ R̃)(R̃ᵀ G₂) as in Eq. (3). No normalisation by the neighbour count.' },
+  { term: 'DPA-1', value: 'Two attention layers on the same embeddings, d_k = 8: φ = softmax(QKᵀ/√d_k) ⊙ R̂R̂ᵀ, G ← G + LayerNorm(φV) (no learnable gain or bias), then the DeepPot-SE product. Type embedding omitted (one species).' },
+  { term: 'DPA-3-style', value: 'One update of a two-graph toy: bond features φ_e(r), angle features φ_a(cos θ) for pairs of bonds shorter than 4 Å, a switched sum of messages φ_c(e_ij, e_im, a_jim) into each bond, then a switched sum over bonds. DPA-3’s switch (Eq. 9). Not DPA-3 itself: no symmetrisation term, one layer, eight channels.' },
+  { term: 'Weights', value: 'Random and untrained (seeded). Whether a difference is zero is a property of the construction; its size when non-zero is not meaningful.' },
+];
+const smoothAssumptions = [
+  { term: 'Weights', value: 'Each switch as its paper writes it: hard 1/r; DeepPot-SE’s ½[cos(πu) + 1]/r; DPA-1/DPA-2’s [u³(−6u² + 15u − 10) + 1]/r; DPA-3’s exp(−exp(20(r − r_cs)/r_cs)) without a 1/r factor. r_c = 6 Å.' },
+  { term: 'Derivatives', value: 'Central differences (h = 10⁻⁴ Å) on each side of r_c, never across it. Jumps at r_c from cubic fits through four points on each side (δ = 3 × 10⁻⁵ Å); values below 10⁻¹² (s), 10⁻⁹ (s′) and 10⁻⁵ (s″) are shown as 0.' },
+  { term: 'Attention toy', value: 'Five fixed neighbours between 2.4 and 4.1 Å and one moving out along a fixed ray. E = Σ_j w_j q · Σ_k A_jk V g_k with g_k = G(s_k) and DPA-1-style Q, K, V; the plain variant does not switch rows. Untrained weights; arbitrary units.' },
+];
+const biasAssumptions = [
+  { term: 'Data', value: 'Invented. Two “DFT setups” whose per-atom reference energies differ by hundreds of eV, as all-electron and pseudopotential energies do. Each frame’s energy is Σ_z c_z μ_z plus an interaction part of −0.2 to −2.6 eV per atom.' },
+  { term: 'Fit', value: 'Minimum-norm least-squares solution of Σ_z c_mz e(z) = E_m (DPA-2 Eq. 6) from the normal equations by eigen-decomposition; rank counted from eigenvalues above 10⁻¹⁰ of the largest.' },
+];
+---
+
+<BaseLayout
+  title="Deep Potential and DPA"
+  description="The Deep Potential family: DeepPot-SE's smooth embedded descriptor, DPA-1's gated attention, DPA-2's multi-task pre-training and DPA-3's line-graph network. What each descriptor can tell apart, smoothness at the cutoff, the energy bias, checkpoints and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">Deep Potential and DPA</h1>
+      <p class="lede">
+        The Deep Potential line began as a way to learn a local descriptor instead of choosing one. DeepPot-SE turns each neighbour into
+        a smoothly weighted direction, filters it with a small network and contracts the result into an invariant matrix
+        <Cite id="zhang2018deeppotse" locator="Sec. 3.3" />. DPA-1 lets neighbours attend to each other <Cite id="zhang2024dpa1" locator="Sec. II" />,
+        DPA-2 turns the descriptor into a multi-task pre-trained model <Cite id="zhang2024dpa2" locator="Sec. 2.1" />, and DPA-3 is a
+        message-passing network on bonds, angles and dihedrals <Cite id="zhang2026dpa3" locator="Sec. 2.1" />. All four are invariant,
+        all four are smooth by design, and the descriptor’s algebra decides what each can see.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Invariant features; forces and virials by back-propagation</dd></div>
+        <div><dt>Locality</dt><dd>DeepPot-SE, DPA-1: one cutoff (6 Å typical). DPA-2, DPA-3: message passing (DPA-3.1-3M: 16 layers, 6.0 / 4.0 Å)</dd></div>
+        <div><dt>Angles</dt><dd>DeepPot-SE: through cos θ only (l ≤ 1). DPA-3: an embedding of cos θ</dd></div>
+        <div><dt>Data</dt><dd>Multi-task pre-training with per-dataset heads (DPA-2) or encodings and biases (DPA-3)</dd></div>
+        <div><dt>Introduced</dt><dd>Phys. Rev. Lett. 2018; NeurIPS 2018; npj Comput. Mater. 2024, 2024, 2026</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/deepmodeling/deepmd-kit">DeePMD-kit</a> (LGPL-3.0; TensorFlow, PyTorch, JAX, Paddle)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architectures</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="se-h">
+      <h2 id="se-h" class="h-section">DeepPot-SE: a learned, smooth descriptor</h2>
+      <p>
+        The energy is a sum of atomic energies, each a function of the atom’s neighbours within r<sub>c</sub>, with parameters that
+        depend on the atom’s species <Cite id="zhang2018deeppotse" locator="Eq. (3)" />. The original Deep Potential built each atom’s
+        environment in a local frame chosen from its neighbours, which introduced discontinuities; DeepPot-SE was designed to remove
+        them while keeping the model end-to-end <Cite id="zhang2018deeppotse" locator="Sec. 1" />. Each relative position becomes one row of a
+        generalised coordinate matrix <Cite id="zhang2018deeppotse" locator="Eqs. (8)–(9)" />:
+      </p>
+      <Math display number="1" tex={String.raw`E = \sum_i E_i, \qquad \{x_{ji}, y_{ji}, z_{ji}\} \;\mapsto\; \tilde{\mathcal R}_j = s(r_{ji})\Big(1,\ \frac{x_{ji}}{r_{ji}},\ \frac{y_{ji}}{r_{ji}},\ \frac{z_{ji}}{r_{ji}}\Big)`} />
+      <Math display number="2" tex={String.raw`s(r) = \begin{cases} \dfrac{1}{r}, & r < r_{cs} \\[6pt] \dfrac{1}{r}\Big\{\tfrac12 \cos\!\Big[\pi \dfrac{r - r_{cs}}{r_c - r_{cs}}\Big] + \tfrac12\Big\}, & r_{cs} \le r < r_c \\[6pt] 0, & r \ge r_c \end{cases}`} />
+      <p>
+        An embedding network maps each s(r<sub>ji</sub>) to M<sub>1</sub> numbers, giving a matrix G with one row per neighbour, and the
+        descriptor is the product <Cite id="zhang2018deeppotse" locator="Eqs. (10)–(11)" />
+      </p>
+      <Math display number="3" tex={String.raw`D_i = (\mathcal G^{1})^{\mathsf T}\, \tilde{\mathcal R}\, \tilde{\mathcal R}^{\mathsf T}\, \mathcal G^{2} \;\in\; \mathbb R^{M_1 \times M_2}`} />
+      <p>
+        where G<sup>2</sup> is the first M<sub>2</sub> columns of G<sup>1</sup>. R̃R̃<sup>T</sup> is invariant to rotations and
+        translations; the sums over neighbours hidden in each matrix product make D invariant to permutations. The authors call the
+        columns of G<sup>1</sup> coordinate filters and those of G<sup>2</sup> axis filters, and report M<sub>1</sub> ≈ 100 and
+        M<sub>2</sub> ≈ 4 working well; trained on copper, the four axis filters weight mainly the first two neighbour shells
+        <Cite id="zhang2018deeppotse" locator="Sec. 3.3; Fig. 1c" />. A fitting network maps the flattened D to E<sub>i</sub>, and both are
+        trained end to end on energies, forces and virials <Cite id="zhang2018deeppotse" locator="Eq. (12)" />. The models are trained and
+        run with DeePMD-kit <Cite id="wang2018deepmdkit" />.
+      </p>
+      <Callout kind="derivation" title="What D can see of the angles">
+        <p id="gram-derivation">
+          Write the dot product of two rows of R̃. With r̂<sub>j</sub> the unit vector to neighbour j and θ<sub>jk</sub> the angle
+          between two neighbours,
+        </p>
+        <Math display tex={String.raw`\tilde{\mathcal R}_j \cdot \tilde{\mathcal R}_k = s_j s_k\,(1 + \hat{\mathbf r}_j \cdot \hat{\mathbf r}_k) = s_j s_k\,(1 + \cos\theta_{jk})`} />
+        <p>so every element of Eq. (3) splits into two parts:</p>
+        <Math display tex={String.raw`D_{ab} = \sum_{j,k} G_a(s_j)\,G_b(s_k)\,s_j s_k (1 + \cos\theta_{jk}) = A^0_a A^0_b + \mathbf A_a \cdot \mathbf A_b, \quad A^0_a = \sum_j G_a(s_j)\, s_j,\ \ \mathbf A_a = \sum_j G_a(s_j)\, s_j\, \hat{\mathbf r}_j`} />
+        <p>
+          A<sup>0</sup> are radial sums and <b>A</b><sub>a</sub> are dipoles of the neighbours weighted by filter a. D therefore sees angles
+          only through cos θ, linearly: in the language of the <a href="/physics-lab/harmonics/">spherical-harmonics lab</a>, only l = 0
+          and l = 1 moments of the neighbour density, in products of two. Two consequences follow. Any two environments with the same
+          radial distances and the same filtered dipoles have identical D, whatever their other angles. And at a site where every
+          radial shell has zero dipole, which is every site with no polar axis (fcc, bcc, hcp, diamond, rock salt), all <b>A</b><sub>a</sub>
+          vanish and D is a purely radial descriptor of that perfect crystal.
+        </p>
+      </Callout>
+      <p>
+        The second consequence concerns perfect crystals only. Thermal motion and defects give every environment dipoles, and with a
+        6 Å cutoff the radial sums of most different structures already differ. Figure 1 shows when it matters and what the later
+        models add.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="dpa1-h">
+      <h2 id="dpa1-h" class="h-section">DPA-1: types and attention between neighbours</h2>
+      <p>
+        DPA-1 keeps R̃ and the switched inverse distance, with the polynomial switch of Eq. (5) below instead of the cosine, and feeds
+        the embedding network the type embeddings of both atoms along with s(r) <Cite id="zhang2024dpa1" locator="Eqs. (2)–(5)" />, so
+        one network covers all element pairs. Before the product of Eq. (3), the neighbours’ embeddings pass through self-attention
+        layers whose weights are gated by the angles between neighbours <Cite id="zhang2024dpa1" locator="Eqs. (6)–(9)" />:
+      </p>
+      <Math display number="4" tex={String.raw`\varphi = \operatorname{softmax}\!\Big(\frac{Q K^{\mathsf T}}{\sqrt{d_k}}\Big) \odot \hat{\mathcal R}\hat{\mathcal R}^{\mathsf T}, \qquad \mathcal G^{l} = \mathcal G^{l-1} + \operatorname{LayerNorm}\big(\varphi\, V\big), \qquad D = \hat{\mathcal G}^{\mathsf T} \tilde{\mathcal R}\tilde{\mathcal R}^{\mathsf T} \dot{\mathcal G}`} />
+      <p>
+        Q, K and V are linear maps of the current embeddings, R̂ holds the unit vectors, and two layers are the default
+        <Cite id="zhang2024dpa1" locator="Eqs. (6), (8)–(10); Sec. II B" />. In the authors’ ablation on high-entropy alloys, type
+        embedding and attention brought most of the gain over DeepPot-SE, the angular gate a smaller but not negligible part
+        <Cite id="zhang2024dpa1" locator="App. A; Table A.1" />.
+      </p>
+      <Callout kind="derivation" title="When the gate has nothing to add">
+        <p id="attention-derivation">
+          Row j of φV is Σ<sub>k</sub> softmax<sub>jk</sub> (r̂<sub>j</sub> · r̂<sub>k</sub>) V<sub>k</sub> = r̂<sub>j</sub> · Σ<sub>k</sub>
+          softmax<sub>jk</sub> r̂<sub>k</sub> V<sub>k</sub><sup>T</sup>. With one species, the first layer’s embeddings, and so its
+          softmax weights and values, depend only on distances. Group the neighbours k into shells of equal distance: within a shell
+          the weight and value are the same, and the sum leaves Σ<sub>k ∈ shell</sub> r̂<sub>k</sub>, the shell’s dipole. Where every
+          shell’s dipole vanishes, the update is zero, LayerNorm of zero is zero, the embeddings are unchanged, and the next layer starts
+          from the same distance-only state. In ideal fcc and hcp, DPA-1 as written sees exactly what DeepPot-SE sees.
+        </p>
+      </Callout>
+      <p>
+        Where dipoles do not vanish, the gate adds information. For each neighbour it measures how well its bond lines up with the
+        attention-weighted dipole of the others, a product of cosines that the layer normalisation then makes nonlinear. Two
+        environments with the same overall dipole but different alignments, like the pyramid and the T of Fig. 1, are separated.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Which environments each descriptor can tell apart" labels={['toy-model', 'live-calculation']} number={1} id="fig-descriptors" framed={false}>
+        <DpaDescriptors client:visible />
+        <Fragment slot="caption">
+          Pairs of environments compared by three descriptor constructions with the same embeddings. In fcc and hcp copper, DeepPot-SE and
+          DPA-1 give identical descriptors until the cutoff reaches a shell only one structure has; an embedding of cos θ separates the two
+          first shells at once. The pyramid and the T fool DeepPot-SE but not DPA-1’s gate; the tetrahedron and the square fool both. Every
+          descriptor is exactly invariant: rotate and relabel to check.
+        </Fragment>
+        <Assumptions slot="assumptions" items={descAssumptions} />
+        <Fragment slot="source">Descriptors from <Cite id="zhang2018deeppotse" locator="Eqs. (8)–(11)" />, <Cite id="zhang2024dpa1" locator="Eqs. (6)–(10)" /> and, for the angle embedding, <Cite id="zhang2026dpa3" locator="Methods Eqs. (6)–(10), (18)–(19)" />. Computed in your browser by <code>src/lib/models/dpa.ts</code>; the equalities and differences are checked in <code>dpa.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="dpa2-h">
+      <h2 id="dpa2-h" class="h-section">DPA-2: a descriptor pre-trained on many datasets</h2>
+      <p>
+        DPA-2 represents each atom with three channels: a single-atom feature f<sub>i</sub>, an invariant pair feature g<sub>ij</sub>
+        initialised from s(r<sub>ij</sub>), and an equivariant pair feature h<sub>ij</sub> = s(r<sub>ij</sub>) r̂<sub>ij</sub> that is never
+        updated. A representation initialiser (repinit) and twelve stacked representation transformers (repformers) update f and g with
+        convolutions, MLPs, a symmetrisation operator that, like Eq. (3), contracts neighbour sums of invariant features times
+        equivariant ones, localised self-attention on f and gated self-attention on g with the gate h<sub>ij</sub> · h<sub>ik</sub>
+        <Cite id="zhang2024dpa2" locator="Sec. 2.2; Fig. 2; Methods 4.2, Eqs. (7)–(32)" />. Its angular inputs therefore enter as in DPA-1,
+        through dot products of neighbour directions; we have not implemented DPA-2 here, so Fig. 1 makes no claim about it.
+      </p>
+      <p>
+        The switch must now have a continuous second derivative, which the polynomial provides, and every softmax is made smooth
+        <Cite id="zhang2024dpa2" locator="Eq. (13); Sec. 4.2.4" />:
+      </p>
+      <Math display number="5" tex={String.raw`w(r) = u^3(-6u^2 + 15u - 10) + 1, \quad u = \frac{r - r_{cs}}{r_c - r_{cs}}; \qquad \operatorname{softmax}^{*}(x_{ij}) = w_{ij}\,\operatorname{softmax}\big(w_{ij}(x_{ij} + s^{*}) - s^{*}\big)`} />
+      <p>
+        with s<sup>*</sup> = 20. A plain softmax changes all its weights when a neighbour enters the cutoff, because the denominator
+        does; multiplying by the switch afterwards does not help <Cite id="zhang2024dpa2" locator="Sec. 4.2.4" />. The model’s energy is
+        the network output plus a per-element energy bias, and its forces and virials are gradients of that energy
+        <Cite id="zhang2024dpa2" locator="Eqs. (2)–(5)" />.
+      </p>
+      <p>
+        The larger change is how DPA-2 is trained. One descriptor is shared by all pre-training datasets and each dataset keeps its own
+        fitting network, because energies computed with different functionals, basis sets and cut-offs belong to different potential
+        energy surfaces and cannot be pooled into one “super-dataset” <Cite id="zhang2024dpa2" locator="Sec. 2.1; Fig. 1a" />. For a new
+        task the descriptor is fine-tuned with a new or inherited head, and the large fine-tuned model can be distilled into a fast
+        DPA-1-like student by an active-learning loop in which the teacher labels configurations from its own simulations
+        <Cite id="zhang2024dpa2" locator="Sec. 2.1; Fig. 1b,c" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="smooth-h">
+      <h2 id="smooth-h" class="h-section">Smooth by construction</h2>
+      <p>
+        Every member of the family treats smoothness at the cutoff as a design requirement: DeepPot-SE asks for a continuously
+        differentiable model <Cite id="zhang2018deeppotse" locator="Sec. 1, requirement 6" />, DPA-2 for continuous second derivatives
+        throughout <Cite id="zhang2024dpa2" locator="Sec. 2.2" />, and DPA-1’s ablation found that a Gaussian radial embedding made energies
+        jump under periodic boundary conditions <Cite id="zhang2024dpa1" locator="App. A" />. DPA-3 switches its messages with a double
+        exponential <Cite id="zhang2026dpa3" locator="Methods Eq. (9)" />, with C = 20, r<sub>cs</sub> = 5.3 Å and r<sub>c</sub> = 6.0 Å for
+        bonds:
+      </p>
+      <Math display number="6" tex={String.raw`s_k(r) = \exp\!\Big[-\exp\!\Big(\frac{C\,(r - r^k_{cs})}{r^k_{cs}}\Big)\Big] \ \ (r \le r^k_c), \qquad s_1(r_c) = e^{-e^{20 \times 0.7/5.3}} \approx 8 \times 10^{-7}`} />
+      <p>
+        The value at the cutoff is ours, evaluated from the paper’s formula: the switch does not reach zero, so the weight steps down by
+        less than one part in a million there, harmless in practice but not exactly continuous. Figure 2 measures each switch’s jumps and
+        runs an atom out through the cutoff of a toy attention layer.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Smoothness at the cutoff: switches and softmax" labels={['toy-model', 'live-calculation']} number={2} id="fig-smooth" framed={false}>
+        <DpaSmoothness client:visible />
+        <Fragment slot="caption">
+          Left: the radial weights of the family and their derivatives near r<sub>c</sub>, each side computed separately so a jump shows as a
+          gap; the table measures the jumps. Right: the energy of a toy attention layer while one neighbour leaves through r<sub>c</sub>. Plain
+          and switch-multiplied softmax jump; DPA-2’s softmax* leaves a step of order e⁻²⁰.
+        </Fragment>
+        <Assumptions slot="assumptions" items={smoothAssumptions} />
+        <Fragment slot="source">Switches from <Cite id="zhang2018deeppotse" locator="Eq. (9)" />, <Cite id="zhang2024dpa2" locator="Eq. (13)" /> and <Cite id="zhang2026dpa3" locator="Methods Eq. (9)" />; softmax* from <Cite id="zhang2024dpa2" locator="Eq. (35)" />. Computed in your browser by <code>src/lib/models/dpa.ts</code>; continuity orders and jump sizes are checked in <code>dpa.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="dpa3-h">
+      <h2 id="dpa3-h" class="h-section">DPA-3: message passing on the line-graph series</h2>
+      <p>
+        The line graph of a graph has one vertex for each edge, and joins two of them when the edges share a vertex. Starting from atoms
+        and bonds, G<sup>(2)</sup> has bonds as vertices and angles as edges, and G<sup>(3)</sup> adds dihedrals: DPA-3 passes messages on
+        this series up to an order K <Cite id="zhang2026dpa3" locator="Sec. 2.1; Fig. 1a,b; Methods 4.2" />. Each layer updates vertices by a
+        normalised, switched sum of edge messages and edges by a self-message, residually, and the vertex feature of G<sup>(k)</sup> is the
+        edge feature of G<sup>(k−1)</sup>, so an angle update flows straight into its two bonds <Cite id="zhang2026dpa3" locator="Methods Eqs. (4)–(8)" />.
+        Atoms start from a one-hot of the element, bonds from an embedding of the distance and angles from an embedding of their cosine
+        <Cite id="zhang2026dpa3" locator="Methods Eqs. (17)–(19)" />. The atomic energy uses only the final atom features
+        <Cite id="zhang2026dpa3" locator="Methods Eq. (3)" />:
+      </p>
+      <Math display number="7" tex={String.raw`E_i = \mathcal F\big(v^{(1,L)}_i,\ c(\mathcal D_m)\big) + e_m(Z_i), \qquad e^{(2,0)}_{(ij)(im)} = \phi^{(2)}_e\big(\cos\theta_{jim}\big)`} />
+      <p>
+        c(D<sub>m</sub>) is an encoding of the training dataset, typically a one-hot, and e<sub>m</sub>(Z) a per-dataset energy bias fitted
+        by least squares <Cite id="zhang2026dpa3" locator="Sec. 2.1; Methods 4.3" />. Because cos θ enters through a network, angles are not
+        limited to the l ≤ 1 moments of Eq. (3), which is why the toy angle embedding of Fig. 1 separates fcc from hcp. Raising K from 1 to 2
+        improved accuracy markedly; K = 3 did worse, especially for forces, so K = 2 is the default
+        <Cite id="zhang2026dpa3" locator="Sec. 2.3; Fig. 3" />. The features are invariant, and the authors find DPA-3 less accurate than
+        equivariant models such as MACE on small-molecule dynamics <Cite id="zhang2026dpa3" locator="Sec. 3" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ligs-h">
+      <h3 id="ligs-h" class="h-sub">The graphs DPA-3 works on, per atom</h3>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Crystal</th><th>Bonds within {DPA31_3M.rcBond} Å (G<sup>(1)</sup> edges)</th><th>Angles, bonds &lt; {DPA31_3M.rcAngle} Å (DPA-3.1-3M)</th><th>Angles, bonds &lt; 4.5 Å (DPA-3.1-MPtrj)</th></tr></thead>
+          <tbody>
+            {
+              ligs.map((r) => (
+                <tr>
+                  <td>{r.name}</td>
+                  <td>{r.bonds.toFixed(r.bonds % 1 ? 1 : 0)}</td>
+                  <td>{r.angles40.toFixed(r.angles40 % 1 ? 1 : 0)}</td>
+                  <td>{r.angles45.toFixed(r.angles45 % 1 ? 1 : 0)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Computed at build time from the Atlas structure gallery with the cutoffs of Table S-9 of <Cite id="zhang2026dpa3" /> and the
+        DPA-3.1-MPtrj model card. Angles are unordered pairs of an atom’s bonds; averages over the atoms of the cell. The smaller angle
+        cutoff keeps the number of G<sup>(2)</sup> edges, which grows as the square of the neighbour count, affordable; the
+        <a href="/models/m3gnet-chgnet/">M3GNet and CHGNet</a> page counts the same quantity for their cutoffs.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="bias-h">
+      <h2 id="bias-h" class="h-section">The energy bias, and when it is not identifiable</h2>
+      <p>
+        DFT total energies carry an arbitrary zero that depends on the code and pseudopotentials, so DPA-2 and DPA-3 add a per-element
+        constant to each atomic energy and fit it from the training compositions and energies <Cite id="zhang2024dpa2" locator="Eqs. (5)–(6)" />:
+      </p>
+      <Math display number="8" tex={String.raw`\sum_{z} c_{mz}\, e_{\mathrm{bias}}(z) = E^{*}_m, \qquad m = 1, \dots, M`} />
+      <p>
+        solved in the least-squares sense, where c<sub>mz</sub> counts atoms of element z in frame m. The solution is unique only if the
+        compositions determine every element separately. DPA-3 fits one bias per dataset
+        <Cite id="zhang2026dpa3" locator="Methods Eq. (3)" />, and its zero-shot tests compare models to a “dummy model” linear in composition
+        for the same reason <Cite id="zhang2026dpa3" locator="Sec. 2.5" />. Figure 3 shows the geometry of Eq. (8).
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Fitting the energy zero from compositions" labels={['toy-model', 'live-calculation']} number={3} id="fig-bias" framed={false}>
+        <DpaBias client:visible />
+        <Fragment slot="caption">
+          Each training frame is a line in the plane of the two biases. Water clusters alone give parallel lines, so only 2 e(H) + e(O) is
+          fixed and the least-squares bias can be far from the setup’s true reference energies without any training error showing. Frames
+          with other compositions make the lines cross. Two DFT setups in one fit cannot be reconciled by a single bias.
+        </Fragment>
+        <Assumptions slot="assumptions" items={biasAssumptions} />
+        <Fragment slot="source">Eq. (8) from <Cite id="zhang2024dpa2" locator="Eq. (6)" />; per-dataset biases from <Cite id="zhang2026dpa3" locator="Methods Eq. (3)" />. Computed in your browser by <code>src/lib/models/dpa.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="d-int" checked />
+        <label for="d-int">Intuition</label>
+        <input type="radio" name="depth" id="d-tech" />
+        <label for="d-tech">Technical</label>
+        <input type="radio" name="depth" id="d-res" />
+        <label for="d-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Each neighbour is turned into a little arrow pointing at it, shorter the farther away it is. A small network then looks at
+            these arrows through many differently tuned lenses, each lens adding up the arrows it sees, and the descriptor compares what the
+            lenses saw. Because it compares sums of arrows, it notices how lopsided the neighbourhood is, but not every detail of its
+            angles. DPA-1 lets each arrow look at the others first; DPA-3 gives every angle its own learned description.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            G<sup>T</sup>R̃ is an M<sub>1</sub> × 4 matrix of filtered moments: one radial sum and one dipole vector per filter. Eq. (3)
+            contracts it with its first M<sub>2</sub> rows over the four columns, which is the Gram matrix of those moments, invariant under
+            rotations because dipoles rotate together. Attention in DPA-1 makes each neighbour’s filter depend on the others, through
+            distances and through cos θ<sub>jk</sub>, before the moments are taken. DPA-2 generalises the contraction to its symmetrisation
+            operator on learned pair features and stacks it; DPA-3 replaces moments by explicit angle (and dihedral) nodes in a message-passing
+            graph <Cite id="zhang2024dpa2" locator="Eqs. (18)–(20)" /> <Cite id="zhang2026dpa3" locator="Methods Eqs. (12)–(16)" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            In atomic-cluster-expansion terms, Eq. (3) is a sum of products of two l ≤ 1 density projections with learned radial functions:
+            a three-body descriptor with restricted angular resolution, made expressive by large M<sub>1</sub> and the nonlinear fitting
+            network rather than by angular order. Attention gated by r̂<sub>j</sub> · r̂<sub>k</sub> raises the effective body order and mixes
+            cosines nonlinearly, but every angular input is still linear in each neighbour direction, so symmetric shells cancel before any
+            nonlinearity acts. Explicit cos θ embeddings (DPA-3, and the bond graphs of <a href="/models/m3gnet-chgnet/">M3GNet and CHGNet</a>)
+            remove that restriction at the cost of a quadratic number of angle nodes. None of these families is equivariant, and, like other
+            distance- and angle-based invariant networks, they are not complete in principle
+            (<a href="/models/schnet/">SchNet page</a>; <Cite id="pozdnyakov2022incompleteness" locator="Abstract" />).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and virials as its gradients with respect to positions and cell <Cite id="zhang2018deeppotse" locator="Eq. (2)" />
+        <Cite id="zhang2024dpa2" locator="Eqs. (2)–(3)" /> <Cite id="zhang2026dpa3" locator="Methods Eq. (2)" />. Multi-task models return the
+        energy of the head or dataset encoding chosen at inference, on that dataset’s reference scale. DeePMD-kit also fits other targets,
+        among them dipoles, polarisabilities and spin forces (README); those are separate fitting networks, not outputs of the energy
+        checkpoints below. There are no charges and no long-range electrostatics in these models.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Everything is local: DeepPot-SE and DPA-1 see one cutoff, DPA-2 and DPA-3 a receptive field
+        of layers × cutoff, and Coulomb tails, image charges and LO–TO splitting lie outside any of them (<a href="/physics-lab/ewald/">P6</a>;
+        <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>). DeepPot-SE resolves angles only through filtered dipoles, and
+        DPA-1’s gate adds nothing at sites where those vanish (Fig. 1); at finite temperature this is a limit on resolution, not a blind
+        spot. Invariant features limited DPA-3 on small-molecule dynamics <Cite id="zhang2026dpa3" locator="Sec. 3" />. A bias fitted from
+        compositions that never vary independently is not identifiable, and the error hides until a new composition is predicted (Fig. 3).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> DPA-3.1-MPtrj inherits MPtrj’s PBE/PBE+U level and its near-equilibrium sampling, with the
+        softening that implies (<a href="/failures/pes-softening/">Failure Atlas</a>). DPA-3.1-3M learns 31 datasets at once, each with its
+        own DFT settings and energy bias; predictions are only as good as the dataset encoding chosen, and energies from different
+        encodings are on different scales (<a href="/failures/experiment-vs-dft/">reference inheritance</a>).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck3m.name}</td>
+              <td>OpenLAM-v1 (31 datasets, incl. OMat24, OC20, SPICE2)</td>
+              <td>{((ck3m.parameters?.total ?? 0) / 1e6).toFixed(2)} M</td>
+              <td>{ck3m.licence}</td>
+              <td><a href={ck3m.weights?.url}>AIS Square</a></td>
+            </tr>
+            <tr>
+              <td>{ckMp.name}</td>
+              <td>MPtrj (PBE/PBE+U)</td>
+              <td>{((ckMp.parameters?.total ?? 0) / 1e6).toFixed(2)} M</td>
+              <td>{ckMp.licence}</td>
+              <td><a href={ckMp.weights?.url}>figshare</a></td>
+            </tr>
+            {
+              board
+                .filter((m) => m.key !== 'dpa-3.1-mptrj')
+                .map((m) => (
+                  <tr>
+                    <td>{m.name}</td>
+                    <td>{m.training_sets.join(', ')}</td>
+                    <td>{m.params ? `${(m.params / 1e6).toFixed(2)} M` : '—'}</td>
+                    <td>{m.licence_checkpoint ?? '—'}</td>
+                    <td><a href={m.checkpoint_url}>{m.version}</a></td>
+                  </tr>
+                ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The first two rows are Atlas records (DPA-3.1-3M from the paper, DPA-3.1-MPtrj from its Matbench Discovery model card). The other
+        rows are the family’s Matbench Discovery submissions (snapshot {snapshot.source.commit_date}; leaderboard parameter counts,
+        training-set labels and licences), whose results are on the <a href="/benchmarks/">Benchmarks</a> page. The DPA-4 rows belong to a
+        newer architecture that this page does not yet describe. DPA-2 checkpoints (for example DPA-2.4-7M, which the DPA-3 paper compares
+        against) are not yet recorded.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/behler-parrinello/">Behler–Parrinello</a> networks use fixed symmetry functions where DeepPot-SE learns its
+        filters. <a href="/models/m3gnet-chgnet/">M3GNet and CHGNet</a> also embed bond angles, on a graph truncated at the same order as
+        DPA-3’s default. <a href="/models/sevennet/">SevenNet-MF</a> and <a href="/models/esen-uma/">UMA</a> answer the same
+        many-datasets problem with fidelity biases and mixtures of experts.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>DeepPot-SE and the embedded descriptor: <Cite id="zhang2018deeppotse" />; the original Deep Potential: <Cite id="zhang2018deepmd" />.</li>
+        <li>DPA-1, attention and pre-training: <Cite id="zhang2024dpa1" />.</li>
+        <li>DPA-2, repformers, multi-task pre-training and distillation: <Cite id="zhang2024dpa2" />.</li>
+        <li>DPA-3, the line-graph series and DPA-3.1-3M: <Cite id="zhang2026dpa3" />.</li>
+        <li>Code: <a href="https://github.com/deepmodeling/deepmd-kit">deepmodeling/deepmd-kit</a> (LGPL-3.0), first described in <Cite id="wang2018deepmdkit" />.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #s-int:checked ~ .depth-int,
+  #s-tech:checked ~ .depth-tech,
+  #s-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

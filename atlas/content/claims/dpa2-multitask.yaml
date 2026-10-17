@@ -1,0 +1,10 @@
+statement: >-
+  DPA-2 pre-trains one descriptor on many datasets at once with a separate fitting network per dataset: the descriptor is
+  updated by every dataset, each fitting network only by its own, because labels computed with different functionals, basis
+  sets and cut-offs describe different potential energy surfaces and cannot be merged into one dataset.
+grade: THEORY
+sources:
+  - { paper: zhang2024dpa2, locator: 'arXiv v2, Sec. 2.1; Fig. 1a' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

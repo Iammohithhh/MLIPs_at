@@ -1,0 +1,18 @@
+title: 'Deep Potential Molecular Dynamics: A Scalable Model with the Accuracy of Quantum Mechanics'
+topic: descriptors-locality
+authors:
+  - 'Zhang, L.'
+  - 'Han, J.'
+  - 'Wang, H.'
+  - 'Car, R.'
+  - 'E, W.'
+year: 2018
+venue: Physical Review Letters 120, 143001
+type: article
+identifiers:
+  doi: 10.1103/PhysRevLett.120.143001
+  arxiv: '1707.09571'
+edges:
+  - { type: compares-against, target: behler2007generalized, documented: true }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-17, notes: 'Metadata checked (Crossref). Not read here; cited for what the DeepPot-SE paper says about it (Sec. 1: a local-frame construction with discontinuities, which DeepPot-SE removes).' }

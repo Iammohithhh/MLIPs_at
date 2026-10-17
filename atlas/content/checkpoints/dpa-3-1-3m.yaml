@@ -1,0 +1,24 @@
+name: DPA-3.1-3M
+family: dpa
+implementation: deepmd-kit
+version: DPA-3.1-3M
+release: { source: zhang2026dpa3 }
+parameters: { total: 3260000 }
+training:
+  - stage: pretraining
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: 'One of the 31 datasets of OpenLAM-v1 (multi-task pre-training with per-dataset sampling weights and energy biases); the others are not recorded individually in the Atlas.'
+  - stage: pretraining
+    dataset: oc20
+    level_of_theory: rpbe-oc20
+    note: 'OpenLAM-v1 member.'
+  - stage: pretraining
+    dataset: spice
+    level_of_theory: wb97md3bj-def2tzvppd
+    note: 'OpenLAM-v1 member (SPICE2).'
+outputs: [energy, forces, stress]
+licence: 'LGPL-3.0 (as listed by Matbench Discovery for the fine-tuned DPA-3.1-3M-FT)'
+weights: { url: 'https://www.aissquare.com/models/detail?pageType=models&name=DPA-3.1-3M&id=343' }
+claims: [dpa3-ligs]
+review: { status: draft, last_checked: 2026-10-17, notes: 'From the DPA-3 paper, Sec. 2.5 and Table S-9: LiGS order K = 2, L = 16 layers, cutoffs 6.0 Å (G(1)) and 4.0 Å (G(2)), 4M steps on 128 GPUs, about 3.26 million parameters (the paper rounds; the parameter count is the paper''s). Weights on AIS Square (Data availability); not downloaded. Licence of the pre-trained weights not stated in the paper.' }

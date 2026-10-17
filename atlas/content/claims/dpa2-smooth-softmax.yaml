@@ -1,0 +1,10 @@
+statement: >-
+  A plain softmax over the neighbours in the cutoff changes discontinuously when an atom enters, and multiplying it by the switch
+  does not fix this because every denominator changes; DPA-2 uses softmax*(x_ij) = w_ij softmax(w_ij (x_ij + s*) − s*) with
+  s* = 20, and requires the switch w to have a continuous second derivative.
+grade: THEORY
+sources:
+  - { paper: zhang2024dpa2, locator: 'arXiv v2, Sec. 4.2.4, Eqs. (34)–(36); Sec. 4.2.1, Eq. (13)' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'The page computes the residual e^−20-sized jump softmax* leaves (Fig. 2).' }

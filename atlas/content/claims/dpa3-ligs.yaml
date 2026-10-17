@@ -1,0 +1,11 @@
+statement: >-
+  DPA-3 passes messages on the line-graph series G(1), G(2), ...: bonds of G(1) are the vertices of G(2), angles its edges, and
+  dihedrals the edges of G(3). Bond features start from an embedding of the distance and angle features from an embedding of
+  cos θ; the vertex feature of G(k) is the edge feature of G(k−1), and the final atom features of G(1), with a dataset encoding,
+  give E_i = F(v_i, c(D_m)) + e_m(Z_i).
+grade: THEORY
+sources:
+  - { paper: zhang2026dpa3, locator: 'arXiv v3, Sec. 2.1; Fig. 1; Methods 4.3, Eqs. (3)–(8), (17)–(20)' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

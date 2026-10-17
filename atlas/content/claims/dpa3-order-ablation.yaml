@@ -1,0 +1,9 @@
+statement: >-
+  On the DPA-2 test sets, DPA-3 models with 3 and 6 layers became much more accurate when the line-graph order was raised from 1
+  to 2 and less accurate, especially for forces, from 2 to 3; order 2 is the default.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: zhang2026dpa3, locator: 'arXiv v3, Sec. 2.3; Fig. 3' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

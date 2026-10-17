@@ -1,0 +1,17 @@
+title: 'DeePMD-kit: A deep learning package for many-body potential energy representation and molecular dynamics'
+topic: descriptors-locality
+authors:
+  - 'Wang, H.'
+  - 'Zhang, L.'
+  - 'Han, J.'
+  - 'E, W.'
+year: 2018
+venue: Computer Physics Communications 228, 178–184
+type: article
+identifiers:
+  doi: 10.1016/j.cpc.2018.03.016
+  arxiv: '1712.03641'
+edges:
+  - { type: reuses-mechanism, target: zhang2018deepmd, documented: true }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-17, notes: 'Metadata checked (Crossref). Not read here; cited as the package the Deep Potential papers use.' }

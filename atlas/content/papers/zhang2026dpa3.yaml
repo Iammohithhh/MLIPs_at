@@ -1,0 +1,28 @@
+title: A graph neural network for the era of large atomistic models
+topic: foundation-models-data
+authors:
+  - 'Zhang, D.'
+  - 'Peng, A.'
+  - 'Cai, C.'
+  - 'Li, W.'
+  - 'Zhou, Y.'
+  - 'Zeng, J.'
+  - 'Guo, M.'
+  - 'Zhang, C.'
+  - 'Li, B.'
+  - 'Jiang, H.'
+  - 'Zhu, T.'
+  - 'Jia, W.'
+  - 'Zhang, L.'
+  - 'Wang, H.'
+year: 2026
+venue: npj Computational Materials 12, 276
+type: article
+identifiers:
+  doi: 10.1038/s41524-026-02146-2
+  arxiv: '2506.01686'
+edges:
+  - { type: extends, target: zhang2024dpa2, documented: true }
+  - { type: compares-against, target: deng2023chgnet, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v3 (PDF, 23 Jan 2026): Secs. 2.1–2.5, 3, Methods 4.2–4.3 (Eqs. 1–20), Fig. 1, Fig. 6, Table S-9 (hyperparameters), Table S-10. Equation numbers follow arXiv v3.' }

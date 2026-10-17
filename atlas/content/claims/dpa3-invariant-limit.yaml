@@ -1,0 +1,9 @@
+statement: >-
+  DPA-3 uses invariant features only; its authors find it less accurate than equivariant models such as MACE on molecular
+  dynamics data of small molecules (rMD17, 3BPA, acetylacetone).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: zhang2026dpa3, locator: 'arXiv v3, Sec. 3' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

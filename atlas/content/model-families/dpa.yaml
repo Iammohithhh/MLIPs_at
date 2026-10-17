@@ -1,0 +1,20 @@
+name: Deep Potential (DeepPot-SE, DPA-1, DPA-2, DPA-3)
+aliases: [DeePMD, Deep Potential, DeepPot-SE, se_e2_a, DPA-1, DPA-2, DPA-3, DPA3]
+paradigms: [descriptor-regression, invariant-message-passing, foundation]
+introduced_in: zhang2018deepmd
+year: 2018
+summary: >-
+  Atomic energies from a learned, smooth local descriptor. DeepPot-SE embeds each neighbour's switched inverse distance
+  s(r) with a network G and forms D = Gᵀ R̃ R̃ᵀ G from the generalised coordinates R̃_j = s(r_j)(1, r̂_j). DPA-1 adds a type
+  embedding and self-attention between neighbours gated by r̂_j · r̂_k; DPA-2 stacks repformer layers on single-atom, pair and
+  equivariant pair channels with smooth softmax and pre-trains one descriptor on many datasets with separate fitting
+  networks; DPA-3 is a message-passing network on the line-graph series (atoms, bonds, angles, dihedrals) with a dataset
+  encoding and per-dataset energy biases.
+locality:
+  kind: message-passing
+  note: 'DeepPot-SE and DPA-1 are strictly local (one cutoff, r_c = 6 Å typical). DPA-2 and DPA-3 pass messages between layers (DPA-3.1-3M: 16 layers, 6.0 Å bonds, 4.0 Å angles).'
+symmetry: invariant
+body_order: 'DeepPot-SE: three-body sums with angles entering only through cos θ (l ≤ 1, derived on the DPA page). DPA-3: angles (and optionally dihedrals) embedded by networks.'
+implementations: [deepmd-kit]
+claims: [dpa-deeppot-se-descriptor, dpa-gram-identity, dpa1-gated-attention, dpa1-attention-nonpolar, dpa1-gate-ablation, dpa2-multitask, dpa2-smooth-softmax, dpa3-ligs, dpa3-order-ablation, dpa3-switch-residual, dpa3-invariant-limit, dpa-energy-bias]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read DeepPot-SE (arXiv v2), DPA-1 (arXiv v4), DPA-2 (arXiv v2) and DPA-3 (arXiv v3) in full; Deep Potential (PRL 2018) only through what DeepPot-SE says of it. One record for the line of models; DPA-4 (DeePMD-kit README, Matbench Discovery) is not yet covered.' }

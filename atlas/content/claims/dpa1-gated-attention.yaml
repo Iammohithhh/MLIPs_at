@@ -1,0 +1,10 @@
+statement: >-
+  DPA-1 embeds s(r_ij) together with type embeddings of both atoms, then updates the neighbours' embeddings with self-attention
+  whose softmax weights are multiplied element-wise by R̂ R̂ᵀ (the cosines between neighbour directions), adds the result through a
+  residual layer normalisation (two such layers by default), and forms the DeepPot-SE product D = Ĝᵀ R̃ R̃ᵀ Ġ.
+grade: THEORY
+sources:
+  - { paper: zhang2024dpa1, locator: 'arXiv v4, Sec. II A–B, Eqs. (4)–(10); Fig. 1' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

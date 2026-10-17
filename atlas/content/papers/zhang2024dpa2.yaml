@@ -1,0 +1,21 @@
+title: 'DPA-2: a large atomic model as a multi-task learner'
+topic: foundation-models-data
+authors:
+  - 'Zhang, D.'
+  - 'Liu, X.'
+  - 'Zhang, X.'
+  - 'Zhang, C.'
+  - 'Cai, C.'
+  - 'Bi, H.'
+et_al: true
+year: 2024
+venue: npj Computational Materials 10, 293
+type: article
+identifiers:
+  doi: 10.1038/s41524-024-01493-2
+  arxiv: '2312.15492'
+edges:
+  - { type: extends, target: zhang2024dpa1, documented: true }
+  - { type: compares-against, target: batatia2023foundation, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v2 (PDF, 16 Aug 2024): Secs. 2.1–2.2 (workflow, Fig. 1; descriptor, Fig. 2), Methods 4.1–4.3, Eqs. (1)–(41). Equation numbers follow arXiv v2. 43 authors in the journal version.' }

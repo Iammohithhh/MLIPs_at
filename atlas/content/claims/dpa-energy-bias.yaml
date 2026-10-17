@@ -1,0 +1,10 @@
+statement: >-
+  DPA-2 and DPA-3 add a per-element energy bias to every atomic energy, fitted by least squares from the compositions and total
+  energies of the training frames (one bias per dataset in DPA-3), to absorb the arbitrary energy zero of each DFT setup.
+grade: THEORY
+sources:
+  - { paper: zhang2024dpa2, locator: 'arXiv v2, Sec. 4.2.1, Eqs. (5)–(6)' }
+  - { paper: zhang2026dpa3, locator: 'arXiv v3, Methods 4.3, Eq. (3)' }
+scope: { model_families: [dpa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'When the frames do not determine every element separately the least-squares problem is rank deficient; the page shows this case in Fig. 3.' }

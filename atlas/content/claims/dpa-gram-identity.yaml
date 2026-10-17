@@ -1,0 +1,8 @@
+statement: >-
+  Because R̃_j · R̃_k = s_j s_k (1 + cos θ_jk), the DeepPot-SE descriptor splits exactly as D = A⁰ B⁰ᵀ + Σ_α A^α B^αᵀ with
+  A⁰_a = Σ_j G_a(s_j) s_j and A^α_a = Σ_j G_a(s_j) s_j r̂_jα: it sees angles only through these filtered dipoles (l ≤ 1). At a site
+  where every radial shell has zero dipole (fcc, hcp, any site with no polar axis) it reduces to radial sums.
+grade: THEORY
+derivation: /models/dpa/#gram-derivation
+scope: { model_families: [dpa] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Derived on the page from Eq. (11) of the DeepPot-SE paper and checked numerically in dpa.test.ts (fcc vs hcp, tetrahedron vs square).' }
