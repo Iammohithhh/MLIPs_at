@@ -182,6 +182,6 @@ test('architecture diagram: a block opens its walkthrough stage and the stage em
 test('walkthrough stage 5 shows baseline and frame feature strips for a local atom', async ({ page }) => {
   await page.goto('/?mode=walk&stage=features&frame=24');
   await expect(page.getByText('Atom 105: baseline vs this frame (d = 0.300 Å)')).toBeVisible();
-  await expect(page.getByText(/Layer 1, 128 vectors \(l = 1\): length/)).toBeVisible();
-  await expect(page.getByText(/Layer 2, 128 scalars/)).toBeVisible();
+  await expect(page.locator('.ev').getByText(/Layer 1, 128 vectors \(l = 1\): length/)).toBeVisible();
+  await expect(page.locator('.ev').getByText(/Layer 2, 128 scalars/)).toBeVisible();
 });
