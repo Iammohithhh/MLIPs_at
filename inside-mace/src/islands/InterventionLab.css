@@ -592,6 +592,14 @@
 .ev th:last-child {
   text-align: left;
 }
+.ev__achan {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin-top: 0.15rem;
+  background: var(--im-stage);
+  border-radius: 2px;
+}
 .ev__fd {
   list-style: none;
   margin: 0;

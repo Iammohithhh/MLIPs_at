@@ -94,20 +94,35 @@ function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
       </p>
       <dl className="mono">
         {[0, 1, 2, 3].map((l) => {
-          const now = l2(c.layers[0]!.Anorm[row]![l]!);
-          const base = l2(b.layers[0]!.Anorm[row]![l]!);
+          const nowCh = c.layers[0]!.Anorm[row]![l]!;
+          const baseCh = b.layers[0]!.Anorm[row]![l]!;
+          const now = l2(nowCh);
+          const base = l2(baseCh);
+          // one colour scale per l (both rows), never shared across l: different irreps are not comparable in size
+          const max = Math.max(...nowCh, ...baseCh);
+          const cell = (v: number) => (max > 0 ? v / max : 0);
           return (
             <div key={l}>
               <dt>l = {l}</dt>
               <dd>
                 {base.toPrecision(4)} → {now.toPrecision(4)}
+                <svg className="ev__achan" viewBox={`0 0 ${nowCh.length} 7`} preserveAspectRatio="none" role="img" aria-label={`l = ${l}: per-channel |A|, baseline (top) and this frame (bottom), scale 0 to ${max.toPrecision(3)}`}>
+                  {baseCh.map((v, k) => (
+                    <rect key={`b${k}`} x={k} y={0} width={1} height={3} fill={`rgb(110 212 186 / ${cell(v)})`} />
+                  ))}
+                  {nowCh.map((v, k) => (
+                    <rect key={`f${k}`} x={k} y={4} width={1} height={3} fill={`rgb(240 169 69 / ${cell(v)})`} />
+                  ))}
+                </svg>
               </dd>
             </div>
           );
         })}
       </dl>
       <p className="ev__note">
-        Norms of the stored per-channel norms (|A| over m, then over channels).
+        Numbers: norm over channels of the stored per-channel norms (|A| over m). Strips: the 128 per-channel |A| values, baseline (teal, top)
+        and this frame (amber, bottom), each l on its own scale from 0 to that l’s largest value in either row — compare rows within an l, not
+        across l.
         {symmetricBaseline(m) &&
           ' In the perfect crystal the l = 1 and l = 2 blocks vanish by the site’s tetrahedral symmetry, while l = 3 does not; displacing the atom switches the lower ones on.'}
       </p>
@@ -227,7 +242,9 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
       <div className="ev">
         <p className="ev__title">This frame (d = {f.d.toFixed(3)} Å)</p>
         <dl className="mono">
-          <dt>E_{atom} (site)</dt>
+          <dt>
+            E<sub>{atom}</sub> (site)
+          </dt>
           <dd>{eV5(ei)} eV, of which E₀({m.structure.symbols[atom]}) = {eV5(e0)} eV is a fixed per-element reference</dd>
           <dt>Σᵢ Eᵢ, {m.structure.n} atoms</dt>
           <dd>{eV5(sum)} eV</dd>
