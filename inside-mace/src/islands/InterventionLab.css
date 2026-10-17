@@ -1205,3 +1205,20 @@ body.is-present .exp-pick {
     top: 0.75rem;
   }
 }
+
+/* Phones (brief §2, §12): tighter instrument header so the scene starts on the first screen. */
+@media (max-width: 640px) {
+  .lab {
+    gap: 0.6rem;
+  }
+  .lab__head h2 {
+    font-size: 1.1rem;
+  }
+  .exp-pick {
+    margin-bottom: 0.3rem;
+  }
+  .exp-pick button {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

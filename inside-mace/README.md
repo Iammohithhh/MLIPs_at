@@ -140,7 +140,7 @@ inside-mace/
 
 ## Verification summary
 
-Final re-verification by build session 6 on 2026-10-17 (last full run 23:49–23:51 UTC, after the last code change; pytest at 23:41, after the last pipeline-relevant change —
+Final re-verification by build session 6 on 2026-10-17 (last full run 23:53–23:55 UTC, after the last code change; pytest at 23:41, after the last pipeline-relevant change —
 none was made; Linux
 cloud container, Node via `npm ci`, Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below is a
 real run in that session.

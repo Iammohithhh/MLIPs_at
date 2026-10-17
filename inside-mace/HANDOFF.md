@@ -298,7 +298,7 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
    and a final screenshot pass of every view (baseline/perturbed/difference/side by side) for ZnO.
 
 
-### Session 6 (final) — 2026-10-17 23:15 → ~23:55 UTC
+### Session 6 (final) — 2026-10-17 23:15 → 23:57 UTC
 
 **State found:** branch at `0f7c0b7` (session 5 handoff), clean. Re-read BRIEF, HANDOFF, CLAUDE.md, README.
 Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK, Playwright desktop + mobile 50 passed /
@@ -334,8 +334,10 @@ Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK,
 - Last code commit: displacement labels in the evidence panels, inspector and rotation panel are signed with a true
   minus (`fmtD` in `src/lib/format.ts`, tested); they read "d = 0.200" before, and a negative d would have shown an
   ASCII hyphen.
+- Last commit: phone header compressed (hero, picker, lab heading) so the Pixel 7 first screen reaches the scene and the
+  moved atom (stage top 576 → 513 px of 839); iPhone 13 (664 px tall) shows the top of the scene. CSS only.
 
-**Verified at the end (23:49–23:51 UTC, after the last code change):** astro check 0 errors; Vitest
+**Verified at the end (23:53–23:55 UTC, after the last code change):** astro check 0 errors; Vitest
 80/80 (10 files); build OK; Playwright desktop + mobile **58 passed, 2 skipped** (perf mobile-only, passed);
 `npm run record:demo` 2/2. pytest 22/22 with the checkpoint at 23:41 (fresh re-evaluation of stored frames, both
 experiments; no pipeline or data change after that).
