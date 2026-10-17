@@ -26,6 +26,7 @@ import { FeatureInspector } from './FeatureInspector';
 import { SceneGuard } from './SceneGuard';
 import { ResponsePlots } from './ResponsePlots';
 import { RotationDemo } from './RotationDemo';
+import { StageEvidence } from './StageEvidence';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
@@ -127,6 +128,7 @@ export default function InterventionLab() {
         </div>
         <aside className="lab__panel">
           {s.mode === 'walk' && <StageDetail stage={s.stage} onStage={(st) => set({ stage: st })} />}
+          {s.mode === 'walk' && <StageEvidence m={m} stage={s.stage} frame={frame} atom={s.atom} />}
           <Displacement frame={frame} onFrame={(k) => set({ frame: k })} />
           <Readouts frame={frame} atom={s.atom} />
           <fieldset className="lab__toggles">

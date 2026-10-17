@@ -533,3 +533,42 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.ev {
+  border-top: 1px solid var(--atlas-rule);
+  padding-top: 0.6rem;
+  font-size: 0.78rem;
+}
+.ev__title {
+  margin: 0 0 0.3rem;
+  font-weight: 600;
+}
+.ev dl {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+  font-size: 0.72rem;
+}
+.ev dt {
+  color: var(--atlas-ink-faint);
+}
+.ev dd {
+  margin: 0 0 0.25rem;
+}
+.ev__scroll {
+  overflow-x: auto;
+}
+.ev table {
+  border-collapse: collapse;
+  font-size: 0.66rem;
+}
+.ev th,
+.ev td {
+  border-bottom: 1px solid var(--atlas-rule);
+  padding: 0.2rem 0.35rem;
+  text-align: right;
+  white-space: nowrap;
+}
+.ev__note {
+  color: var(--atlas-ink-muted);
+  margin: 0.4rem 0 0;
+}

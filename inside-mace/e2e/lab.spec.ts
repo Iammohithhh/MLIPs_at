@@ -103,6 +103,7 @@ test('guided walkthrough: seven stages, equation on demand, URL keeps the stage'
   await page.getByRole('button', { name: 'Show equation and code' }).click();
   await expect(page.locator('.sd__eq .katex')).toBeVisible();
   await expect(page.getByText(/mace\/modules\/utils.py:22/)).toBeVisible();
+  await expect(page.getByText(/autograd force vs central finite difference/)).toBeVisible();
   await page.getByRole('navigation', { name: 'Computation stages' }).getByRole('button', { name: /Neighbour graph/ }).click();
   await expect(page.getByText('Stage 2 of 7')).toBeVisible();
   // switching mode keeps the displacement frame
