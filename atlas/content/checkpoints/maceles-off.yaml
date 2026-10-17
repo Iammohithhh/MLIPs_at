@@ -1,0 +1,16 @@
+name: MACELES-OFF
+family: les
+implementation: mace
+version: MACELES-OFF_small_converted.model
+release: { source: kim2025les }
+training:
+  - stage: training
+    dataset: spice
+    level_of_theory: wb97md3bj-def2tzvppd
+    note: 'The MACE-OFF23 training/validation split: about 85% of SPICE v1 (neutral molecules, ten elements) plus 50–90-atom QMugs molecules at the same level (QMugs not recorded separately in the Atlas).'
+outputs: [energy, forces, charges, dipole]
+long_range: latent-ewald
+licence: 'CC BY-NC 4.0 (les_fit repository README)'
+weights: { url: 'https://github.com/ChengUCB/les_fit/blob/main/MACELES-OFF/MACELES-OFF_small_converted.model' }
+claims: [maceles-off-accuracy]
+review: { status: draft, last_checked: 2026-10-17, notes: 'MACE with an LES module: cutoff 4.5 Å, 192 channels, ℓ = 1, float32 (Kim et al. arXiv v1, MACELES-OFF section and Table II). Charges are LES latent charges and dipoles their first moment; not trained on either. The converted file runs on the MACE main branch (les_fit README, MD5 given there); trained with the Cheng-group MACE fork. Parameter count not stated. Not downloaded.' }

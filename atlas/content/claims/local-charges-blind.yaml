@@ -1,0 +1,12 @@
+statement: >-
+  A charge that is a function of an atom's environment within the model's receptive field cannot change when only atoms outside
+  that field change; uniform rescaling to a total charge changes every atom by the same amount. Only a global step such as charge
+  equilibration can move charge between distant atoms. This applies to 3G-HDNNP charges and to LES latent charges alike.
+grade: THEORY
+derivation: /models/long-range/#local-derivation
+sources:
+  - { paper: ko2021fourth, locator: 'arXiv v1, Sec. I; Fig. 1' }
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. II c (limitation of the local charge assumption)' }
+scope: { model_families: [hdnnp-4g, les] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

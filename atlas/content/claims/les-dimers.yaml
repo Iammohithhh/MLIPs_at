@@ -1,0 +1,11 @@
+statement: >-
+  On binding curves of charged and polar molecular dimers in a 30 Å box (HSE06 with many-body dispersion; trained between about
+  5 and 12 Å, tested at 12–15 Å), a short-range CACE model with a 5 Å cutoff and one message-passing layer flattened the binding
+  curves and missed forces, because molecules beyond the cutoff sit on separate graphs; the LES model (σ = 1 Å, k_c = 2π/3 Å⁻¹)
+  had lower test errors for all three dimer classes.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: cheng2025les, locator: 'arXiv v2, Sec. I B; Fig. 1' }
+scope: { model_families: [les, cace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

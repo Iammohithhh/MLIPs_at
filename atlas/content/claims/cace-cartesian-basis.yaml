@@ -1,0 +1,11 @@
+statement: >-
+  CACE replaces spherical harmonics by Cartesian monomials L_l(r̂) = x^lx y^ly z^lz with lx + ly + lz = l and forms invariants by
+  contracting atom-centred moments A_l with multinomial weights C(l) = l!/(lx! ly! lz!), using (r̂_j · r̂_k)^l = Σ_l C(l) L_l(r̂_j) L_l(r̂_k):
+  B⁽²⁾ sums radial products times cos^l θ_jk, B⁽³⁾ chains two angles, and products that factor into lower-order invariants are
+  dropped.
+grade: THEORY
+sources:
+  - { paper: cheng2024cace, locator: 'arXiv v3, Sec. I A, Eqs. (2), (4), (6)–(10); Fig. 1i' }
+scope: { model_families: [cace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

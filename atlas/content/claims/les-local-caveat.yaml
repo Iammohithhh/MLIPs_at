@@ -1,0 +1,11 @@
+statement: >-
+  The authors of LES state that predicting charges locally works well empirically but lacks theoretical guarantees and may meet
+  its limits in edge cases such as long-range charge transfer, and that the sign of all latent charges is not determined because
+  E_lr depends on |S(k)|².
+grade: THEORY
+sources:
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. II c' }
+  - { paper: cheng2025les, locator: 'arXiv v2, Sec. II (locality "remains empirical")' }
+scope: { model_families: [les] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

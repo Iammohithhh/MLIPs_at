@@ -1,0 +1,18 @@
+title: Machine learning of charges and long-range interactions from energies and forces
+topic: electrostatics
+authors:
+  - 'King, D. S.'
+  - 'Kim, D.'
+  - 'Zhong, P.'
+  - 'Cheng, B.'
+year: 2025
+venue: Nature Communications 16, 8763
+type: article
+identifiers:
+  doi: 10.1038/s41467-025-63852-x
+  arxiv: '2412.15455'
+edges:
+  - { type: extends, target: cheng2025les, documented: true }
+  - { type: compares-against, target: ko2021fourth, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (PDF and HTML, 19 Dec 2024; titled "Learning charges and long-range interactions from energies and forces", first author Kim there, King in the journal version): Sec. II (Eqs. 1–5), Sec. III A–E, Tables I–II. Equation and table numbers follow arXiv v1.' }

@@ -1,0 +1,8 @@
+statement: >-
+  Each Cartesian two-body invariant Σ_jk R_j R_k cos^l θ_jk is a fixed positive combination of the spherical power-spectrum
+  invariants p_l, p_(l−2), …, because cos^l θ expands in Legendre polynomials of order l, l − 2, …; the Cartesian and spherical
+  invariants up to the same l span the same space.
+grade: THEORY
+derivation: /models/long-range/#cace-derivation
+scope: { model_families: [cace] }
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,120 @@
+/* Long-range page figures: charge transfer on a chain (Fig. 1), the latent Ewald sum (Fig. 2), CACE's Cartesian basis (Fig. 3). */
+
+.lr-side {
+  display: grid;
+  align-content: start;
+  gap: 0.6rem;
+  padding: 1rem 1.1rem;
+  min-width: 0;
+}
+.lab .seg.lr-models {
+  justify-self: start;
+}
+.lr-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.lr-sub,
+.lr-cap {
+  margin: 0;
+  font: 0.78rem/1.45 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.lab-plot .lr-row {
+  font: 600 0.72rem var(--font-sans);
+  fill: var(--atlas-ink);
+}
+.lab-plot .lr-id {
+  fill: var(--atlas-ink-faint);
+}
+.lab-plot .lr-same {
+  fill: color-mix(in oklab, var(--atlas-phys) 12%, transparent);
+}
+.lab-plot .lr-band {
+  fill: color-mix(in oklab, var(--atlas-rule) 50%, transparent);
+}
+.lab-plot .lr-band-label {
+  font: 0.62rem var(--font-sans);
+  fill: var(--atlas-ink-muted);
+}
+.lab-plot .lr-curve {
+  fill: none;
+  stroke-width: 2.2;
+}
+.lab-plot .lr-curve.is-dashed {
+  stroke-dasharray: 5 3;
+  stroke-width: 1.6;
+}
+.lab-plot .lr-curve.is-thin {
+  stroke-width: 1.3;
+}
+.lr-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 0.76rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.lr-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.lr-legend .swatch {
+  width: 1.1rem;
+  height: 0;
+  border-top: 2.5px solid currentColor;
+}
+.lr-legend .swatch.is-dashed {
+  border-top-style: dashed;
+}
+
+.lr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 0.8rem/1.4 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.lr-table th,
+.lr-table td {
+  padding: 0.3rem 0.5rem 0.3rem 0;
+  border-bottom: 1px solid var(--atlas-rule);
+  text-align: right;
+}
+.lr-table th:first-child,
+.lr-table td:first-child {
+  text-align: left;
+}
+.lr-table th {
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  color: var(--atlas-ink-faint);
+}
+.lr-table .is-match {
+  color: var(--atlas-verified);
+  font-weight: 600;
+}
+.lr-mono {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.lr-mono span {
+  padding: 0.15rem 0.35rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.3rem;
+  font: 0.72rem var(--font-mono, ui-monospace, monospace);
+  color: var(--atlas-ink);
+  background: var(--atlas-canvas);
+}
+.lr-h {
+  margin: 0;
+  font: 600 0.78rem var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--atlas-arch);
+}

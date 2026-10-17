@@ -1,0 +1,14 @@
+title: Cartesian atomic cluster expansion for machine learning interatomic potentials
+topic: descriptors-locality
+authors:
+  - 'Cheng, B.'
+year: 2024
+venue: npj Computational Materials 10, 157
+type: article
+identifiers:
+  doi: 10.1038/s41524-024-01332-4
+  arxiv: '2402.07472'
+edges:
+  - { type: reuses-mechanism, target: drautz2019ace, documented: true, note: 'Same body-ordered density expansion, written with Cartesian monomials instead of spherical harmonics.' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v3 (PDF, 30 Jul 2024): Sec. I A (Eqs. 1–15, Fig. 1, Fig. 2), Table I. Equation numbers follow arXiv v3.' }

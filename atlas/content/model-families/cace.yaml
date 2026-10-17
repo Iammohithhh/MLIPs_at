@@ -1,0 +1,20 @@
+name: Cartesian atomic cluster expansion (CACE)
+aliases: [CACE, CACE-SR]
+paradigms: [descriptor-regression, invariant-message-passing]
+introduced_in: cheng2024cace
+year: 2024
+summary: >-
+  The atomic cluster expansion written in Cartesian coordinates: edge bases R_n,cl(r) x^lx y^ly z^lz with a learned element
+  embedding, atom-centred sums A, and invariants B formed by contracting Cartesian moments with multinomial weights instead of
+  Clebsch–Gordan coefficients, keeping only polynomially independent combinations. Zero or one message-passing layer, then an MLP
+  per atom. The host model of the first latent-Ewald (LES) papers.
+locality:
+  kind: message-passing
+  note: 'One cutoff (4–6 Å in the papers); T = 0 or 1 message-passing layers, so the receptive field is r_c or 2 r_c.'
+symmetry: invariant
+body_order: 'B features up to ν_max (2–4 typical) with l_max 2–4: ν + 1-body terms, built from Cartesian moments.'
+reuses_mechanism:
+  - { family: grace, mechanism: 'The ACE density trick (atom-centred sums before products), here with Cartesian monomials.' }
+implementations: [cace]
+claims: [cace-cartesian-basis, cace-legendre-mix]
+review: { status: draft, last_checked: 2026-10-17, notes: 'From the CACE paper (arXiv v3, Sec. I A). No released general-purpose checkpoint is recorded.' }

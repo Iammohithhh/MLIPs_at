@@ -1,0 +1,18 @@
+title: A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer
+topic: electrostatics
+authors:
+  - 'Ko, T. W.'
+  - 'Finkler, J. A.'
+  - 'Goedecker, S.'
+  - 'Behler, J.'
+year: 2021
+venue: Nature Communications 12, 398
+type: article
+identifiers:
+  doi: 10.1038/s41467-020-20427-2
+  arxiv: '2009.06484'
+edges:
+  - { type: extends, target: behler2007generalized, documented: true }
+  - { type: reuses-mechanism, target: rappe1991qeq, documented: true, note: 'Charge equilibration with environment-dependent electronegativities.' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (PDF, 14 Sep 2020): Secs. I–III, Eqs. (1)–(9), Figs. 1–4, Table I. The supplementary information (training details, geometries) was not read. Equation numbers follow arXiv v1.' }

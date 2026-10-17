@@ -5,5 +5,5 @@ summary: >-
 explains: [coulomb-interaction]
 demonstrated_by: [receptive-field-figure, interface-receptive-field, pair-cutoff, madelung-sums]
 related: [locality, ewald-summation, charge-equilibration]
-papers: [cheng2025les]
+papers: [cheng2025les, ko2021fourth, king2025charges]
 review: { status: draft, last_checked: 2026-10-14 }

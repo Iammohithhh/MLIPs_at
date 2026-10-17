@@ -1,0 +1,11 @@
+statement: >-
+  In simulations of the water liquid–vapour interface, all short- and long-range CACE models gave similar density profiles, but
+  the short-range model without message passing extended interfacial dipole ordering into the bulk and the one with a message
+  passing layer produced opposite ordering in a thicker slab, while the LES models recovered the screened orientational profile;
+  short-range models also diverged in the longitudinal dipole correlation of bulk water as k → 0.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: cheng2025les, locator: 'arXiv v2, Secs. I D–E; Figs. 4, 6' }
+scope: { model_families: [les, cace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

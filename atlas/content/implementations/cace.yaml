@@ -1,0 +1,7 @@
+name: CACE
+repo: https://github.com/BingqingCheng/cace
+language: Python
+framework: pytorch
+licence: CC BY-NC 4.0 (LICENSE)
+families: [cace, les]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Reference implementation of CACE and of CACE-LR with the LES Ewald module (CACE and LES papers, Code availability). LICENSE file read.' }

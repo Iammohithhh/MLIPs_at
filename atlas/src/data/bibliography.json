@@ -270,6 +270,7 @@
    "deng2024softening",
    "drautz2019ace",
    "kim2024multifidelity",
+   "ko2021fourth",
    "riebesell2023matbench",
    "schutt2018schnet",
    "zhang2024dpa1",
@@ -2117,6 +2118,116 @@
    ]
   }
  },
+ "cheng2024cace": {
+  "arxiv": {
+   "authors": [
+    "Bingqing Cheng"
+   ],
+   "id": "2402.07472v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2024-02-12",
+   "title": "Cartesian atomic cluster expansion for machine learning interatomic potentials",
+   "updated": "2024-07-30"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Cheng, B.' vs fetched ['cheng', 'cheng']"
+   }
+  ],
+  "cites": [
+   "batatia2023foundation",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "drautz2019ace",
+   "fu2022forces",
+   "musaelian2023allegro",
+   "schutt2017schnet",
+   "wang2018deepmdkit"
+  ],
+  "crossref": {
+   "article_number": "157",
+   "authors": [
+    {
+     "family": "Cheng",
+     "given": "Bingqing"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-024-01332-4",
+   "issue": "1",
+   "page": null,
+   "title": "Cartesian atomic cluster expansion for machine learning interatomic potentials",
+   "type": "journal-article",
+   "volume": "10",
+   "year": 2024
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 70,
+   "id": "W4400776655",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W1971360483",
+    "W2025444507",
+    "W2029413789",
+    "W2064780160",
+    "W2083415705",
+    "W2197007850",
+    "W2585152223",
+    "W2592884795",
+    "W2626778328",
+    "W2726670313",
+    "W2775708988",
+    "W2900475422",
+    "W2904141086",
+    "W2910857709",
+    "W2923693308",
+    "W2939169979",
+    "W2951539866",
+    "W3003838176",
+    "W3009030042",
+    "W3035839386",
+    "W3041909131",
+    "W3043992084",
+    "W3044111935",
+    "W3093149769",
+    "W3120951562",
+    "W3132956480",
+    "W3169271328",
+    "W3176386153",
+    "W3185227028",
+    "W3189651386",
+    "W3208707586",
+    "W4225405705",
+    "W4280600366",
+    "W4304588537",
+    "W4306313211",
+    "W4308022370",
+    "W4310119513",
+    "W4319162181",
+    "W4367048790",
+    "W4384206875",
+    "W4385659449",
+    "W4386608568",
+    "W4387866108",
+    "W4391733868",
+    "W4396768624",
+    "W4416191329"
+   ]
+  }
+ },
  "cheng2025les": {
   "arxiv": {
    "authors": [
@@ -2148,6 +2259,7 @@
   "cites": [
    "batzner2022nequip",
    "behler2007generalized",
+   "cheng2024cace",
    "deng2023chgnet",
    "drautz2019ace",
    "rappe1991qeq"
@@ -2169,7 +2281,7 @@
    "volume": "11",
    "year": 2025
   },
-  "fetched": "2026-10-14",
+  "fetched": "2026-10-17",
   "openalex": {
    "cited_by_count": 92,
    "id": "W4408876037",
@@ -2197,12 +2309,9 @@
     "W3093149769",
     "W3123300545",
     "W3132956480",
-    "W3133931590",
     "W3159653252",
-    "W3178108585",
     "W3181402237",
     "W3189651386",
-    "W3209636498",
     "W4213092775",
     "W4220834411",
     "W4225405705",
@@ -2326,6 +2435,7 @@
    "batzner2022nequip",
    "chen2022m3gnet",
    "fu2022forces",
+   "ko2021fourth",
    "rappe1991qeq"
   ],
   "crossref": {
@@ -2486,6 +2596,7 @@
    "batzner2022nequip",
    "chanussot2020oc20",
    "chen2022m3gnet",
+   "cheng2024cace",
    "deng2023chgnet",
    "focassio2024surfaces",
    "wang2018deepmdkit",
@@ -2772,7 +2883,8 @@
   ],
   "cites": [
    "batatia2022mace",
-   "batzner2022nequip"
+   "batzner2022nequip",
+   "ko2021fourth"
   ],
   "crossref": null,
   "fetched": "2026-10-15",
@@ -4019,6 +4131,488 @@
     "W4403582283",
     "W4416191329",
     "W6945177990"
+   ]
+  }
+ },
+ "kim2025les": {
+  "arxiv": {
+   "authors": [
+    "Dongjin Kim",
+    "Xiaoyu Wang",
+    "Peichen Zhong",
+    "Daniel S. King",
+    "Theo Jaffrelot Inizan",
+    "Bingqing Cheng"
+   ],
+   "id": "2507.14302v1",
+   "primary_category": "physics.chem-ph",
+   "published": "2025-07-18",
+   "title": "A universal augmentation framework for long-range electrostatics in machine learning interatomic potentials",
+   "updated": "2025-07-18"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kim, D.' vs fetched ['kim', 'kim']"
+   }
+  ],
+  "cites": [
+   "barrosoluque2024omat24",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "chen2022m3gnet",
+   "cheng2024cace",
+   "cheng2025les",
+   "deng2023chgnet",
+   "drautz2019ace",
+   "eastman2022spice",
+   "fu2025esen",
+   "gonze1997dfpt",
+   "king2025charges",
+   "ko2021fourth",
+   "levine2025omol25",
+   "musaelian2023allegro",
+   "passaro2023escn",
+   "wang2018deepmdkit",
+   "wood2025uma",
+   "zhong2025response"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Kim",
+     "given": "Dongjin"
+    },
+    {
+     "family": "Wang",
+     "given": "Xiaoyu"
+    },
+    {
+     "family": "Vargas",
+     "given": "Santiago"
+    },
+    {
+     "family": "Zhong",
+     "given": "Peichen"
+    },
+    {
+     "family": "King",
+     "given": "Daniel S."
+    },
+    {
+     "family": "Inizan",
+     "given": "Theo Jaffrelot"
+    },
+    {
+     "family": "Cheng",
+     "given": "Bingqing"
+    }
+   ],
+   "container": "Journal of Chemical Theory and Computation",
+   "doi": "10.1021/acs.jctc.5c01400",
+   "issue": "24",
+   "page": "12709-12724",
+   "title": "A Universal Augmentation Framework for Long-Range Electrostatics in Machine Learning Interatomic Potentials",
+   "type": "journal-article",
+   "volume": "21",
+   "year": 2025
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 30,
+   "id": "W4417191530",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W1976499671",
+    "W1981021420",
+    "W1992985800",
+    "W2010830730",
+    "W2011378420",
+    "W2015688756",
+    "W2025444507",
+    "W2030903201",
+    "W2044028691",
+    "W2057806291",
+    "W2064780160",
+    "W2067328332",
+    "W2083415705",
+    "W2085497102",
+    "W2114722820",
+    "W2123891429",
+    "W2146411229",
+    "W2161605421",
+    "W2163257413",
+    "W2197007850",
+    "W2592884795",
+    "W2601081289",
+    "W2756519801",
+    "W2775708988",
+    "W2884817966",
+    "W2910857709",
+    "W2923693308",
+    "W2964344211",
+    "W2970740744",
+    "W2989581357",
+    "W2991533556",
+    "W3000387070",
+    "W3086372695",
+    "W3093149769",
+    "W3132956480",
+    "W3181402237",
+    "W3189651386",
+    "W3202121601",
+    "W4220834411",
+    "W4225405705",
+    "W4282053982",
+    "W4295608318",
+    "W4307169910",
+    "W4310135808",
+    "W4310555543",
+    "W4313545414",
+    "W4317677088",
+    "W4319162181",
+    "W4319653980",
+    "W4321085451",
+    "W4385952529",
+    "W4386740800",
+    "W4387803785",
+    "W4392271577",
+    "W4392382360",
+    "W4400776655",
+    "W4401761673",
+    "W4403582283",
+    "W4404511389",
+    "W4404929144",
+    "W4407759102",
+    "W4407768940",
+    "W4408150315",
+    "W4408876037",
+    "W4409069046",
+    "W4409271209",
+    "W4409376204",
+    "W4409919879",
+    "W4410498985",
+    "W4412974141",
+    "W4413857476",
+    "W4414644745",
+    "W4414687828",
+    "W4414900353",
+    "W4415800530",
+    "W4416524231",
+    "W4417151596",
+    "W4417200024",
+    "W6891811738",
+    "W7116706387"
+   ]
+  }
+ },
+ "king2025charges": {
+  "arxiv": {
+   "authors": [
+    "Dongjin Kim",
+    "Daniel S. King",
+    "Peichen Zhong",
+    "Bingqing Cheng"
+   ],
+   "id": "2412.15455v1",
+   "primary_category": "physics.comp-ph",
+   "published": "2024-12-19",
+   "title": "Learning charges and long-range interactions from energies and forces",
+   "updated": "2024-12-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2024, 2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'King, D. S.' vs fetched ['king', 'kim']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "cheng2024cace",
+   "cheng2025les",
+   "deng2023chgnet",
+   "drautz2019ace",
+   "eastman2022spice",
+   "gonze1997dfpt",
+   "ko2021fourth",
+   "prodan2005nearsightedness",
+   "rappe1991qeq"
+  ],
+  "crossref": {
+   "article_number": "8763",
+   "authors": [
+    {
+     "family": "King",
+     "given": "Daniel S."
+    },
+    {
+     "family": "Kim",
+     "given": "Dongjin"
+    },
+    {
+     "family": "Zhong",
+     "given": "Peichen"
+    },
+    {
+     "family": "Cheng",
+     "given": "Bingqing"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-025-63852-x",
+   "issue": "1",
+   "page": null,
+   "title": "Machine learning of charges and long-range interactions from energies and forces",
+   "type": "journal-article",
+   "volume": "16",
+   "year": 2025
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 42,
+   "id": "W4414687828",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W248096629",
+    "W1509345248",
+    "W1968666708",
+    "W1970149124",
+    "W1976161355",
+    "W1981225934",
+    "W1981368803",
+    "W1988091937",
+    "W2005543043",
+    "W2015197254",
+    "W2025444507",
+    "W2035454388",
+    "W2044841660",
+    "W2053856735",
+    "W2067328332",
+    "W2071955309",
+    "W2083415705",
+    "W2092157292",
+    "W2092216163",
+    "W2142501550",
+    "W2170006871",
+    "W2170560995",
+    "W2197007850",
+    "W2323403662",
+    "W2418973097",
+    "W2461093577",
+    "W2755181646",
+    "W2756519801",
+    "W2884817966",
+    "W2893525128",
+    "W2900475422",
+    "W2910857709",
+    "W2923693308",
+    "W2989600197",
+    "W2991533556",
+    "W3003838176",
+    "W3044111935",
+    "W3086372695",
+    "W3093149769",
+    "W3132956480",
+    "W3157183757",
+    "W3181402237",
+    "W3189651386",
+    "W3202121601",
+    "W4220834411",
+    "W4225405705",
+    "W4294316513",
+    "W4310555543",
+    "W4313545414",
+    "W4367174359",
+    "W4386740800",
+    "W4387803785",
+    "W4388001291",
+    "W4392382360",
+    "W4400776655",
+    "W4402618195",
+    "W4404188960",
+    "W4404709951",
+    "W4404929144",
+    "W4405700376",
+    "W4405883509",
+    "W4407768940",
+    "W4408150315",
+    "W4408876037",
+    "W4409069046",
+    "W4409271209",
+    "W4417200024",
+    "W6912082700",
+    "W6930796275"
+   ]
+  }
+ },
+ "ko2021fourth": {
+  "arxiv": {
+   "authors": [
+    "Tsz Wai Ko",
+    "Jonas A. Finkler",
+    "Stefan Goedecker",
+    "Jörg Behler"
+   ],
+   "id": "2009.06484v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2020-09-14",
+   "title": "A Fourth-Generation High-Dimensional Neural Network Potential with Accurate Electrostatics Including Non-local Charge Transfer",
+   "updated": "2020-09-14"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2020, 2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Ko, T. W.' vs fetched ['ko', 'ko']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "behler2011symmetry",
+   "drautz2019ace",
+   "prodan2005nearsightedness",
+   "rappe1991qeq",
+   "schutt2018schnet"
+  ],
+  "crossref": {
+   "article_number": "398",
+   "authors": [
+    {
+     "family": "Ko",
+     "given": "Tsz Wai"
+    },
+    {
+     "family": "Finkler",
+     "given": "Jonas A."
+    },
+    {
+     "family": "Goedecker",
+     "given": "Stefan"
+    },
+    {
+     "family": "Behler",
+     "given": "Jörg"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-020-20427-2",
+   "issue": "1",
+   "page": null,
+   "title": "A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2021
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 507,
+   "id": "W3086372695",
+   "publication_year": 2021,
+   "referenced_works": [
+    "W26088913",
+    "W1596185547",
+    "W1816466342",
+    "W1968497847",
+    "W1975997599",
+    "W1977840798",
+    "W1979095640",
+    "W1981368803",
+    "W2008517160",
+    "W2017196167",
+    "W2020103959",
+    "W2025444507",
+    "W2028056984",
+    "W2028228833",
+    "W2040048373",
+    "W2043740651",
+    "W2047968138",
+    "W2053117030",
+    "W2055526416",
+    "W2058370262",
+    "W2061179540",
+    "W2063007245",
+    "W2064816673",
+    "W2065881820",
+    "W2071955309",
+    "W2079199763",
+    "W2080249868",
+    "W2082737816",
+    "W2083415705",
+    "W2083956694",
+    "W2084551198",
+    "W2092956715",
+    "W2093604975",
+    "W2133959849",
+    "W2142501550",
+    "W2148424525",
+    "W2155155530",
+    "W2170006871",
+    "W2197007850",
+    "W2283356398",
+    "W2318554958",
+    "W2401640061",
+    "W2520022941",
+    "W2523246573",
+    "W2530960271",
+    "W2541404351",
+    "W2547447472",
+    "W2593724699",
+    "W2746244909",
+    "W2746867917",
+    "W2768213699",
+    "W2778051509",
+    "W2778341174",
+    "W2884817966",
+    "W2898785473",
+    "W2910857709",
+    "W2923693308",
+    "W2955950058",
+    "W2958445743",
+    "W2964186609",
+    "W2971894235",
+    "W2988055229",
+    "W3033175660",
+    "W3033241142",
+    "W3041882528",
+    "W3080512649",
+    "W3086372695",
+    "W3129374569",
+    "W3155265294",
+    "W6963637939"
    ]
   }
  },
@@ -6133,6 +6727,7 @@
   ],
   "cites": [
    "behler2007generalized",
+   "ko2021fourth",
    "stillinger1985sw"
   ],
   "crossref": {
@@ -7798,6 +8393,122 @@
    "id": "W4417114399",
    "publication_year": 2026,
    "referenced_works": []
+  }
+ },
+ "zhong2025response": {
+  "arxiv": {
+   "authors": [
+    "Peichen Zhong",
+    "Dongjin Kim",
+    "Daniel S. King",
+    "Bingqing Cheng"
+   ],
+   "id": "2504.05169v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2025-04-07",
+   "title": "Machine learning interatomic potential can infer electrical response",
+   "updated": "2025-04-07"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zhong, P.' vs fetched ['zhong']"
+   }
+  ],
+  "cites": [
+   "batzner2022nequip",
+   "behler2007generalized",
+   "cheng2024cace",
+   "cheng2025les",
+   "drautz2019ace",
+   "gonze1997dfpt"
+  ],
+  "crossref": null,
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 25,
+   "id": "W7116706387",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W64853285",
+    "W146254884",
+    "W248096629",
+    "W1968627298",
+    "W1981368803",
+    "W1986694656",
+    "W1992191950",
+    "W2000688419",
+    "W2019657469",
+    "W2025444507",
+    "W2044095971",
+    "W2044841660",
+    "W2051310735",
+    "W2052367774",
+    "W2053293614",
+    "W2055259893",
+    "W2055710408",
+    "W2067328332",
+    "W2114722820",
+    "W2151108095",
+    "W2151895170",
+    "W2197007850",
+    "W2246414389",
+    "W2276452054",
+    "W2323403662",
+    "W2337273824",
+    "W2461093577",
+    "W2471170444",
+    "W2737305403",
+    "W2757878424",
+    "W2899763243",
+    "W2901531754",
+    "W2910857709",
+    "W2916466728",
+    "W2923693308",
+    "W2939169979",
+    "W2944277922",
+    "W2963139616",
+    "W2989600197",
+    "W2991533556",
+    "W3093149769",
+    "W3096028823",
+    "W3132956480",
+    "W3159636121",
+    "W3201406359",
+    "W4214810852",
+    "W4220834411",
+    "W4225405705",
+    "W4290989482",
+    "W4297999440",
+    "W4309324942",
+    "W4317938386",
+    "W4387567835",
+    "W4391997456",
+    "W4392382360",
+    "W4393025471",
+    "W4400776655",
+    "W4401761673",
+    "W4402631204",
+    "W4404188960",
+    "W4404929144",
+    "W4408876037",
+    "W4408906981",
+    "W4409069046",
+    "W4409908894",
+    "W4414912718",
+    "W4415104596"
+   ]
   }
  }
 }

@@ -1,0 +1,570 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import LrChain from '~/islands/LrChain';
+import LrLes from '~/islands/LrLes';
+import LrCace from '~/islands/LrCace';
+import table from '~/data/benchmarks/charge-transfer-king2025.json';
+import { RC_4G, DIMER_BOX } from '~/lib/models/long-range';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const ckOff = (await getEntry('checkpoints', 'maceles-off'))!.data as Checkpoint;
+
+// Published Table 1 of King et al., snapshotted by pipeline/atlas_pipeline/charge_transfer.py.
+type Cell = { rcut: number | null; E: number | null; F: number | null; rcut_printed: string; E_printed: string; F_printed: string };
+const cols = table.models as string[];
+const systems = table.systems.map((s) => ({ ...s, models: s.models as unknown as Record<string, Cell> }));
+const best = (s: (typeof systems)[number], k: 'E' | 'F') => globalThis.Math.min(...cols.map((c) => s.models[c]?.[k] ?? Infinity));
+const show = (c: Cell | undefined, k: 'E' | 'F' | 'rcut') => (!c ? '—' : k === 'E' ? c.E_printed : k === 'F' ? c.F_printed : c.rcut_printed);
+
+const chainAssumptions = [
+  { term: 'Molecules', value: `Idealised linear C₁₀H₂ (C–C ${'1.28'} Å, C–H 1.06 Å) and C₁₀H₃⁺ with the right carbon carrying two H at 120° (1.09 Å). Atoms 1–11 sit at the same positions in both: unlike the paper's DFT geometries, the toy chain is not relaxed after protonation.` },
+  { term: 'Descriptor', value: `Radial symmetry functions Σ exp(−ηr²) f_c(r) per neighbour species, η = 0.05, 0.3, 1, 3 Å⁻², Behler’s cosine cutoff at r_c = ${RC_4G} Å (the paper’s cutoff for this system). One small tanh network per element, random untrained weights.` },
+  { term: 'Charge models', value: 'Local: q_i = q⁰(Z) + 0.06·NN(G_i). Rescaled: the same, shifted uniformly to Σq = Q. Charge equilibration: χ = χ⁰(Z) + 0.6·NN(G_i), toy hardness J(Z), Gaussian widths = covalent radii (Cordero), solved exactly as Eqs. (2)–(4) with Q = 0 or +1.' },
+  { term: 'Not shown', value: 'Energies; the short-range networks; LES’s option of appending the total charge to the features (used by King et al. only for Ag₃⁺/⁻), which would let every local charge depend on Q.' },
+];
+const lesAssumptions = [
+  { term: 'Cell', value: `Cubic, ${DIMER_BOX} Å, two charges on a line through the centre, as in the dimer benchmark of the LES paper; the half-box d = 15 Å is the farthest a pair can be.` },
+  { term: 'Energy', value: 'Eq. (5) with k_e = 14.40 eV Å and q in e, summed over every k vector with 0 < |k| < k_c. k_c → ∞ means every k with exp(−σ²k²/2) > 10⁻¹². Per-atom constants (the self term and the change from truncation) are removed so curves compare.' },
+  { term: 'Charges', value: 'Fixed by hand, not predicted: the figure shows what Eq. (5) does with charges, not what a trained model would assign.' },
+];
+const caceAssumptions = [
+  { term: 'Environments', value: 'The first atom of each crystal in the Atlas structure gallery (ASE-built cells), with every periodic image within r_c.' },
+  { term: 'Radial weight', value: 'Behler’s cosine cutoff, one channel, in place of CACE’s trainable Bessel functions mixed per (c, l) (Eq. 5 of the paper). No element embedding.' },
+  { term: 'Invariants', value: 'B⁽²⁾ for every l ≤ 4 by Eq. (7) and Eq. (8); B⁽³⁾ with (l₁, l₂) = (1, 2) for the rotation test. Spherical power spectrum from real spherical harmonics.' },
+];
+---
+
+<BaseLayout
+  title="Long-range models: 4G-HDNNP, LES and CACE"
+  description="How MLIPs reach beyond the cutoff: the fourth-generation HDNNP's charge equilibration, latent Ewald summation (LES) and the Cartesian atomic cluster expansion it was built on. Non-local charge transfer, what the Ewald sum computes, Cartesian vs spherical invariants, published results, checkpoints and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model families</p>
+      <h1 class="h-display">Long-range models</h1>
+      <p class="lede">
+        Message passing extends a model’s reach by one cutoff per layer, but two molecules farther apart than the cutoff sit on separate
+        graphs and never exchange a message <Cite id="cheng2025les" locator="Introduction; Sec. I B" />. The fourth-generation
+        Behler–Parrinello potential predicts electronegativities locally and lets charge equilibration distribute charge over the whole
+        system <Cite id="ko2021fourth" locator="Sec. II" />. Latent Ewald summation predicts charges locally and lets them interact
+        globally through an Ewald sum, learning them from energies and forces alone <Cite id="cheng2025les" locator="Sec. I A" />. The
+        difference is where the non-locality sits, and this page shows what each can and cannot see.
+      </p>
+      <dl class="glance">
+        <div><dt>4G-HDNNP</dt><dd>Local χ<sub>i</sub> → global charge equilibration → Coulomb energy + short-range energies that see the charges</dd></div>
+        <div><dt>LES</dt><dd>Local latent q<sub>i</sub> → reciprocal-space Ewald sum; an add-on for any short-range MLIP</dd></div>
+        <div><dt>CACE</dt><dd>ACE in Cartesian coordinates; the host model of the first LES papers (CACE-LR)</dd></div>
+        <div><dt>Charges trained on</dt><dd>4G: reference (Hirshfeld) charges. LES: nothing; only energies and forces</dd></div>
+        <div><dt>Introduced</dt><dd>Nat. Commun. 2021; npj Comput. Mater. 2024, 2025; Nat. Commun. 2025; J. Chem. Theory Comput. 2025</dd></div>
+        <div><dt>Code</dt><dd><a href="https://theochemgoettingen.gitlab.io/RuNNer/">RuNNer</a> (GPL-3.0); <a href="https://github.com/ChengUCB/les">LES</a> and <a href="https://github.com/BingqingCheng/cace">CACE</a> (CC BY-NC 4.0)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architectures</strong>; the one released general-purpose checkpoint is listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="why-h">
+      <h2 id="why-h" class="h-section">Three ways past the cutoff</h2>
+      <p>
+        A local model writes the energy as a sum of atomic energies of neighbourhoods; Coulomb interactions decay as 1/r and their sum over
+        a crystal converges only conditionally, so no cutoff captures them (<a href="/physics-lab/ewald/">P6</a>,
+        <a href="/physics-lab/beyond-the-cutoff/">beyond the cutoff</a>). Recent work sorts the remedies into local charge models,
+        deliberately non-local models, and coupling to an applied field <Cite id="grasselli2026longrange" locator="Abstract" />. The
+        families on this page cover the first two. Third-generation HDNNPs predict a charge for each atom from its environment and add the
+        charges’ electrostatics; the fourth generation was introduced because such charges cannot respond to changes outside the cutoff
+        <Cite id="ko2021fourth" locator="Sec. I; Fig. 1" />. LES predicts charges the same local way, but never trains them on charges at all
+        <Cite id="cheng2025les" locator="Sec. I A" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="g4-h">
+      <h2 id="g4-h" class="h-section">4G-HDNNP: local electronegativities, global charges</h2>
+      <p>
+        The total energy has an electrostatic part, which is not truncated, and a short-range part <Cite id="ko2021fourth" locator="Eq. (1)" />.
+        Atomic networks map each atom’s symmetry functions to an electronegativity χ<sub>i</sub>; the charges Q<sub>i</sub>, Gaussians of width
+        σ<sub>i</sub> taken from covalent radii, minimise a charge-equilibration energy with element hardnesses J<sub>i</sub> fitted alongside
+        <Cite id="ko2021fourth" locator="Eqs. (2)–(4)" />:
+      </p>
+      <Math display number="1" tex={String.raw`E_{\mathrm{Qeq}} = E_{\mathrm{elec}} + \sum_i \Big(\chi_i Q_i + \tfrac12 J_i Q_i^2\Big), \qquad E_{\mathrm{elec}} = \sum_{i}\sum_{j<i} \frac{\operatorname{erf}\!\big(r_{ij}/\sqrt2\gamma_{ij}\big)}{r_{ij}}\,Q_iQ_j + \sum_i \frac{Q_i^2}{2\sigma_i\sqrt\pi}`} />
+      <p>
+        with γ<sub>ij</sub> = (σ<sub>i</sub>² + σ<sub>j</sub>²)<sup>1/2</sup>. Setting ∂E<sub>Qeq</sub>/∂Q<sub>i</sub> = 0 with the total charge fixed by a
+        Lagrange multiplier λ gives one linear system for all atoms <Cite id="ko2021fourth" locator="Eqs. (5)–(7)" />:
+      </p>
+      <Math display number="2" tex={String.raw`\begin{pmatrix} \mathbf A & \mathbf 1 \\ \mathbf 1^{\mathsf T} & 0 \end{pmatrix} \begin{pmatrix} \mathbf Q \\ \lambda \end{pmatrix} = \begin{pmatrix} -\boldsymbol\chi \\ Q_{\mathrm{tot}} \end{pmatrix}, \qquad A_{ii} = J_i + \frac{1}{\sigma_i\sqrt\pi}, \quad A_{ij} = \frac{\operatorname{erf}\!\big(r_{ij}/\sqrt2\gamma_{ij}\big)}{r_{ij}}`} />
+      <p>
+        Every charge depends on every χ, every distance and the total charge. The short-range atomic networks then take the atom’s charge
+        as an extra input, so long-range charge transfer can change local bonding, and are fitted to what the electrostatics leaves
+        <Cite id="ko2021fourth" locator="Eqs. (8)–(9); Fig. 2" />:
+      </p>
+      <Math display number="3" tex={String.raw`E_{\mathrm{short}} = \sum_i E_i\big(\{G_i\}, Q_i\big) = E_{\mathrm{ref}} - E_{\mathrm{elec}}`} />
+      <p>
+        Unlike the earlier CENT method, whose charges were intermediate quantities fitted only through the energy, 4G-HDNNP charges are
+        trained to DFT Hirshfeld charges <Cite id="ko2021fourth" locator="Sec. II" />, a partitioning the authors note is not an observable.
+        The paper’s first test is the one Fig. 1 rebuilds: a chain of ten sp carbons, neutral or protonated at one end. With a 4.23 Å
+        cutoff, the left half of the chain has nearly the same environment in both molecules but different DFT charges; the 3G-HDNNP gave
+        those atoms almost identical charges, rescaling them to the right total did not help, and the 4G-HDNNP matched DFT
+        <Cite id="ko2021fourth" locator="Fig. 3; Table I" />.
+      </p>
+      <Callout kind="derivation" title="Why a local charge cannot see the far end">
+        <p id="local-derivation">
+          Let q<sub>i</sub> = f(G<sub>i</sub>), where G<sub>i</sub> depends only on the atoms within the receptive field of atom i. If a change
+          leaves every atom inside that field where it was, G<sub>i</sub> is unchanged, so q<sub>i</sub> is unchanged, whatever f is and however it
+          was trained. Rescaling to a total charge Q, q<sub>i</sub> → q<sub>i</sub> + (Q − Σ<sub>j</sub>q<sub>j</sub>)/N, moves every atom by the same
+          amount. In Eq. (2) instead, χ<sub>i</sub> is local but Q = −A⁻¹(χ + λ1): A is dense, so a change in one χ, or in Q<sub>tot</sub>, changes every
+          charge. Message passing widens the field to layers × cutoff but does not remove it.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Who can see a proton added 12 Å away" labels={['toy-model', 'live-calculation']} number={1} id="fig-chain" framed={false}>
+        <LrChain client:visible />
+        <Fragment slot="caption">
+          The same toy network and descriptor drive three charge models on C₁₀H₂ and C₁₀H₃⁺. On the shaded atoms the environments are identical,
+          so a local charge (3G-HDNNP, or an LES latent charge) cannot change; rescaling adds the same amount to all of them; charge
+          equilibration moves charge along the whole chain. Switch molecules to compare.
+        </Fragment>
+        <Assumptions slot="assumptions" items={chainAssumptions} />
+        <Fragment slot="source">System and cutoff from <Cite id="ko2021fourth" locator="Sec. III; Fig. 3" />; charge equilibration as <Cite id="ko2021fourth" locator="Eqs. (2)–(7)" />. Computed in your browser by <code>src/lib/models/long-range.ts</code>; the zero, uniform and non-zero changes are checked in <code>long-range.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="les-h">
+      <h2 id="les-h" class="h-section">LES: local latent charges, a global Ewald sum</h2>
+      <p>
+        LES leaves the host model alone and adds a second readout. The energy splits into a short-range sum and a long-range part; a small
+        network maps each atom’s invariant features B<sub>i</sub> (from ACE, symmetry functions, SOAP or any message-passing network) to a
+        hidden variable q<sub>i</sub>, and the long-range energy is an Ewald sum of those variables <Cite id="cheng2025les" locator="Eqs. (1)–(4)" />
+        <Cite id="king2025charges" locator="Eqs. (1), (3)–(4)" />:
+      </p>
+      <Math display number="4" tex={String.raw`E = \sum_i E_\theta(B_i) + E_{\mathrm{lr}}, \qquad q_i = Q_\phi(B_i), \qquad S(\mathbf k) = \sum_i q_i\, e^{i\mathbf k\cdot\mathbf r_i}`} />
+      <Math display number="5" tex={String.raw`E_{\mathrm{lr}} = \frac{2\pi}{V} \sum_{0<|\mathbf k|<k_c} \frac{e^{-\sigma^2k^2/2}}{k^2}\,\big|S(\mathbf k)\big|^2`} />
+      <p>
+        σ is a smearing length, typically 1 Å, and k<sub>c</sub> a cutoff in reciprocal space: 2π/3 Å⁻¹ for the dimers and molten NaCl of the first
+        paper, π Å⁻¹ for water <Cite id="cheng2025les" locator="Secs. I B–D" />. q may have several channels, each summed separately. The
+        charges are not trained on reference charges, not constrained to a total charge, and no self-interaction term is subtracted; leaving
+        out k = 0 keeps a net charge from diverging and, for a neutral cell, is the tinfoil boundary condition
+        <Cite id="cheng2025les" locator="Sec. I A" /> <Cite id="king2025charges" locator="Sec. II b" />. (The first paper writes the prefactor as
+        1/V, since q there carries no units; later papers write 2π/V or 1/2ε₀V.) For finite systems the same energy is a direct sum over pairs
+        <Cite id="kim2025les" locator="Eq. (3)" />.
+      </p>
+      <Callout kind="derivation" title="What Eq. (5) is">
+        <p id="les-derivation">
+          A Gaussian charge of standard deviation s has Fourier transform q e<sup>−s²k²/2</sup>, so Eq. (5) is the Coulomb energy, in reciprocal space,
+          of charges smeared to s = σ/√2: their pair interaction is q<sub>i</sub>q<sub>j</sub> erf(r/√2σ)/r, which is the long-range half of the
+          Ewald split with parameter α = 1/√2σ, the short-range half being q<sub>i</sub>q<sub>j</sub> erfc(r/√2σ)/r <Cite id="king2025charges" locator="Eq. (2)" />.
+          The i = j terms of |S|² add a constant q<sub>i</sub>²/(√(2π) σ) per atom, which a short-range network can absorb because q<sub>i</sub> is local.
+          In a periodic cell each charge also meets its images, and dropping k = 0 removes 2π|M|²/3V for a cell of dipole M. Our test suite
+          checks all three: Eq. (5) plus the erfc sum minus the self terms reproduces the rock-salt Madelung constant for any σ, and an
+          isolated pair in a large box gives erf(r/√2σ)/r − 2π|M|²/3V.
+        </p>
+      </Callout>
+      <p>
+        Read as charges, the q are as expressive as any local partial-charge model; read as messages, they let atoms anywhere in the cell
+        exchange information, a minimal version of Ewald message passing <Cite id="cheng2025les" locator="Sec. I A; Sec. II" />. Either way the
+        q<sub>i</sub> are local, and the authors say so: predicting charges locally works empirically but has no guarantee, and may fail where
+        charge moves over long distances <Cite id="king2025charges" locator="Sec. II c" />. Figure 2 shows what Eq. (5) does with two charges in
+        the dimer benchmark’s 30 Å box.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="What the latent Ewald sum computes" labels={['toy-model', 'live-calculation']} number={2} id="fig-les" framed={false}>
+        <LrLes client:visible />
+        <Fragment slot="caption">
+          Two fixed charges in a periodic box, energy against separation. With k<sub>c</sub> → ∞, Eq. (5) is the interaction of two Gaussian
+          charges plus their images; the paper’s k<sub>c</sub> = 2π/3 Å⁻¹ leaves short ripples that the short-range model has to absorb. At large
+          separation the box shows: the periodic curve departs from the isolated one by the tinfoil dipole term and higher image terms.
+        </Fragment>
+        <Assumptions slot="assumptions" items={lesAssumptions} />
+        <Fragment slot="source">Eq. (5) from <Cite id="king2025charges" locator="Eqs. (3)–(4)" />; box, σ and k<sub>c</sub> from <Cite id="cheng2025les" locator="Sec. I B" />. Computed in your browser by <code>src/lib/models/long-range.ts</code>; the Ewald identities are checked in <code>long-range.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="les-ev-h">
+      <h2 id="les-ev-h" class="h-section">What LES has been shown to do</h2>
+      <p>
+        On the charged and polar dimers, a short-range CACE model with a 5 Å cutoff and one message-passing layer, a 10 Å receptive field,
+        flattened the binding curves it was trained on and failed beyond them, because molecules more than 5 Å apart were on separate graphs;
+        the LES model fitted them <Cite id="cheng2025les" locator="Sec. I B; Fig. 1" />. In bulk water every model gave the same O–O radial
+        distribution, but short-range models diverged in the longitudinal dipole correlation at long wavelength, and at the liquid–vapour
+        interface they let dipole ordering run into the bulk, or reversed it in a thicker slab, where LES recovered the screened profile
+        <Cite id="cheng2025les" locator="Figs. 3, 4, 6" />. With a single channel, the q learned from a gas of ±1 point charges and from a
+        fixed-charge KF solution recovered the true charges <Cite id="king2025charges" locator="Figs. 1–2" />, and on SPICE dipeptides their
+        dipole and quadrupole moments matched DFT although the charges differed from MBI partial charges atom by atom
+        <Cite id="king2025charges" locator="Sec. III D; Fig. 4" />. The dipole P = Σ q<sub>i</sub>r<sub>i</sub> also gives Born effective charges
+        Z*<sub>iαβ</sub> = ∂P<sub>α</sub>/∂r<sub>iβ</sub> <Cite id="kim2025les" locator="Eqs. (4)–(5)" />; a paper we have read only in abstract
+        develops this into electrical response <Cite id="zhong2025response" locator="Abstract" />.
+      </p>
+      <p>
+        The test that matters most for this page is the 4G-HDNNP’s own datasets. Fig. 1 says LES charges cannot transfer charge across
+        C₁₀H₃⁺ and charge equilibration can. Yet on those datasets CACE-LR, fitted to energies and forces with no total-charge constraint, has
+        lower test errors than the 4G-HDNNP <Cite id="king2025charges" locator="Table 1" />: energies and forces need not come from correct
+        charges, and the short-range part sees protonated ends directly. The architectural limit concerns charges and what is computed from
+        them, not, so far, the energies on these sets.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Charge-transfer datasets of the 4G-HDNNP paper" labels={['published-result']} id="tab-charge" framed>
+        <div class="table-wrap">
+          <table class="ck num">
+            <thead>
+              <tr>
+                <th>System</th>
+                <th></th>
+                {cols.map((c) => <th class="keep-case">{c}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                systems.map((s) => (
+                  <>
+                    <tr class="sys">
+                      <td rowspan="3">{s.name}</td>
+                      <td>r<sub>c</sub> (Å)</td>
+                      {cols.map((c) => <td>{show(s.models[c], 'rcut')}</td>)}
+                    </tr>
+                    <tr>
+                      <td>E (meV/atom)</td>
+                      {cols.map((c) => <td class={s.models[c]?.E === best(s, 'E') ? 'is-best' : undefined}>{show(s.models[c], 'E')}</td>)}
+                    </tr>
+                    <tr>
+                      <td>F (meV/Å)</td>
+                      {cols.map((c) => <td class={s.models[c]?.F === best(s, 'F') ? 'is-best' : undefined}>{show(s.models[c], 'F')}</td>)}
+                    </tr>
+                  </>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <Fragment slot="caption">
+          Test RMSEs as printed in Table 1 of King et al. (bold: lowest in its row). Each system is its own dataset with a 90/10 split; compare
+          within a row, never across systems. The 3G- and 4G-HDNNP values are quoted there from Ko et al., the two ACE columns from a
+          charge-constrained ACE study; cutoffs differ between columns (Au₂: 4.23 Å for 4G-HDNNP, 5.5 Å for CACE-LR). For Ag₃⁺/⁻ the CACE
+          model was short-ranged with the total charge appended to its features.
+        </Fragment>
+        <Fragment slot="source"><Cite id="king2025charges" locator="arXiv v1, Table 1" />, snapshotted from arXiv HTML {table.source.arxiv} on {table.source.retrieved} by <code>pipeline/atlas_pipeline/charge_transfer.py</code>; 3G/4G values originally <Cite id="ko2021fourth" locator="Sec. III" />.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="cace-h">
+      <h2 id="cace-h" class="h-section">CACE: the cluster expansion in Cartesian coordinates</h2>
+      <p>
+        The host model of the first LES papers builds the atomic cluster expansion without spherical harmonics. Each edge carries an
+        element-pair embedding T<sub>c</sub>, radial functions R<sub>n,cl</sub> mixed from Bessel functions separately for every channel and
+        angular order, and a Cartesian monomial of total degree l; summing edges gives the atom-centred basis
+        <Cite id="cheng2024cace" locator="Eqs. (1), (2), (5), (6)" />:
+      </p>
+      <Math display number="6" tex={String.raw`A_{i,cn\mathbf l} = \sum_{j} T_c(\sigma_i,\sigma_j)\, R_{n,cl}(r_{ji})\, L_{\mathbf l}(\hat{\mathbf r}_{ji}), \qquad L_{\mathbf l}(\hat{\mathbf r}) = \hat x^{\,l_x}\hat y^{\,l_y}\hat z^{\,l_z}, \quad l_x + l_y + l_z = l`} />
+      <p>
+        Invariants come from contracting moments with the multinomial weights C(<b>l</b>) = l!/(l<sub>x</sub>! l<sub>y</sub>! l<sub>z</sub>!), which turn
+        sums of monomial products into powers of dot products <Cite id="cheng2024cace" locator="Eqs. (4), (7)–(9)" />:
+      </p>
+      <Math display number="7" tex={String.raw`\sum_{\mathbf l} C(\mathbf l)\, L_{\mathbf l}(\hat{\mathbf r}_j) L_{\mathbf l}(\hat{\mathbf r}_k) = (\hat{\mathbf r}_j\cdot\hat{\mathbf r}_k)^l, \qquad B^{(2)}_{l} = \sum_{\mathbf l} C(\mathbf l)\, A_{\mathbf l}^2 = \sum_{j,k} R_j R_k \cos^l\theta_{jk}`} />
+      <Math display number="8" tex={String.raw`B^{(3)}_{l_1l_2} = \sum_{\mathbf l_1,\mathbf l_2} C(\mathbf l_1)C(\mathbf l_2)\, A_{\mathbf l_1} A_{\mathbf l_1+\mathbf l_2} A_{\mathbf l_2} = \sum_{j,k,h} R_jR_kR_h \cos^{l_1}\theta_{jk}\cos^{l_2}\theta_{kh}`} />
+      <p>
+        Combinations that factor into lower-order invariants are left out, so the features stay polynomially independent and their count stays
+        small; one or no message-passing layer follows, then an MLP per atom <Cite id="cheng2024cace" locator="Sec. I A; Fig. 1i; Fig. 2; Eqs. (11)–(15)" />.
+        The radial channels do not multiply with body order, because each R<sub>n,cl</sub> already mixes all raw radial functions
+        <Cite id="cheng2024cace" locator="Sec. I A" />. The density trick and its self-interaction terms are the same as in ACE; the
+        <a href="/models/grace/">GRACE page</a> computes them. What is specific to CACE is the angular algebra.
+      </p>
+      <Callout kind="derivation" title="Cartesian and spherical invariants span the same space">
+        <p id="cace-derivation">
+          A monomial of degree l is not a single spherical harmonic: x² + y² + z² = 1 hides lower orders inside it, which is why there are
+          (l+1)(l+2)/2 monomials but 2l+1 harmonics. After contraction this shows up in Legendre polynomials: cos<sup>l</sup> θ = Σ<sub>l′</sub>
+          c<sub>ll′</sub> P<sub>l′</sub>(cos θ) with l′ = l, l − 2, … and c<sub>ll′</sub> = (2l′+1) l! / (2<sup>(l−l′)/2</sup> ((l−l′)/2)! (l+l′+1)!!), all positive.
+          By the addition theorem, Σ<sub>jk</sub> R<sub>j</sub>R<sub>k</sub> P<sub>l′</sub>(cos θ<sub>jk</sub>) is the spherical power spectrum p<sub>l′</sub>. So
+          B⁽²⁾<sub>l</sub> = Σ<sub>l′</sub> c<sub>ll′</sub> p<sub>l′</sub>, a triangular, invertible map: B⁽²⁾ up to l and p up to l carry the same information.
+          For example B⁽²⁾<sub>2</sub> = ⅔ p<sub>2</sub> + ⅓ p<sub>0</sub>.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Cartesian moments and their invariants" labels={['toy-model', 'live-calculation']} number={3} id="fig-cace" framed={false}>
+        <LrCace client:visible />
+        <Fragment slot="caption">
+          The surface is f(n̂) = Σ<sub>j</sub> R(r<sub>j</sub>)(n̂ · r̂<sub>j</sub>)<sup>l</sup>, the order-l Cartesian moment of the neighbours read as a function
+          of direction. Its components A<sub>l</sub> change when the environment rotates; the contracted invariants do not, equal the explicit
+          sums over angles, and decompose into spherical power-spectrum terms with fixed coefficients.
+        </Fragment>
+        <Assumptions slot="assumptions" items={caceAssumptions} />
+        <Fragment slot="source">Eqs. (6)–(8) from <Cite id="cheng2024cace" locator="Eqs. (2), (4), (6)–(9)" />. Computed in your browser by <code>src/lib/models/long-range.ts</code>; Eqs. (7)–(8), invariance and the Legendre mix are checked in <code>long-range.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="l-int" checked />
+        <label for="l-int">Intuition</label>
+        <input type="radio" name="depth" id="l-tech" />
+        <label for="l-tech">Technical</label>
+        <input type="radio" name="depth" id="l-res" />
+        <label for="l-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            A local model is a crowd of people who each look only at their neighbours. A long-range model gives each person a charge and lets
+            all charges pull on one another however far apart. In LES each person decides their own charge by looking around; in the 4G-HDNNP
+            each person decides how much they want charge, and the charge is then shared out over the whole crowd at once, so a change at one
+            end can move charge at the other.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Both families add a pairwise electrostatic energy of Gaussian charges to a local energy, with the same erf kernel (Eq. 1 and the
+            derivation under Eq. 5). They differ in the map from structure to charges: LES uses q = f(B<sub>i</sub>), a local function; the
+            4G-HDNNP uses Q = −A⁻¹(χ + λ1) with local χ but a dense A that depends on every distance, plus a constraint on the total charge. LES is
+            trained only on energies and forces, so its charges are whatever makes Eq. (5) useful; the 4G-HDNNP fits χ to reference charges
+            first. LES’s Ewald sum costs O(N<sup>3/2</sup>) as implemented, with O(N log N) possible by particle–mesh methods
+            <Cite id="cheng2025les" locator="Methods A" />; the 4G-HDNNP solves an N + 1 linear system per configuration.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            With one channel, LES’s q are defined only up to a global sign, since Eq. (5) depends on |S(k)|² <Cite id="king2025charges" locator="Sec. II c" />.
+            A total-charge constraint can be added as a penalty λ(Q − Σq)² <Cite id="king2025charges" locator="Eq. (5)" />, and different charge
+            states can be told apart by appending Q to every B<sub>i</sub> <Cite id="king2025charges" locator="Sec. II e" />, which makes every charge
+            depend on Q but not on where the extra charge physically goes. Charge equilibration has its own known artefact: with fixed χ and J,
+            two separated fragments keep fractional charges (<a href="/physics-lab/charge-equilibration/">P8</a>). LES and LODE order local and
+            global steps oppositely: LES predicts locally and sums globally, LODE computes a global potential and featurises it locally
+            <Cite id="cheng2025les" locator="Sec. II" />. CACE’s invariants are equivalent to ACE’s, as the derivation above shows for two-body
+            terms; the CACE paper states the general case <Cite id="cheng2024cace" locator="Sec. I A" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and stresses as its gradients <Cite id="ko2021fourth" locator="Methods" /> <Cite id="kim2025les" locator="Sec. II" />. The
+        4G-HDNNP also returns its equilibrated charges, trained to Hirshfeld charges. LES returns latent charges that were never trained on
+        anything but energies and forces; with one channel they behave as partial charges, and their dipole and its derivatives give dipole
+        moments, polarisation and Born effective charges <Cite id="kim2025les" locator="Eqs. (4)–(5)" />. None of these are DFT quantities: a
+        Fermi level, density of states or band alignment is not something any of these models predicts.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> LES charges, like 3G-HDNNP charges, are functions of a finite receptive field and cannot move
+        charge between distant parts of a system (Fig. 1); the authors expect edge cases with long-range charge transfer
+        <Cite id="king2025charges" locator="Sec. II c" />. The 4G-HDNNP can, but its charges are fitted to one partitioning scheme, and charge
+        equilibration with fixed parameters leaves fractional charges on separated fragments (<a href="/physics-lab/charge-equilibration/">P8</a>).
+        LES’s reciprocal sum assumes a periodic cell with tinfoil boundary conditions; a slab with a net dipole across vacuum normally needs a
+        dipole correction, and none of the LES papers read here applies one (<a href="/physics-lab/periodic-slab/">periodic slab</a>). A small k<sub>c</sub> leaves ripples the short-range part must
+        absorb (Fig. 2). Long-range charges add electrostatics, not electronic structure: nothing here gives a Fermi level or an electrode
+        potential (<a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> MACELES-OFF learned from neutral molecules in SPICE v1 and QMugs at one hybrid-DFT level
+        <Cite id="kim2025les" locator="MACELES-OFF section" />: charged species, ions in solution and elements outside its ten are extrapolation,
+        and its charges are latent, not fitted to any reference. Its licence is non-commercial.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Architecture</th><th>Training data</th><th>Outputs</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ckOff.name}</td>
+              <td>MACE + LES (r<sub>c</sub> 4.5 Å, 192 channels, ℓ = 1)</td>
+              <td>SPICE v1 (MACE-OFF23 split) + QMugs, ωB97M-D3(BJ)/def2-TZVPPD</td>
+              <td>{ckOff.outputs.join(', ')}</td>
+              <td>{ckOff.licence}</td>
+              <td><a href={ckOff.weights?.url}>les_fit</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        From <Cite id="kim2025les" locator="MACELES-OFF section; Table II; Data availability" />. The 4G-HDNNPs of Ko et al. and the CACE-LR models of the
+        LES papers are fitted to one system each (training scripts and models for the latter are in the les_fit repository); they are not
+        general-purpose checkpoints and are not listed. The <a href="/models/checkpoints/">checkpoints page</a> lists every recorded checkpoint.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/behler-parrinello/">Behler–Parrinello</a> networks are the 2G ancestor of the 4G-HDNNP. <a href="/models/grace/">GRACE</a>
+        shares CACE’s cluster-expansion basis in spherical form. <a href="/models/mace/">MACE</a> hosts LES in MACELES-OFF, and
+        <a href="/models/esen-uma/">UMA</a> takes total charge and spin as inputs for molecules instead of computing electrostatics.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>4G-HDNNP: <Cite id="ko2021fourth" />; code in RuNNer (<a href="https://theochemgoettingen.gitlab.io/RuNNer/">documentation</a>).</li>
+        <li>Latent Ewald summation: <Cite id="cheng2025les" />; charges, charge states and comparison with 4G-HDNNP: <Cite id="king2025charges" />.</li>
+        <li>LES as a library for MACE, NequIP, CACE and MatGL, and MACELES-OFF: <Cite id="kim2025les" />; electrical response: <Cite id="zhong2025response" />.</li>
+        <li>Cartesian atomic cluster expansion: <Cite id="cheng2024cace" />.</li>
+        <li>A taxonomy of long-range methods: <Cite id="grasselli2026longrange" />.</li>
+        <li>Code: <a href="https://github.com/ChengUCB/les">ChengUCB/les</a>, <a href="https://github.com/BingqingCheng/cace">BingqingCheng/cace</a>, <a href="https://github.com/ChengUCB/les_fit">ChengUCB/les_fit</a> (all CC BY-NC 4.0).</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #l-int:checked ~ .depth-int,
+  #l-tech:checked ~ .depth-tech,
+  #l-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .ck.num td {
+    font-variant-numeric: tabular-nums;
+    padding-block: 0.3rem;
+  }
+  .ck.num tr:not(.sys) td:first-child {
+    font-weight: 400;
+    color: var(--atlas-ink-muted);
+  }
+  .ck.num tr.sys td {
+    border-top: 1px solid var(--atlas-rule-strong);
+    color: var(--atlas-ink-faint);
+  }
+  .ck.num tr.sys td:first-child {
+    color: var(--atlas-ink);
+    vertical-align: top;
+  }
+  .ck th.keep-case {
+    text-transform: none;
+  }
+  .ck .is-best {
+    font-weight: 700;
+    color: var(--atlas-verified);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

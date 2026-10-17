@@ -73,7 +73,7 @@ const assumptions = [
         <li><strong>Fixed vs learned descriptors.</strong> The fingerprint is chosen by hand, so its resolution is set before training. Message-passing models learn their features instead (<a href="/models/nequip/">NequIP</a>, <a href="/models/mace/">MACE</a>).</li>
         <li><strong>Element pairs multiply.</strong> Functions are usually defined per pair or triplet of elements, so the descriptor grows quickly with the number of elements — one reason universal models moved to learned element embeddings.</li>
         <li><strong>Body order.</strong> G³ already captures angles (three-body terms, see <a href="/physics-lab/body-order/">P3</a>); systematically complete expansions came later with the atomic cluster expansion <Cite id="drautz2019ace" />.</li>
-        <li><strong>Long range.</strong> The fourth-generation HDNNPs add environment-dependent charges and electrostatics on top of the local energy (<a href="/physics-lab/charge-equilibration/">P8</a>).</li>
+        <li><strong>Long range.</strong> Third-generation HDNNPs add environment-dependent charges and their electrostatics to the local energy; the fourth generation obtains the charges by charge equilibration from environment-dependent electronegativities, so they can respond to changes beyond the cutoff (<a href="/models/long-range/">long-range models</a>; <a href="/physics-lab/charge-equilibration/">P8</a>).</li>
       </ul>
       <Callout kind="caveat" title="A method, not a model">
         A Behler–Parrinello potential is fitted for one chemical system from its own reference data. Accuracy claims belong

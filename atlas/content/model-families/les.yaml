@@ -1,0 +1,20 @@
+name: Latent Ewald summation (LES)
+aliases: [LES, CACE-LR, MACELES, latent Ewald summation]
+paradigms: [long-range]
+introduced_in: cheng2025les
+year: 2025
+summary: >-
+  An add-on to any short-range MLIP. A small network maps each atom's invariant features B_i to a latent charge q_i, and the
+  long-range energy is a reciprocal-space Ewald sum of those charges with Gaussian smearing σ (typically 1 Å), with k = 0
+  omitted. The charges are never trained to reference charges and are not constrained to a total charge; with one channel they
+  behave as physical partial charges.
+locality:
+  kind: local-plus-long-range
+  note: 'q_i depends on the host model''s receptive field only; the Ewald sum couples all atoms. k_c = 2π/3 Å⁻¹ (dimers, molten NaCl) or π Å⁻¹ (water) in the first paper.'
+symmetry: invariant
+long_range: latent-ewald
+reuses_mechanism:
+  - { family: cace, mechanism: 'Host model of the first LES papers (CACE-LR); later also MACE, NequIP, Allegro, CHGNet through the LES library.' }
+implementations: [les, cace]
+claims: [les-energy, les-gaussian-pair, les-dimers, les-interface-water, les-charge-transfer-table, les-local-caveat, les-dipoles, maceles-off-accuracy, local-charges-blind]
+review: { status: draft, last_checked: 2026-10-17, notes: 'One record for the method and its CACE, MACE and other hosts. Read the LES paper (arXiv v2), King et al. (arXiv v1) and Kim et al. (arXiv v1) in full; Zhong et al. (Born effective charges) only through its abstract.' }

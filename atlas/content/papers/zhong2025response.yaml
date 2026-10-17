@@ -1,0 +1,15 @@
+title: Machine learning interatomic potential can infer electrical response
+topic: electrostatics
+authors:
+  - 'Zhong, P.'
+  - 'Kim, D.'
+  - 'King, D. S.'
+  - 'Cheng, B.'
+year: 2025
+type: preprint
+identifiers:
+  arxiv: '2504.05169'
+edges:
+  - { type: extends, target: cheng2025les, documented: true }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-17, notes: 'Abstract and title page of arXiv v1 (7 Apr 2025) only. The Born-effective-charge formula used on the Atlas page is quoted from kim2025les, Eq. (4).' }

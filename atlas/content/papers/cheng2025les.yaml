@@ -8,5 +8,7 @@ type: article
 identifiers:
   doi: 10.1038/s41524-025-01577-7
   arxiv: '2408.15165'
-verified_against: secondary
-review: { status: draft, last_checked: 2026-10-14, notes: Metadata checked (Crossref, arXiv); full text not yet read. }
+edges:
+  - { type: extends, target: cheng2024cace, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v2 (PDF, 19 Dec 2024) in full: Eqs. (1)–(5), Figs. 1–8, Table I, Methods A–C. Eq. (4) there has the prefactor 1/V (latent units); the later papers write 2π/V or 1/(2ε₀V). Equation numbers follow arXiv v2.' }

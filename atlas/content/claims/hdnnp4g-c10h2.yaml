@@ -1,0 +1,11 @@
+statement: >-
+  For C10H2 and C10H3+ with a 4.23 Å cutoff, the atoms in the left half of the chain have nearly identical environments in both
+  molecules but different DFT (Hirshfeld) charges; the 3G-HDNNP assigned them nearly identical charges (rescaling to the total
+  charge did not help), while the 4G-HDNNP reproduced the DFT charges, with lower energy, charge and force errors than the 2G- and
+  3G-HDNNPs for both molecules.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: ko2021fourth, locator: 'arXiv v1, Sec. III (organic molecules); Fig. 3; Table I; Fig. 4' }
+scope: { model_families: [hdnnp-4g, behler-parrinello] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,12 @@
+statement: >-
+  On the four 4G-HDNNP charge-transfer datasets (C10H2/C10H3+, Ag3+/−, Na8/9Cl8+, Au2 on Al-doped MgO(001)), CACE-LR trained on
+  energies and forces only, without a total-charge constraint, had lower test energy and force RMSEs than the 4G-HDNNP values
+  reported by Ko et al.; for Ag3 a short-range CACE with the total charge appended to the features was used, and the cutoffs
+  differ between models for the Au2 system.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. III E; Table 1' }
+  - { paper: ko2021fourth, locator: 'arXiv v1, Sec. III (source of the 3G/4G values)' }
+scope: { model_families: [les, hdnnp-4g] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Numbers are snapshotted by pipeline/atlas_pipeline/charge_transfer.py, not typed.' }

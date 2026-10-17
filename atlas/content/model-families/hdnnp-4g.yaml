@@ -1,0 +1,20 @@
+name: Fourth-generation HDNNP (4G-HDNNP)
+aliases: [4G-HDNNP, 4G HDNNP, fourth-generation high-dimensional neural network potential]
+paradigms: [descriptor-regression, long-range]
+introduced_in: ko2021fourth
+year: 2021
+summary: >-
+  A Behler–Parrinello network whose atomic networks predict electronegativities χ_i from symmetry functions; charge
+  equilibration with Gaussian charges and a fixed total charge turns them into charges that depend on the whole system. The
+  electrostatic energy of those charges is added to short-range atomic energies, whose networks take the charges as an extra
+  input. Charges are trained to reference (Hirshfeld) charges, energies and forces to DFT.
+locality:
+  kind: global
+  note: 'Electronegativities and short-range energies are local (r_c = 4.23–5.29 Å in the paper); the charges come from one global linear solve, so a change anywhere can move charge everywhere.'
+symmetry: invariant
+body_order: 'Symmetry functions (two- and three-body) in each atomic network; electrostatics is pairwise between the equilibrated Gaussian charges.'
+long_range: charge-equilibration
+extends: [behler-parrinello]
+implementations: [runner]
+claims: [hdnnp4g-qeq, hdnnp4g-charges-input, hdnnp4g-c10h2, local-charges-blind, les-charge-transfer-table]
+review: { status: draft, last_checked: 2026-10-17, notes: 'From the 4G-HDNNP paper (arXiv v1, full text; SI not read). The cutoff values are those of the paper''s systems, not defaults.' }

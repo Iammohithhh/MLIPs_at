@@ -1,0 +1,9 @@
+statement: >-
+  The short-range atomic networks of a 4G-HDNNP take the equilibrated charge of their atom as an input besides the symmetry
+  functions, so that non-local charge transfer can change local many-body energies; they are trained on E_ref − E_elec and forces.
+grade: THEORY
+sources:
+  - { paper: ko2021fourth, locator: 'arXiv v1, Sec. II, Eqs. (8)–(9); Fig. 2' }
+scope: { model_families: [hdnnp-4g] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,12 @@
+statement: >-
+  LES adds E_lr = (2π/V) Σ_{0<|k|<k_c} e^{−σ²k²/2} |S(k)|²/k² to a short-range energy, with S(k) = Σ_i q_i e^{ik·r_i} and latent
+  charges q_i = Q_φ(B_i) predicted from each atom's invariant features. The charges are not trained to reference charges and not
+  constrained to a total charge; omitting k = 0 (tinfoil boundary conditions) keeps a non-zero net charge from diverging, and no
+  self-interaction term is subtracted. σ is typically 1 Å.
+grade: THEORY
+sources:
+  - { paper: cheng2025les, locator: 'arXiv v2, Sec. I A, Eqs. (1)–(4) (prefactor 1/V there)' }
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. II a–b, Eqs. (1)–(4)' }
+scope: { model_families: [les] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

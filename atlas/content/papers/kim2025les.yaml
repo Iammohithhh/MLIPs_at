@@ -1,0 +1,21 @@
+title: A universal augmentation framework for long-range electrostatics in machine learning interatomic potentials
+topic: electrostatics
+authors:
+  - 'Kim, D.'
+  - 'Wang, X.'
+  - 'Vargas, S.'
+  - 'Zhong, P.'
+  - 'King, D. S.'
+  - 'Inizan, T. J.'
+  - 'Cheng, B.'
+year: 2025
+venue: Journal of Chemical Theory and Computation 21, 12709–12724
+type: article
+identifiers:
+  doi: 10.1021/acs.jctc.5c01400
+  arxiv: '2507.14302'
+edges:
+  - { type: extends, target: cheng2025les, documented: true }
+  - { type: extends, target: batatia2022mace, documented: true, note: 'MACELES: MACE with an LES module.' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (PDF, 18 Jul 2025; six authors there, seven in the journal version): Sec. II (Eqs. 1–5, Fig. 1), the MACELES-OFF section (Table II), Data and Code availability. Equation numbers follow arXiv v1.' }

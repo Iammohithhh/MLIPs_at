@@ -1,0 +1,7 @@
+name: LES library
+repo: https://github.com/ChengUCB/les
+language: Python
+framework: pytorch
+licence: CC BY-NC 4.0 (README)
+families: [les]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Standalone PyTorch module with patches for MACE, NequIP/Allegro, CACE and MatGL (Kim et al. 2025, Code availability; les_fit README). MACELES is in the main MACE repository since October 2025 (les_fit README). README read; licence text not found as a separate file.' }

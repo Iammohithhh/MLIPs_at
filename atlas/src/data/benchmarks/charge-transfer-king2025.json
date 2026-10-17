@@ -1,0 +1,216 @@
+{
+ "source": {
+  "paper": "king2025charges",
+  "arxiv": "2412.15455v1",
+  "url": "https://arxiv.org/html/2412.15455v1",
+  "table": "Table 1",
+  "quoted_from": {
+   "3G-HDNNP": "ko2021fourth",
+   "4G-HDNNP": "ko2021fourth",
+   "ACE": "ref. 41 of the paper",
+   "χ + η (ACE)": "ref. 41 of the paper"
+  },
+  "retrieved": "2026-10-17"
+ },
+ "units": {
+  "E": "meV/atom",
+  "F": "meV/Å"
+ },
+ "models": [
+  "ACE",
+  "χ + η (ACE)",
+  "3G-HDNNP",
+  "4G-HDNNP",
+  "CACE-LR"
+ ],
+ "systems": [
+  {
+   "key": "c10h2",
+   "name": "C₁₀H₂ / C₁₀H₃⁺",
+   "label_as_printed": "C 10 H 2 /C 10 H + 3",
+   "models": {
+    "ACE": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 0.76,
+     "E_printed": "0.76",
+     "F": 37.22,
+     "F_printed": "37.22"
+    },
+    "χ + η (ACE)": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 0.75,
+     "E_printed": "0.75",
+     "F": 35.16,
+     "F_printed": "35.16"
+    },
+    "3G-HDNNP": {
+     "rcut": 4.23,
+     "rcut_printed": "4.23 Å",
+     "E": 2.045,
+     "E_printed": "2.045",
+     "F": 231.0,
+     "F_printed": "231.0"
+    },
+    "4G-HDNNP": {
+     "rcut": 4.23,
+     "rcut_printed": "4.23 Å",
+     "E": 1.194,
+     "E_printed": "1.194",
+     "F": 78.0,
+     "F_printed": "78.00"
+    },
+    "CACE-LR": {
+     "rcut": 4.23,
+     "rcut_printed": "4.23 Å",
+     "E": 0.73,
+     "E_printed": "0.73",
+     "F": 36.9,
+     "F_printed": "36.9"
+    }
+   }
+  },
+  {
+   "key": "ag3",
+   "name": "Ag₃⁺ / Ag₃⁻",
+   "label_as_printed": "Ag + / − 3",
+   "models": {
+    "ACE": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 809.62,
+     "E_printed": "809.62",
+     "F": 285.81,
+     "F_printed": "285.81"
+    },
+    "χ + η (ACE)": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 0.21,
+     "E_printed": "0.21",
+     "F": 23.1,
+     "F_printed": "23.10"
+    },
+    "3G-HDNNP": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 320.2,
+     "E_printed": "320.2",
+     "F": 1913.0,
+     "F_printed": "1913"
+    },
+    "4G-HDNNP": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 1.323,
+     "E_printed": "1.323",
+     "F": 31.69,
+     "F_printed": "31.69"
+    },
+    "CACE-LR": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 0.162,
+     "E_printed": "0.162",
+     "F": 29.0,
+     "F_printed": "29.0"
+    }
+   }
+  },
+  {
+   "key": "nacl",
+   "name": "Na₈/₉Cl₈⁺",
+   "label_as_printed": "Na 8/9 Cl + 8",
+   "models": {
+    "ACE": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 1.55,
+     "E_printed": "1.55",
+     "F": 41.72,
+     "F_printed": "41.72"
+    },
+    "χ + η (ACE)": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 0.71,
+     "E_printed": "0.71",
+     "F": 12.35,
+     "F_printed": "12.35"
+    },
+    "3G-HDNNP": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 2.042,
+     "E_printed": "2.042",
+     "F": 76.67,
+     "F_printed": "76.67"
+    },
+    "4G-HDNNP": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 0.481,
+     "E_printed": "0.481",
+     "F": 32.78,
+     "F_printed": "32.78"
+    },
+    "CACE-LR": {
+     "rcut": 5.29,
+     "rcut_printed": "5.29 Å",
+     "E": 0.21,
+     "E_printed": "0.21",
+     "F": 9.78,
+     "F_printed": "9.78"
+    }
+   }
+  },
+  {
+   "key": "au2mgo",
+   "name": "Au₂ on MgO(001)",
+   "label_as_printed": "Au 2 -MgO(001)",
+   "models": {
+    "ACE": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 2.56,
+     "E_printed": "2.56",
+     "F": 88.7,
+     "F_printed": "88.70"
+    },
+    "χ + η (ACE)": {
+     "rcut": 6.0,
+     "rcut_printed": "6 Å",
+     "E": 1.63,
+     "E_printed": "1.63",
+     "F": 50.27,
+     "F_printed": "50.27"
+    },
+    "3G-HDNNP": {
+     "rcut": null,
+     "rcut_printed": "-",
+     "E": null,
+     "E_printed": "-",
+     "F": null,
+     "F_printed": "-"
+    },
+    "4G-HDNNP": {
+     "rcut": 4.23,
+     "rcut_printed": "4.23 Å",
+     "E": 0.219,
+     "E_printed": "0.219",
+     "F": 66.0,
+     "F_printed": "66.00"
+    },
+    "CACE-LR": {
+     "rcut": 5.5,
+     "rcut_printed": "5.5 Å",
+     "E": 0.073,
+     "E_printed": "0.073",
+     "F": 7.91,
+     "F_printed": "7.91"
+    }
+   }
+  }
+ ]
+}

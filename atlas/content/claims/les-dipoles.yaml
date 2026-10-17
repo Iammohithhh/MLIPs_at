@@ -1,0 +1,10 @@
+statement: >-
+  With one latent-charge channel, CACE-LR trained only on energies and forces of polar dipeptides from SPICE gave charges whose
+  first and second moments agreed closely with the DFT dipole and traceless quadrupole moments of unseen dipeptides, and which
+  followed the electronegativity order O > N > C > H, while differing from MBI partial charges atom by atom.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. III D; Fig. 4' }
+scope: { model_families: [les] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,10 @@
+statement: >-
+  MACELES-OFF, MACE with an LES module trained on the MACE-OFF23 split of SPICE (cutoff 4.5 Å), had test errors comparable to
+  MACE-OFF23(L), which uses a 5 Å cutoff, and lower than MACE-OFF23(S) with the same cutoff, at about the speed of MACE-OFF23(S);
+  it also predicted dipoles and Born effective charges without training on them.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kim2025les, locator: 'arXiv v1, MACELES-OFF section; Table II; Figs. 5–6' }
+scope: { model_families: [les], checkpoints: [maceles-off] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

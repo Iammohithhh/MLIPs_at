@@ -1,0 +1,11 @@
+statement: >-
+  In a 4G-HDNNP, atomic neural networks predict electronegativities χ_i from symmetry functions; the charges are the minimum of
+  E_Qeq = E_elec + Σ_i (χ_i Q_i + ½ J_i Q_i²) for Gaussian charges of width σ_i (covalent radii) at fixed total charge, found from
+  one linear system with a Lagrange multiplier. The charges therefore depend on the positions, composition and total charge of the
+  whole system.
+grade: THEORY
+sources:
+  - { paper: ko2021fourth, locator: 'arXiv v1, Sec. II, Eqs. (2)–(7); Fig. 2' }
+scope: { model_families: [hdnnp-4g] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,11 @@
+statement: >-
+  The LES energy is the reciprocal-space part of an Ewald sum with splitting parameter 1/(√2 σ): for an isolated pair it is
+  k_e q₁q₂ erf(r/√2σ)/r plus a constant k_e q²/(√(2π)σ) per atom, in a periodic cell it adds the interaction with images, and the
+  omitted k = 0 term removes 2π|M|²/3V for a cell with dipole M. With σ = 1 Å the pair term is within 0.1% of Coulomb beyond 3.3 Å.
+grade: THEORY
+derivation: /models/long-range/#les-derivation
+sources:
+  - { paper: king2025charges, locator: 'arXiv v1, Sec. II a–b, Eq. (2) with φ(r) = erfc(r/√2σ)' }
+scope: { model_families: [les] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }
