@@ -230,7 +230,13 @@ function LabBody() {
   return (
     <section className="lab" aria-labelledby="lab-title">
       <header className="lab__head">
-        <h2 id="lab-title">What changes when this atom moves?</h2>
+        <div>
+          <h2 id="lab-title">What changes when this atom moves?</h2>
+          <p className="lab__exp">
+            {m.title} · {experimentInfo(m.id)?.structure ?? m.structure.source}, {m.structure.supercell.join('×')} supercell, {m.structure.n} atoms, periodic ·{' '}
+            {baselineFacts(m).forceFree ? 'baseline forces zero' : 'unrelaxed baseline (carries forces)'}
+          </p>
+        </div>
         <div className="lab__status">
           <span className="label status-pre">Precomputed model evaluations; interactive inspection</span>
           <span className="label status-ck mono" title={`SHA-256 ${String(m.provenance.sha256)}`}>
