@@ -1,0 +1,10 @@
+statement: >-
+  LES energies are quadratic in the latent charges, so training on energies and forces alone cannot fix their overall
+  sign. Run as released, MACELES-OFF gives Born effective charges and dipoles that are strongly anti-correlated with DFT
+  (Pearson r between −0.89 and −0.95 for the BECs and below −0.95 for the dipoles in all seven SPICE test subsets of
+  les_fit; least-squares slopes −0.75 to −0.90 and −0.65 to −0.80). A sign convention, for example from one reference
+  dipole, is needed before these quantities are read physically.
+grade: THEORY
+derivation: /models/x-ray/maceles-off/#sign-h
+scope: { model_families: [les], checkpoints: [maceles-off] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Derivation on the page; numbers PRECOMPUTED by pipeline/atlas_pipeline/xray_les.py on the les_fit data-spice-test-bec configurations (commit a886785), float64 on CPU, LES real-space sum re-implemented and tested. Kim et al. (arXiv v1, Fig. 6b–c) report good agreement with DFT; how the sign was handled there was not found in the text read. Not checked with the LES package itself.' }

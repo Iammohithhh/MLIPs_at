@@ -3839,6 +3839,103 @@
    ]
   }
  },
+ "jurecka2006s22": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2006; fetched [2006]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Jurečka, P.' vs fetched ['jurecka']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Jurečka",
+     "given": "Petr"
+    },
+    {
+     "family": "Šponer",
+     "given": "Jiří"
+    },
+    {
+     "family": "Černý",
+     "given": "Jiří"
+    },
+    {
+     "family": "Hobza",
+     "given": "Pavel"
+    }
+   ],
+   "container": "Phys. Chem. Chem. Phys.",
+   "doi": "10.1039/b600027d",
+   "issue": "17",
+   "page": "1985-1993",
+   "title": "Benchmark database of accurate (MP2 and CCSD(T) complete basis set limit) interaction energies of small model complexes, DNA base pairs, and amino acid pairs",
+   "type": "journal-article",
+   "volume": "8",
+   "year": 2006
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 1853,
+   "id": "W2064142965",
+   "publication_year": 2006,
+   "referenced_works": [
+    "W1966689737",
+    "W1980803935",
+    "W1990886938",
+    "W1993077801",
+    "W1993091782",
+    "W1996217479",
+    "W2003286577",
+    "W2012460834",
+    "W2013739357",
+    "W2017509252",
+    "W2020282973",
+    "W2021769180",
+    "W2022889126",
+    "W2025232734",
+    "W2028022118",
+    "W2028619013",
+    "W2038232634",
+    "W2038459360",
+    "W2039323030",
+    "W2041321224",
+    "W2043578603",
+    "W2051826856",
+    "W2052043507",
+    "W2058889787",
+    "W2060913460",
+    "W2063094389",
+    "W2069006374",
+    "W2076231220",
+    "W2080577721",
+    "W2082037815",
+    "W2082691688",
+    "W2091559870",
+    "W2106784956",
+    "W2140886907",
+    "W2154550723",
+    "W2155462450",
+    "W2156212567",
+    "W2160425716",
+    "W4240605966"
+   ]
+  }
+ },
  "kaplan2025matpes": {
   "arxiv": {
    "authors": [
@@ -7128,6 +7225,7 @@
    }
   ],
   "cites": [
+   "jurecka2006s22",
    "perdew2001ladder"
   ],
   "crossref": {

@@ -1,0 +1,8 @@
+statement: >-
+  The MACELES-OFF file stores the LES prefactor n_f = 90.0474, i.e. a Coulomb constant n_f/2π = 14.331 eV Å, 0.47 %
+  below e²/4πε₀ = 14.400 eV Å; LES changed its default to 90.4756 in April 2026. The stored value is the one the model was
+  trained with, so a run must keep it; the difference is equivalent to rescaling every latent charge by 0.9976.
+grade: THEORY
+derivation: /models/x-ray/maceles-off/#constant-h
+scope: { model_families: [les], checkpoints: [maceles-off] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Value read from the stored les.ewald attributes with a restricted unpickler. Default change: LES repository commit e712327 ("correct norm_factor", 1 Apr 2026); earlier versions (e.g. d95934a, Nov 2025) default to 90.0474.' }

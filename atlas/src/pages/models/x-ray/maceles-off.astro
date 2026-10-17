@@ -1,0 +1,711 @@
+---
+import katex from 'katex';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import LesXray, { type LesStep } from '~/islands/LesXray';
+import { katexOptions } from '~/lib/katex-options.mjs';
+import raw from '~/data/xray/maceles-off.json';
+import {
+  becSumRule,
+  coulombConstant,
+  dimerMultipoles,
+  netCharge,
+  receptiveField,
+  rotationCheck,
+  separatedRows,
+  type LesDoc,
+} from '~/lib/models/xray-les';
+
+const tex = (s: string) => katex.renderToString(s, { ...katexOptions, displayMode: true });
+const doc = raw as unknown as LesDoc;
+const hp = doc.model.hyperparameters;
+const les = hp.les;
+const prov = doc.provenance as Record<string, string> & { rotation: { axis: number[]; angleDeg: number } };
+const sys = (id: string) => doc.systems.find((s) => s.id === id)!;
+const ethanol = sys('ethanol');
+const dip = sys('dipeptide');
+const rot = rotationCheck(ethanol)!;
+const k = coulombConstant(les.norm_factor);
+const kTrue = doc.model.halfInvEps0 / (2 * Math.PI);
+const fmtInt = (x: number) => x.toLocaleString('en-GB');
+const params = doc.model.parameters;
+const C = Number(hp.hidden_irreps.split('x')[0]);
+const sub = doc.validation.subsets;
+const range = (f: (s: (typeof sub)[0]) => number, d = 2) => {
+  const v = sub.map(f);
+  return `${Math.min(...v).toFixed(d)} to ${Math.max(...v).toFixed(d)}`;
+};
+const SUBSET_NAMES: Record<string, string> = {
+  pubchem: 'PubChem',
+  des370k_monomers: 'DES370K monomers',
+  des370k_dimers: 'DES370K dimers',
+  dipeptides: 'Dipeptides',
+  solvated_amino_acids: 'Solvated amino acids',
+  water: 'Water clusters',
+  qmugs: 'QMugs',
+};
+const nConfigs = sub.reduce((a, s) => a + s.configs, 0);
+
+const steps: LesStep[] = [
+  {
+    id: 'h1',
+    title: 'Layer 1 features h⁽¹⁾',
+    eq: tex(String.raw`h^{(1)}_i = \mathrm{MACE}_1\big(\{\mathbf r_{ij}, z_j\}_{r_{ij} < r_c}\big) \in \mathbb R^{${C}} \oplus (\mathbb R^3)^{${C}}`),
+    what: `The first MACE layer: ${C} scalar and ${C} vector channels per atom (${hp.hidden_irreps}), built from neighbours within r_c = ${hp.r_max} Å, body order ${hp.correlation + 1}. Colour: the norm of the scalar or vector part.`,
+    code: 'products[0] (forward hook)',
+    parts: ['scalars', 'vectors'],
+  },
+  {
+    id: 'h2',
+    title: 'Layer 2 features h⁽²⁾',
+    eq: tex(String.raw`h^{(2)}_i = \mathrm{MACE}_2\big(h^{(1)}_i, \{h^{(1)}_j, \mathbf r_{ij}\}_{r_{ij} < r_c}\big) \in \mathbb R^{${C}}`),
+    what: `The second layer keeps only ${C} scalars. Through h⁽¹⁾ of its neighbours an atom now sees up to ${receptiveField(hp)} Å along connected atoms (2 r_c), but nothing in a disconnected part of the graph.`,
+    code: 'products[1] (forward hook)',
+  },
+  {
+    id: 'q',
+    title: 'Latent charges q',
+    eq: tex(String.raw`q_i = \mathbf w_1^{\top} h^{(1)}_{i,0} \;+\; \mathbf w_2^{\top}\,\mathrm{SiLU}\big(W h^{(2)}_i\big)`),
+    what: `Each energy readout has a twin with its own weights that outputs a number per atom instead of an energy: a linear readout on layer 1 and a ${C}→16→1 MLP on layer 2 (${fmtInt(params.chargeReadouts)} parameters). The charges are never fitted to charges, only through the energy below. Blue positive, brown negative.`,
+    code: 'les_readouts[0], les_readouts[1]',
+    parts: ['from layer 1', 'from layer 2', 'q = sum'],
+  },
+  {
+    id: 'phi',
+    title: 'Latent potential φ',
+    eq: tex(String.raw`\varphi_i = \frac{n_f}{2\pi} \sum_{j \neq i} q_j\, \frac{\operatorname{erf}\!\big(r_{ij}/\sqrt2\,\sigma\big)}{r_{ij}},\qquad \sigma = ${les.sigma}\,\text{\AA},\ \ \frac{n_f}{2\pi} = ${k.toFixed(3)}\ \text{eV\,\AA}`),
+    what: 'The potential the other latent charges create at each atom, with Gaussian-smeared charges so it stays finite at short range. It reaches every atom, however far: this is the only part of the model with no cutoff.',
+    code: 'xray_les.les_potential (LES Ewald, real-space branch)',
+  },
+  {
+    id: 'energy',
+    title: 'Long-range energy E_lr',
+    eq: tex(String.raw`E = \underbrace{\sum_i \big[E_0(z_i) + s\,(e^{(1)}_i + e^{(2)}_i) + \mu\big]}_{E_{\mathrm{sr}}} + \underbrace{\tfrac12 \sum_i q_i\, \varphi_i}_{E_{\mathrm{lr}}},\qquad \mathbf F_i = -\nabla_{\mathbf r_i} E`),
+    what: 'Bars: each atom’s share ½ q_i φ_i of E_lr (a bookkeeping split; only the sum is defined by the model). Arrows: the forces from E_lr alone or from the local part alone, both from autograd.',
+    code: 'scale_shift, xray_les.les_energy, torch.autograd.grad',
+  },
+];
+
+const assumptions = [
+  { term: 'Model', value: `MACELES-OFF, ${doc.model.file} (${doc.model.licence}), MD5 ${doc.model.md5} as given in the les_fit README; architecture and LES settings read from the file.` },
+  { term: 'Run', value: `One forward pass per structure on CPU in float64 (trained in float32) with mace-torch ${prov['mace-torch']}, e3nn ${prov.e3nn}, PyTorch ${prov.torch}. The LES step for finite systems is re-implemented in the pipeline and tested; the LES package was not run.` },
+  { term: 'Structures', value: 'Isolated molecules, no periodic cell: ethanol (G2 geometry, not relaxed) and the first dipeptide of the les_fit SPICE BEC test set, with its DFT dipole and Born effective charges.' },
+  { term: 'Units', value: 'Energies in eV, forces in eV/Å, latent charges in units the model chose (Coulomb’s law with k = 14.33 eV Å makes them comparable to e), dipoles in e·Å.' },
+  { term: 'Sign', value: 'The overall sign of the latent charges is not determined by the model (see below); they are shown as the file computes them.' },
+];
+
+// ---- Fig. 2: water dimer --------------------------------------------------------
+const [mA, mB] = doc.dimer.monomers as [LesDoc['dimer']['monomers'][0], LesDoc['dimer']['monomers'][0]];
+const rows = doc.dimer.rows.map((r) => ({
+  d: r.dOO,
+  gap: r.minGap,
+  sr: 1000 * (r.eSr - mA.eSr - mB.eSr),
+  lr: 1000 * (r.eLr - mA.eLr - mB.eLr),
+}));
+const eq = rows.find((r) => r.d === 2.91)!;
+const split = rows.find((r) => r.gap > hp.r_max)!;
+const lastLinked = [...rows].reverse().find((r) => r.gap < hp.r_max)!;
+const sep = separatedRows(doc);
+const sepMaxDev = Math.max(...sep.map((r) => r.dEsr));
+const W2 = 640;
+const H2 = 260;
+const pd = { l: 48, r: 14, t: 16, b: 36 };
+const leftW = W2 * 0.52;
+const xa = (d: number) => pd.l + ((d - 2.5) / (8.5 - 2.5)) * (leftW - pd.l - 10);
+const yMinA = -450;
+const yMaxA = 300;
+const ya = (v: number) => pd.t + ((yMaxA - Math.max(yMinA, Math.min(yMaxA, v))) / (yMaxA - yMinA)) * (H2 - pd.t - pd.b);
+const pathA = (f: (r: (typeof rows)[0]) => number) =>
+  rows.filter((r) => r.d <= 8.5).map((r, i) => `${i ? 'L' : 'M'}${xa(r.d).toFixed(1)},${ya(f(r)).toFixed(1)}`).join('');
+const x0B = leftW + 46;
+const lx = (d: number) => x0B + ((Math.log10(d) - Math.log10(5)) / (Math.log10(30) - Math.log10(5))) * (W2 - pd.r - x0B);
+const ly = (v: number) => pd.t + ((Math.log10(10) - Math.log10(Math.max(0.01, v))) / (Math.log10(10) - Math.log10(0.01))) * (H2 - pd.t - pd.b);
+const tail = rows.filter((r) => r.d >= 5.5);
+const pathB = tail.map((r, i) => `${i ? 'L' : 'M'}${lx(r.d).toFixed(1)},${ly(-r.lr).toFixed(1)}`).join('');
+const multi = tail.map((r) => ({ d: r.d, m: dimerMultipoles(doc, r.d) }));
+const pathM = multi.map((r, i) => `${i ? 'L' : 'M'}${lx(r.d).toFixed(1)},${ly(-1000 * r.m.total).toFixed(1)}`).join('');
+const m30 = multi.find((r) => r.d === 30)!.m;
+const lr30 = rows.find((r) => r.d === 30)!.lr;
+
+// ---- Fig. 3: BEC parity -----------------------------------------------------------
+const pts = doc.validation.becPoints;
+const zLim = 3;
+const W3 = 360;
+const H3 = 360;
+const p3 = 40;
+const sx = (v: number) => p3 + ((v + zLim) / (2 * zLim)) * (W3 - p3 - 10);
+const sy = (v: number) => 10 + ((zLim - v) / (2 * zLim)) * (H3 - p3 - 10);
+const elClass = (z: number) => (z === 1 ? 'el-h' : z === 6 ? 'el-c' : z === 7 ? 'el-n' : z === 8 ? 'el-o' : 'el-x');
+const clip = (v: number) => Math.max(-zLim, Math.min(zLim, v));
+const dipDot = dip.P[0] * dip.dft!.dipole[0] + dip.P[1] * dip.dft!.dipole[1] + dip.P[2] * dip.dft!.dipole[2];
+---
+
+<BaseLayout
+  title="Architecture X-ray: MACELES-OFF"
+  description="A long-range model opened up: MACELES-OFF’s latent charges, latent potential and Coulomb energy from a real forward pass, a water dimer pulled apart, and Born effective charges checked against DFT."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · <a href="/models/long-range/">Long-range models</a> · <a href="/models/x-ray/">X-ray</a> · MACELES-OFF</p>
+      <h1 class="h-display">Architecture X-ray: MACELES-OFF</h1>
+      <p class="lede">
+        A short-range MACE with one addition: every atom also gets a number, a latent charge, and those numbers interact
+        through Coulomb’s law at any distance. Here is that addition, step by step, read out of the released model — and two
+        things the forward pass reveals that the paper does not dwell on.
+      </p>
+      <dl class="glance">
+        <div><dt>Architecture</dt><dd><a href="/models/long-range/">LES</a> <Cite id="cheng2025les" /> on <a href="/models/mace/">MACE</a> <Cite id="batatia2022mace" /></dd></div>
+        <div><dt>Checkpoint</dt><dd><a href="/models/checkpoints/">MACELES-OFF</a> <Cite id="kim2025les" /></dd></div>
+        <div><dt>Local part</dt><dd>{hp.num_interactions} layers · {hp.hidden_irreps} · r<sub>c</sub> = {hp.r_max} Å</dd></div>
+        <div><dt>Long-range part</dt><dd>latent charges, Gaussian σ = {les.sigma} Å, no cutoff</dd></div>
+        <div><dt>Parameters</dt><dd>{fmtInt(params.mace + params.chargeReadouts)} (counted; {fmtInt(params.chargeReadouts)} for charges)</dd></div>
+        <div><dt>Compute</dt><dd>CPU, float64, offline</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="precomputed" /> Numbers come from this <strong>checkpoint’s</strong> weights. The LES idea (any latent
+        charges in a Coulomb sum) is the architecture; a different LES model would have different charges.
+      </p>
+    </header>
+
+    <div class="wide fig-wrap">
+      <Figure title="Inside one MACELES-OFF forward pass" labels={['precomputed']} number={1} id="fig-xray" framed={false}>
+        <LesXray client:visible steps={steps} />
+        <Fragment slot="caption">
+          Left: the molecule coloured by the selected step (blue positive or large, brown negative), with the long-range or
+          the local force on each atom as arrows; click an atom to read its values. Right: the steps and their equations.
+          Below: one bar per atom, then the totals: E<sub>sr</sub>, E<sub>lr</sub>, the net latent charge, the dipole and the
+          Born effective charges Z* of the selected atom (with DFT for the dipeptide). For ethanol, “rotated” switches to a
+          second forward pass of the rotated molecule.
+        </Fragment>
+        <Assumptions slot="assumptions" items={assumptions} />
+        <Fragment slot="source">
+          LES energy, finite-system form and BEC definition: <Cite id="kim2025les" locator="arXiv v1, Eqs. 3–4; Fig. 1" />, from
+          <Cite id="cheng2025les" locator="Eqs. 1–4" />; checkpoint settings <Cite id="kim2025les" locator="Table II" />;
+          values computed by <code>pipeline/atlas_pipeline/xray_les.py</code>.
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="see-h">
+      <h2 id="see-h" class="h-section">What the X-ray shows</h2>
+      <h3 class="h-sub">1. Two energies, one model</h3>
+      <p>
+        For ethanol the local part gives E<sub>sr</sub> = {ethanol.eSr.toFixed(3)} eV (almost all of it the isolated-atom
+        energies E₀) and the latent Coulomb sum adds E<sub>lr</sub> = {ethanol.eLr.toFixed(3)} eV; for the 45-atom dipeptide
+        E<sub>lr</sub> = {dip.eLr.toFixed(3)} eV. These are not small corrections to be switched off. The two parts were trained
+        together, so each has absorbed some of what the other does: on the les_fit test molecules, dropping the E<sub>lr</sub>
+        forces from the trained model raises the force error from {range((s) => 1000 * s.forceRmse, 0)} meV/Å to
+        {range((s) => 1000 * s.forceRmseWithoutLr, 0)} meV/Å (Table 1). That is a statement about this fit, not about how
+        large “electrostatics” is in these molecules.
+      </p>
+      <h3 class="h-sub">2. Charges come from the same features as energies</h3>
+      <p>
+        MACE has one energy readout per layer; MACELES gives each a twin with separate weights that outputs a latent charge
+        <Cite id="kim2025les" locator="Sec. II; Fig. 1" />. In the file, the LES module’s own charge network is unused
+        (<code>use_atomwise</code> is false) and all charges come from these twins: {fmtInt(params.chargeReadouts)} of
+        {fmtInt(params.mace + params.chargeReadouts)} parameters. Because q is a function of the local features, a charge only
+        knows about atoms within the receptive field; what LES adds is that charges far apart still interact.
+      </p>
+      <h3 class="h-sub">3. Rotations change nothing that should not change</h3>
+      <p>
+        Rotating ethanol by {prov.rotation.angleDeg}° about ({prov.rotation.axis.join(', ')}) and running the model again
+        leaves the charges unchanged (max |Δq| = {rot.dq.toExponential(0)}, the stored rounding), changes the energy by
+        {rot.dE.toExponential(0)} eV, and rotates both force parts with the molecule (to {Math.max(rot.dFsr, rot.dFlr).toExponential(0)} eV/Å).
+        The latent charges are invariants, and E<sub>lr</sub> depends only on distances between them.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="dimer-h">
+      <h2 id="dimer-h" class="h-section">Pulling two waters apart</h2>
+      <p>
+        The S22 water dimer <Cite id="jurecka2006s22" /> was separated rigidly along the O···O axis and each geometry run
+        through the model, together with the two isolated waters. The interaction energy of each part is its value for the
+        dimer minus its value for the two monomers.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Where the two parts of the model couple two water molecules" labels={['precomputed']} number={2} id="fig-dimer">
+        <svg class="nq-plot" viewBox={`0 0 ${W2} ${H2}`} role="img" aria-label={`Water dimer interaction energy versus O–O distance. Local part: ${eq.sr.toFixed(0)} meV at 2.91 Å, exactly zero from ${split.d} Å. Long-range part: ${eq.lr.toFixed(0)} meV at 2.91 Å, ${lr30.toFixed(3)} meV at 30 Å.`}>
+          <line x1={xa(2.5)} x2={xa(8.5)} y1={ya(0)} y2={ya(0)} class="ax" />
+          <line x1={xa(2.5)} x2={xa(2.5)} y1={ya(yMaxA)} y2={ya(yMinA)} class="ax" />
+          <rect x={xa(lastLinked.d)} y={ya(yMaxA)} width={xa(split.d) - xa(lastLinked.d)} height={ya(yMinA) - ya(yMaxA)} class="band" />
+          <text x={xa(split.d) + 4} y={ya(yMaxA) + 12} class="tk">graph splits</text>
+          {[3, 4, 5, 6, 7, 8].map((d) => <text x={xa(d)} y={H2 - pd.b + 14} text-anchor="middle" class="tk">{d}</text>)}
+          {[-400, -200, 0, 200].map((v) => <text x={xa(2.5) - 5} y={ya(v) + 4} text-anchor="end" class="tk">{v}</text>)}
+          <path d={pathA((r) => r.sr)} class="sr" />
+          <path d={pathA((r) => r.lr)} class="lr" />
+          <path d={pathA((r) => r.sr + r.lr)} class="total" />
+          <text x={xa(2.5) + 4} y={H2 - 4} class="tk">d(O···O) / Å; interaction energy / meV</text>
+
+          <line x1={lx(5)} x2={lx(30)} y1={ly(0.01)} y2={ly(0.01)} class="ax" />
+          <line x1={lx(5)} x2={lx(5)} y1={ly(10)} y2={ly(0.01)} class="ax" />
+          {[5, 10, 20, 30].map((d) => <text x={lx(d)} y={H2 - pd.b + 14} text-anchor="middle" class="tk">{d}</text>)}
+          {[10, 1, 0.1, 0.01].map((v) => <text x={lx(5) - 5} y={ly(v) + 4} text-anchor="end" class="tk">{v}</text>)}
+          <path d={pathM} class="multi" />
+          <path d={pathB} class="lr" />
+          {tail.map((r) => <circle cx={lx(r.d)} cy={ly(-r.lr)} r="2.4" class="lrdot" />)}
+          <text x={lx(5) + 4} y={H2 - 4} class="tk">log scale: −E_lr interaction / meV</text>
+        </svg>
+        <Fragment slot="caption">
+          Left: interaction energies of the local part (blue), the LES part (brown) and their sum (ink). At the S22 geometry
+          (2.91 Å) the local part gives {eq.sr.toFixed(0)} meV and the LES part {eq.lr > 0 ? '+' : ''}{eq.lr.toFixed(0)} meV,
+          {(eq.sr + eq.lr).toFixed(0)} meV in total; the split between the two is the model’s own and has no physical meaning.
+          The local part falls to exactly zero at {split.d} Å (closest atom pair {split.gap.toFixed(2)} Å, beyond r<sub>c</sub>;
+          deviation below {sepMaxDev < 1e-9 ? '10⁻⁹' : sepMaxDev.toExponential(0)} eV in every later row). Right: the LES
+          part beyond that point, which is all the model has left; dashed: the multipole expansion of the two isolated waters’
+          latent charges about their O atoms (charge–charge, charge–dipole and dipole–dipole terms), within
+          {(100 * globalThis.Math.abs(m30.total / (lr30 / 1000) - 1)).toFixed(0)} % at 30 Å.
+        </Fragment>
+        <Fragment slot="source">
+          Geometry: S22 water dimer from <code>ase.collections.s22</code> <Cite id="jurecka2006s22" />; 31 separations from
+          2.6 to 30 Å (<code>xray_les.water_dimer_scan</code>); multipole terms from the stored monomer charges
+          (<code>dimerMultipoles</code>, tested).
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="dimer2-h">
+      <h3 class="h-sub" id="dimer2-h">The receptive field is not a distance between molecules</h3>
+      <p>
+        With two message-passing layers an atom’s features depend on atoms up to 2 r<sub>c</sub> = {receptiveField(hp)} Å away —
+        but only along a chain of atoms each within r<sub>c</sub> of the next. Once no atom of one water is within
+        {hp.r_max} Å of the other, the graph has two components and no number of layers can connect them: the local energy
+        and every latent charge become exactly the isolated monomers’. In the scan that happens between {lastLinked.d} and
+        {split.d} Å O···O, not at 9 Å. From there on the only coupling is E<sub>lr</sub>, which decays as the multipoles of
+        the two charge distributions dictate. <Badge label="theory" />
+      </p>
+      <p>
+        One more thing shows in the tail: the latent charges of each isolated water sum to {netCharge(mA.q).toExponential(1)},
+        not zero. Nothing in the model enforces neutrality <Cite id="cheng2025les" locator="text after Eq. 4" />, so a
+        neutral molecule carries a small net latent charge whose 1/R interaction with another would eventually dominate
+        the dipole term ({(1000 * m30.qq).toExponential(1)} versus {(1000 * m30.pp).toExponential(1)} meV at 30 Å here; it
+        overtakes it near {Math.round(30 * Math.sqrt(Math.abs(m30.pp / m30.qq)))} Å).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="sign-h">
+      <h2 id="sign-h" class="h-section">The sign of a latent charge</h2>
+      <Callout kind="derivation" title="Energy and forces cannot fix the sign">
+        <Fragment set:html={tex(String.raw`E_{\mathrm{lr}}[-q] = \tfrac12 \sum_{i \ne j} (-q_i)(-q_j)\,K(r_{ij}) = E_{\mathrm{lr}}[q]`)} />
+        The long-range energy is quadratic in the charges, and E<sub>sr</sub> does not involve them at all. Flipping the
+        sign of both charge readouts’ last-layer weights flips every q and leaves every energy and force unchanged, so a
+        model trained on energies and forces can land on either sign. The dipole P = Σ (q<sub>i</sub> − q̄) r<sub>i</sub> and the
+        Born effective charges Z*<sub>iαβ</sub> = ∂P<sub>α</sub>/∂r<sub>iβ</sub> <Cite id="kim2025les" locator="arXiv v1, Eq. 4" />
+        are linear in q, so they flip with it.
+      </Callout>
+      <p>
+        For this checkpoint the forward pass lands on the negative branch. On the dipeptide of Fig. 1 the model’s dipole points
+        against the DFT one (P · μ = {dipDot.toFixed(3)} e²Å²), and across {nConfigs} test configurations in seven subsets the
+        model’s Born effective charges and dipoles are almost perfectly anti-correlated with DFT (Fig. 3, Table 1). Up to
+        that sign, the agreement is what <Cite id="kim2025les" locator="Fig. 6b–c" /> report; the text we read does not say how
+        their plots handle the sign. Anyone computing IR intensities only needs |∂P/∂t|², which is sign-free; anyone reading
+        individual charges, dipole directions or a response to a field needs a convention first. <Badge label="theory" />
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Born effective charges: model against DFT" labels={['precomputed', 'dft-reference']} number={3} id="fig-bec">
+        <div class="bec">
+          <svg class="nq-plot bec-plot" viewBox={`0 0 ${W3} ${H3}`} role="img" aria-label={`Diagonal Born effective charges of ${pts.length / 3} atoms, model against DFT: points fall along a line of negative slope.`}>
+            <line x1={sx(-zLim)} x2={sx(zLim)} y1={sy(0)} y2={sy(0)} class="ax" />
+            <line x1={sx(0)} x2={sx(0)} y1={sy(-zLim)} y2={sy(zLim)} class="ax" />
+            <line x1={sx(-zLim)} x2={sx(zLim)} y1={sy(-zLim)} y2={sy(zLim)} class="mark" />
+            <line x1={sx(-zLim)} x2={sx(zLim)} y1={sy(zLim)} y2={sy(-zLim)} class="mark" />
+            {pts.map(([, z, ref, mod]) => <circle cx={sx(clip(ref))} cy={sy(clip(mod))} r="2.2" class={`pt ${elClass(z)}`} />)}
+            {[-2, 0, 2].map((v) => <text x={sx(v)} y={H3 - p3 + 16} text-anchor="middle" class="tk">{v}</text>)}
+            {[-2, 0, 2].map((v) => <text x={p3 - 6} y={sy(v) + 4} text-anchor="end" class="tk">{v}</text>)}
+            <text x={sx(0)} y={H3 - 4} text-anchor="middle" class="tk">Z*αα, DFT (e)</text>
+            <text x={12} y={sy(0)} text-anchor="middle" class="tk" transform={`rotate(-90 12 ${sy(0)})`}>Z*αα, MACELES-OFF</text>
+            <text x={sx(1.4)} y={sy(1.9)} class="tk">y = x</text>
+            <text x={sx(1.3)} y={sy(-2.3)} class="tk">y = −x</text>
+          </svg>
+          <ul class="legend" aria-label="Elements">
+            <li><span class="sw el-h"></span>H</li>
+            <li><span class="sw el-c"></span>C</li>
+            <li><span class="sw el-n"></span>N</li>
+            <li><span class="sw el-o"></span>O</li>
+            <li><span class="sw el-x"></span>F, P, S, Cl, Br, I</li>
+          </ul>
+        </div>
+        <Fragment slot="caption">
+          Diagonal Z* components of the first two configurations of each subset ({pts.length} values), clipped to ±{zLim}. The
+          cloud lies along y = −x, not y = x: the sign derived above. Least-squares slopes through the origin over all
+          components of all configurations are {range((s) => s.becSlope)} (Table 1), so beyond the sign the model’s Z* are
+          also 10–25 % smaller than DFT’s.
+        </Fragment>
+        <Fragment slot="source">
+          DFT values (ωB97M-D3(BJ)/def2-SVP <Cite id="kim2025les" locator="text after Table II" />) from the les_fit <code>data-spice-test-bec</code> files (commit
+          {String(prov.lesFitCommit).slice(0, 7)}, CC BY-NC 4.0);
+          model values from autograd of P (<code>xray_les.run</code>).
+        </Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="val-h">
+      <h2 id="val-h" class="h-section">Is the rebuilt model the released one?</h2>
+      <p>
+        The pipeline rebuilds the model from the file’s tensors and re-implements the LES sum, so it has to show it computes
+        what the authors’ code computes. The les_fit repository ships its test configurations with DFT energies, forces,
+        dipoles and Born effective charges. Run on all {nConfigs} of them, the rebuild matches the force labels to
+        {range((s) => 1000 * s.forceRmse, 0)} meV/Å and the energies to {range((s) => 1000 * s.energyRmsePerAtom, 1)} meV per atom.
+        A broken piece would not hide: removing just the LES forces already gives
+        {range((s) => 1000 * s.forceRmseWithoutLr, 0)} meV/Å. We could not run the original
+        training-fork code, so this is a consistency check, not a bit-for-bit reproduction.
+      </p>
+      <div class="table-wrap">
+        <table class="prov val">
+          <caption>Table 1 · Rebuilt MACELES-OFF on the les_fit test configurations <Badge label="precomputed" /></caption>
+          <thead>
+            <tr>
+              <th>Subset</th>
+              <th class="num">Configs</th>
+              <th class="num">E RMSE (meV/atom)</th>
+              <th class="num">F RMSE (meV/Å)</th>
+              <th class="num">F RMSE without E_lr</th>
+              <th class="num">Z* slope · r</th>
+              <th class="num">μ slope · r</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              sub.map((s) => (
+                <tr>
+                  <td>{SUBSET_NAMES[s.name] ?? s.name}</td>
+                  <td class="num">{s.configs}</td>
+                  <td class="num">{(1000 * s.energyRmsePerAtom).toFixed(2)}</td>
+                  <td class="num">{(1000 * s.forceRmse).toFixed(1)}</td>
+                  <td class="num">{(1000 * s.forceRmseWithoutLr).toFixed(0)}</td>
+                  <td class="num">{s.becSlope.toFixed(2)} · {s.becCorr.toFixed(2)}</td>
+                  <td class="num">{s.dipoleSlope.toFixed(2)} · {s.dipoleCorr.toFixed(2)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="prose-note">
+        All rows are this Atlas run (float64, CPU). Errors are against the energy and force labels in the les_fit files, on about 50
+        configurations per subset; they are not the paper’s test-set numbers <Cite id="kim2025les" locator="Fig. 5; Table III" />,
+        which cover the full MACE-OFF test split and should not be ranked against these. “Without E_lr” removes the LES
+        forces from the same trained model; it is not a retrained short-range model. Slopes are least-squares through the
+        origin; r is Pearson’s correlation.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="constant-h">
+      <h2 id="constant-h" class="h-section">The constant inside the kernel</h2>
+      <p>
+        LES writes the prefactor of its Coulomb sum as n<sub>f</sub> = 1/2ε₀ in eV Å/e², so the pair energy is
+        (n<sub>f</sub>/2π) q<sub>i</sub>q<sub>j</sub>/r at large r. The file stores n<sub>f</sub> = {les.norm_factor}, which gives
+        k = {k.toFixed(4)} eV Å; Coulomb’s constant is e²/4πε₀ = {kTrue.toFixed(4)} eV Å (n<sub>f</sub> = {doc.model.halfInvEps0.toFixed(4)}),
+        {(100 * (1 - k / kTrue)).toFixed(2)} % more. LES changed its default to the correct value in April 2026; this model was
+        trained with the old one. <Badge label="theory" />
+      </p>
+      <Callout kind="derivation" title="Why the old constant does no harm, if it is kept">
+        <Fragment set:html={tex(String.raw`k_{\mathrm{old}}\, q_i q_j = k_{\mathrm{new}}\, (\lambda q_i)(\lambda q_j),\qquad \lambda = \sqrt{k_{\mathrm{old}}/k_{\mathrm{new}}} = ${Math.sqrt(k / kTrue).toFixed(4)}`)} />
+        Every latent charge was learned with k<sub>old</sub>; the same energies follow from charges {(100 * (1 - Math.sqrt(k / kTrue))).toFixed(2)} % smaller and the
+        correct constant. Running the file with the new default without that rescaling would change E<sub>lr</sub> by
+        {(100 * (kTrue / k - 1)).toFixed(2)} % — {(1000 * (kTrue / k - 1) * globalThis.Math.abs(dip.eLr)).toFixed(1)} meV for the dipeptide.
+        The pipeline therefore reads n<sub>f</sub> from the stored module rather than from any LES version.
+      </Callout>
+      <Callout kind="derivation" title="Why the Born effective charges sum to zero">
+        With the mean removed, P = Σ (q<sub>i</sub> − q̄) r<sub>i</sub> is unchanged by a rigid translation r<sub>i</sub> → r<sub>i</sub> + a, because
+        Σ (q<sub>i</sub> − q̄) = 0 and the charges, being functions of distances, do not change. Differentiating with respect to a
+        gives Σ<sub>i</sub> Z*<sub>i</sub> = 0, the acoustic sum rule, whatever the net latent charge. In the stored passes the largest
+        |Σ<sub>i</sub> Z*<sub>i,αβ</sub>| is {becSumRule(dip.Z).toExponential(0)} for the dipeptide, the stored rounding. <Badge label="theory" />
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Architecture-level and checkpoint-level limits</h2>
+      <ul class="facts">
+        <li>
+          <strong>Architecture (LES).</strong> Latent charges are functions of local features, so charge cannot flow
+          between atoms farther apart than the receptive field, or between disconnected fragments; the
+          <a href="/models/long-range/">long-range page</a> shows the C₁₀H₂ chain where this matters. The charge sign is
+          undetermined by energies, and the net charge is not constrained to zero.
+        </li>
+        <li>
+          <strong>Checkpoint (MACELES-OFF).</strong> Trained on neutral molecules and clusters of ten elements
+          <Cite id="kim2025les" locator="MACELES-OFF section" /> at ωB97M-D3(BJ)/def2-TZVPPD (<a href="/data/">SPICE</a>
+          <Cite id="eastman2022spice" />), with no total-charge input: ions and charged fragments are outside its scope. Its
+          BECs and dipoles come out with the opposite sign to DFT and, in size, 10–25 % and 20–35 % smaller (Table 1). Licence CC BY-NC 4.0.
+        </li>
+      </ul>
+    </section>
+
+    <section class="block" aria-labelledby="how-h">
+      <h2 id="how-h" class="h-section">How the values were obtained</h2>
+      <ul class="facts">
+        <li>
+          <strong>Safe loading.</strong> The released file is a pickled PyTorch module. The pipeline never unpickles it as
+          code: a restricted unpickler yields only tensors, plain numbers and inert placeholders, from which the cutoff,
+          channels, neighbour normalisation and the LES settings (σ, n<sub>f</sub>, readout mode, mean removal) are read. A
+          fresh MACE model is built with the installed mace-torch and loaded with every tensor checked by name and shape;
+          the two charge readouts are rebuilt with mace’s own readout blocks and loaded strictly.
+        </li>
+        <li>
+          <strong>LES.</strong> For isolated molecules LES uses a direct pair sum with an erf kernel
+          <Cite id="kim2025les" locator="arXiv v1, Eq. 3" />; the pipeline implements that sum (eight lines) and tests it against
+          Coulomb’s law at large r, the kernel’s closed form, a brute-force pair loop and its sign symmetry. The periodic
+          (Ewald) branch is not used here.
+        </li>
+        <li>
+          <strong>Checks.</strong> Pipeline tests: rotation invariance of charges and energies, the BEC sum rule, separability
+          of the water dimer once the graph splits, the parameter count. Site tests recompute E<sub>lr</sub>, φ and P from the
+          stored charges, the multipole tail and the sign of the dipeptide’s dipole.
+        </li>
+      </ul>
+      <div class="table-wrap">
+        <table class="prov">
+          <tbody>
+            <tr><th>Checkpoint file</th><td><a href={doc.model.url}>{doc.model.file}</a> ({doc.model.licence})</td></tr>
+            <tr><th>MD5 · SHA-256</th><td><code>{doc.model.md5}</code> · <code>{doc.model.sha256}</code></td></tr>
+            <tr><th>Software</th><td>mace-torch {prov['mace-torch']} · e3nn {prov.e3nn} · PyTorch {prov.torch} · ASE {prov.ase}; LES: {prov.les}</td></tr>
+            <tr><th>Test data</th><td>les_fit <code>data-spice-test-bec</code>, commit <code>{prov.lesFitCommit}</code></td></tr>
+            <tr><th>Precision · device</th><td>{prov.dtype} · {prov.device}</td></tr>
+            <tr><th>Stored precision</th><td>{prov.rounding}</td></tr>
+            <tr><th>Script</th><td><code>{prov.script}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="lim-h">
+      <h2 id="lim-h" class="h-section">What this page is not</h2>
+      <p>
+        Not periodic: every structure is an isolated molecule, so the reciprocal-space Ewald branch and its k-space cutoff are
+        not exercised. Not a benchmark: Table 1 checks that the rebuild is sound on {nConfigs} configurations and is not
+        comparable with published leaderboards. Not a statement that latent charges are partial charges: they are whatever
+        made the energies fit, and the dimer shows their split between local and long-range parts is the model’s choice.
+        The network’s internal channels are shown as norms only; see the <a href="/models/x-ray/">MACE X-ray</a> for
+        channel-by-channel tensors of a MACE model.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+    color: var(--atlas-ink);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    min-width: 0;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+    color: var(--atlas-ink);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .block h3 {
+    margin-block: 1.5rem 0.5rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.6rem;
+    padding-left: 1.2rem;
+  }
+  .facts strong {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+  .block :global(.katex-display) {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .prov {
+    border-collapse: collapse;
+    font: 0.84rem/1.45 var(--font-sans);
+    width: 100%;
+  }
+  .prov caption {
+    text-align: left;
+    font: 600 0.85rem var(--font-sans);
+    margin-bottom: 0.4rem;
+  }
+  .prov th,
+  .prov td {
+    text-align: left;
+    padding: 0.45rem 1rem 0.45rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+    vertical-align: top;
+  }
+  .prov th {
+    font-weight: 600;
+    color: var(--atlas-ink-muted);
+  }
+  .prov code {
+    overflow-wrap: anywhere;
+  }
+  .val .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prose-note {
+    font: 0.9rem/1.55 var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .nq-plot {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .nq-plot .ax {
+    stroke: var(--atlas-ink-muted);
+    stroke-width: 1;
+  }
+  .nq-plot .mark {
+    stroke: var(--atlas-rule);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 3;
+  }
+  .nq-plot .band {
+    fill: var(--atlas-surface-2);
+  }
+  .nq-plot .tk {
+    font: 11px var(--font-sans);
+    fill: var(--atlas-ink-muted);
+  }
+  .nq-plot .total {
+    fill: none;
+    stroke: var(--atlas-ink);
+    stroke-width: 2;
+  }
+  .nq-plot .sr {
+    fill: none;
+    stroke: var(--atlas-arch);
+    stroke-width: 1.6;
+  }
+  .nq-plot .lr {
+    fill: none;
+    stroke: var(--atlas-caveat);
+    stroke-width: 1.8;
+  }
+  .nq-plot .lrdot {
+    fill: var(--atlas-caveat);
+  }
+  .nq-plot .multi {
+    fill: none;
+    stroke: var(--atlas-ink);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4;
+  }
+  .bec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  .bec-plot {
+    max-width: 26rem;
+    flex: 1 1 18rem;
+  }
+  .nq-plot .pt {
+    fill-opacity: 0.7;
+  }
+  .el-h {
+    fill: var(--atlas-ink-muted);
+    background: var(--atlas-ink-muted);
+  }
+  .el-c {
+    fill: var(--atlas-arch);
+    background: var(--atlas-arch);
+  }
+  .el-n {
+    fill: var(--atlas-phys);
+    background: var(--atlas-phys);
+  }
+  .el-o {
+    fill: var(--atlas-caveat);
+    background: var(--atlas-caveat);
+  }
+  .el-x {
+    fill: var(--atlas-fail);
+    background: var(--atlas-fail);
+  }
+  .legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+    font: 0.8rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .legend li {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+  }
+  .sw {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    display: inline-block;
+  }
+</style>

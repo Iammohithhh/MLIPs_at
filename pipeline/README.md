@@ -70,6 +70,19 @@ curl -L -o NequIP-OAM-S-0.1.nequip.zip https://zenodo.org/records/18775904/files
 ATLAS_NEQUIP_PACKAGE=NequIP-OAM-S-0.1.nequip.zip ../.venv-nequip/bin/python -m pytest -q tests/test_xray_nequip.py
 ```
 
+`xray_les.py` opens MACELES-OFF (MACE + Latent Ewald Summation; les_fit, CC BY-NC 4.0), writing
+`atlas/src/data/xray/maceles-off.json`. The file is checked against the MD5 in the les_fit README, read with the same
+restricted unpickler, rebuilt with `mace-torch` (same environment as `xray.py`) and its two charge readouts loaded
+strictly. The LES sum for finite systems is re-implemented in the module (tested against closed forms) using the
+σ and prefactor stored in the file, so the LES package is not needed. Inputs: ethanol, the S22 water dimer from ASE and
+the les_fit `data-spice-test-bec` configurations (about 40 CPU-minutes).
+
+```bash
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/ChengUCB/les_fit ../../les_fit
+../.venv-xray/bin/python -m atlas_pipeline.xray_les ../../les_fit/MACELES-OFF/MACELES-OFF_small_converted.model ../../les_fit/data-spice-test-bec ../atlas/src/data/structures ../atlas/src/data/xray/maceles-off.json
+ATLAS_MACELES_CHECKPOINT=../../les_fit/MACELES-OFF/MACELES-OFF_small_converted.model ../.venv-xray/bin/python -m pytest -q tests/test_xray_les.py
+```
+
 ## Model Observatory
 
 `observatory.py` runs four released checkpoints trained on MPtrj (MACE-MP-0a medium, CHGNet

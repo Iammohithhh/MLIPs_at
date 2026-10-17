@@ -1,0 +1,9 @@
+statement: >-
+  In MACELES-OFF the local energy and the latent charges of two molecules stop depending on each other as soon as no atom
+  of one is within the 4.5 Å cutoff of the other: the graph splits and no number of message-passing layers can couple
+  the parts. Beyond that point only the LES term couples them; for the S22 water dimer it is −4.7 meV at 5.5 Å and
+  still −0.025 meV at 30 Å.
+grade: THEORY
+derivation: /models/x-ray/maceles-off/#dimer-h
+scope: { model_families: [les], checkpoints: [maceles-off] }
+review: { status: draft, last_checked: 2026-10-17, notes: 'Separability tested on the precomputed scan (float64): local energy equal to the monomer sum to 1e-8 eV once the closest pair is beyond r_c. The 2 × r_c receptive field applies within one connected graph only.' }

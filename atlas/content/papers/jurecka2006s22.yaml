@@ -1,0 +1,14 @@
+title: 'Benchmark database of accurate (MP2 and CCSD(T) complete basis set limit) interaction energies of small model complexes, DNA base pairs, and amino acid pairs'
+topic: benchmarks-failures
+authors:
+  - 'Jurečka, P.'
+  - 'Šponer, J.'
+  - 'Černý, J.'
+  - 'Hobza, P.'
+year: 2006
+venue: Physical Chemistry Chemical Physics 8, 1985–1993
+type: article
+identifiers:
+  doi: 10.1039/b600027d
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-17, notes: 'The S22 set. Used on the Atlas only for the water-dimer geometry, taken from the ase.collections.s22 copy shipped with ASE 3.29.0; the paper itself was not read.' }

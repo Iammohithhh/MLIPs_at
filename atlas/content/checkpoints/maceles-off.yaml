@@ -12,5 +12,5 @@ outputs: [energy, forces, charges, dipole]
 long_range: latent-ewald
 licence: 'CC BY-NC 4.0 (les_fit repository README)'
 weights: { url: 'https://github.com/ChengUCB/les_fit/blob/main/MACELES-OFF/MACELES-OFF_small_converted.model' }
-claims: [maceles-off-accuracy]
-review: { status: draft, last_checked: 2026-10-17, notes: 'MACE with an LES module: cutoff 4.5 Å, 192 channels, ℓ = 1, float32 (Kim et al. arXiv v1, MACELES-OFF section and Table II). Charges are LES latent charges and dipoles their first moment; not trained on either. The converted file runs on the MACE main branch (les_fit README, MD5 given there); trained with the Cheng-group MACE fork. Parameter count not stated. Not downloaded.' }
+claims: [maceles-off-accuracy, maceles-off-latent-sign, maceles-off-coulomb-constant, maceles-off-graph-split]
+review: { status: draft, last_checked: 2026-10-17, notes: 'MACE with an LES module: cutoff 4.5 Å, 192 channels, ℓ = 1, float32 (Kim et al. arXiv v1, MACELES-OFF section and Table II). Charges are LES latent charges and dipoles their first moment; not trained on either. The converted file runs on the MACE main branch (les_fit README, MD5 given there); trained with the Cheng-group MACE fork. Parameter count not stated in the paper. Downloaded 2026-10-17 (MD5 matches the README) and rebuilt for the Atlas X-ray: 1,888,080 trainable MACE parameters plus 3,280 in the two charge readouts; LES settings stored in the file: σ = 1 Å, prefactor 90.0474, charges from the readouts (use_atomwise false), mean removed for dipoles.' }

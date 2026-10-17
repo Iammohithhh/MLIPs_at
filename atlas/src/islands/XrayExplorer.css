@@ -130,3 +130,35 @@
 .xr-rot {
   overflow-x: auto;
 }
+/* MACELES-OFF X-ray */
+.les-bars {
+  max-height: 22rem;
+  overflow-y: auto;
+}
+.les-bars button.mw-bar {
+  border: 0;
+  background: none;
+  padding: 0.1rem 0.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+}
+.les-bars button.mw-bar:focus-visible {
+  outline: 2px solid var(--atlas-focus, var(--atlas-arch));
+}
+.les-totals {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  font: 0.8rem var(--font-sans);
+}
+.les-totals dt {
+  color: var(--atlas-ink-muted);
+}
+.les-totals dd {
+  margin: 0;
+  font: 0.8rem var(--font-mono);
+  color: var(--atlas-ink);
+  overflow-wrap: anywhere;
+}
