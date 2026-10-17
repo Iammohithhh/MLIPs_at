@@ -7,7 +7,7 @@
 
 import { expect, test } from '@playwright/test';
 
-test('mobile interaction stays responsive under 4× CPU throttling', async ({ page, context, browserName }, info) => {
+for (const exp of ['si-bond-stretch', 'zno-axial-bond']) test(`mobile interaction stays responsive under 4× CPU throttling (${exp})`, async ({ page, context, browserName }, info) => {
   test.skip(browserName !== 'chromium' || info.project.name !== 'mobile', 'CDP throttling: Chromium mobile project only');
   const cdp = await context.newCDPSession(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
@@ -21,7 +21,7 @@ test('mobile interaction stays responsive under 4× CPU throttling', async ({ pa
   });
 
   const t0 = Date.now();
-  await page.goto('/');
+  await page.goto(`/?exp=${exp}`);
   const out = page.locator('output.lab__disp-value');
   await expect(out).toContainText('d = +0.000 Å', { timeout: 30_000 });
   await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30_000 });
@@ -45,6 +45,7 @@ test('mobile interaction stays responsive under 4× CPU throttling', async ({ pa
   const heapMB = (metrics.find((x) => x.name === 'JSHeapUsedSize')?.value ?? NaN) / 2 ** 20;
 
   const result = {
+    exp,
     setup: 'Pixel 7 emulation, CPU throttling 4×, SwiftShader WebGL, static dist/ over localhost',
     interactiveMs,
     frameStepMs: { median, worst, all: steps },
