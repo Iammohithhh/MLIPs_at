@@ -211,7 +211,7 @@ unchanged; scene renders, no overflow).
    after impostor-depth verification (§4, may be judged not worth it — record why).
 
 
-### Session 5 — 2026-10-17 22:16 → 22:50 UTC
+### Session 5 — 2026-10-17 22:16 → 22:52 UTC
 
 **State found:** branch at `0fd7591` (session 4 handoff), working tree clean. Re-read BRIEF, HANDOFF, CLAUDE.md.
 
@@ -270,7 +270,11 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
 - `5c86385` **colour-by-change bug fixed:** the ramp started from each element's colour, so ZnO's red O atoms
   looked "changed" (amber-ish) at zero change and the grey→amber legend was wrong; now every element starts from
   the neutral grey of the legend and of the PNG-export text ("grey = 0 to amber = largest").
-- Re-verified at 22:48 after `5c86385`: Vitest 75/75, Playwright desktop + mobile 50 passed / 2 skipped.
+- `5e2ff21` layout: `.lab__stage` no longer stretches to the side panel's height (it left an empty dark band under
+  the scene, worst in side by side); side-by-side pane labels moved to the top of each pane (they collided with
+  the force-scale caption once the stage stopped stretching). Screenshot-checked at 1440×900 (ZnO split).
+- Re-verified at 22:51 after the layout change: astro check 0 errors, Vitest 75/75, Playwright desktop + mobile
+  50 passed / 2 skipped.
 
 **Open problems / known gaps:**
 - Baseline ZnO forces (0.037 eV/Å) are below the 0.12 eV/Å arrow threshold, so the d = 0 ZnO scene shows no
