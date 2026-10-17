@@ -103,6 +103,20 @@ with DFT, so no number on the page is an error estimate.
 - One checkpoint, two structures, one displacement path each. Nothing here establishes the model's accuracy or
   reliability, and the model does not "understand" chemistry.
 
+## Rendering decisions
+
+- **Renderer.** The working WebGL renderer and impostor-sphere shaders from `atlas/src/three` are kept (brief:
+  migrating custom shaders to WebGPU is a separate decision). Render on demand, device-pixel ratio capped at 2.
+- **Ambient occlusion (brief §4, optional) — evaluated and not enabled.** Session 5 tried N8AO (n8ao 2.0.1,
+  ISC) as a three.js `EffectComposer` pass behind an off-by-default toggle. The prerequisite holds: the impostor
+  fragment shader writes `gl_FragDepth` (`src/three/primitives.tsx`), so depth-reconstructed occlusion would see
+  the spheres rather than their billboard quads. The measured result did not justify it: on the ZnO scene
+  (1440×1000, SwiftShader) mean luminance changed from 40.381 to 40.376 (no visible occlusion), while the
+  composer's render target dropped multisample anti-aliasing, so 11 % of pixels changed — almost all of them
+  thin graph edges and the selection halo becoming aliased. Muddier lines and an extra full-screen pass on
+  phones for no visible depth cue is the case the brief says to disable, so the code and dependency were
+  removed. A future attempt should use a multisampled render target and be checked on a real GPU.
+
 ## Layout
 
 ```
