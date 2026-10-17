@@ -2,7 +2,7 @@
 // that snaps to evaluated frames, baseline / perturbed / difference views, and linked energy and force
 // plots. All numbers come from the precomputed MACE-MP-0a medium evaluations in the manifest.
 
-import { useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import raw from '../data/experiments/si-bond-stretch/manifest.json';
 import {
   axialForce,
@@ -14,6 +14,7 @@ import {
   norm,
   parseManifest,
   siteEnergyChange,
+  type Manifest,
   type Vec3,
 } from '../lib/experiment';
 import { neighbourhood, bonds, graphEdges } from '../lib/scene';
@@ -35,18 +36,45 @@ import { ArchitectureDiagram } from './ArchitectureDiagram';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
-const m = parseManifest(raw);
-const DEMO = demoSteps(m);
-const CHECKPOINT = String(m.provenance.checkpoint);
 const DISPLAY_RADIUS = 6.0; // Å: moved atom, its graph neighbours within r_max
 const FORCE_SCALE = 0.5; // Å of arrow per eV/Å: the largest stored force (|F| = 4.7 eV/Å, moved atom at d = +0.3 Å) draws as a 2.3 Å arrow
-const B = m.displacement.baselineIndex;
-const moved = m.displacement.atom;
-// Atoms with full channel data (moved atom + first two shells), labelled by baseline distance.
-const LOCAL_OPTIONS = (neighbourhood(m, B, 4.0) ?? []).map((a) => ({
-  index: a.index,
-  label: a.index === moved ? `${a.index}: moved atom` : `${a.index}: ${a.r0.toFixed(2)} Å${a.index === m.displacement.partner ? ' (bond partner)' : ''}`,
-}));
+
+// Everything the instrument derives from one experiment's manifest, shared through context so the same
+// components serve any committed experiment (the experiment is fixed for the lifetime of the instrument).
+interface Lab {
+  m: Manifest;
+  demo: ReturnType<typeof demoSteps>;
+  checkpoint: string;
+  B: number;
+  moved: number;
+  /** Atoms with full channel data (moved atom + first two shells), labelled by baseline distance. */
+  localOptions: { index: number; label: string }[];
+}
+
+function makeLab(m: Manifest): Lab {
+  const B = m.displacement.baselineIndex;
+  const moved = m.displacement.atom;
+  return {
+    m,
+    demo: demoSteps(m),
+    checkpoint: String(m.provenance.checkpoint),
+    B,
+    moved,
+    localOptions: (neighbourhood(m, B, 4.0) ?? []).map((a) => ({
+      index: a.index,
+      label: a.index === moved ? `${a.index}: moved atom` : `${a.index}: ${a.r0.toFixed(2)} Å${a.index === m.displacement.partner ? ' (bond partner)' : ''}`,
+    })),
+  };
+}
+
+const LabContext = createContext<Lab | null>(null);
+function useLab(): Lab {
+  const lab = useContext(LabContext);
+  if (!lab) throw new Error('InterventionLab components need an experiment');
+  return lab;
+}
+
+const DEFAULT_MANIFEST = parseManifest(raw);
 
 const COLORS = {
   stage: '#141a19',
@@ -63,7 +91,17 @@ function fmt(x: number | null, digits = 3, unit = ''): string {
   return `${x > 0 ? '+' : x < 0 ? '−' : ''}${s.replace('-', '')}${unit ? ` ${unit}` : ''}`;
 }
 
-export default function InterventionLab() {
+export default function InterventionLab({ manifest = DEFAULT_MANIFEST }: { manifest?: Manifest }) {
+  const lab = useMemo(() => makeLab(manifest), [manifest]);
+  return (
+    <LabContext.Provider value={lab}>
+      <LabBody />
+    </LabContext.Provider>
+  );
+}
+
+function LabBody() {
+  const { m, demo: DEMO, checkpoint: CHECKPOINT, B, moved, localOptions: LOCAL_OPTIONS } = useLab();
   const { s, init, set } = useExperiment();
   const [issues, setIssues] = useState<string[]>([]);
   const [showEdges, setShowEdges] = useState(true);
@@ -317,9 +355,10 @@ function Scene(props: {
   sync?: CameraSync;
 }) {
   const { shown, view, selected, showEdges, showShell, colourMode, layer } = props;
-  const atoms = useMemo(() => neighbourhood(m, shown, DISPLAY_RADIUS) ?? [], [shown]);
+  const { m, moved } = useLab();
+  const atoms = useMemo(() => neighbourhood(m, shown, DISPLAY_RADIUS) ?? [], [m, shown]);
   const bondPairs = useMemo(() => bonds(atoms), [atoms]);
-  const scaleMax = useMemo(() => blockScaleMax(m, layer, 'h0') ?? 1, [layer]);
+  const scaleMax = useMemo(() => blockScaleMax(m, layer, 'h0') ?? 1, [m, layer]);
 
   const buffers = useMemo<AtomBuffers>(() => {
     const n = atoms.length;
@@ -391,7 +430,7 @@ function Scene(props: {
 
   return (
     <div className="lab__canvas">
-      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0])} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync} preserveDrawingBuffer>
+      <Stage view={cameraView(props.camera, sel?.pos ?? [0, 0, 0], m.displacement.axis)} resetKey={props.resetKey} background={COLORS.stage} label="Silicon neighbourhood of the moved atom with force arrows" minDistance={6} maxDistance={60} sync={props.sync} preserveDrawingBuffer>
         <SceneContents onPick={(i) => i !== null && atoms[i] && props.onPick(atoms[i]!.index)} buffers={buffers} version={shown * 7 + layer + (colourMode === 'change' ? 1000 : 0)} sticks={sticks} arrows={arrows} lines={lines} sel={sel?.pos ?? null} showShell={showShell} />
       </Stage>
     </div>
@@ -416,10 +455,9 @@ type CameraPreset = 'overview' | 'environment' | 'axis';
 const PRESET_LABEL: Record<CameraPreset, string> = { overview: 'Overview', environment: 'Selected environment', axis: 'Side-on to the path' };
 
 /** Camera presets keep z up; 'axis' looks perpendicular to the displacement axis so the motion is in the image plane. */
-function cameraView(preset: CameraPreset, sel: Vec3): { position: [number, number, number]; target: [number, number, number] } {
+function cameraView(preset: CameraPreset, sel: Vec3, u: Vec3): { position: [number, number, number]; target: [number, number, number] } {
   if (preset === 'environment') return { position: [sel[0] + 7, sel[1] - 9, sel[2] + 5], target: sel };
   if (preset === 'axis') {
-    const u = m.displacement.axis;
     // perpendicular to û, as horizontal as possible
     const p: Vec3 = [-u[1], u[0], 0];
     const n = Math.hypot(p[0], p[1]) || 1;
@@ -439,6 +477,7 @@ function SceneContents(p: {
   onPick: (i: number | null) => void;
 }) {
   // Hooks that need the R3F context live inside <Stage>.
+  const { m } = useLab();
   const uniforms = useShadingUniforms(COLORS.stage, true, 14, 40);
   return (
     <>
@@ -463,6 +502,7 @@ function ForceScale() {
 }
 
 function ColourLegend({ mode, layer }: { mode: 'element' | 'change'; layer: number }) {
+  const { m } = useLab();
   if (mode === 'element')
     return (
       <div className="lab__legend">
@@ -479,6 +519,7 @@ function ColourLegend({ mode, layer }: { mode: 'element' | 'change'; layer: numb
 }
 
 function Displacement({ frame, onFrame }: { frame: number; onFrame: (k: number) => void }) {
+  const { m, moved } = useLab();
   const vals = m.displacement.values;
   const d = vals[frame] ?? 0;
   return (
@@ -514,6 +555,7 @@ function Displacement({ frame, onFrame }: { frame: number; onFrame: (k: number) 
 }
 
 function Readouts({ frame, atom }: { frame: number; atom: number }) {
+  const { m } = useLab();
   const dE = energyChange(m, frame);
   const F = force(m, frame, atom);
   const dEi = siteEnergyChange(m, frame, atom);
@@ -541,6 +583,7 @@ function Readouts({ frame, atom }: { frame: number; atom: number }) {
 }
 
 function Plots({ frame, onFrame, d }: { frame: number; onFrame: (k: number) => void; d: number }) {
+  const { m } = useLab();
   const vals = m.displacement.values;
   const W = 300;
   const H = 150;
