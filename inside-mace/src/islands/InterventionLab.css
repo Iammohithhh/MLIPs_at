@@ -138,6 +138,8 @@
 }
 .lab__panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: 1rem;
   align-content: start;
   background: var(--atlas-surface);
@@ -571,4 +573,13 @@
 .ev__note {
   color: var(--atlas-ink-muted);
   margin: 0.4rem 0 0;
+}
+.ev__strip {
+  display: inline-grid;
+  grid-template-columns: repeat(10, 0.7rem);
+  gap: 1px;
+}
+.ev__strip span {
+  height: 0.7rem;
+  outline: 1px solid var(--atlas-rule);
 }

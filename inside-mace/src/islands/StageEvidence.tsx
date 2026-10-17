@@ -1,10 +1,72 @@
 // Recorded evidence shown with the energy and forces stages of the walkthrough.
-import { okFrameAt, type Manifest } from '../lib/experiment';
+import { useEffect, useState } from 'react';
+import { norm, okFrameAt, type Manifest } from '../lib/experiment';
 import type { Stage } from '../lib/urlState';
+import { loadChunk, type FrameChunk } from './FeatureInspector';
+
+type EdgeChunk = FrameChunk & { edgesIntoMoved: { src: number[]; vec: number[][]; radial: number[][]; sh: number[][] } };
+
+function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
+  const [c, setC] = useState<EdgeChunk | null>(null);
+  useEffect(() => {
+    let live = true;
+    loadChunk(frame).then((x) => live && setC(x as EdgeChunk), () => live && setC(null));
+    return () => {
+      live = false;
+    };
+  }, [frame]);
+  if (!c) return <p className="ev__note">Loading edge data…</p>;
+  const e = c.edgesIntoMoved;
+  const rows = e.src
+    .map((j, i) => ({ j, r: norm(e.vec[i]!), radial: e.radial[i]!, sh: e.sh[i]! }))
+    .sort((a, b) => a.r - b.r)
+    .slice(0, 6);
+  const max = Math.max(...e.radial.flat().map(Math.abs));
+  return (
+    <div className="ev">
+      <p className="ev__title">
+        {e.src.length} edges (r &lt; {m.rMax} Å) end on the moved atom (d = {c.d.toFixed(3)} Å); the 6 shortest, with their {rows[0]?.radial.length} radial basis values
+      </p>
+      <div className="ev__scroll">
+        <table className="mono">
+          <thead>
+            <tr>
+              <th>from atom</th>
+              <th>r (Å)</th>
+              <th>R₁…R₁₀ (colour: ±{max.toPrecision(2)})</th>
+              <th>Y₁ (x, y, z)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.j}>
+                <td>{row.j}</td>
+                <td>{row.r.toFixed(4)}</td>
+                <td>
+                  <span className="ev__strip">
+                    {row.radial.map((v, n) => (
+                      <span key={n} title={`R${n + 1} = ${v.toPrecision(4)}`} style={{ background: v >= 0 ? `rgb(240 169 69 / ${Math.abs(v) / max})` : `rgb(58 159 140 / ${Math.abs(v) / max})` }} />
+                    ))}
+                  </span>
+                </td>
+                <td>{row.sh.slice(1, 4).map((v) => v.toFixed(3)).join(', ')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="ev__note">
+        Radial values include the smooth cutoff envelope; Y₁ are the l = 1 spherical harmonics (e3nn component normalisation, order x, y, z), proportional to
+        the edge direction. Edge vectors follow MACE’s convention r_receiver − r_sender + shift.
+      </p>
+    </div>
+  );
+}
 
 export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: Stage; frame: number; atom: number }) {
   const f = okFrameAt(m, frame);
   if (!f) return null;
+  if (stage === 'radial' || stage === 'neighbours') return <EdgeEvidence m={m} frame={frame} />;
   if (stage === 'energy') {
     const sum = f.nodeEnergy.reduce((a, b) => a + b, 0);
     const e0 = m.baseline.e0[atom];

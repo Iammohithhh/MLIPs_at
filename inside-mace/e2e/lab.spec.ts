@@ -106,6 +106,7 @@ test('guided walkthrough: seven stages, equation on demand, URL keeps the stage'
   await expect(page.getByText(/autograd force vs central finite difference/)).toBeVisible();
   await page.getByRole('navigation', { name: 'Computation stages' }).getByRole('button', { name: /Neighbour graph/ }).click();
   await expect(page.getByText('Stage 2 of 7')).toBeVisible();
+  await expect(page.getByText(/46 edges \(r < 6 Å\) end on the moved atom/)).toBeVisible();
   // switching mode keeps the displacement frame
   await page.getByRole('button', { name: 'Next evaluated frame' }).click();
   await page.getByRole('tab', { name: 'Move an atom' }).click();
