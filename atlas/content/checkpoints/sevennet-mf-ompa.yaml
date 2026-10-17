@@ -1,0 +1,23 @@
+name: SevenNet-MF-ompa
+family: sevennet
+implementation: sevennet
+version: 7net-mf-ompa
+release: { source: kim2024multifidelity }
+parameters: { total: 25734966 }
+heads:
+  - { name: mpa, level_of_theory: pbe-pbeu-mp }
+  - { name: omat24, level_of_theory: pbe-pbeu-omat24 }
+training:
+  - stage: training
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Task "mpa": MPtrj together with sAlex (subsampled Alexandria; not yet recorded in the Atlas).'
+  - stage: training
+    dataset: omat24
+    level_of_theory: pbe-pbeu-omat24
+    note: 'Task "omat24", trained simultaneously with "mpa" in one multi-fidelity model.'
+outputs: [energy, forces, stress]
+licence: 'MIT (repository LICENSE at commit 209339d); Matbench Discovery lists GPL-3.0 for this checkpoint'
+weights: { url: 'https://figshare.com/articles/software/7net_MF_ompa/28590722?file=53029859' }
+claims: [sevennet-mf-architecture]
+review: { status: draft, last_checked: 2026-10-17, notes: 'From the SevenNet documentation (pretrained.md at commit 209339d): lmax 3, 5 layers, parity full; tasks mpa and omat24; the mpa task is the one evaluated on Matbench Discovery. Parameter count from the Matbench Discovery model card (snapshot 2026-10-03). No paper of its own: the release source is the multi-fidelity method paper; the model is described only in the documentation.' }

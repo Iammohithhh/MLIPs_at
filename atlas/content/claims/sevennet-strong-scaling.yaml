@@ -1,0 +1,10 @@
+statement: >-
+  In fixed-size tests (12,960 atoms of α-quartz), the 32-channel models reached speed-ups of 13.1–15.4 on 32 GPUs, and the
+  4-channel, 2-layer model stopped gaining beyond 4 GPUs; the authors attribute the saturation to under-utilised GPUs as the
+  atoms per GPU fall.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 4.2; Fig. 5; Fig. S1' }
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

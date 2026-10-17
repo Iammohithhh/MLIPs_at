@@ -1,0 +1,91 @@
+{
+ "format": "atlas-structure",
+ "version": 1,
+ "id": "sio2-alpha-quartz",
+ "title": "Silica, α-quartz (hexagonal cell, γ = 120°)",
+ "symbols": [
+  "Si",
+  "Si",
+  "Si",
+  "O",
+  "O",
+  "O",
+  "O",
+  "O",
+  "O"
+ ],
+ "positions": [
+  [
+   2.309045,
+   0.0,
+   3.6036
+  ],
+  [
+   -1.154523,
+   1.999692,
+   1.8018
+  ],
+  [
+   1.303477,
+   2.257689,
+   0.0
+  ],
+  [
+   1.376726,
+   1.136295,
+   4.247383
+  ],
+  [
+   3.243577,
+   0.624132,
+   2.445583
+  ],
+  [
+   2.753697,
+   2.496954,
+   0.643783
+  ],
+  [
+   0.295697,
+   1.760427,
+   1.158017
+  ],
+  [
+   -1.081274,
+   3.121086,
+   2.959817
+  ],
+  [
+   0.785577,
+   3.633249,
+   4.761617
+  ]
+ ],
+ "cell": [
+  [
+   4.916,
+   0.0,
+   0.0
+  ],
+  [
+   -2.458,
+   4.257381,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   5.4054
+  ]
+ ],
+ "pbc": [
+  true,
+  true,
+  true
+ ],
+ "provenance": {
+  "source": "ase.spacegroup.crystal(['Si', 'O'], basis=[(0.4697, 0, 2/3), (0.4135, 0.2669, 0.1191 + 2/3)], spacegroup=154, cellpar=[4.916, 4.916, 5.4054, 90, 90, 120])",
+  "generator": "ase 3.29.0",
+  "notes": "Cell and fractional coordinates from the room-pressure refinement of Levien, Prewitt & Weidner, Am. Mineral. 65, 920 (1980), shifted by 2/3 along c to ASE's setting of P3_221. Si–O bonds 1.605 and 1.614 Å."
+ }
+}

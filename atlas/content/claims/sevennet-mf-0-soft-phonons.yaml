@@ -1,0 +1,10 @@
+statement: >-
+  SevenNet-MF-0 (PBE/PBE+U plus r²SCAN from the Materials Project) shows strongly softened optical phonons in unary and binary
+  crystals compared with r²SCAN and SevenNet-0; the authors attribute this to MP-r²SCAN containing only relaxations started
+  from PBE minima, with forces and stresses narrowly distributed around zero.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kim2024multifidelity, locator: 'arXiv v1, Sec. 2.3; Supplementary Fig. 10 and Sec. VI' }
+scope: { model_families: [sevennet], datasets: [mptrj] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Main text read; the supplementary figure itself was not seen.' }

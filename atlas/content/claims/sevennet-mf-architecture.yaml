@@ -1,0 +1,11 @@
+statement: >-
+  SevenNet-MF one-hot encodes the fidelity of each database as l = 0 (0e) features and concatenates them to the scalar input
+  of the linear layers (atom-type embedding, self-interaction layers in the interaction blocks, first linear layer of the
+  output block), with fidelity-dependent weights initialised to zero, and uses a separate atomic energy shift and scale per
+  fidelity. The convolutions are unchanged, so the parallel algorithm applies without modification.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kim2024multifidelity, locator: 'arXiv v1, Sec. 2.1; Fig. 1a–d; Methods 4.1' }
+scope: { model_families: [sevennet], checkpoints: [sevennet-mf-ompa] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Matches sevenn/nn/linear.py and sevenn/nn/scale.py at commit 209339d.' }

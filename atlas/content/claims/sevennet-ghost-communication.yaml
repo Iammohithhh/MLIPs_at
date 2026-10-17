@@ -1,0 +1,11 @@
+statement: >-
+  In SevenNet's spatial decomposition each processor keeps ghost atoms only within r_c of its subdomain. Ghost positions and
+  species are sent once; after every message-passing layer except the last, ghost node features are sent forward; on the
+  reverse path, energy gradients with respect to ghost node features (T − 1 times) and ghost partial forces (once) are
+  sent back to the owners. The parallel model does not change the outputs of the serial NequIP model.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 1; Sec. 2.2; Sec. 3.1; Figs. 2, 3' }
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Exactness reproduced for a toy invariant network in sevennet.test.ts (TOY_DEMO, not a test of SevenNet itself).' }

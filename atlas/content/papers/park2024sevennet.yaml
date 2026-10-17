@@ -11,5 +11,8 @@ type: article
 identifiers:
   doi: 10.1021/acs.jctc.4c00190
   arxiv: '2402.03789'
-verified_against: abstract
-review: { status: draft, last_checked: 2026-10-16, notes: 'Abstract: SevenNet is based on the NequIP architecture; SevenNet-0 pretrained on Materials Project data. The 11Jul2024 checkpoint README states MPtrj (CHGNet) training data.' }
+edges:
+  - { type: extends, target: batzner2022nequip, documented: true }
+  - { type: compares-against, target: chen2022m3gnet, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (HTML, 6 Feb 2024; the only arXiv version): Secs. 2–7, Eqs. (1)–(9), Figs. 1–6. Equation numbers follow arXiv v1. The SevenNet-0 of the paper (trained on the M3GNet dataset, MPF.2021.2.8) is the 22May2024 checkpoint; the 11Jul2024 checkpoint is a retraining on MPtrj (repository README).' }

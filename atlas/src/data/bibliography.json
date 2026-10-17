@@ -269,6 +269,7 @@
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
+   "kim2024multifidelity",
    "riebesell2023matbench",
    "schutt2018schnet"
   ],
@@ -3851,6 +3852,168 @@
    "referenced_works": []
   }
  },
+ "kim2024multifidelity": {
+  "arxiv": {
+   "authors": [
+    "Jaesun Kim",
+    "Jisu Kim",
+    "Jaehoon Kim",
+    "Jiho Lee",
+    "Yutack Park",
+    "Youngho Kang",
+    "Seungwu Han"
+   ],
+   "id": "2409.07947v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2024-09-12",
+   "title": "Data-efficient multi-fidelity training for high-fidelity machine learning interatomic potentials",
+   "updated": "2024-09-12"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Kim, J.' vs fetched ['kim', 'kim']"
+   }
+  ],
+  "cites": [
+   "barrosoluque2024omat24",
+   "batatia2023foundation",
+   "batzner2022nequip",
+   "behler2007generalized",
+   "chen2022m3gnet",
+   "deng2023chgnet",
+   "eastman2022spice",
+   "geiger2022e3nn",
+   "park2024sevennet"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Kim",
+     "given": "Jaesun"
+    },
+    {
+     "family": "Kim",
+     "given": "Jisu"
+    },
+    {
+     "family": "Kim",
+     "given": "Jaehoon"
+    },
+    {
+     "family": "Lee",
+     "given": "Jiho"
+    },
+    {
+     "family": "Park",
+     "given": "Yutack"
+    },
+    {
+     "family": "Kang",
+     "given": "Youngho"
+    },
+    {
+     "family": "Han",
+     "given": "Seungwu"
+    }
+   ],
+   "container": "Journal of the American Chemical Society",
+   "doi": "10.1021/jacs.4c14455",
+   "issue": "1",
+   "page": "1042-1054",
+   "title": "Data-Efficient Multifidelity Training for High-Fidelity Machine Learning Interatomic Potentials",
+   "type": "journal-article",
+   "volume": "147",
+   "year": 2024
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 87,
+   "id": "W4405499204",
+   "publication_year": 2024,
+   "referenced_works": [
+    "W1970127494",
+    "W1971044734",
+    "W1979544533",
+    "W1981368803",
+    "W1991149034",
+    "W1992985800",
+    "W2005363979",
+    "W2017196167",
+    "W2025444507",
+    "W2062820224",
+    "W2074616700",
+    "W2083415705",
+    "W2084220325",
+    "W2162653998",
+    "W2165698076",
+    "W2323979432",
+    "W2346212703",
+    "W2560647685",
+    "W2585152223",
+    "W2601081289",
+    "W2613900957",
+    "W2788652239",
+    "W2792216393",
+    "W2897682197",
+    "W2945824677",
+    "W2954088480",
+    "W2964121744",
+    "W3042681088",
+    "W3082215798",
+    "W3083599250",
+    "W3105152113",
+    "W3118334075",
+    "W3126539308",
+    "W3163995736",
+    "W3200016379",
+    "W3201073812",
+    "W4212774754",
+    "W4214870278",
+    "W4225405705",
+    "W4226120291",
+    "W4282041110",
+    "W4286588524",
+    "W4295846579",
+    "W4307178223",
+    "W4310135808",
+    "W4311822110",
+    "W4313545414",
+    "W4366493193",
+    "W4377694431",
+    "W4385758691",
+    "W4386740800",
+    "W4387577569",
+    "W4388540929",
+    "W4388567027",
+    "W4389132751",
+    "W4391631778",
+    "W4392157869",
+    "W4392166749",
+    "W4394856183",
+    "W4396913311",
+    "W4399270503",
+    "W4400734331",
+    "W4401895647",
+    "W4402012880",
+    "W4403582283",
+    "W4416191329",
+    "W6945177990"
+   ]
+  }
+ },
  "levine2025omol25": {
   "arxiv": {
    "authors": [
@@ -4005,6 +4168,7 @@
    "chen2022m3gnet",
    "deng2023chgnet",
    "drautz2019ace",
+   "kim2024multifidelity",
    "mazitov2025petmad",
    "musaelian2023allegro",
    "riebesell2023matbench"
@@ -4699,9 +4863,9 @@
    "volume": "20",
    "year": 2024
   },
-  "fetched": "2026-10-16",
+  "fetched": "2026-10-17",
   "openalex": {
-   "cited_by_count": 228,
+   "cited_by_count": 230,
    "id": "W4391631778",
    "publication_year": 2024,
    "referenced_works": [

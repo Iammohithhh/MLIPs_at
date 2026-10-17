@@ -1,0 +1,7 @@
+name: SevenNet
+repo: https://github.com/MDIL-SNU/SevenNet
+language: Python (LAMMPS pair styles in C++)
+framework: pytorch
+licence: MIT (current repository); Matbench Discovery lists GPL-3.0 for the releases used by its older SevenNet submissions
+families: [sevennet]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read at commit 209339d (2026-10-06): LICENSE (MIT), README.md, docs/source/user_guide/pretrained.md (model list), sevenn/nn/linear.py (one-hot modality concatenated as num_modalities x 0e to the linear layer input), sevenn/nn/scale.py (modal-wise shift and scale), sevenn/pretrained_potentials/SevenNet_0__11Jul2024/{README.md, pre_train.yaml}.' }

@@ -1,0 +1,98 @@
+/* SevenNet page figures: shell plot beside the 3D domain (Fig. 1), the 2D parallel lab (Fig. 2) and the fidelity lab (Fig. 3). */
+
+.sn-side {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+.sn-plot .sn-direct,
+.sn-canvas .sn-direct {
+  font: 600 0.72rem var(--font-sans);
+  fill: var(--atlas-ink-muted);
+}
+.sn-tip {
+  min-height: 2.6em;
+  font: 0.78rem/1.4 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+
+.sn-canvas {
+  position: relative;
+  padding: 0.75rem 0.9rem 0.6rem;
+  background: var(--atlas-canvas);
+  border-bottom: 1px solid var(--atlas-rule);
+  min-width: 0;
+}
+.sn-canvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sn-canvas .stage-legend.sn-legend {
+  position: static;
+  margin-top: 0.5rem;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.sn-rank {
+  font: 600 0.8rem var(--font-sans);
+  fill: var(--atlas-ink-faint);
+  cursor: pointer;
+}
+.sn-rank.is-on {
+  fill: var(--atlas-arch);
+}
+.sn-caption-line {
+  margin: 0.4rem 0 0;
+  font: 0.78rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+
+.sn-switches {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.55rem;
+  font: 0.85rem/1.35 var(--font-sans);
+}
+.sn-switches legend {
+  padding: 0 0.3rem;
+  font: 600 0.7rem var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--atlas-arch);
+}
+.sn-switches label {
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+}
+.sn-switches:disabled {
+  opacity: 0.5;
+}
+
+.sn-fid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  border-bottom: 1px solid var(--atlas-rule);
+}
+.sn-fid .sn-canvas {
+  border-bottom: 0;
+  border-right: 1px solid var(--atlas-rule);
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+}
+
+@media (max-width: 860px) {
+  .sn-fid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sn-fid .sn-canvas {
+    border-right: 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+}

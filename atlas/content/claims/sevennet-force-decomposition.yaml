@@ -1,0 +1,10 @@
+statement: >-
+  SevenNet writes each atomic force as a sum of edge forces, F_v = Σ_w (F_vw − F_wv) with F_vw = Σ_t ∂E/∂e^(t)_vw ·
+  ∂e^(t)_vw/∂r_vw, and evaluates ∂E/∂e through the chain rule over node features, which needs ∂E/∂h of ghost atoms to be
+  returned to their owners after each layer and the F_wv of ghost atoms to be returned at the end.
+grade: THEORY
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 3.1; Eqs. (5)–(8)' }
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

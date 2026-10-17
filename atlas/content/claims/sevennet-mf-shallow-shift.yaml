@@ -1,0 +1,12 @@
+statement: >-
+  A one-hot fidelity concatenated to the input of a linear layer acts as a fidelity-dependent bias. If it enters only where
+  the energy is linear in it (an energy shift, or a model linear in fixed descriptors), the fidelities differ by a constant
+  for a given composition and predict identical forces and stresses; fidelity-dependent forces need the bias to pass
+  through nonlinear layers that also see the geometry.
+grade: THEORY
+sources:
+  - { paper: kim2024multifidelity, locator: 'arXiv v1, Sec. 3 (discussion of BPNN and GAP)' }
+derivation: /models/sevennet/#fidelity-derivation
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Checked for a toy network in sevennet.test.ts.' }

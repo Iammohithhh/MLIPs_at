@@ -1,0 +1,18 @@
+name: SevenNet
+aliases: [Scalable EquiVariance-Enabled Neural Network, SevenNet-MF, 7net]
+paradigms: [equivariant, foundation]
+introduced_in: park2024sevennet
+year: 2024
+summary: >-
+  NequIP's equivariant message-passing architecture, re-implemented so that each interaction block is a separate
+  TorchScript module and LAMMPS can exchange ghost-atom node features (forward) and energy gradients (reverse) between
+  layers. This keeps the spatial-decomposition ghost shell at one cutoff for any number of layers and makes multi-GPU MD
+  exact. SevenNet-MF adds a one-hot fidelity to the linear layers and fidelity-wise energy shifts so that one model trains
+  on databases computed with different DFT settings.
+locality: { kind: message-passing, note: 'Receptive field T × r_c (SevenNet-0: 5 layers, r_c = 5 Å, 25 Å); in parallel runs the ghost shell stays r_c.' }
+symmetry: equivariant
+body_order: 'As NequIP: two-body messages whose tensor products build higher body order with depth.'
+extends: [nequip]
+implementations: [sevennet]
+claims: [sevennet-ghost-communication, sevennet-force-decomposition, sevennet-weak-scaling, sevennet-strong-scaling, sevennet-other-architectures, sevennet-0-paper-model, sevennet-mf-architecture, sevennet-mf-shallow-shift, sevennet-mf-data-efficiency, sevennet-mf-0-soft-phonons]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read both papers (arXiv HTML) and the repository at commit 209339d.' }

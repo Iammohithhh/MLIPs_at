@@ -1,0 +1,10 @@
+statement: >-
+  On α-quartz with 4,608 atoms per A100 GPU and 20 models (4–64 channels, 2–5 layers, r_c = 4 Å, l_max = 3), weak-scaling
+  parallel efficiency at 32 GPUs was 0.67–0.83 with 2 layers and 0.79–0.84 with 5 layers; more channels or layers slightly
+  raised efficiency because computation grew relative to communication.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 4; Sec. 4.1; Fig. 4' }
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Homogeneous bulk with load balancing every 10 steps; single precision; the authors expect larger synchronisation costs for heterogeneous systems.' }

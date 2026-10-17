@@ -1,0 +1,11 @@
+statement: >-
+  The SevenNet-0 of the paper follows GNoME's NequIP hyperparameters (5 interaction blocks; 128 l = 0, 64 l = 1 and 32 l = 2
+  features; r_c = 5 Å; 8 Bessel functions), replaces the self-connection tensor product with a linear layer and keeps only
+  scalar-output paths in the last block, cutting parameters from 16.24 M (GNoME) to 0.84 M. Trained on the M3GNet dataset
+  (Materials Project relaxations), it reached test MAEs of 24 meV/atom, 0.067 eV/Å and 0.65 GPa.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 5.1' }
+scope: { model_families: [sevennet], checkpoints: [sevennet-0-11jul2024] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'The released 11Jul2024 checkpoint keeps the architecture but was retrained on MPtrj; its README warns that it is not the model of the paper.' }

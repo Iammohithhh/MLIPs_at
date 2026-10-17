@@ -20,6 +20,7 @@ import ase
 import numpy as np
 from ase import Atoms
 from ase.build import bulk, fcc111, molecule
+from ase.spacegroup import crystal
 
 G2_NOTE = (
     "Coordinates from the G2 set as tabulated in ASE: MP2(full)/6-31G(d) optimised geometries "
@@ -34,6 +35,18 @@ class Recipe:
     source: str
     build: Callable[[], Atoms]
     notes: str = ""
+
+
+def _alpha_quartz() -> Atoms:
+    # Levien, Prewitt & Weidner (1980) list Si (0.4697, 0, 0) and O (0.4135, 0.2669, 0.1191) in P3_221. ASE's
+    # setting of space group 154 places the two-fold axes at z = 2/3, so both sites are shifted by c * 2/3: the
+    # same crystal, translated.
+    return crystal(
+        ["Si", "O"],
+        basis=[(0.4697, 0.0, 2 / 3), (0.4135, 0.2669, 0.1191 + 2 / 3)],
+        spacegroup=154,
+        cellpar=[4.916, 4.916, 5.4054, 90, 90, 120],
+    )
 
 
 def _au_slab() -> Atoms:
@@ -70,6 +83,15 @@ RECIPES: list[Recipe] = [
         "ase.build.bulk('ZnO', 'wurtzite', a=3.25, c=5.21, u=0.382)",
         lambda: bulk("ZnO", "wurtzite", a=3.25, c=5.21, u=0.382),
         "a, c and the internal parameter u are inputs; the cell is not orthogonal.",
+    ),
+    Recipe(
+        "sio2-alpha-quartz",
+        "Silica, α-quartz (hexagonal cell, γ = 120°)",
+        "ase.spacegroup.crystal(['Si', 'O'], basis=[(0.4697, 0, 2/3), (0.4135, 0.2669, 0.1191 + 2/3)], "
+        "spacegroup=154, cellpar=[4.916, 4.916, 5.4054, 90, 90, 120])",
+        _alpha_quartz,
+        "Cell and fractional coordinates from the room-pressure refinement of Levien, Prewitt & Weidner, Am. Mineral. "
+        "65, 920 (1980), shifted by 2/3 along c to ASE's setting of P3_221. Si–O bonds 1.605 and 1.614 Å.",
     ),
     Recipe(
         "au111-slab",

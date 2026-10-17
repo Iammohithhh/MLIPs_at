@@ -1,0 +1,12 @@
+statement: >-
+  For Li₆PS₅Cl, a multi-fidelity model trained on PBE data plus SCAN single points that added 10–20 % to the PBE cost gave
+  Li-ion conductivities within 10 % of a model trained on a full SCAN dataset, while a model trained on the SCAN subset alone
+  deviated and formed short Li–Li bonds above 600 K. For InₓGa₁₋ₓN with r²SCAN data only for the binaries, multi-fidelity
+  mixing energies of unseen alloys reached R² = 0.98 against a high-fidelity model, versus −4.55 for transfer learning and
+  0.31 for Δ-learning.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: kim2024multifidelity, locator: 'arXiv v1, Sec. 2.2; Figs. 2, 3; Table 1' }
+scope: { model_families: [sevennet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Bespoke three-layer models (32 channels, lmax 2), not the pretrained checkpoints.' }

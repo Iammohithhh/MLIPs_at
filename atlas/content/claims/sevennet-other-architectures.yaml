@@ -1,0 +1,10 @@
+statement: >-
+  The communication scheme applies to message-passing models with two-body message functions (SchNet, PhysNet, PaiNN,
+  NequIP, MACE) after adapting the force computation; models with explicit three-body terms such as M3GNet, CHGNet, ALIGNN
+  and DimeNet would also need edge features and their gradients exchanged.
+grade: THEORY
+sources:
+  - { paper: park2024sevennet, locator: 'arXiv v1, Sec. 6' }
+scope: { model_families: [sevennet, schnet, mace, m3gnet, chgnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Stated by the authors as an argument, not demonstrated for those models in the paper.' }

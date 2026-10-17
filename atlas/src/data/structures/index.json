@@ -20,6 +20,11 @@
   "atoms": 4
  },
  {
+  "id": "sio2-alpha-quartz",
+  "title": "Silica, α-quartz (hexagonal cell, γ = 120°)",
+  "atoms": 9
+ },
+ {
   "id": "au111-slab",
   "title": "Au(111) slab, 4 × 4 × 4 layers, vacuum along c",
   "atoms": 64

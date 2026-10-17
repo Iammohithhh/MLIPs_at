@@ -1,0 +1,20 @@
+title: Data-Efficient Multifidelity Training for High-Fidelity Machine Learning Interatomic Potentials
+topic: foundation-models-data
+authors:
+  - 'Kim, J.'
+  - 'Kim, J.'
+  - 'Kim, J.'
+  - 'Lee, J.'
+  - 'Park, Y.'
+  - 'Kang, Y.'
+  - 'Han, S.'
+year: 2024
+venue: Journal of the American Chemical Society 147, 1042–1054
+type: article
+identifiers:
+  doi: 10.1021/jacs.4c14455
+  arxiv: '2409.07947'
+edges:
+  - { type: extends, target: park2024sevennet, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (HTML): Secs. 2.1–2.4, 3, Methods 4.1–4.3, Fig. 1. Section numbers follow arXiv v1.' }

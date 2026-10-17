@@ -1,0 +1,582 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SevenNetDomains from '~/islands/SevenNetDomains';
+import SevenNetParallel from '~/islands/SevenNetParallel';
+import SevenNetFidelity from '~/islands/SevenNetFidelity';
+import quartz from '~/data/structures/sio2-alpha-quartz.json';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import type { Structure } from '~/lib/structure/types';
+import { PAPER_BENCH, SEVENNET0, decompositionCost, domainEdge, shellCounts } from '~/lib/models/sevennet';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const q = quartz as unknown as Structure;
+
+// Build-time table: one rank of the paper's weak-scaling runs, and SevenNet-0's settings (same module as Fig. 1).
+const rows = [
+  ...[2, 3, 4, 5].map((T) => ({ label: `benchmark models, ${T} layers`, rc: PAPER_BENCH.rc, T })),
+  { label: 'SevenNet-0 settings, 5 layers', rc: SEVENNET0.rc, T: SEVENNET0.layers },
+].map(({ label, rc, T }) => {
+  const c = shellCounts(q, domainEdge(q, PAPER_BENCH.atomsPerGpu), rc, T);
+  return { label, rc, T, k: decompositionCost(c, T, SEVENNET0.featureFloats) };
+});
+
+const ck0 = (await getEntry('checkpoints', 'sevennet-0-11jul2024'))!.data as Checkpoint;
+const ckMf = (await getEntry('checkpoints', 'sevennet-mf-ompa'))!.data as Checkpoint;
+const board = snapshot.models.filter((m) => m.family_dir === 'sevennet');
+
+const domainAssumptions = [
+  { term: 'Crystal', value: 'α-quartz built with ASE from the room-pressure refinement of Levien, Prewitt & Weidner (1980): a = 4.916 Å, c = 5.4054 Å, 9 atoms per cell, 2.65 g/cm³. The paper benchmarks on α-quartz too.' },
+  { term: 'Domain', value: 'One rank’s subdomain is a cube holding the chosen number of atoms on average, placed in the infinite crystal; every rank of a large homogeneous run sees the same picture. The 3D view is a 5.4 Å slice through its middle.' },
+  { term: 'Ghosts', value: 'As LAMMPS builds them from a communication cutoff: every atom inside the box extended by r_c (SevenNet) or by T·r_c (no exchange between layers) on each side.' },
+  { term: 'Work', value: 'Node updates per force call: SevenNet updates its own atoms on each of T layers. Without exchange, layer t must be evaluated for every atom within (T − t)·r_c of the box. Counts of node updates, not timings; per-edge cost, GPU utilisation and latency are not modelled.' },
+  { term: 'Traffic', value: 'Floats arriving per rank per force call: 4 per ghost (position, species), 480 per ghost for each of the T − 1 feature exchanges and the T − 1 gradient exchanges (SevenNet-0’s 128x0e + 64x1e + 32x2e), 3 per ghost for partial forces. Floats are counted, not bytes; message latency is not counted.' },
+];
+const toyAssumptions = [
+  { term: 'System', value: '300 atoms of two species on a jittered triangular lattice (spacing 1, toy units) in a free rectangle; strips along x are the subdomains.' },
+  { term: 'Model', value: 'An invariant message-passing network: 4 channels, edge filters from 4 Bessel functions times NequIP’s p = 6 polynomial cutoff at r_c = 1.8, m_v = Σ_w f_t(r_vw) ⊙ W_t h_w, h_v ← h_v + tanh(U_t m_v), E_v = q·h_v + shift(Z_v). Random untrained weights; energies in arbitrary units.' },
+  { term: 'Forces', value: 'Hand-written reverse mode, checked against finite differences. The parallel runs share nothing but what the chosen exchanges send.' },
+  { term: 'Agreement', value: '“Identical” means energy within 10⁻⁹ relative and every force within 10⁻⁹ of the largest force; measured differences are about 10⁻¹² (sevennet.test.ts).' },
+];
+const fidAssumptions = [
+  { term: 'Model', value: 'The toy network of Fig. 2 with three layers. Fidelity 0 is the plain model; fidelity 1 adds a random bias vector in the embedding and in each update layer (“every linear layer”) and a per-species energy shift.' },
+  { term: 'Not shown', value: 'Training. In SevenNet-MF the fidelity weights start at zero and are fitted together with the shared weights on all databases at once.' },
+];
+---
+
+<BaseLayout
+  title="SevenNet"
+  description="SevenNet: NequIP's equivariant architecture made to run across many GPUs in LAMMPS by exchanging ghost-atom features and gradients between layers, and SevenNet-MF's multi-fidelity training. Ghost shells counted in α-quartz, a parallel toy network checked against serial, checkpoints and limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">SevenNet</h1>
+      <p class="lede">
+        Large molecular-dynamics codes split a simulation box into subdomains, one per processor, each holding a thin shell of
+        “ghost” copies of its neighbours’ atoms. A message-passing network sees further than its cutoff, which breaks that
+        arrangement. SevenNet, the Scalable EquiVariance-Enabled Neural Network, keeps <a href="/models/nequip/">NequIP</a>’s
+        architecture and changes how it is evaluated: ghost node features travel forward between layers and their energy
+        gradients travel back, so the shell stays one cutoff thick and multi-GPU runs reproduce the serial model
+        <Cite id="park2024sevennet" locator="Abstract; Sec. 3" />. A later extension, SevenNet-MF, trains one model on databases
+        computed at different levels of theory <Cite id="kim2024multifidelity" locator="Sec. 2.1" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exact E(3) equivariance, as NequIP (e3nn tensor products)</dd></div>
+        <div><dt>Locality</dt><dd>T × r<sub>c</sub>; SevenNet-0: 5 × 5 Å. Ghost shell in parallel runs: r<sub>c</sub></dd></div>
+        <div><dt>Messages</dt><dd>NequIP convolutions; one TorchScript module per layer</dd></div>
+        <div><dt>Forces</dt><dd>Conservative: −∂E/∂r, assembled from edge forces</dd></div>
+        <div><dt>Introduced</dt><dd>J. Chem. Theory Comput. 2024; multi-fidelity J. Am. Chem. Soc. 2024</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/MDIL-SNU/SevenNet">SevenNet</a> (PyTorch, LAMMPS; MIT)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture and its parallel evaluation</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="mp-h">
+      <h2 id="mp-h" class="h-section">Message passing and the receptive field</h2>
+      <p>
+        Like most interatomic potentials, SevenNet writes the energy as a sum of atomic energies and the forces as its negative
+        gradient <Cite id="park2024sevennet" locator="Eqs. (1)–(2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`E = \sum_{i=1}^{N} E_i, \qquad \mathbf F_i = -\nabla_i E`} />
+      <p>
+        The authors stress that spatial decomposition is valid only because of this split. Atomic energies come from node features
+        updated by <i>T</i> message-passing layers, each with a message function <i>M<sub>t</sub></i> and an update function
+        <i>U<sub>t</sub></i> <Cite id="park2024sevennet" locator="Sec. 2.1; Eqs. (3)–(4)" />:
+      </p>
+      <Math display number="2" tex={String.raw`m^{(t+1)}_v = \sum_{w \in \mathcal N(v)} M_t\big(h^{(t)}_v, h^{(t)}_w, e_{vw}\big), \qquad h^{(t+1)}_v = U_t\big(h^{(t)}_v, m^{(t+1)}_v\big)`} />
+      <p>
+        Edges join atoms closer than <i>r</i><sub>c</sub>, so <i>h</i><sup>(<i>t</i>+1)</sup> depends on atoms up to <i>t</i> cutoffs
+        away and <i>E<sub>v</sub></i> on atoms up to <i>T</i>·<i>r</i><sub>c</sub> away (the <a href="/models/nequip/">NequIP</a> page
+        shows this growth in a real crystal). In SevenNet the convolution block of NequIP is the message function and the
+        interaction block the update <Cite id="park2024sevennet" locator="Sec. 2.2; Fig. 2" />. SevenNet-0 uses five interaction
+        blocks with 128 scalar, 64 vector and 32 rank-2 features and <i>r</i><sub>c</sub> = 5 Å, so each atomic energy depends on
+        atoms 25 Å away <Cite id="park2024sevennet" locator="Sec. 5.1" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="dd-h">
+      <h2 id="dd-h" class="h-section">Why message passing breaks spatial decomposition</h2>
+      <p>
+        In spatial decomposition each processor evaluates energies and forces of the atoms in its own subdomain and receives
+        positions of atoms near its boundary as ghosts. For a strictly local potential, ghosts within <i>r</i><sub>c</sub> are enough.
+        A message-passing network would need ghosts within <i>T</i>·<i>r</i><sub>c</sub>, and neighbouring processors would then
+        recompute the large subgraph they share <Cite id="park2024sevennet" locator="Sec. 1" />. Figure 1 counts what that means
+        in quartz.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="One rank’s atoms and ghosts in α-quartz" labels={['live-calculation']} number={1} id="fig-domains" framed={false}>
+        <SevenNetDomains client:visible quartz={q} />
+        <Fragment slot="caption">
+          A subdomain owned by one GPU and the ghost atoms it must hold: within r<sub>c</sub> when node features are exchanged
+          between layers (SevenNet), within T·r<sub>c</sub> when they are not. With five 5 Å layers and the paper’s 4,608 atoms per
+          GPU, the deep shell holds eleven ghosts for every owned atom and the rank does four times the node updates. SevenNet
+          avoids both and pays in traffic instead: more data, in more exchanges.
+        </Fragment>
+        <Assumptions slot="assumptions" items={domainAssumptions} />
+        <Fragment slot="source">Communication pattern from <Cite id="park2024sevennet" locator="Sec. 3.1; Fig. 3" />; SevenNet-0 settings from its <code>pre_train.yaml</code>. Counted in your browser by <code>src/lib/models/sevennet.ts</code> (checks in <code>sevennet.test.ts</code>).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="bench-h">
+      <h3 id="bench-h" class="h-sub">At the paper’s 4,608 atoms per GPU</h3>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Setting</th><th>r<sub>c</sub></th><th>Owned</th><th>Ghosts, SevenNet</th><th>Ghosts, T·r<sub>c</sub></th><th>Node updates, naive ÷ SevenNet</th><th>Floats received, SevenNet ÷ naive</th></tr></thead>
+          <tbody>
+            {
+              rows.map(({ label, rc, k }) => (
+                <tr>
+                  <td>{label}</td>
+                  <td>{rc} Å</td>
+                  <td>{k.owned.toLocaleString('en')}</td>
+                  <td>{k.ghostsSeven.toLocaleString('en')}</td>
+                  <td>{k.ghostsNaive.toLocaleString('en')}</td>
+                  <td>{(k.updatesNaive / k.updatesSeven).toFixed(2)}</td>
+                  <td>{(k.commSeven.total / k.commNaive.total).toFixed(0)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Computed at build time by the same module as Fig. 1 for a cubic subdomain of α-quartz. The traffic ratio assumes SevenNet-0’s
+        480 floats per feature exchange for every row; the benchmark models had 4–64 channels with <i>l</i><sub>max</sub> = 3, so
+        their messages were smaller or larger <Cite id="park2024sevennet" locator="Sec. 4" />. The trade is deliberate: on GPUs
+        connected by NVLink and InfiniBand, moving features is cheaper than holding and recomputing the deep shell.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="rev-h">
+      <h2 id="rev-h" class="h-section">Forward features, reverse gradients</h2>
+      <p>
+        SevenNet’s exchange runs in both directions <Cite id="park2024sevennet" locator="Sec. 3.1; Fig. 3a–f" />. On the forward path,
+        ghost positions and species arrive first. The first layer needs nothing else, because a ghost’s initial feature is just the
+        embedding of its species. After each later layer the owners send the ghosts’ updated features. The forces are harder. Each
+        edge feature <i>e</i><sup>(<i>t</i>)</sup><sub><i>vw</i></sub> is built from the bond vector, so the authors define an edge force
+        and assemble atomic forces from it <Cite id="park2024sevennet" locator="Eqs. (5)–(6)" />:
+      </p>
+      <Math display number="3" tex={String.raw`\mathbf F_{vw} = \sum_{t=1}^{T} \frac{\partial E}{\partial e^{(t)}_{vw}} \frac{\partial e^{(t)}_{vw}}{\partial \mathbf r_{vw}}, \qquad \mathbf F_v = -\frac{\partial E}{\partial \mathbf r_v} = \sum_{w \in \mathcal N(v)} \big(\mathbf F_{vw} - \mathbf F_{wv}\big)`} />
+      <p>
+        An edge feature only enters the update of its receiving atom, so ∂<i>E</i>/∂<i>e</i> follows from ∂<i>E</i>/∂<i>h</i> of that
+        atom. Those gradients come from the chain rule, layer by layer from the top <Cite id="park2024sevennet" locator="Eqs. (7)–(8)" />:
+      </p>
+      <Math display number="4" tex={String.raw`\frac{\partial E}{\partial h^{(T)}_v} = \frac{\partial E}{\partial h^{(T+1)}_v}\frac{\partial h^{(T+1)}_v}{\partial h^{(T)}_v} + \sum_{w \in \mathcal N(v)} \frac{\partial E}{\partial h^{(T+1)}_w}\frac{\partial h^{(T+1)}_w}{\partial h^{(T)}_v}`} />
+      <p>
+        The second term is <i>h<sub>v</sub></i>’s influence on its neighbours’ energies. When a neighbour <i>w</i> is owned by another
+        processor, that processor holds <i>v</i> as a ghost, computes the term, and must send it back: the reverse communication.
+        Repeating this for every layer down to the second, and finally sending back the edge forces <b>F</b><sub><i>wv</i></sub>
+        computed on ghosts, completes Eq. (3). Altogether there are <i>T</i> − 1 forward exchanges of features and <i>T</i> − 1
+        reverse exchanges of gradients per force call.
+      </p>
+      <ol class="flow" aria-label="One SevenNet force call on one rank">
+        <li><span>ghosts in</span> positions and species within r<sub>c</sub></li>
+        <li class="key"><span>forward ×(T − 1)</span> layer t on owned atoms, then ghost features h in</li>
+        <li><span>energy</span> sum over owned atoms, global reduction</li>
+        <li class="key"><span>reverse ×(T − 1)</span> ∂E/∂h of ghosts out, summed by owners</li>
+        <li><span>forces</span> ghost edge forces out, summed by owners</li>
+      </ol>
+      <p>
+        In the code each interaction block is its own TorchScript file, and LAMMPS’ communication routines run between them; the
+        architecture is otherwise NequIP’s, in PyTorch with e3nn <Cite id="park2024sevennet" locator="Sec. 3.2" />. Figure 2 runs the
+        same choreography on a toy network small enough to check every number.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Parallel and serial, to the last digit" labels={['toy-model', 'live-calculation']} number={2} id="fig-parallel" framed={false}>
+        <SevenNetParallel client:visible />
+        <Fragment slot="caption">
+          A toy message-passing network run on one process and split over up to four ranks. With SevenNet’s three exchanges the
+          parallel energy and forces equal the serial ones to rounding. Switching an exchange off shows what it carries: features fix
+          the energy, gradients and partial forces fix the forces of atoms near the boundaries. The naive scheme needs no exchange
+          between layers but repeats work.
+        </Fragment>
+        <Assumptions slot="assumptions" items={toyAssumptions} />
+        <Fragment slot="source">Exchange pattern and Eqs. (5)–(8) of <Cite id="park2024sevennet" locator="Sec. 3.1" />. Computed in your browser by <code>src/lib/models/sevennet.ts</code>; exactness for T = 1–5 and P = 2–4 is tested in <code>sevennet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="scale-h">
+      <h2 id="scale-h" class="h-section">What the scaling tests found</h2>
+      <p>
+        The authors trained 20 NequIP-type models on SiO<sub>2</sub> (4–64 channels, 2–5 layers, <i>r</i><sub>c</sub> = 4 Å) and ran
+        them in LAMMPS on up to 32 A100 GPUs, in single precision <Cite id="park2024sevennet" locator="Sec. 4" />. In weak scaling
+        (4,608 atoms per GPU) efficiency at 32 GPUs was 0.67–0.83 for two layers and 0.79–0.84 for five, and it rose slightly with more
+        channels and layers, because computation grew faster than communication <Cite id="park2024sevennet" locator="Sec. 4.1; Fig. 4" />.
+        Strong scaling was weaker. On 12,960 atoms the 32-channel models reached speed-ups of 13.1–15.4 on 32 GPUs, and the smallest
+        model stopped gaining beyond four. The authors attribute this to GPUs left under-used as the atoms per GPU fall
+        <Cite id="park2024sevennet" locator="Sec. 4.2; Fig. 5" />. Fig. 1 shows the geometric side of the same trend: the ghost
+        fraction rises steeply as domains shrink.
+      </p>
+      <p>
+        As a demonstration, SevenNet-0 quenched a 112,000-atom Si<sub>3</sub>N<sub>4</sub> melt on 8 GPUs at about 0.1 ns per day, with a
+        weak-scaling efficiency of 0.94 against a 14,000-atom run on one GPU. The amorphous structure’s radial and angular
+        distributions agreed with DFT data averaged over 40 small cells <Cite id="park2024sevennet" locator="Sec. 5.2; Fig. 6" />.
+        The authors argue that the same scheme fits any network with two-body message functions (SchNet, PaiNN, MACE), while
+        <a href="/models/m3gnet-chgnet/">M3GNet and CHGNet</a>, with explicit three-body terms, would also need edge features and
+        their gradients exchanged <Cite id="park2024sevennet" locator="Sec. 6" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="mf-h">
+      <h2 id="mf-h" class="h-section">Multi-fidelity: one model, several levels of theory</h2>
+      <p>
+        Large GGA databases are cheap; meta-GGA or hybrid data are scarce. SevenNet-MF trains on both at once. A database’s
+        fidelity is a rotation-invariant label, so it is one-hot encoded as l = 0 features and concatenated to the scalar input
+        of every linear layer: the atom-type embedding, the self-interaction layers in the interaction blocks and the first layer of
+        the output block. Each fidelity also gets its own atomic energy shift and scale. The fidelity weights start at zero, and at
+        inference the user picks the fidelity to predict <Cite id="kim2024multifidelity" locator="Sec. 2.1; Fig. 1a–d" />. For a
+        linear layer acting on scalar features <i>x</i>, with fidelity <i>f</i>,
+      </p>
+      <Math display number="5" tex={String.raw`W \begin{bmatrix} x \\ \mathbf e_f \end{bmatrix} = W_x\, x + W_{\mathrm f}\, \mathbf e_f = W_x\, x + \mathbf b_f`} />
+      <p>
+        so the one-hot is a fidelity-dependent bias. Because the convolutions are untouched, the parallel algorithm needs no change
+        <Cite id="kim2024multifidelity" locator="Sec. 2.1" />. Where the bias sits decides what it can do.
+      </p>
+      <Callout kind="derivation" title="Why a bias at the end cannot change forces">
+        <p id="fidelity-derivation">
+          If the fidelity only adds a per-species constant to each atomic energy, <i>E<sub>f</sub></i> = <i>E</i><sub>0</sub> +
+          Σ<sub><i>i</i></sub> <i>s<sub>f</sub></i>(<i>Z<sub>i</sub></i>), and the extra term does not depend on any position:
+        </p>
+        <Math display tex={String.raw`\mathbf F^{(f)}_i = -\nabla_i E_0 - \nabla_i \sum_j s_f(Z_j) = \mathbf F^{(0)}_i`} />
+        <p>
+          The same holds for a model linear in fixed descriptors <i>D</i>(<b>r</b>), since <b>w</b>·<i>D</i> + <b>v</b>·<b>e</b><sub><i>f</i></sub>
+          has the same gradient for every <i>f</i>; Kim et al. make this point for simplified Behler–Parrinello networks and GAP
+          <Cite id="kim2024multifidelity" locator="Sec. 3" />. A bias inside a message-passing layer passes through nonlinearities
+          and is multiplied by geometry-dependent filters in later layers, so ∂<i>E<sub>f</sub></i>/∂<b>r</b> depends on <i>f</i>.
+          Figure 3 checks both cases, and <code>sevennet.test.ts</code> checks that the shift-only forces agree exactly.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Where the fidelity enters decides what it can change" labels={['toy-model', 'live-calculation']} number={3} id="fig-fidelity" framed={false}>
+        <SevenNetFidelity client:visible />
+        <Fragment slot="caption">
+          The same structure at two fidelities. With the fidelity only in the energy shift, energies move by a constant and every
+          force is unchanged, exactly; the dimer curves are parallel. With the fidelity in every linear layer, as in SevenNet-MF, the
+          two energy surfaces have different shapes and the forces differ.
+        </Fragment>
+        <Assumptions slot="assumptions" items={fidAssumptions} />
+        <Fragment slot="source">Architecture from <Cite id="kim2024multifidelity" locator="Sec. 2.1; Fig. 1c,d" /> and <code>sevenn/nn/linear.py</code> (commit 209339d). Computed in your browser by <code>src/lib/models/sevennet.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="mfres-h">
+      <h3 id="mfres-h" class="h-sub">What multi-fidelity training bought</h3>
+      <p>
+        For the Li<sub>6</sub>PS<sub>5</sub>Cl solid electrolyte, SCAN single points on a subsample of the PBE structures added only
+        10–20 % to the cost of the PBE data. The multi-fidelity model trained on both gave Li-ion conductivities within 10 % of a model
+        trained on a full SCAN dataset. A model trained on the SCAN subsample alone deviated and formed short Li–Li bonds above
+        600 K <Cite id="kim2024multifidelity" locator="Sec. 2.2; Fig. 2; Table 1" />. For In<sub>x</sub>Ga<sub>1−x</sub>N, with r²SCAN data
+        only for the binary nitrides, the multi-fidelity model predicted mixing energies of unseen alloys with R² = 0.98 against a
+        high-fidelity reference. Transfer learning scored −4.55 and Δ-learning 0.31 <Cite id="kim2024multifidelity" locator="Sec. 2.2; Fig. 3" />.
+        Trained on Materials Project PBE and r²SCAN relaxations, SevenNet-MF-0 corrected PBE’s errors in the Cs–Cr–Cl phase diagram
+        <Cite id="kim2024multifidelity" locator="Sec. 2.3; Fig. 4c" />. The released SevenNet-MF-ompa and SevenNet-Omni models use the
+        same mechanism with PBE(+U) tasks from different databases (SevenNet documentation).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="s-int" checked />
+        <label for="s-int">Intuition</label>
+        <input type="radio" name="depth" id="s-tech" />
+        <label for="s-tech">Technical</label>
+        <input type="radio" name="depth" id="s-res" />
+        <label for="s-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Each GPU looks after one block of the simulation and keeps copies of the atoms just across its border. A message-passing
+            model passes information one bond-length further per layer, so a naive split would need copies from five bond-lengths
+            away. SevenNet instead has the GPUs swap their freshly computed atom descriptions after every layer, so a thin border is
+            always enough, and then swaps the corresponding gradients on the way back to get the forces right.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Forward communication supplies <i>h</i><sup>(<i>t</i>)</sup> of ghosts so Eq. (2) can be evaluated for owned atoms on every
+            layer. Reverse communication is reverse-mode differentiation across processors. A ghost’s ∂<i>E</i>/∂<i>h</i> computed
+            locally is a partial sum (Eq. 4) that must be added to its owner’s before the next layer down, and the edge forces of
+            Eq. (3) computed on ghosts are partial forces in the LAMMPS sense. Energies are pooled globally. The scheme leaves the model
+            unchanged, so serial and parallel runs agree to rounding <Cite id="park2024sevennet" locator="Sec. 2.2" />. The stress is
+            available in serial mode <Cite id="park2024sevennet" locator="Sec. 3.2" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            The scheme converts the receptive-field problem of message passing into a latency and bandwidth problem: 2(<i>T</i> − 1)
+            extra synchronising exchanges per force call, each the size of the ghost shell times the feature width. That is why
+            efficiency rises with model size in weak scaling and why strong scaling saturates once a GPU holds too few atoms to stay
+            busy <Cite id="park2024sevennet" locator="Secs. 4.1–4.2" />. Strictly local designs such as <a href="/models/allegro/">Allegro</a>
+            avoid the exchanges altogether, at the cost of losing message passing. Multi-fidelity training is complementary: by
+            sharing all weights but a few fidelity biases and shifts, the scarce high-fidelity data only have to teach the
+            difference from a common surface, which the authors find more data-efficient than transfer learning or Δ-learning
+            <Cite id="kim2024multifidelity" locator="Sec. 2.1; Fig. 1e; Sec. 2.2" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces as its gradient and stress from the virial <Cite id="park2024sevennet" locator="Secs. 2, 3.2, 5.1" />. Models
+        with several fidelities return the quantities of the fidelity selected at inference, so energies from different tasks are on
+        different reference scales <Cite id="kim2024multifidelity" locator="Sec. 2.1" />. The package also provides a CUDA D3 dispersion
+        correction that can be added to the energy (README). There are no charges and no electrostatic term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> The receptive field ends at <i>T</i>·<i>r</i><sub>c</sub>: 25 Å for SevenNet-0, but
+        Coulomb tails, image charges and LO–TO splitting lie beyond any finite cutoff (<a href="/physics-lab/ewald/">P6</a>;
+        <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>). The parallel algorithm adds no error, but it adds
+        exchanges. With few atoms per GPU it scales poorly, and the authors expect synchronisation costs to grow in heterogeneous
+        systems, which their homogeneous quartz benchmarks did not test <Cite id="park2024sevennet" locator="Secs. 4.1–4.2" />. A
+        fidelity that enters only as an energy shift cannot correct forces (Fig. 3).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> The released SevenNet-0 (11Jul2024) is not the model of the paper. It has the same
+        architecture but was retrained on MPtrj, a near-equilibrium PBE/PBE+U dataset with the softening that implies (<a href="/failures/pes-softening/">Failure Atlas</a>).
+        SevenNet-MF-0 shows strongly softened optical phonons because the Materials Project r²SCAN relaxations it learned from start at
+        PBE minima and contain little force and stress information <Cite id="kim2024multifidelity" locator="Sec. 2.3" />. In
+        multi-task checkpoints each task inherits its database’s DFT settings, so tasks are not interchangeable
+        (<a href="/failures/experiment-vs-dft/">reference inheritance</a>).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Tasks</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck0.name}</td>
+              <td>MPtrj (PBE/PBE+U)</td>
+              <td>—</td>
+              <td>{((ck0.parameters?.total ?? 0) / 1e6).toFixed(2)} M</td>
+              <td>{ck0.licence}</td>
+              <td><a href={ck0.weights?.url}>checkpoint</a></td>
+            </tr>
+            <tr>
+              <td>{ckMf.name}</td>
+              <td>MPtrj + sAlex; OMat24</td>
+              <td>{ckMf.heads.map((h) => h.name).join(', ')}</td>
+              <td>{((ckMf.parameters?.total ?? 0) / 1e6).toFixed(1)} M</td>
+              <td>{ckMf.licence}</td>
+              <td><a href={ckMf.weights?.url}>figshare</a></td>
+            </tr>
+            {
+              board.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>—</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(2)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td><a href={m.checkpoint_url}>{m.version}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The first two rows are Atlas records; the parameter counts come from the Matbench Discovery model cards. The other rows are the
+        SevenNet models submitted to Matbench Discovery (snapshot {snapshot.source.commit_date}; leaderboard parameter counts,
+        training-set labels and licences), whose results are on the <a href="/benchmarks/">Benchmarks</a> page. The repository is MIT
+        licensed today, while the leaderboard lists GPL-3.0 for the older submissions. The documentation also lists SevenNet-l3i5
+        (<i>l</i><sub>max</sub> = 3), SevenNet-omat, SevenNet-Omni with 13 tasks from 15 databases and its deeper i8 and i12
+        variants, and the distilled SevenNet-Nano; these are not yet recorded here individually. SevenNet-0 is one of the four
+        checkpoints in the <a href="/observatory/">Observatory</a>.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/nequip/">NequIP</a> is the architecture SevenNet runs. <a href="/models/allegro/">Allegro</a> answers the same
+        scaling problem the other way, by giving up message passing. <a href="/models/mace/">MACE</a> is another two-body-message
+        network to which the authors say the scheme applies.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The parallel algorithm, its scaling tests and SevenNet-0: <Cite id="park2024sevennet" />.</li>
+        <li>Multi-fidelity training and SevenNet-MF-0: <Cite id="kim2024multifidelity" />.</li>
+        <li>The architecture it runs: <Cite id="batzner2022nequip" />.</li>
+        <li>Code and models: <a href="https://github.com/MDIL-SNU/SevenNet">MDIL-SNU/SevenNet</a> (MIT); model list in the <a href="https://sevennet.readthedocs.io/en/latest/user_guide/pretrained.html">documentation</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #s-int:checked ~ .depth-int,
+  #s-tech:checked ~ .depth-tech,
+  #s-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>
