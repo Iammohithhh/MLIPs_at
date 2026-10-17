@@ -70,3 +70,13 @@ test('presentation mode on ZnO: captions from the ZnO run, status and checkpoint
   await expect(page.locator('.exp-pick')).toBeHidden(); // minimal controls: the link fixes the experiment
   expect(errors).toEqual([]);
 });
+
+test('stage 4 shows per-channel |A| strips for each l, with the Si symmetry zeros as empty baseline rows', async ({ page }) => {
+  await page.goto('/?exp=si-bond-stretch&mode=walk&stage=messages&frame=20');
+  const strips = page.locator('svg.ev__achan');
+  await expect(strips).toHaveCount(4);
+  // l = 1 baseline row: every channel is zero in the perfect crystal → fully transparent cells
+  const opacities = await strips.nth(1).locator('rect').evaluateAll((rs) => rs.slice(0, 128).map((r) => r.getAttribute('fill')));
+  expect(opacities.every((f) => /\/ 0\)$/.test(f ?? ''))).toBe(true);
+  await expect(page.getByText(/each l on its own scale/)).toBeVisible();
+});

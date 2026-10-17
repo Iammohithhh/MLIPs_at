@@ -298,7 +298,7 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
    and a final screenshot pass of every view (baseline/perturbed/difference/side by side) for ZnO.
 
 
-### Session 6 (final) — 2026-10-17 23:15 → ~23:50 UTC
+### Session 6 (final) — 2026-10-17 23:15 → ~23:55 UTC
 
 **State found:** branch at `0f7c0b7` (session 5 handoff), clean. Re-read BRIEF, HANDOFF, CLAUDE.md, README.
 Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK, Playwright desktop + mobile 50 passed /
@@ -328,10 +328,14 @@ Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK,
 - `39f738a` **bug fix:** signed readouts dropped the exponent's minus for small positive values (`fmt(2.43e-15)` →
   "+2.43e15"; reachable e.g. for ΔEᵢ of a far atom). `fmtSigned` now in `src/lib/format.ts` with tests; Vitest 79/79
   (10 files), Playwright 56 passed / 2 skipped after the fix.
+- `158a1fa` + test: stage-4 evidence draws the 128 per-channel |A| values per l as baseline (teal) / frame (amber) strips,
+  one scale per l (never across l); Si l = 1, 2 baseline rows are empty (symmetry zeros, asserted in
+  `e2e/experiments.spec.ts`). Site-energy label E with a subscript.
 
-**Verified at the end (23:38–23:41 UTC, after the last code change):** astro check 0 errors / 0 warnings; Vitest
-76/76 (9 files); build OK; Playwright desktop + mobile **56 passed, 2 skipped** (perf mobile-only, passed);
-`npm run record:demo` 2/2; pytest 22/22 with the checkpoint (fresh re-evaluation of stored frames, both experiments).
+**Verified at the end (23:46–23:48 UTC, after the last code change):** astro check 0 errors / 0 warnings; Vitest
+79/79 (10 files); build OK; Playwright desktop + mobile **58 passed, 2 skipped** (perf mobile-only, passed);
+`npm run record:demo` 2/2. pytest 22/22 with the checkpoint at 23:41 (fresh re-evaluation of stored frames, both
+experiments; no pipeline or data change after that).
 Overflow sweep: 0 px at 320, 768, 844 (landscape), 1024, 1920 widths for walk stage 7, ZnO split, ZnO presentation.
 
 **Open problems / known gaps (also in README "Brief §16 status" and "Remaining limitations"):**

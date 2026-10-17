@@ -140,16 +140,17 @@ inside-mace/
 
 ## Verification summary
 
-Final re-verification by build session 6 on 2026-10-17 (last full run 23:38–23:41 UTC, after the last code change; Linux
+Final re-verification by build session 6 on 2026-10-17 (last full run 23:46–23:48 UTC, after the last code change; pytest at 23:41, after the last pipeline-relevant change —
+none was made; Linux
 cloud container, Node via `npm ci`, Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below is a
 real run in that session.
 
 | Check | Command | Result |
 |---|---|---|
 | Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
-| Unit / numerics (Vitest, 10 files) | `npm test` | **79 / 79 passed** (after the 23:43 formatting fix; Playwright re-run after it: 56 passed, 2 skipped) |
+| Unit / numerics (Vitest, 10 files) | `npm test` | **79 / 79 passed** |
 | Static build | `npx astro build` | OK, 1 page |
-| Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **56 passed, 2 skipped** (the two perf tests run on the mobile project only, and passed there) |
+| Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **58 passed, 2 skipped** (the two perf tests run on the mobile project only, and passed there) |
 | Demonstration script | `npm run record:demo` | **2 / 2 passed** (both experiments, steps 1–5, stills saved) |
 | Pipeline (pytest, with the checkpoint) | `INSIDE_MACE_CHECKPOINT=ckpt.model python -m pytest -q tests` | **22 / 22 passed** (20.6 s), checkpoint `sha256sum` = `01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845` (matches the pinned hash) |
 | Screenshots | `node` + Playwright, inspected by eye | ZnO difference and side by side at 1440×1000, ZnO walkthrough stage 5 at 1024×800, ZnO perturbed at 390×844 (Pixel 7), Si presentation step 3 at 1440×900, demo stills at 1280×720, stage 2/3 and 7 evidence panels; scene renders, labels legible. Horizontal overflow (`scrollWidth − innerWidth`) = 0 at 320×640, 768×1024, 844×390, 1024×768 and 1920×1080 for Si walk stage 7, ZnO side by side and ZnO presentation; 0 page errors |
