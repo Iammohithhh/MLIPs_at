@@ -133,3 +133,77 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
 4. Visual for the rotation panel (glyphs) and stage evidence for stage 5 and an A-norm heatmap for stage 4.
 5. Presentation mode (`?present=1`), PNG export with title/settings/units/status/attribution, demo-sequence script,
    README + interpretation limits + reproduction; move manifest to lazy fetch.
+
+
+### Session 4 — 2026-10-17 21:16 → 22:05 UTC
+
+**State found:** the log had only session 1's entry, but `git log` shows a second batch of commits (19:20–19:39 UTC,
+`ac53b8b` … `c2285ee`: Trace the change with predict-before-reveal, side-by-side synced scenes, architecture diagram,
+stage-5 evidence, presentation mode + 5-step demo, "what a zero means" notes, PNG export, lazy loader island, rotation
+glyphs, README, GSAP camera transitions, walk-mode toggles). No session-3 commits exist. Re-verified that state first:
+astro check 0 errors, Vitest 35/35, Playwright desktop+mobile 34/34.
+
+**Done (commits on `claude/inside-mace`):**
+- `8650cd6` pipeline: second experiment `zno-axial-bond` (wurtzite ZnO, two species) + optional 4th CLI argument to
+  (re)run selected experiment ids only. Moved atom = the Zn nearest the supercell centre (index 150); axis = unit vector
+  to its axial O neighbour (149), i.e. −c ([0001] direction); d > 0 shortens that Zn–O bond. 5×5×3 supercell, 300 atoms
+  (in-plane width 14.07 Å, c 15.63 Å, both > 2·r_max). Local set by a 3.4 Å cutoff (18 atoms: 4 O, 12 Zn, 1 far O).
+- `85651cb` **real ZnO data** in `src/data/experiments/zno-axial-bond/` (MACE-MP-0a medium, SHA-256 verified, float64,
+  CPU, same versions as Si): 25 frames d = −0.300…+0.300 Å, all `ok` (~10–14 s each). Checks: restoration ΔE = 0,
+  ΔF = 0; FD (h = 1e-2…3e-4 Å) error 7.3e-7 eV/Å at h = 3e-4 (∝ h²) for the moved atom; rotated input |ΔE| = 0.0,
+  F equivariance 3.1e-14, h0 invariance 1.3e-15, h1 equivariance 5.2e-16. `scales.json` generated. `index.json` lists both.
+  **Physics observed:** the ideal wurtzite input (a = 3.25, c = 5.21, u = 0.382, not relaxed with the model) has a
+  baseline force of 0.0371 eV/Å along c on every Zn and O (C3v sites; x, y ≤ 4e-6) — so, unlike Si, the ZnO baseline is
+  **not** force-free and its layer-1 l = 1 features are **not** zero. Anharmonic: ΔE(+0.3) = 0.708 eV (bond compressed)
+  vs ΔE(−0.3) = 0.302 eV; F·û = −6.25 eV/Å at +0.3 Å, +1.68 at −0.3 Å. Documented in `pipeline/README.md` (new
+  Experiments table). New `src/lib/experiments.test.ts`: generic checks over every committed manifest (restoration,
+  dE, energy-slope vs F·û, positive curvature, ΣEᵢ = E, ΣF = 0, FD, rotation, atom identity, local set).
+- `372a440` `e2e/perf.spec.ts` — Pixel 7 emulation, 4× CPU throttle (CDP), SwiftShader.
+  Measured: interactive 2.5–2.8 s; frame step → updated readout median 0.40–0.44 s, worst 1.38–1.46 s (first step,
+  includes lazy chunk); 29 long tasks, max ~0.7 s; JS heap 26–33 MB. Budgets: median < 1.5 s, worst < 4 s, heap < 400 MB.
+- `00eddea` `src/lib/experimentInfo.ts` (+ test): element display colours (Si as before, Zn added, O from
+  atlas/src/lib/chem/elements.ts), bond-stick criterion per experiment (Si 2.6 Å, ZnO 2.3 Å), geometry source, domain
+  sentence, and `baselineFacts(m)` **derived from the stored run** (force-free? l = 1 vectors vanish?).
+- `e52035c` frame chunks and colour scales keyed by experiment id (`loadChunk(id, k)`, `scalesFor(id)`); a chunk whose
+  `experiment`/`k` does not match is rejected; missing scales → alert, never a blank heatmap.
+- `c6df239` InterventionLab takes its manifest via React context (`InterventionLab({ manifest })`, default Si), all
+  sub-components use `useLab()`. Behaviour unchanged.
+- `edadd9c`, `fd3b1e5`, `93ea6bf`: element colours per atom, legend swatches from the composition, bond label, colour
+  option text, demo step-1 caption (zero-force claim only if stored forces are zero; else quotes the largest stored force
+  and says the geometry is unrelaxed), step-2 "pushes back" derived from the sign, PNG-export text per experiment.
+
+**Verified at the end (21:49 UTC):** `astro check` 0 errors; Vitest 66/66 (7 files); `astro build` OK; Playwright
+desktop + mobile 35 passed, 1 skipped (perf runs on mobile only); pytest 22/22 with `INSIDE_MACE_CHECKPOINT` (fresh
+re-evaluation of a stored frame matches for **both** experiments). Screenshots 1440×1000 and 390×844 inspected (Si page
+unchanged; scene renders, no overflow).
+
+**Open problems / known gaps:**
+- ZnO is **not yet reachable on the page.** `LabLoader` still renders the default (Si) manifest and `decodeState` reports
+  `exp=zno-axial-bond` as "not available". Before exposing it, these Si-only texts must become per-experiment or
+  data-derived (each would be false for ZnO):
+  `src/lib/stages.ts:38` ("216 Si atoms"), `:49` ("46 neighbours" — compute from the chunk's edge count), `:97`, `:111`,
+  `:122` (shapes `[216]`); `src/islands/StageEvidence.tsx:102` (Td symmetry: l = 1, 2 A-norms zero), `:168`, `:187–190`
+  ("Si embedding" → moved element), `:210` (E₀(Si)), `:211` ("216 atoms"), `:253`; `src/islands/FeatureInspector.tsx:122`
+  (l = 1 zero at baseline → gate on `baselineFacts(m).vectorsVanish`); `src/islands/ArchitectureDiagram.tsx:54`
+  (`[216, 3]` → `m.structure.n`); `src/pages/index.astro:36,42–43` (Structure / Domain → `experimentInfo`);
+  `InterventionLab.tsx` FORCE_SCALE comment (ZnO max |F| 6.25 eV/Å → 3.1 Å arrow; fine, but the comment is Si-specific);
+  scene `label="Silicon neighbourhood…"`; check `TraceChange.tsx`/`trace.ts` "exact zeros" wording for a baseline
+  with non-zero vectors; Si-only claims in README "Experiment"/"Domain".
+- The hero and the lab both show "Move an atom / Walk me through it" button rows (visible duplication on desktop and
+  mobile screenshots) — consider keeping only the hero pair or making the lab pair a compact mode switch.
+- HANDOFF had no session-2 entry; its work is summarised above from `git log`.
+
+**Next steps (in dependency order):**
+1. Make every text listed above per-experiment (use `experimentInfo`, `baselineFacts`, `composition`, chunk edge
+   counts), with Vitest cases for both manifests (pattern: `experimentInfo.test.ts`, `figureText.test.ts`).
+2. Experiment selection: `LabLoader` reads `exp` from the URL, `import.meta.glob('../data/experiments/*/manifest.json')`
+   (lazy, not eager) → `parseManifest` → `<InterventionLab manifest={m} />`; `decodeState` must accept any id in
+   `index.json` (pass the list); an experiment picker (two cards: "Si: bond stretch", "ZnO: axial Zn–O bond") near the
+   scene; switching keeps mode/stage/view where valid and resets atom/frame to that experiment's moved atom/baseline.
+   index.astro provenance block must follow the selected experiment (render client-side or show both).
+3. ZnO-specific explanation: the baseline is not a model minimum (0.037 eV/Å along c) — say it next to the readouts
+   and in walk stage 7; the difference view is then the meaningful one. Two-species scene legend already works.
+4. Playwright for ZnO (`?exp=zno-axial-bond&frame=24`: readouts quote stored ΔE +0.7076 eV, legend shows Zn/O, no
+   "zero by symmetry" text; URL round-trip; switching experiments), screenshots at 1440/1024/390 widths.
+5. Then the remaining brief items: final README verification summary + limitations (session 6), optional subtle AO only
+   after impostor-depth verification (§4, may be judged not worth it — record why).
