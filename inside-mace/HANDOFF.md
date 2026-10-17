@@ -40,7 +40,7 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
      verified results (test/build output), open problems, and the exact next steps. -->
 
 
-### Session 1 — 2026-10-17 18:15 → 18:55 UTC
+### Session 1 — 2026-10-17 18:15 → 18:57 UTC
 
 **Done (commits on `claude/inside-mace`):**
 - `8c6a260` Scaffold `inside-mace/` (Astro 7 + React + TS strict; `astro.config.mjs` adapted from Atlas, without
@@ -91,15 +91,28 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
   Playwright config therefore serves `dist/` with `python3 -m http.server`. Run `npx astro build` before `npx playwright test
   --project=desktop --project=mobile`.
 
+**Added after the first log write (same session):**
+- `6c46037` click-to-pick atoms (`AtomPicker` mounted) + keyboard atom selector for the 17-atom local set; smaller plot text.
+- `26c4a3a` camera presets (Overview / Selected environment / Side-on to the path); force arrows 0.5 Å per eV/Å, arrows
+  below 0.12 eV/Å hidden, scale note in scene units.
+- `2dc80f8` `ResponsePlots.tsx`: per-layer/per-irrep ‖Δh‖ vs d and ΔEᵢ small multiples for the selected atom, own axes.
+- `7b4b8d5` `RotationDemo.tsx`: real rotated-input comparison (E invariant to 0.0 eV, F → RF to 3e-14, h0 invariant,
+  layer-1 l=1 channel h → Rh), with the camera-vs-input distinction stated. Schema now keeps `checks.rotation.runs[].local`.
+- `dcc50e4` + final commit: `StageEvidence.tsx` — walkthrough evidence for stages 2/3 (46 edges into the moved atom, the 6
+  shortest with 10 Bessel values and Y₁), 6 (E_i, ΣEᵢ vs E) and 7 (autograd vs finite-difference table); mobile panel
+  overflow fixed (`.lab__panel` column minmax(0,1fr)).
+- Final state verified at 18:52 UTC: astro check 0 errors, Vitest 24/24, build OK, Playwright desktop+mobile 22/22.
+
 **Open problems / known gaps:**
 - Walk mode: scene overlays only toggle edges/shell/arrows per stage; the stage-specific tensor views (radial/SH bars for
   edges into the moved atom, A-norm per l, site-energy bars, force decomposition) are not built yet. Scene-toggle
   checkboxes do not reflect walk-mode overrides.
 - No "Trace the change" reveal sequence (brief §9), no "Predict before revealing" prompt, no GSAP transitions yet.
-- Rotation demonstration (§10) data exists in the manifest (`checks.rotation`, incl. rotated local features) but has no UI.
+- Rotation demonstration has a text/number panel only; a visual (two small scenes or arrow glyphs for F and an l=1
+  channel before/after R) would make it memorable in a recording.
+- Walk-mode stages 1, 4, 5 have no stage-specific evidence block yet (embedding vector, A-norm by l, h heatmap emphasis).
 - No camera presets (overview / selected environment / comparison) or synchronised side-by-side baseline|perturbed
   cameras (§7 asks for both states together with synced cameras; currently a toggle).
-- Atom picking in the scene is wired (`onPick`) but `AtomPicker` is not mounted yet; atom selection only via URL.
 - Plot tick text scales with SVG width (large on desktop); plots need axis labels/units in-figure and a linked
   per-atom ΔEᵢ plot; feature-change-vs-d per layer plot ("which parts respond") still missing.
 - Presentation mode, still-image export, scripted demo sequence, README (incl. interpretation limits), mobile
@@ -108,13 +121,12 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
   (domain mismatch) — if added, must carry the mismatch caveat.
 
 **Next steps (in dependency order):**
-1. Mount `AtomPicker` in the scene; selected-neighbour highlight; atom info in the panel. Camera presets + side-by-side
-   synced baseline|perturbed views (desktop), single scene with toggle (mobile).
+1. Side-by-side synced baseline|perturbed scenes on desktop (single scene with toggle on mobile); GSAP camera
+   transitions between presets (respect reduced motion); selected-neighbour highlight.
 2. Stage-specific inspectors for walk mode using the chunk data (edges radial/SH, A norms by l, h heatmap, site energy
    bars with ΣEᵢ = E, force = −∂E/∂r with FD table from `checks.finiteDifference`).
 3. "Trace the change" sequence (stage-by-stage highlight of per-atom change norms, layer 1 → layer 2 → site energies →
    forces; labelled as a dependency explanation, not timing), optional predict-before-reveal.
-4. Rotation demonstration panel from `checks.rotation` (camera rotation vs input rotation; E invariant, F → RF, h0
-   invariant, h1 → R h1 with the stored rotated local features).
+4. Visual for the rotation panel (glyphs) and stage evidence for stages 1, 4, 5.
 5. Presentation mode (`?present=1`), PNG export with title/settings/units/status/attribution, demo-sequence script,
    README + interpretation limits + reproduction; move manifest to lazy fetch.
