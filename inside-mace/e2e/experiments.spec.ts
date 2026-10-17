@@ -67,5 +67,6 @@ test('presentation mode on ZnO: captions from the ZnO run, status and checkpoint
   await expect(page.getByText(/not relaxed with the model/)).toBeVisible();
   await expect(page.getByText('Precomputed model evaluations; interactive inspection')).toBeVisible();
   await expect(page.getByText(/mace-mp-0a-medium · sha256 01bfe221/)).toBeVisible();
+  await expect(page.locator('.exp-pick')).toBeHidden(); // minimal controls: the link fixes the experiment
   expect(errors).toEqual([]);
 });
