@@ -8,6 +8,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useEffect, useRef, type ReactNode } from 'react';
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import type { CameraSync } from './cameraSync';
 
@@ -102,10 +103,26 @@ function Controls({
       controls.update();
       return;
     }
-    camera.position.set(...view.position);
-    controls.target.set(...view.target);
-    controls.update();
-    invalidate();
+    // inside-mace: animate the preset change with GSAP (orientation stays z-up), or jump under reduced motion.
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      camera.position.set(...view.position);
+      controls.target.set(...view.target);
+      controls.update();
+      invalidate();
+      return;
+    }
+    const tl = gsap.timeline({
+      onUpdate: () => {
+        controls.update();
+        invalidate();
+      },
+    });
+    tl.to(camera.position, { x: view.position[0], y: view.position[1], z: view.position[2], duration: 0.7, ease: 'power2.inOut' }, 0);
+    tl.to(controls.target, { x: view.target[0], y: view.target[1], z: view.target[2], duration: 0.7, ease: 'power2.inOut' }, 0);
+    return () => {
+      tl.kill();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
