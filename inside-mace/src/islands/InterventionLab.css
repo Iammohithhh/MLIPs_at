@@ -969,3 +969,73 @@
     font-size: 0.95rem;
   }
 }
+
+/* Rotation glyphs (RotationDemo.tsx) */
+.rot__glyphs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin: 0.6rem 0;
+}
+.rot__glyph {
+  margin: 0;
+  width: 11rem;
+}
+.rot__glyph svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--im-stage);
+  border-radius: 50%;
+}
+.rot__glyph figcaption {
+  font-size: 0.72rem;
+  color: var(--atlas-ink-muted);
+  margin-top: 0.3rem;
+}
+.rot__ring {
+  fill: none;
+  stroke: var(--im-stage-rule);
+}
+.rot__arc {
+  fill: none;
+  stroke: var(--im-stage-muted);
+  stroke-width: 1.2;
+}
+.rot__v0,
+.rot__v1,
+.rot__vR {
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.rot__v0 {
+  stroke: var(--im-mint);
+}
+.rot__v1 {
+  stroke: var(--im-amber);
+}
+.rot__vR {
+  stroke: #fff;
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+}
+.rot__axis {
+  fill: var(--im-stage-ink);
+}
+.rot__key {
+  flex: 1 1 14rem;
+  font-size: 0.78rem;
+  margin: 0;
+}
+.rot__key .k0 {
+  color: var(--im-teal);
+  font-weight: 600;
+}
+.rot__key .k1 {
+  color: var(--im-amber-ink);
+  font-weight: 600;
+}
+.rot__key .kR {
+  font-weight: 600;
+}
