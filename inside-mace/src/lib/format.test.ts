@@ -18,3 +18,12 @@ describe('fmtSigned', () => {
     expect(fmtSigned(NaN)).toBe('—');
   });
 });
+
+describe('fmtD', () => {
+  it('signs displacements with a true minus and leaves the baseline unsigned', async () => {
+    const { fmtD } = await import('./format');
+    expect(fmtD(0.2)).toBe('+0.200');
+    expect(fmtD(-0.125)).toBe('−0.125');
+    expect(fmtD(0)).toBe('0.000');
+  });
+});

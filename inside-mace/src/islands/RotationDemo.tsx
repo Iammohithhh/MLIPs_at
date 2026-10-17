@@ -1,5 +1,6 @@
 // "What changes when the coordinate frame changes?" — a real comparison: the same structure (positions
 // AND cell) rotated by R and evaluated again by the model. Camera rotation, by contrast, changes only the view.
+import { fmtD } from '../lib/format';
 import { useEffect, useState } from 'react';
 import type { Manifest, Vec3 } from '../lib/experiment';
 import { loadChunk, type FrameChunk } from './FeatureInspector';
@@ -80,7 +81,7 @@ export function RotationDemo({ m, channel }: { m: Manifest; channel: number }) {
       <h3 id="rot-title">What changes when the coordinate frame changes?</h3>
       <p className="rot__lede">
         Turning the camera only changes your view. Here the <em>model input</em> itself was rotated — every position and the cell, by{' '}
-        {rot.angleDeg}° about ({rot.axis.join(', ')}) — and the checkpoint was run again (frame d = {f.d.toFixed(3)} Å).{' '}
+        {rot.angleDeg}° about ({rot.axis.join(', ')}) — and the checkpoint was run again (frame d = {fmtD(f.d)} Å).{' '}
         {rot.runs.length > 1 &&
           `Rotated runs are stored for ${rot.runs.map((r) => `d = ${mn(m.displacement.values[r.frame]!.toFixed(3))} Å`).join(' and ')}; the displaced one is shown because its force and vector features are non-zero, so their rotation is visible.`}{' '}
         <span className="label">Precomputed</span>

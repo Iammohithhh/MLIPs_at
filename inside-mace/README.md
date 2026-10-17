@@ -140,7 +140,7 @@ inside-mace/
 
 ## Verification summary
 
-Final re-verification by build session 6 on 2026-10-17 (last full run 23:46–23:48 UTC, after the last code change; pytest at 23:41, after the last pipeline-relevant change —
+Final re-verification by build session 6 on 2026-10-17 (last full run 23:49–23:51 UTC, after the last code change; pytest at 23:41, after the last pipeline-relevant change —
 none was made; Linux
 cloud container, Node via `npm ci`, Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below is a
 real run in that session.
@@ -148,7 +148,7 @@ real run in that session.
 | Check | Command | Result |
 |---|---|---|
 | Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
-| Unit / numerics (Vitest, 10 files) | `npm test` | **79 / 79 passed** |
+| Unit / numerics (Vitest, 10 files) | `npm test` | **80 / 80 passed** |
 | Static build | `npx astro build` | OK, 1 page |
 | Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **58 passed, 2 skipped** (the two perf tests run on the mobile project only, and passed there) |
 | Demonstration script | `npm run record:demo` | **2 / 2 passed** (both experiments, steps 1–5, stills saved) |

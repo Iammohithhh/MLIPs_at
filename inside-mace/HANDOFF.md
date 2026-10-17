@@ -331,9 +331,12 @@ Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK,
 - `158a1fa` + test: stage-4 evidence draws the 128 per-channel |A| values per l as baseline (teal) / frame (amber) strips,
   one scale per l (never across l); Si l = 1, 2 baseline rows are empty (symmetry zeros, asserted in
   `e2e/experiments.spec.ts`). Site-energy label E with a subscript.
+- Last code commit: displacement labels in the evidence panels, inspector and rotation panel are signed with a true
+  minus (`fmtD` in `src/lib/format.ts`, tested); they read "d = 0.200" before, and a negative d would have shown an
+  ASCII hyphen.
 
-**Verified at the end (23:46–23:48 UTC, after the last code change):** astro check 0 errors / 0 warnings; Vitest
-79/79 (10 files); build OK; Playwright desktop + mobile **58 passed, 2 skipped** (perf mobile-only, passed);
+**Verified at the end (23:49–23:51 UTC, after the last code change):** astro check 0 errors; Vitest
+80/80 (10 files); build OK; Playwright desktop + mobile **58 passed, 2 skipped** (perf mobile-only, passed);
 `npm run record:demo` 2/2. pytest 22/22 with the checkpoint at 23:41 (fresh re-evaluation of stored frames, both
 experiments; no pipeline or data change after that).
 Overflow sweep: 0 px at 320, 768, 844 (landscape), 1024, 1920 widths for walk stage 7, ZnO split, ZnO presentation.

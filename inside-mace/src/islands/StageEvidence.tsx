@@ -1,4 +1,5 @@
 // Recorded evidence shown with each stage of the walkthrough (all values from the precomputed frame chunks).
+import { fmtD } from '../lib/format';
 import { useEffect, useState } from 'react';
 import { norm, okFrameAt, type Manifest } from '../lib/experiment';
 import { baselineFacts, experimentInfo } from '../lib/experimentInfo';
@@ -26,7 +27,7 @@ function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
   return (
     <div className="ev">
       <p className="ev__title">
-        {e.src.length} edges (r &lt; {m.rMax} Å) end on the moved atom (d = {c.d.toFixed(3)} Å); the 6 shortest, with their {rows[0]?.radial.length} radial basis values
+        {e.src.length} edges (r &lt; {m.rMax} Å) end on the moved atom (d = {fmtD(c.d)} Å); the 6 shortest, with their {rows[0]?.radial.length} radial basis values
       </p>
       <div className="ev__scroll">
         <table className="mono">
@@ -90,7 +91,7 @@ function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
   return (
     <div className="ev">
       <p className="ev__title">
-        Aggregated A of atom {atom}, layer 1: block norm over 128 channels for each l (d = {c.d.toFixed(3)} Å vs baseline)
+        Aggregated A of atom {atom}, layer 1: block norm over 128 channels for each l (d = {fmtD(c.d)} Å vs baseline)
       </p>
       <dl className="mono">
         {[0, 1, 2, 3].map((l) => {
@@ -171,7 +172,7 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
   return (
     <div className="ev">
       <p className="ev__title">
-        Atom {atom}: baseline vs this frame (d = {c.d.toFixed(3)} Å)
+        Atom {atom}: baseline vs this frame (d = {fmtD(c.d)} Å)
       </p>
       {blocks.map((bl) => {
         const max = Math.max(...bl.base.map(Math.abs), ...bl.cur.map(Math.abs));
@@ -182,7 +183,7 @@ function FeatureEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom:
             </p>
             <span className="ev__rowlabel mono">baseline</span>
             <Cells v={bl.base} max={max} signed={bl.signed} label={`${bl.title}, baseline`} />
-            <span className="ev__rowlabel mono">d = {c.d.toFixed(3)} Å</span>
+            <span className="ev__rowlabel mono">d = {fmtD(c.d)} Å</span>
             <Cells v={bl.cur} max={max} signed={bl.signed} label={`${bl.title}, this frame`} />
           </div>
         );
@@ -240,7 +241,7 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
     const ei = f.nodeEnergy[atom];
     return (
       <div className="ev">
-        <p className="ev__title">This frame (d = {f.d.toFixed(3)} Å)</p>
+        <p className="ev__title">This frame (d = {fmtD(f.d)} Å)</p>
         <dl className="mono">
           <dt>
             E<sub>{atom}</sub> (site)

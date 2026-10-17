@@ -2,6 +2,7 @@
 // atom's layer features, baseline vs the selected evaluated frame vs their difference. Frame data is
 // lazy-loaded per frame. Colour scales are fixed per layer and block over all frames (scales.json).
 
+import { fmtD } from '../lib/format';
 import { useEffect, useState } from 'react';
 import type { Manifest } from '../lib/experiment';
 import { baselineFacts, experimentInfo } from '../lib/experimentInfo';
@@ -127,7 +128,7 @@ export function FeatureInspector({ m, frame, atom, layer, channel, onChannel }: 
         quantities. Colour scales are fixed over all frames: values ±{sc.h0.value.toPrecision(3)}, difference ±{sc.h0.change.toPrecision(3)}.
       </p>
       <Heat values={hb} max={sc.h0.value} label="Baseline" channel={channel} onChannel={onChannel} />
-      <Heat values={hf} max={sc.h0.value} label={`d = ${cur.data.d.toFixed(3)} Å`} channel={channel} onChannel={onChannel} />
+      <Heat values={hf} max={sc.h0.value} label={`d = ${fmtD(cur.data.d)} Å`} channel={channel} onChannel={onChannel} />
       <Heat values={diff} max={sc.h0.change} label="Difference" channel={channel} onChannel={onChannel} />
       <dl className="fi__readout mono">
         <dt>channel {channel}, l = 0</dt>

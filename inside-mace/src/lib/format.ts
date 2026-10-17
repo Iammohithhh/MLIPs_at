@@ -9,3 +9,8 @@ export function fmtSigned(x: number | null | undefined, digits = 3, unit = ''): 
   const s = a < 10 ** -digits && a !== 0 ? a.toExponential(2).replace('e-', 'e−').replace('e+', 'e') : a.toFixed(digits);
   return `${x > 0 ? '+' : x < 0 ? '−' : ''}${s}${unit ? ` ${unit}` : ''}`;
 }
+
+/** Displacement label "+0.200", "−0.125" or "0.000" (Å implied by the caller); the baseline has no sign. */
+export function fmtD(d: number): string {
+  return d === 0 ? (0).toFixed(3) : fmtSigned(d, 3);
+}
