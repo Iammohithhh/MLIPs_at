@@ -211,7 +211,7 @@ unchanged; scene renders, no overflow).
    after impostor-depth verification (§4, may be judged not worth it — record why).
 
 
-### Session 5 — 2026-10-17 22:16 → 22:46 UTC
+### Session 5 — 2026-10-17 22:16 → 22:50 UTC
 
 **State found:** branch at `0fd7591` (session 4 handoff), working tree clean. Re-read BRIEF, HANDOFF, CLAUDE.md.
 
@@ -264,13 +264,18 @@ desktop + mobile 50 passed / 2 skipped (perf mobile-only) at 22:40, then `experi
 (`sha256sum` = 01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845, matches) — includes the fresh
 re-evaluation of stored frames for both experiments. Venv recipe as in session 1 (≈2 min; pytest ≈36 s).
 
+**Later commits (same session):**
+- `8a11049` rotation panel says which rotated runs are stored (d = 0 and +0.100 Å) and why the displaced one is shown.
+- `6dc2bfa` true minus in plot ticks/tooltips and response readouts.
+- `5c86385` **colour-by-change bug fixed:** the ramp started from each element's colour, so ZnO's red O atoms
+  looked "changed" (amber-ish) at zero change and the grey→amber legend was wrong; now every element starts from
+  the neutral grey of the legend and of the PNG-export text ("grey = 0 to amber = largest").
+- Re-verified at 22:48 after `5c86385`: Vitest 75/75, Playwright desktop + mobile 50 passed / 2 skipped.
+
 **Open problems / known gaps:**
 - Baseline ZnO forces (0.037 eV/Å) are below the 0.12 eV/Å arrow threshold, so the d = 0 ZnO scene shows no
-  arrows; the legend states the threshold and the readout note states the stored force, so this is honest, but
-  a session could consider a per-experiment threshold (it must stay stated in the legend and PNG export).
-- The rotation run for ZnO is stored at d = 0.100 Å (as for Si); fine, but the panel does not say why that frame.
-- Hyphen-minus may remain in a few less-visible numbers (trace tooltips, plot ticks); the main readouts,
-  stage 6, rotation and inspector now use U+2212.
+  arrows. Not worth a per-experiment threshold: at 0.5 Å per eV/Å such an arrow is 0.02 Å long (invisible);
+  the readout note quotes the stored value instead.
 - Ambient occlusion: evaluated in SwiftShader only; if retried, use a multisampled target and a real GPU.
 
 **Next steps (session 6):**
@@ -281,5 +286,5 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
    FD h² convergence, rotation tolerances per experiment) and list limitations: precomputed only (no live
    inference), two structures / one path each, no DFT comparison, ZnO geometry unrelaxed, AO not enabled,
    WebGPU not adopted, perf measured on emulation (SwiftShader) not a physical phone.
-3. If time remains: per-experiment arrow threshold (see above, with legend/export text and tests), a sentence in
-   the rotation panel about the chosen frame, and a last sweep of hyphen-minus in trace tooltips/plot ticks.
+3. If time remains: a Playwright check that colour-by-change on ZnO renders the bond partner amber (pixel sample)
+   and a final screenshot pass of every view (baseline/perturbed/difference/side by side) for ZnO.
