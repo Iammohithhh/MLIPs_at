@@ -12,12 +12,14 @@ export interface ElementDisplay {
   name: string;
   /** sRGB hex display colour (not a computed quantity). */
   color: string;
+  /** Plain name of the display colour, for exported legends. */
+  colorName: string;
 }
 
 export const ELEMENT_DISPLAY: Record<string, ElementDisplay> = {
-  Si: { name: 'Silicon', color: '#a9b4b8' },
-  Zn: { name: 'Zinc', color: '#8f93bd' },
-  O: { name: 'Oxygen', color: '#c96a5f' },
+  Si: { name: 'Silicon', color: '#a9b4b8', colorName: 'grey' },
+  Zn: { name: 'Zinc', color: '#8f93bd', colorName: 'slate blue' },
+  O: { name: 'Oxygen', color: '#c96a5f', colorName: 'brick red' },
 };
 
 export interface ExperimentInfo {
