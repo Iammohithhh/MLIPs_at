@@ -94,6 +94,7 @@ test('guided walkthrough: seven stages, equation on demand, URL keeps the stage'
   await page.goto('/');
   await page.getByRole('link', { name: 'Walk me through it' }).click();
   await expect(page.getByText('Stage 1 of 7')).toBeVisible();
+  await expect(page.getByText(/learned numbers selected by the element alone/)).toBeVisible();
   for (let n = 2; n <= 7; n++) {
     await page.getByRole('button', { name: 'Next stage →' }).click();
     await expect(page.getByText(`Stage ${n} of 7`)).toBeVisible();

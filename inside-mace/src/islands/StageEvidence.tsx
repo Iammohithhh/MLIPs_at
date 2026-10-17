@@ -66,6 +66,27 @@ function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
 export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: Stage; frame: number; atom: number }) {
   const f = okFrameAt(m, frame);
   if (!f) return null;
+  if (stage === 'species') {
+    const v = m.baseline.embed;
+    const max = Math.max(...v.map(Math.abs));
+    const p = m.structure.positions[atom]!;
+    return (
+      <div className="ev">
+        <p className="ev__title">
+          Input for atom {atom}: {m.structure.symbols[atom]} at ({(atom === m.displacement.atom ? f.movedPosition : p).map((x) => x.toFixed(3)).join(', ')}) Å
+        </p>
+        <p className="ev__note">
+          Initial features h⁽⁰⁾ of a Si atom: {v.length} learned numbers selected by the element alone (identical for every Si atom, independent of
+          position). Colour ±{max.toPrecision(2)}.
+        </p>
+        <span className="ev__embed" role="img" aria-label={`${v.length} embedding values of Si`}>
+          {v.map((x, c) => (
+            <span key={c} title={`channel ${c}: ${x.toPrecision(4)}`} style={{ background: x >= 0 ? `rgb(240 169 69 / ${Math.abs(x) / max})` : `rgb(58 159 140 / ${Math.abs(x) / max})` }} />
+          ))}
+        </span>
+      </div>
+    );
+  }
   if (stage === 'radial' || stage === 'neighbours') return <EdgeEvidence m={m} frame={frame} />;
   if (stage === 'energy') {
     const sum = f.nodeEnergy.reduce((a, b) => a + b, 0);

@@ -583,3 +583,13 @@
   height: 0.7rem;
   outline: 1px solid var(--atlas-rule);
 }
+.ev__embed {
+  display: grid;
+  grid-template-columns: repeat(32, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 0.4rem;
+}
+.ev__embed span {
+  aspect-ratio: 1;
+  outline: 1px solid var(--atlas-rule);
+}

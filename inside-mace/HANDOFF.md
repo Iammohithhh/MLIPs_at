@@ -40,7 +40,7 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
      verified results (test/build output), open problems, and the exact next steps. -->
 
 
-### Session 1 — 2026-10-17 18:15 → 18:57 UTC
+### Session 1 — 2026-10-17 18:15 → 18:55 UTC
 
 **Done (commits on `claude/inside-mace`):**
 - `8c6a260` Scaffold `inside-mace/` (Astro 7 + React + TS strict; `astro.config.mjs` adapted from Atlas, without
@@ -101,7 +101,8 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
 - `dcc50e4` + final commit: `StageEvidence.tsx` — walkthrough evidence for stages 2/3 (46 edges into the moved atom, the 6
   shortest with 10 Bessel values and Y₁), 6 (E_i, ΣEᵢ vs E) and 7 (autograd vs finite-difference table); mobile panel
   overflow fixed (`.lab__panel` column minmax(0,1fr)).
-- Final state verified at 18:52 UTC: astro check 0 errors, Vitest 24/24, build OK, Playwright desktop+mobile 22/22.
+- Last commit adds stage-1 evidence (input position + the 128-value Si embedding h⁽⁰⁾ strip).
+- Final state verified at 18:54 UTC: astro check 0 errors, Vitest 24/24, build OK, Playwright desktop+mobile 22/22.
 
 **Open problems / known gaps:**
 - Walk mode: scene overlays only toggle edges/shell/arrows per stage; the stage-specific tensor views (radial/SH bars for
@@ -110,7 +111,7 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
 - No "Trace the change" reveal sequence (brief §9), no "Predict before revealing" prompt, no GSAP transitions yet.
 - Rotation demonstration has a text/number panel only; a visual (two small scenes or arrow glyphs for F and an l=1
   channel before/after R) would make it memorable in a recording.
-- Walk-mode stages 1, 4, 5 have no stage-specific evidence block yet (embedding vector, A-norm by l, h heatmap emphasis).
+- Walk-mode stages 4, 5 have no stage-specific evidence block yet (embedding vector, A-norm by l, h heatmap emphasis).
 - No camera presets (overview / selected environment / comparison) or synchronised side-by-side baseline|perturbed
   cameras (§7 asks for both states together with synced cameras; currently a toggle).
 - Plot tick text scales with SVG width (large on desktop); plots need axis labels/units in-figure and a linked
@@ -127,6 +128,6 @@ The whole brief is in scope. Work in dependency order; never drop or water down 
    bars with ΣEᵢ = E, force = −∂E/∂r with FD table from `checks.finiteDifference`).
 3. "Trace the change" sequence (stage-by-stage highlight of per-atom change norms, layer 1 → layer 2 → site energies →
    forces; labelled as a dependency explanation, not timing), optional predict-before-reveal.
-4. Visual for the rotation panel (glyphs) and stage evidence for stages 1, 4, 5.
+4. Visual for the rotation panel (glyphs) and stage evidence for stages 4, 5.
 5. Presentation mode (`?present=1`), PNG export with title/settings/units/status/attribution, demo-sequence script,
    README + interpretation limits + reproduction; move manifest to lazy fetch.
