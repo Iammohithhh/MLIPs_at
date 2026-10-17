@@ -378,14 +378,17 @@ function Scene(props: {
     const elementColour = (i: number) => linear(ELEMENT_DISPLAY[m.structure.symbols[i] ?? '']?.color ?? COLORS.atom);
     const amber = linear(COLORS.amber);
     const mint = linear(COLORS.mint);
+    const neutral = linear(COLORS.atom);
     atoms.forEach((a, i) => {
       positions.set(a.pos, i * 3);
       radii[i] = a.index === moved ? 0.62 : 0.5;
       const base = elementColour(a.index);
       let c = base;
       if (colourMode === 'change') {
+        // One neutral start colour for every element, matching the legend ramp (grey → amber); starting from
+        // element colours would make red O atoms read as "changed" before any change.
         const v = featureChange(m, shown, layer, 'h0', a.index);
-        c = v === null ? [0.2, 0.2, 0.2] : mixRGB(base, amber, Math.min(1, v / scaleMax));
+        c = v === null ? [0.2, 0.2, 0.2] : mixRGB(neutral, amber, Math.min(1, v / scaleMax));
       }
       if (a.index === moved) c = mint;
       colors.set(c, i * 3);
