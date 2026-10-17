@@ -224,7 +224,7 @@
 }
 .lab__plots {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
   gap: 1rem;
 }
 .lab__plot {
@@ -259,4 +259,8 @@
 .lab__plot .missing {
   font: 10px var(--im-mono);
   fill: var(--atlas-ink-muted);
+}
+.lab__status .label {
+  white-space: normal;
+  line-height: 1.3;
 }
