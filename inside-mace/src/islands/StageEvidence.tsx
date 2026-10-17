@@ -63,6 +63,48 @@ function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
   );
 }
 
+function MessageEvidence({ m, frame, atom }: { m: Manifest; frame: number; atom: number }) {
+  const [c, setC] = useState<FrameChunk | null>(null);
+  const [b, setB] = useState<FrameChunk | null>(null);
+  useEffect(() => {
+    let live = true;
+    loadChunk(frame).then((x) => live && setC(x), () => live && setC(null));
+    loadChunk(m.displacement.baselineIndex).then((x) => live && setB(x), () => live && setB(null));
+    return () => {
+      live = false;
+    };
+  }, [frame, m]);
+  const row = m.local.indexOf(atom);
+  if (row < 0) return <p className="ev__note">Message tensors are stored for the moved atom and its first two shells only.</p>;
+  if (!c || !b) return <p className="ev__note">Loading message data…</p>;
+  const l2 = (v: number[]) => Math.sqrt(v.reduce((a, x) => a + x * x, 0));
+  return (
+    <div className="ev">
+      <p className="ev__title">
+        Aggregated A of atom {atom}, layer 1: block norm over 128 channels for each l (d = {c.d.toFixed(3)} Å vs baseline)
+      </p>
+      <dl className="mono">
+        {[0, 1, 2, 3].map((l) => {
+          const now = l2(c.layers[0]!.Anorm[row]![l]!);
+          const base = l2(b.layers[0]!.Anorm[row]![l]!);
+          return (
+            <div key={l}>
+              <dt>l = {l}</dt>
+              <dd>
+                {base.toPrecision(4)} → {now.toPrecision(4)}
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+      <p className="ev__note">
+        Norms of the stored per-channel norms (|A| over m, then over channels). In the perfect crystal the l = 1 and l = 2 blocks vanish by the
+        site’s tetrahedral symmetry, while l = 3 does not; displacing the atom switches the lower ones on.
+      </p>
+    </div>
+  );
+}
+
 export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: Stage; frame: number; atom: number }) {
   const f = okFrameAt(m, frame);
   if (!f) return null;
@@ -87,6 +129,7 @@ export function StageEvidence({ m, stage, frame, atom }: { m: Manifest; stage: S
       </div>
     );
   }
+  if (stage === 'messages') return <MessageEvidence m={m} frame={frame} atom={atom} />;
   if (stage === 'radial' || stage === 'neighbours') return <EdgeEvidence m={m} frame={frame} />;
   if (stage === 'energy') {
     const sum = f.nodeEnergy.reduce((a, b) => a + b, 0);
