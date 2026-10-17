@@ -444,3 +444,53 @@
   gap: 0.5rem;
   margin-top: 0.7rem;
 }
+.rp {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.rp__panel {
+  margin: 0;
+  background: var(--im-stage-2);
+  border: 1px solid var(--im-stage-rule);
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+.rp__panel figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--im-stage-muted);
+}
+.rp__val {
+  color: var(--im-amber);
+  white-space: nowrap;
+}
+.rp__panel svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.rp__panel .axis {
+  stroke: var(--im-stage-rule);
+}
+.rp__panel .pt {
+  fill: var(--im-teal);
+  cursor: pointer;
+}
+.rp__panel .pt.is-on {
+  fill: var(--im-amber);
+}
+.rp__range {
+  margin: 0;
+  font-size: 0.65rem;
+  color: var(--im-stage-muted);
+}
+.rp__def {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--im-stage-muted);
+}

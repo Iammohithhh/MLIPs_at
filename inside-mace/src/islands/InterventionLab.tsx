@@ -24,6 +24,7 @@ import { Arrows, AtomPicker, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB
 import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
 import { SceneGuard } from './SceneGuard';
+import { ResponsePlots } from './ResponsePlots';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
@@ -179,6 +180,7 @@ export default function InterventionLab() {
       </div>
       <section className="lab__inspect" aria-labelledby="inspect-title">
         <h3 id="inspect-title">Which parts of the model respond?</h3>
+        <ResponsePlots m={m} atom={s.atom} frame={frame} onFrame={(k) => set({ frame: k })} />
         <FeatureInspector m={m} frame={frame} atom={s.atom} layer={s.layer} channel={s.channel} onChannel={(c) => set({ channel: c })} />
       </section>
       <Plots frame={frame} onFrame={(k) => set({ frame: k })} d={d} />
