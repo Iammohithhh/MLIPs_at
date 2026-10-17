@@ -20,6 +20,12 @@ describe('still-image export text', () => {
     expect(t.legend[0]).toContain('0.5 Å of length per eV/Å');
     expect(t.panes).toEqual(['Baseline · d = 0', 'Perturbed · d = +0.300 Å']);
   });
+
+  it('names force-change arrows in the difference view', () => {
+    const t = figureText(m, { ...defaultState(m, ck), frame: 24, view: 'difference' as const }, 'element', 0.5, 'u');
+    expect(t.legend[0]).toMatch(/^Force-change arrows ΔF = F\(d\) − F\(0\)/);
+    expect(figureText(m, { ...defaultState(m, ck), frame: 24 }, 'element', 0.5, 'u').legend[0]).toMatch(/^Force arrows/);
+  });
 });
 
 describe('still-image export text for another experiment', () => {

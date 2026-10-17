@@ -6,3 +6,4 @@ playwright-report/
 pipeline/.cache/
 __pycache__/
 *.model
+recordings/

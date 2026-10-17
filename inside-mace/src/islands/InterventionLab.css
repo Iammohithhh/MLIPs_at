@@ -108,6 +108,9 @@
   height: 3px;
   background: var(--im-mint);
 }
+.lab__scale-bar.is-diff {
+  background: var(--im-amber);
+}
 .swatch {
   display: inline-block;
   width: 0.7rem;

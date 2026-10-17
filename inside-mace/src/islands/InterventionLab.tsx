@@ -196,7 +196,7 @@ function LabBody() {
         </header>
         <div className="lab__stage lab__stage--present">
           {scene}
-          <ForceScale />
+          <ForceScale difference={view === 'difference'} />
           <ColourLegend mode={colourMode} layer={s.layer} />
           {views}
         </div>
@@ -266,7 +266,7 @@ function LabBody() {
       <div className="lab__grid">
         <div className="lab__stage">
           {scene}
-          <ForceScale />
+          <ForceScale difference={view === 'difference'} />
           <ColourLegend mode={colourMode} layer={s.layer} />
           {views}
         </div>
@@ -504,11 +504,13 @@ function SceneContents(p: {
   );
 }
 
-function ForceScale() {
+function ForceScale({ difference }: { difference: boolean }) {
+  // In the Difference view the arrows are amber and show ΔF = F(frame) − F(baseline), not the force itself.
+  const what = difference ? 'force-change arrows ΔFᵢ = Fᵢ(d) − Fᵢ(0)' : 'force arrows';
   return (
-    <div className="lab__scale" aria-label={`Force scale: ${FORCE_SCALE} Å of arrow per 1 eV/Å`}>
-      <span className="lab__scale-bar" style={{ width: '24px' }} aria-hidden="true" />
-      <span className="mono">force arrows: {FORCE_SCALE} Å of length per eV/Å (in scene units, not screen pixels); arrows under 0.12 eV/Å hidden</span>
+    <div className="lab__scale" aria-label={`${difference ? 'Force-change' : 'Force'} scale: ${FORCE_SCALE} Å of arrow per 1 eV/Å`}>
+      <span className={`lab__scale-bar${difference ? ' is-diff' : ''}`} style={{ width: '24px' }} aria-hidden="true" />
+      <span className="mono">{what}: {FORCE_SCALE} Å of length per eV/Å (in scene units, not screen pixels); arrows under 0.12 eV/Å hidden</span>
     </div>
   );
 }

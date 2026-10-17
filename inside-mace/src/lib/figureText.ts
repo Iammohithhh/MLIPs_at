@@ -41,7 +41,7 @@ export function figureText(m: Manifest, s: ExperimentState, colour: 'element' | 
         : 'This frame has no evaluated outputs.',
     ],
     legend: [
-      `Force arrows: ${forceScale} Å of length per eV/Å (scene units); arrows under 0.12 eV/Å hidden`,
+      `${s.view === 'difference' ? 'Force-change arrows ΔF = F(d) − F(0) (amber)' : 'Force arrows'}: ${forceScale} Å of length per eV/Å (scene units); arrows under 0.12 eV/Å hidden`,
       colour === 'change'
         ? `Atom colour: ‖Δh‖ of layer ${s.layer + 1} scalar features (128 channels), grey = 0 to amber = largest over all frames; moved atom in mint`
         : `Atom colour: ${elementLegend}, moved atom mint · thin lines: model graph edges (r < ${m.rMax} Å), not bonds · sticks: ${info?.bondLabel ?? 'bonds < 2.6 Å'}`,

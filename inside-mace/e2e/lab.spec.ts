@@ -45,6 +45,8 @@ test('baseline / perturbed / difference views and reset', async ({ page }) => {
   for (const name of ['Baseline', 'Difference', 'Perturbed']) {
     await page.getByRole('radio', { name }).click();
     await expect(page.getByRole('radio', { name })).toHaveAttribute('aria-checked', 'true');
+    // the scale caption names what the arrows show in this view
+    await expect(page.locator('.lab__scale').first()).toContainText(name === 'Difference' ? 'force-change arrows ΔFᵢ' : 'force arrows:');
   }
   await page.getByRole('button', { name: 'Reset experiment' }).click();
   await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.000 Å');

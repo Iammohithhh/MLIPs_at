@@ -21,6 +21,8 @@ npm run build          # static site in dist/
 npm run check          # astro check (TypeScript strict)
 npm test               # Vitest: schema, numerics, URL state, trace, demo, export text
 npx astro build && npx playwright test --project=desktop --project=mobile   # browser checks (Chromium)
+npm run record:demo    # after a build: the 5-step demonstration for both experiments, a still per step in recordings/
+                       # (RECORD_VIDEO=1 adds a .webm; needs Playwright's ffmpeg)
 ```
 
 On Linux the Playwright config uses `/opt/pw-browsers/chromium` with SwiftShader WebGL; on Windows use
@@ -143,7 +145,7 @@ Chromium `/opt/pw-browsers/chromium` with SwiftShader WebGL). Every line below i
 | Check | Command | Result |
 |---|---|---|
 | Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
-| Unit / numerics (Vitest, 9 files) | `npm test` | **75 / 75 passed** |
+| Unit / numerics (Vitest, 9 files) | `npm test` | **75 / 75 passed**; 76 / 76 after session 6 added the difference-view legend test |
 | Static build | `npx astro build` | OK, 1 page |
 | Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **50 passed, 2 skipped** (the perf test runs on the mobile project only); after session 6's additions (`e2e/colour.spec.ts`, `e2e/motion.spec.ts`, phone layout) **56 passed, 2 skipped** |
 | Pipeline (pytest, with the checkpoint) | `INSIDE_MACE_CHECKPOINT=ckpt.model python -m pytest -q tests` | **22 / 22 passed** (28.7 s), checkpoint `sha256sum` = `01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845` (matches the pinned hash) |
@@ -189,7 +191,8 @@ Done means implemented **and** verified by the checks above.
 | Measurement on a physical phone (§15 "representative mobile device or emulation") | **Partial** | emulation only (Pixel 7 profile, CPU throttle, SwiftShader); no physical device was available |
 | Arbitrary-geometry live inference | **Not done (out of scope by design)** | the brief calls it a separate extension; the page never claims live computation |
 | Blender cover image / promotional artwork | **Not done** | optional in the brief |
-| A screen recording of the demonstration | **Not done** | the scripted 5-step sequence exists (`?present=1&demo=1…5`); recording it is left to the owner |
+| Reproducible demonstration for recording | **Done** | `?present=1&demo=1…5`, driven by `npm run record:demo` (`record/demo.record.ts`, both experiments, asserts each step, saves a still per step; 2 / 2 passed). Stills inspected for ZnO steps 4–5 |
+| An actual video file | **Not done** | Playwright's own ffmpeg build is not installed in the cloud container (`Executable doesn't exist at /opt/pw-browsers/ffmpeg-1013/ffmpeg-linux`), so `RECORD_VIDEO=1` was not run here; recording is left to the owner |
 
 ## Remaining limitations
 
