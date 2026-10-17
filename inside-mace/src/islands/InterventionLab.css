@@ -1053,7 +1053,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--im-stage-muted);
+  color: var(--atlas-ink-muted);
   margin-right: 0.25rem;
 }
 .exp-pick button {
@@ -1063,17 +1063,22 @@
   gap: 0.1rem;
   min-height: 44px;
   padding: 0.4rem 0.8rem;
-  border: 1px solid var(--im-stage-rule);
+  border: 1px solid var(--atlas-rule-strong);
   border-radius: var(--im-radius);
-  background: var(--im-stage);
-  color: var(--im-stage-ink);
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
 }
 .exp-pick button.is-on {
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
   border-color: var(--im-mint);
   box-shadow: inset 0 0 0 1px var(--im-mint);
+}
+.exp-pick button.is-on .exp-pick__n {
+  color: var(--im-mint);
 }
 .exp-pick button:focus-visible {
   outline: 2px solid var(--im-mint);
@@ -1081,7 +1086,7 @@
 }
 .exp-pick__n {
   font-size: 0.72rem;
-  color: var(--im-stage-muted);
+  color: var(--atlas-ink-muted);
 }
 @media (max-width: 600px) {
   .exp-pick {
@@ -1099,4 +1104,33 @@
   font-size: 0.8rem;
   line-height: 1.4;
   color: var(--atlas-ink-muted);
+}
+
+/* The lab's mode switch is a joined segmented control, so it reads as the instrument's state rather than a
+   second pair of calls to action under the hero's buttons. */
+.lab__modes {
+  gap: 0;
+  align-items: center;
+}
+.lab__modes::before {
+  content: 'Mode';
+  font: 500 0.72rem var(--im-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-muted);
+  margin-right: 0.6rem;
+}
+.lab__modes button {
+  border-radius: 0;
+  font-weight: 500;
+}
+.lab__modes button:first-of-type {
+  border-radius: 5px 0 0 5px;
+}
+.lab__modes button:last-of-type {
+  border-radius: 0 5px 5px 0;
+  border-left-width: 0;
+}
+.lab__modes button.is-on + button {
+  border-left-width: 1px;
 }
