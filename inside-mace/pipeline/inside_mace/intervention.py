@@ -15,6 +15,8 @@ Outputs (written into ``inside-mace/src/data/experiments/<id>/``):
 
 Usage (from inside-mace/pipeline):
   python -m inside_mace.intervention <checkpoint.model> ../../atlas/src/data/structures ../src/data/experiments
+  python -m inside_mace.intervention <checkpoint.model> ../../atlas/src/data/structures ../src/data/experiments zno-axial-bond
+      (optional 4th argument: comma-separated experiment ids to (re)run; others keep their stored data)
 """
 
 from __future__ import annotations
@@ -54,7 +56,28 @@ def si_bond_stretch() -> dict:
     }
 
 
-EXPERIMENTS = [si_bond_stretch]
+def zno_axial_bond() -> dict:
+    # Wurtzite ZnO, the two-species case. 5×5×3 hexagonal supercell (300 atoms): the in-plane
+    # width a·5·sin 60° = 14.07 Å and c·3 = 15.63 Å both exceed 2·r_max = 12 Å, so the 6 Å
+    # minimum-image neighbourhood drawn by the site is unique. The moved atom is the Zn nearest
+    # the supercell centre; it moves along the c axis towards its axial O neighbour.
+    return {
+        "id": "zno-axial-bond",
+        "title": "Zinc oxide: push one Zn along its axial Zn–O bond",
+        "structure": "zno-wurtzite",
+        "supercell": [5, 5, 3],
+        "moved_symbol": "Zn",
+        "partner_rule": "axial",
+        "axis_label": "[0001] (c axis) — towards the axial O neighbour",
+        "displacements": [round(-0.30 + 0.025 * k, 4) for k in range(25)],  # Å; 0 is the baseline
+        # Local set: moved Zn, its 4 O neighbours (1.975 Å basal ×3, 1.990 Å axial) and the 12 Zn
+        # second neighbours (3.20–3.25 Å). Distinct distances differ slightly, so a distance cutoff
+        # is used instead of counting distinct shells.
+        "local_cutoff": 3.4,
+    }
+
+
+EXPERIMENTS = [si_bond_stretch, zno_axial_bond]
 ROTATION = {"axis": [1.0, 2.0, 3.0], "angleDeg": 50.0}
 FD_STEPS = [1e-2, 3e-3, 1e-3, 3e-4]  # Å, central differences
 
@@ -147,16 +170,25 @@ def run_experiment(model, spec: dict, structures_dir: Path, out_dir: Path, versi
     base = _atoms(structure, spec["supercell"])
     n = len(base)
     centre = base.cell.sum(axis=0) / 2
-    moved = int(np.argmin(np.linalg.norm(base.positions - centre, axis=1)))
+    rc = np.linalg.norm(base.positions - centre, axis=1)
+    if spec.get("moved_symbol"):
+        rc = np.where(np.array(base.get_chemical_symbols()) == spec["moved_symbol"], rc, np.inf)
+    moved = int(np.argmin(rc))
     v = _mic_vectors(base, moved)
     dist = np.linalg.norm(v, axis=1)
     # Bonded neighbour along +[111]-type direction: the nearest neighbour whose bond vector is
     # parallel to (1,1,1) or (-1,-1,-1) — pick the one with positive sum.
     nn = [j for j in range(n) if j != moved and dist[j] < dist[dist > 1e-6].min() + 1e-3]
-    partner = max(nn, key=lambda j: v[j].sum())
+    if spec.get("partner_rule") == "axial":
+        # Nearest neighbours lie in a 0.02 Å window for wurtzite (basal 1.975, axial 1.990 Å).
+        nn = [j for j in range(n) if j != moved and dist[j] < dist[dist > 1e-6].min() + 0.1]
+        partner = max(nn, key=lambda j: abs(v[j][2]) / dist[j])
+    else:
+        partner = max(nn, key=lambda j: v[j].sum())
     axis = v[partner] / np.linalg.norm(v[partner])
     shells = sorted({round(float(d), 3) for d in dist if d > 1e-6})
-    local = [moved] + [j for j in np.argsort(dist) if 1e-6 < dist[j] <= shells[spec["local_shells"] - 1] + 1e-3]
+    cut = spec["local_cutoff"] if "local_cutoff" in spec else shells[spec["local_shells"] - 1] + 1e-3
+    local = [moved] + [j for j in np.argsort(dist) if 1e-6 < dist[j] <= cut]
     local = [int(j) for j in local]
     r_max = float(model.r_max)
 
@@ -348,6 +380,7 @@ def run_experiment(model, spec: dict, structures_dir: Path, out_dir: Path, versi
 
 def main(argv: list[str]) -> int:
     ckpt, structures_dir, out_root = Path(argv[0]), Path(argv[1]), Path(argv[2])
+    only = set(argv[3].split(",")) if len(argv) > 3 else None
     digest = hashlib.sha256(ckpt.read_bytes()).hexdigest()
     if digest != CHECKPOINT_SHA256:
         raise SystemExit(f"checkpoint sha256 {digest} != expected {CHECKPOINT_SHA256}")
@@ -361,6 +394,11 @@ def main(argv: list[str]) -> int:
     index = []
     for make in EXPERIMENTS:
         spec = make()
+        if only is not None and spec["id"] not in only:
+            # Keep the existing manifest's index entry; the experiment is not re-run.
+            m = json.loads((out_root / spec["id"] / "manifest.json").read_text())
+            index.append({"id": m["id"], "title": m["title"], "n": m["structure"]["n"], "frames": len(m["frames"])})
+            continue
         print(f"experiment {spec['id']}", flush=True)
         m = run_experiment(model, spec, structures_dir, out_root / spec["id"], versions, digest)
         index.append({"id": m["id"], "title": m["title"], "n": m["structure"]["n"], "frames": len(m["frames"])})
