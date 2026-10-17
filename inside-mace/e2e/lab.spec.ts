@@ -87,3 +87,26 @@ test('reduced motion is respected (no transitions)', async ({ page }) => {
   const d = await page.locator('.lab__views button').first().evaluate((el) => getComputedStyle(el).transitionDuration);
   expect(parseFloat(d)).toBeLessThan(0.001);
 });
+
+test('guided walkthrough: seven stages, equation on demand, URL keeps the stage', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Walk me through it' }).click();
+  await expect(page.getByText('Stage 1 of 7')).toBeVisible();
+  for (let n = 2; n <= 7; n++) {
+    await page.getByRole('button', { name: 'Next stage →' }).click();
+    await expect(page.getByText(`Stage ${n} of 7`)).toBeVisible();
+  }
+  await expect(page).toHaveURL(/stage=forces/);
+  await expect(page.getByText(/not the slope of its own site energy/)).toBeVisible();
+  await page.getByRole('button', { name: 'Show equation and code' }).click();
+  await expect(page.locator('.sd__eq .katex')).toBeVisible();
+  await expect(page.getByText(/mace\/modules\/utils.py:22/)).toBeVisible();
+  await page.getByRole('navigation', { name: 'Computation stages' }).getByRole('button', { name: /Neighbour graph/ }).click();
+  await expect(page.getByText('Stage 2 of 7')).toBeVisible();
+  // switching mode keeps the displacement frame
+  await page.getByRole('button', { name: 'Next evaluated frame' }).click();
+  await page.getByRole('tab', { name: 'Move an atom' }).click();
+  await expect(page.locator('output.lab__disp-value')).toContainText('d = +0.025 Å');
+  expect(errors).toEqual([]);
+});

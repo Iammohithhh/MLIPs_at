@@ -24,6 +24,7 @@ import { Arrows, ImpostorAtoms, Lines, Shell, Sticks, linear, mixRGB, useShading
 import { usePrefersReducedMotion } from '../three/theme';
 import { FeatureInspector } from './FeatureInspector';
 import { SceneGuard } from './SceneGuard';
+import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
 const m = parseManifest(raw);
@@ -92,10 +93,19 @@ export default function InterventionLab() {
           This link could not be restored exactly: {issues.join('; ')}.
         </p>
       )}
+      <div className="lab__modes" role="tablist" aria-label="Mode">
+        <button role="tab" aria-selected={s.mode === 'lab'} className={s.mode === 'lab' ? 'is-on' : ''} onClick={() => set({ mode: 'lab' })}>
+          Move an atom
+        </button>
+        <button role="tab" aria-selected={s.mode === 'walk'} className={s.mode === 'walk' ? 'is-on' : ''} onClick={() => set({ mode: 'walk' })}>
+          Walk me through it
+        </button>
+      </div>
+      {s.mode === 'walk' && <StageNav stage={s.stage} onStage={(st) => set({ stage: st })} />}
       <div className="lab__grid">
         <div className="lab__stage">
           <SceneGuard>
-            <Scene shown={shown} view={view} selected={s.atom} showEdges={showEdges} showShell={showShell} colourMode={colourMode} layer={s.layer} resetKey={resetKey} reduced={reduced} onPick={(i) => set({ atom: i })} />
+            <Scene shown={shown} view={view} selected={s.atom} showEdges={s.mode === 'walk' ? ['neighbours', 'radial', 'messages'].includes(s.stage) : showEdges} showShell={s.mode === 'walk' ? s.stage === 'neighbours' : showShell} showForces={s.mode !== 'walk' || s.stage === 'forces'} colourMode={colourMode} layer={s.layer} resetKey={resetKey} reduced={reduced} onPick={(i) => set({ atom: i })} />
           </SceneGuard>
           <ForceScale />
           <ColourLegend mode={colourMode} layer={s.layer} />
@@ -108,6 +118,7 @@ export default function InterventionLab() {
           </div>
         </div>
         <aside className="lab__panel">
+          {s.mode === 'walk' && <StageDetail stage={s.stage} onStage={(st) => set({ stage: st })} />}
           <Displacement frame={frame} onFrame={(k) => set({ frame: k })} />
           <Readouts frame={frame} atom={s.atom} />
           <fieldset className="lab__toggles">
@@ -163,6 +174,7 @@ function Scene(props: {
   selected: number;
   showEdges: boolean;
   showShell: boolean;
+  showForces: boolean;
   colourMode: 'element' | 'change';
   layer: number;
   resetKey: number;
@@ -206,6 +218,7 @@ function Scene(props: {
 
   const arrows = useMemo<Segment[]>(() => {
     const out: Segment[] = [];
+    if (!props.showForces) return out;
     const teal = linear(COLORS.mint);
     const amber = linear(COLORS.amber);
     for (const a of atoms) {
@@ -216,7 +229,7 @@ function Scene(props: {
       out.push({ a: a.pos, b: [a.pos[0] + f[0] * FORCE_SCALE, a.pos[1] + f[1] * FORCE_SCALE, a.pos[2] + f[2] * FORCE_SCALE], color: view === 'difference' ? amber : teal, radius: 0.075 });
     }
     return out;
-  }, [atoms, view, props.shown]);
+  }, [atoms, view, props.shown, props.showForces]);
 
   const lines = useMemo(() => {
     const out: ColoredLine[] = [];

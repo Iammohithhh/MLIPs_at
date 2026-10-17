@@ -17,7 +17,8 @@ const p = manifest.provenance as Record<string, unknown>;
         Follow a real MACE checkpoint from atomic geometry to energy and forces. Then change one atom and inspect the difference.
       </p>
       <div class="hero__actions">
-        <a class="btn btn--primary" href="#lab">Move an atom</a>
+        <a class="btn btn--primary" href="?mode=lab#lab">Move an atom</a>
+        <a class="btn btn--secondary" href="?mode=walk&amp;stage=species#lab">Walk me through it</a>
       </div>
     </header>
     <div id="lab" class="page__lab">
@@ -92,6 +93,10 @@ const p = manifest.provenance as Record<string, unknown>;
   .btn--primary {
     background: var(--im-stage);
     color: var(--im-mint);
+  }
+  .btn--secondary {
+    border: 1px solid var(--atlas-rule-strong);
+    color: var(--atlas-ink);
   }
   .provenance {
     border-top: 1px solid var(--atlas-rule);

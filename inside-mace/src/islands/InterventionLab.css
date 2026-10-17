@@ -343,3 +343,103 @@
   margin: 0;
   max-width: 36rem;
 }
+.lab__modes {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.lab__modes button,
+.sn button,
+.sd__nav button,
+.sd__more {
+  min-height: 2.5rem;
+  font: 600 0.85rem var(--im-font);
+  border: 1px solid var(--atlas-rule-strong);
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  border-radius: 5px;
+  padding: 0 0.9rem;
+  cursor: pointer;
+}
+.lab__modes button.is-on {
+  background: var(--im-stage);
+  color: var(--im-mint);
+  border-color: var(--im-stage);
+}
+.sn ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+@media (max-width: 900px) {
+  .sn ol {
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  }
+}
+.sn button {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  font-weight: 500;
+  font-size: 0.78rem;
+}
+.sn button.is-on {
+  border-color: var(--im-teal);
+  box-shadow: inset 0 -3px 0 var(--im-teal);
+}
+.sn__n {
+  color: var(--atlas-phys);
+  font-weight: 700;
+}
+.sd h3 {
+  margin: 0.1rem 0 0.4rem;
+  font-size: 1.1rem;
+}
+.sd__step {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--atlas-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.sd__plain {
+  margin: 0 0 0.5rem;
+}
+.sd__changed {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  color: var(--atlas-ink-muted);
+}
+.sd__tech {
+  margin-top: 0.6rem;
+  overflow-x: auto;
+}
+.sd__eq {
+  font-size: 0.85rem;
+}
+.sd__tech dl {
+  font-size: 0.72rem;
+  display: grid;
+  gap: 0.15rem;
+}
+.sd__tech dt {
+  color: var(--atlas-ink-faint);
+  margin-top: 0.3rem;
+}
+.sd__tech dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.sd__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
