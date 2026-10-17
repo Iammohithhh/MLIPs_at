@@ -130,7 +130,7 @@ inside-mace/
   src/islands/                 LabLoader (lazy entry), InterventionLab, TraceChange, ArchitectureDiagram,
                                StagePanel, StageEvidence, FeatureInspector, ResponsePlots, RotationDemo, SceneGuard
   src/lib/                     experiment.ts (schema, metrics), scene.ts, trace.ts, stages.ts, urlState.ts,
-                               demo.ts, figureText.ts, store.ts (+ *.test.ts)
+                               demo.ts, figureText.ts, format.ts, store.ts (+ *.test.ts)
   src/three/                   copied from atlas/src/three (Stage, impostor atoms, primitives, shading); cameraSync.ts is new
   src/data/experiments/        precomputed data (manifest + lazy per-frame chunks + fixed colour scales)
   pipeline/                    CPU data pipeline (Python) and pytest checks
@@ -147,7 +147,7 @@ real run in that session.
 | Check | Command | Result |
 |---|---|---|
 | Typecheck (TS strict, Astro) | `npm run check` | 0 errors, 0 warnings, 0 hints |
-| Unit / numerics (Vitest, 9 files) | `npm test` | **76 / 76 passed** |
+| Unit / numerics (Vitest, 10 files) | `npm test` | **79 / 79 passed** (after the 23:43 formatting fix; Playwright re-run after it: 56 passed, 2 skipped) |
 | Static build | `npx astro build` | OK, 1 page |
 | Browser checks (Playwright, desktop 1440×1000 + mobile Pixel 7) | `npx playwright test --project=desktop --project=mobile` | **56 passed, 2 skipped** (the two perf tests run on the mobile project only, and passed there) |
 | Demonstration script | `npm run record:demo` | **2 / 2 passed** (both experiments, steps 1–5, stills saved) |

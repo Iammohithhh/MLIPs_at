@@ -325,6 +325,9 @@ Re-verified first (23:16–23:20): astro check 0 errors, Vitest 75/75, build OK,
   horizontal scroll in the ~300 px side panel. Browser check reads the Si d = +0.1 Å, h = 3e-4 Å error (9.8e−7).
 - `6860305` stage-2/3 edge table fits the panel (Y₁ column was clipped).
 - Final commit: README verification numbers from the last full run; this entry.
+- `39f738a` **bug fix:** signed readouts dropped the exponent's minus for small positive values (`fmt(2.43e-15)` →
+  "+2.43e15"; reachable e.g. for ΔEᵢ of a far atom). `fmtSigned` now in `src/lib/format.ts` with tests; Vitest 79/79
+  (10 files), Playwright 56 passed / 2 skipped after the fix.
 
 **Verified at the end (23:38–23:41 UTC, after the last code change):** astro check 0 errors / 0 warnings; Vitest
 76/76 (9 files); build OK; Playwright desktop + mobile **56 passed, 2 skipped** (perf mobile-only, passed);
@@ -338,7 +341,6 @@ Overflow sweep: 0 px at 320, 768, 844 (landscape), 1024, 1920 widths for walk st
   `RECORD_VIDEO=1 npm run record:demo`, or screen-record `?present=1&demo=1`.
 - Performance measured under emulation (SwiftShader, CPU throttle) only; `edge` Playwright project not run here.
 - Precomputed only; two experiments, one path each; no DFT reference; ZnO baseline unrelaxed (stated on the page).
-- Minor: exponents in the inspector's l = 1 readout (e.g. "−3.0e-8") keep an ASCII hyphen after the "e".
 
 **Next steps (for whoever continues):**
 1. Record the demonstration video on the owner's machine (`--project=edge` / `RECORD_VIDEO=1`) and check it frame by frame.
