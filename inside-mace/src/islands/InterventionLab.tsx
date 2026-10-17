@@ -231,11 +231,12 @@ export default function InterventionLab() {
           <Readouts frame={frame} atom={s.atom} />
           <fieldset className="lab__toggles">
             <legend>Scene</legend>
+            {s.mode === 'walk' && <p className="lab__hint">Edges and cutoff sphere follow the walkthrough stage.</p>}
             <label>
-              <input type="checkbox" checked={showEdges} onChange={(e) => setShowEdges(e.target.checked)} /> Graph edges into the selected atom (r &lt; {m.rMax} Å)
+              <input type="checkbox" checked={sceneEdges} disabled={s.mode === 'walk'} onChange={(e) => setShowEdges(e.target.checked)} /> Graph edges into the selected atom (r &lt; {m.rMax} Å)
             </label>
             <label>
-              <input type="checkbox" checked={showShell} onChange={(e) => setShowShell(e.target.checked)} /> Cutoff sphere
+              <input type="checkbox" checked={sceneShell} disabled={s.mode === 'walk'} onChange={(e) => setShowShell(e.target.checked)} /> Cutoff sphere
             </label>
             <label>
               Colour{' '}
