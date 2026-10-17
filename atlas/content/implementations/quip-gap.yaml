@@ -1,0 +1,7 @@
+name: QUIP / GAP (quippy)
+repo: https://github.com/libAtoms/QUIP
+language: Fortran
+framework: other
+licence: 'QUIP: GPL v2 (parts public domain); GAP (submodule, fitting and prediction): Academic Software Licence (ASL; non-commercial)'
+families: [gap]
+review: { status: draft, last_checked: 2026-10-17, notes: 'QUIP README at commit 1e2f84b (2026-05-12) states the GPL v2 licence and that GAP, included as a submodule, is under a non-commercial academic source licence; libAtoms/GAP LICENSE.md at commit 25e734c is the ASL. Python interface quippy works with ASE; QUIP also interfaces with LAMMPS (IJQC 2015 tutorial, Software section).' }

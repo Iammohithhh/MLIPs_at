@@ -1,0 +1,18 @@
+title: Machine learning a general-purpose interatomic potential for silicon
+topic: descriptors-locality
+authors:
+  - 'Bartók, A. P.'
+  - 'Kermode, J.'
+  - 'Bernstein, N.'
+  - 'Csányi, G.'
+year: 2018
+venue: Physical Review X 8, 041048
+type: article
+identifiers:
+  doi: 10.1103/PhysRevX.8.041048
+  arxiv: '1805.01568'
+edges:
+  - { type: extends, target: bartok2013soap, documented: true }
+  - { type: compares-against, target: stillinger1985sw, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v1 (3 May 2018): Sec. II A (Eqs. 1–10), II B (database, Table I, DFT settings, Fig. 3), II C (convergence and locality). Hyperparameters cross-checked against the released parameter file gp_iter6_sparse9k.xml (libAtoms/silicon-testing-framework, commit ec91b17).' }

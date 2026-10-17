@@ -1,0 +1,17 @@
+title: On representing chemical environments
+topic: descriptors-locality
+authors:
+  - 'Bartók, A. P.'
+  - 'Kondor, R.'
+  - 'Csányi, G.'
+year: 2013
+venue: Physical Review B 87, 184115
+type: article
+identifiers:
+  doi: 10.1103/PhysRevB.87.184115
+  arxiv: '1209.3140'
+edges:
+  - { type: extends, target: bartok2010gap, documented: true }
+  - { type: compares-against, target: behler2011symmetry, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read the arXiv text (latest version): Sec. III (power spectrum, bispectrum), Sec. IV (SOAP kernel, Eqs. 32–41), Fig. 7. Equation numbers follow the arXiv text.' }

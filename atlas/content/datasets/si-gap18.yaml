@@ -1,0 +1,16 @@
+name: Si GAP database (2018)
+domain: [inorganic-materials]
+summary: >-
+  Periodic silicon cells chosen by hand and from experience: the isolated atom, crystal structures (diamond, β-Sn,
+  simple hexagonal, hexagonal diamond, bcc, bc8, fcc, hcp, st12) with strains and rattles, liquid and amorphous
+  snapshots, point defects, surfaces, cracks and stacking faults. Each cell gives a total energy, six virial components
+  and three force components per atom: 531,710 numbers over 171,815 atomic environments.
+introduced_in: bartok2018silicon
+levels_of_theory: [pw91-si-gap18]
+configuration_types: [rattled, md-sampled, single-point, other]
+size:
+  structures: 2475
+  approximate: false
+  source: { paper: bartok2018silicon, locator: 'Table I (column totals); Sec. II B' }
+url: https://github.com/libAtoms/silicon-testing-framework
+review: { status: draft, last_checked: 2026-10-17, notes: 'Totals read from Table I of arXiv v1: 2475 cells, 171,815 environments, 9000 representative environments.' }

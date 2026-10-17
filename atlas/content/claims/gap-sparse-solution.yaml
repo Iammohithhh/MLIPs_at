@@ -1,0 +1,12 @@
+statement: >-
+  GAP is a sparse Gaussian process: a set S of representative environments is chosen and the prediction is
+  ε*(d*) = k*ᵀ (C_SS + C_ST Λ⁻¹ C_TS)⁻¹ C_ST Λ⁻¹ t, where Λ holds the expected error of each observation (scaled with
+  the number of atoms for energies). The cost of a prediction grows with the number of sparse points, not with the
+  amount of data, and a small jitter is added to C_SS.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2015gaptutorial, locator: 'arXiv v2, Sparsification, Eqs. (29)–(32)' }
+  - { paper: bartok2018silicon, locator: 'arXiv v1, Sec. II A, Eq. (9)' }
+scope: { model_families: [gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

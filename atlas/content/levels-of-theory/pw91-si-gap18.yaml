@@ -1,0 +1,7 @@
+name: PW91 (Si GAP database)
+method: DFT
+functional: PW91
+basis: 'Plane waves, 250 eV cutoff with finite-basis corrections; ultrasoft pseudopotentials'
+codes: [CASTEP]
+notes: 'Monkhorst–Pack k-point spacing 0.03 Å⁻¹ and 0.05 eV smearing; remaining numerical error of a few meV, dominated by the k-point grid (Bartók et al., PRX 8, 041048, Sec. II B).'
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,11 @@
+statement: >-
+  The Si GAP database holds 2475 periodic cells with 171,815 atomic environments, computed with CASTEP and PW91;
+  with energies, six virial components and three force components per atom it amounts to 531,710 values. On a separate
+  test set of configurations unlike the training data, the GAP's force errors have a median of about 0.025 eV/Å, an
+  order of magnitude below the analytical potentials tested.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2018silicon, locator: 'arXiv v1, Sec. II B; Table I; Fig. 3' }
+scope: { model_families: [gap], checkpoints: [si-gap-18], datasets: [si-gap18] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

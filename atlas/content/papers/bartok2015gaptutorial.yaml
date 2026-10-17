@@ -1,0 +1,16 @@
+title: 'Gaussian approximation potentials: a brief tutorial introduction'
+topic: descriptors-locality
+authors:
+  - 'Bartók, A. P.'
+  - 'Csányi, G.'
+year: 2015
+venue: International Journal of Quantum Chemistry 115, 1051
+type: review
+identifiers:
+  doi: 10.1002/qua.24927
+  arxiv: '1502.01366'
+edges:
+  - { type: extends, target: bartok2010gap, documented: true }
+  - { type: extends, target: bartok2013soap, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v2 (5 Feb 2020): Eqs. (1)–(4) (local energies and kernels), (12) (total-energy covariance), (24) (cutoff), (25)–(28) (noise), (32) (sparse solution), (36)–(44) (SOAP).' }

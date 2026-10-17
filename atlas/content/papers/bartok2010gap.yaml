@@ -1,0 +1,17 @@
+title: 'Gaussian approximation potentials: the accuracy of quantum mechanics, without the electrons'
+topic: descriptors-locality
+authors:
+  - 'Bartók, A. P.'
+  - 'Payne, M. C.'
+  - 'Kondor, R.'
+  - 'Csányi, G.'
+year: 2010
+venue: Physical Review Letters 104, 136403
+type: article
+identifiers:
+  doi: 10.1103/PhysRevLett.104.136403
+  arxiv: '0910.1019'
+edges:
+  - { type: compares-against, target: behler2007generalized, documented: true, note: 'Cites the neural-network atomic energy as the closest earlier approach with similar aims.' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v3: Eqs. (1)–(5) (local energies, delta-function density with cosine cutoff, 4D bispectrum), Fig. 1 (force errors and locality limits for C, Si, Ge).' }

@@ -1,0 +1,10 @@
+statement: >-
+  The Si GAP of 2018 is a repulsive spline pair potential plus a SOAP kernel model with cutoff 5 Å (cosine ramp of
+  1 Å), atom width σ = 0.5 Å, n_max = 10, l_max = 12, ζ = 4, δ = 3 eV and 9000 representative environments selected by
+  CUR, fitted to energies, forces and virials with default expected errors of 1 meV/atom, 0.1 eV/Å and 0.05 eV.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2018silicon, locator: 'arXiv v1, Sec. II A (Eqs. 1–8), Sec. II B, Table I' }
+scope: { model_families: [gap], checkpoints: [si-gap-18] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'n_max, l_max and the cutoff width are not stated in the arXiv text; they are read from the command line stored in the released gp_iter6_sparse9k.xml (silicon-testing-framework commit ec91b17), which also stores a 716-dimensional descriptor (13 × 55 power-spectrum components plus one).' }

@@ -1,0 +1,12 @@
+statement: >-
+  GAP writes the total energy as a sum of local energies with compact support inside a cutoff, plus optional long-range
+  terms, and regresses each local energy with a Gaussian process. Because quantum-mechanical calculations give only
+  total energies and their derivatives, the covariance of two total energies is the double sum of the kernel over the
+  atoms of both configurations, and forces and virials enter through derivatives of that covariance.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2015gaptutorial, locator: 'arXiv v2, Eqs. (1)–(4), (12), (15)–(16)' }
+  - { paper: bartok2010gap, locator: 'Eq. (1)' }
+scope: { model_families: [gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

@@ -1,0 +1,19 @@
+name: Si GAP (Bartók et al. 2018)
+family: gap
+implementation: quip-gap
+version: 'gp_iter6_sparse9k.xml (label GAP_2017_6_17_60_4_3_56_165)'
+release: { date: 2018-05-21, source: bartok2018silicon }
+elements: 1
+training:
+  - stage: training
+    dataset: si-gap18
+    level_of_theory: pw91-si-gap18
+    note: 'Total energies, forces and virials; per-configuration-type expected errors (default 1 meV/atom, 0.1 eV/Å, 0.05 eV; larger for liquid, amorphous and other types).'
+outputs: [energy, forces, stress]
+licence: 'Parameter files: no licence file in the repository (Zenodo record 10.5281/zenodo.1250555 lists "other-open"); running them needs the GAP code (ASL, non-commercial).'
+weights: { url: 'https://github.com/libAtoms/silicon-testing-framework/tree/master/models/GAP' }
+claims: [gap-si18-config, gap-si18-database, gap-variance]
+review:
+  status: draft
+  last_checked: 2026-10-17
+  notes: 'The parameter file and its sparse-point file sit in models/GAP of libAtoms/silicon-testing-framework (commit ec91b17; Zenodo v1.0, 2018-05-21). Its command line: soap l_max=12 n_max=10 atom_sigma=0.5 zeta=4 cutoff=5.0 cutoff_transition_width=1.0 central_weight=1.0 n_sparse=9000 delta=3.0 covariance_type=dot_product sparse_method=cur_points, default_sigma={0.001 0.1 0.05 0.0}, sparse_jitter=1e-8, core potential glue.xml. Later papers call this potential GAP-18 (seen in a search summary of arXiv:2005.07046, not read).'

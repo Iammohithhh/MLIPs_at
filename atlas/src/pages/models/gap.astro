@@ -1,0 +1,497 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SoapKernel from '~/islands/SoapKernel';
+import GapLab from '~/islands/GapLab';
+import SoapDegeneracy from '~/islands/SoapDegeneracy';
+import { GAP18_SOAP } from '~/lib/models/soap';
+import { getEntry } from 'astro:content';
+import type { Checkpoint, Dataset } from '~/content/schemas';
+
+const ck = (await getEntry('checkpoints', 'si-gap-18'))!.data as Checkpoint;
+const db = (await getEntry('datasets', 'si-gap18'))!.data as Dataset;
+
+const kernelAssumptions = [
+  { term: 'Environments', value: 'Monatomic lattices built from exact lattice vectors, all with the same nearest-neighbour distance d = 2.556 Å (fcc Cu’s), so only the arrangement differs: fcc, hcp (ideal c/a), bcc, simple cubic, diamond; plus fcc compressed by 3 % and fcc with every neighbour displaced by 0.1 Å Gaussian noise per component (fixed seed). One species: a multi-species SOAP uses one density per element.' },
+  { term: 'Density', value: 'A Gaussian of width σ on every neighbour inside r_c, weighted by QUIP’s cosine cutoff of width d = 1 Å, and one on the centre atom with weight 1 (as in the Si GAP).' },
+  { term: 'Power spectrum', value: 'Density coefficients c_lm(r) on 20 Gauss–Legendre radial nodes over 0 ≤ r ≤ r_c + 3σ instead of QUIP’s n_max radial functions; real spherical harmonics up to l_max. Both are discretisations of the same rotation-averaged overlap; this one is checked against the closed form to 10⁻⁸ in the tests.' },
+  { term: 'Kernel', value: 'K = (p̂·p̂′)^ζ with δ = 1, so K = 1 for identical environments. The colour shows the kernel distance √(2 − 2K) relative to the largest in the matrix.' },
+];
+const gapAssumptions = [
+  { term: 'Reference', value: 'The Stillinger–Weber potential for Si stands in for DFT, so reference energies are exact and cheap. Energies are relative to isolated atoms (SW gives 0 for an isolated atom; −4.3366 eV per atom in diamond).' },
+  { term: 'Training data', value: '8-atom cubic diamond cells (periodic), each strained isotropically by a random ε in [−ε_max, ε_max] and rattled by a random amplitude up to the chosen maximum (fixed seeds). Total energies only; the Si GAP also fits forces and virials.' },
+  { term: 'Model', value: 'SOAP with σ = 0.5 Å, r_c = 5 Å, 1 Å cosine ramp (the Si GAP’s values), l_max = 4 and 14 radial nodes (the Si GAP: l_max = 12, n_max = 10); δ = 3 eV; no pair potential; expected error σ_E = 1 meV per atom (Λ = N σ_E²); jitter 10⁻⁸ δ². Representative environments by farthest-point sampling in kernel distance (the Si GAP used CUR).' },
+  { term: 'Uncertainty', value: 'σ per atom from the Si GAP’s simplified variance (Eq. 6) with σ_e = 10⁻⁶ eV², read as a variance in eV². The band is ±2 × the mean σ over the 8 atoms. It is not calibrated.' },
+];
+const degAssumptions = [
+  { term: 'Geometry', value: 'Pozdnyakov et al.’s Fig. 1a construction: four identical neighbours on a circle of radius 2 Å around the centre, at {0, 1, 3, 4} × 45° (X⁺) and {0, 1, 2, 5} × 45° (X⁻). The gaps around the circle are 1, 2, 1, 4 and 1, 1, 3, 3 steps, so no rotation or reflection maps one onto the other.' },
+  { term: 'Features', value: 'SOAP power spectrum as in Fig. 1 (σ = 0.5 Å, r_c = 4 Å). Bispectrum: density projected on three Gaussian radial channels centred at 1.5, 2.0 and 2.5 Å (width 0.5 Å), coupled with exact real Gaunt coefficients for l ≤ 4.' },
+  { term: 'Lift', value: 'The neighbour at 0° moves out of the plane by the chosen distance in both environments.' },
+];
+---
+
+<BaseLayout
+  title="GAP and SOAP"
+  description="Gaussian approximation potentials with the SOAP kernel: local energies by sparse Gaussian-process regression on rotation-averaged density overlaps. A SOAP kernel explorer, a GAP trained live in your browser with its uncertainty, and two environments that SOAP cannot tell apart."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">GAP and SOAP</h1>
+      <p class="lede">
+        A Gaussian approximation potential (GAP) writes the energy as a sum of atomic energies, each interpolated from stored
+        quantum-mechanical results by kernel regression on the atom’s neighbourhood <Cite id="bartok2010gap" locator="Eq. (1) and text" />.
+        Its usual kernel, SOAP, compares two neighbourhoods by how much their atomic densities overlap, averaged over all
+        relative rotations <Cite id="bartok2013soap" locator="Sec. IV" />. Where a neural
+        network learns its features, GAP fixes them and learns only how much each stored environment counts, which also gives
+        every prediction a variance.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exact invariance: rotation average built into the kernel</dd></div>
+        <div><dt>Locality</dt><dd>Strictly local: one cutoff (5 Å in the Si GAP)</dd></div>
+        <div><dt>Regression</dt><dd>Sparse Gaussian process on M representative environments</dd></div>
+        <div><dt>Forces</dt><dd>Conservative: derivatives of the kernel fit</dd></div>
+        <div><dt>Introduced</dt><dd>Phys. Rev. Lett. 2010; SOAP Phys. Rev. B 2013</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/libAtoms/QUIP">QUIP / quippy</a> (GPL v2) with GAP (Academic Software Licence)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong>; the trained Si GAP is listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="local-h">
+      <h2 id="local-h" class="h-section">Local energies from a kernel</h2>
+      <p>
+        Like every interatomic potential on this site, GAP splits the energy into local terms with compact support inside a
+        cutoff, leaving electrostatics and dispersion to separate long-range terms <Cite id="bartok2015gaptutorial" locator="Eq. (1)" />:
+      </p>
+      <Math display number="1" tex={String.raw`E = \sum_i \varepsilon(\mathcal R_i) + E_{\text{long range}}, \qquad \varepsilon(\mathcal R) = \sum_{s=1}^{M} \alpha_s\, K(\mathcal R, \mathcal R_s)`} />
+      <p>
+        𝓡<sub><i>i</i></sub> is the set of neighbours of atom <i>i</i>, the <i>M</i> environments 𝓡<sub><i>s</i></sub> are
+        representative atoms chosen from the training data, and <i>K</i> measures how similar two environments are
+        <Cite id="bartok2018silicon" locator="Eq. (1)" />. In Gaussian-process language <i>K</i> is the covariance of two local
+        energies; any kernel corresponds to some set of basis functions, which never have to be written down
+        <Cite id="bartok2015gaptutorial" locator="Eqs. (2)–(7)" />. Atomic energies are not observable, so training uses the
+        covariance of total energies, the kernel summed over the atoms of both configurations, and its derivatives for forces
+        and virials <Cite id="bartok2015gaptutorial" locator="Eqs. (12)–(16)" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="soap-h">
+      <h2 id="soap-h" class="h-section">SOAP: overlapping densities</h2>
+      <p>
+        SOAP replaces each neighbour by a Gaussian, so that small displacements change the description smoothly
+        <Cite id="bartok2018silicon" locator="Eq. (2)" />:
+      </p>
+      <Math display number="2" tex={String.raw`\rho_i(\mathbf r) = \sum_{j} f_{\text{cut}}(r_{ij})\, \exp\!\left(-\frac{|\mathbf r - \mathbf r_{ij}|^2}{2\sigma_{\text{at}}^2}\right)`} />
+      <p>
+        The sum includes atom <i>i</i> itself, σ<sub>at</sub> is typically 0.5 Å, and QUIP’s cutoff function is 1 up to
+        <i>r</i><sub>c</sub> − <i>d</i>, then falls as a half cosine to zero at <i>r</i><sub>c</sub>, with <i>d</i> = 1 Å as the usual
+        choice <Cite id="bartok2015gaptutorial" locator="Eq. (24)" />. The kernel is the overlap of two densities, squared and
+        integrated over all rotations R̂, then normalised and raised to a small integer power ζ
+        <Cite id="bartok2013soap" locator="Eq. (36)" /><Cite id="bartok2018silicon" locator="Eqs. (3)–(4)" />:
+      </p>
+      <Math display number="3" tex={String.raw`\tilde k(\rho, \rho') = \int \mathrm d\hat R\, \Big| \int \mathrm d\mathbf r\, \rho(\mathbf r)\, \rho'(\hat R \mathbf r) \Big|^2, \qquad K(\rho, \rho') = \delta^2 \left(\frac{\tilde k(\rho, \rho')}{\sqrt{\tilde k(\rho, \rho)\, \tilde k(\rho', \rho')}}\right)^{\zeta}`} />
+      <p>
+        Expanding each density in radial functions and spherical harmonics, with coefficients <i>c</i><sub><i>nlm</i></sub>,
+        turns the rotation integral into a dot product. The vector is the <em>power spectrum</em>
+        <Cite id="bartok2013soap" locator="Eqs. (37)–(40)" /><Cite id="bartok2015gaptutorial" locator="Eqs. (42)–(44)" />:
+      </p>
+      <Math display number="4" tex={String.raw`p_{nn'l} = \frac{1}{\sqrt{2l+1}} \sum_{m=-l}^{l} c_{nlm}\, c_{n'lm}, \qquad K(\rho, \rho') = \delta^2 \left(\hat{\mathbf p} \cdot \hat{\mathbf p}'\right)^{\zeta}, \quad \hat{\mathbf p} = \mathbf p / |\mathbf p|`} />
+      <p>
+        A product of two density coefficients is a sum over pairs of neighbours, so <i>p</i> is a function of triangles: two
+        distances from the centre and the angle between them. SOAP is the SO(3) power spectrum with Gaussian densities and a
+        dot-product kernel <Cite id="bartok2013soap" locator="Sec. IV B" />. The exponent ζ makes the regression nonlinear in these
+        three-body features; ζ = 4 in the Si GAP, where δ = 3 eV sets the energy scale <Cite id="bartok2018silicon" locator="Sec. II A" />.
+      </p>
+      <Callout kind="derivation" title="The rotation average in closed form">
+        <p id="haar-derivation">
+          Expand a Gaussian about a neighbour at <b>r</b><sub><i>j</i></sub> using
+          exp(<i>z</i> cos γ) = 4π Σ<sub><i>lm</i></sub> <i>i</i><sub><i>l</i></sub>(<i>z</i>) <i>Y</i><sub><i>lm</i></sub>(r̂) <i>Y</i><sub><i>lm</i></sub>(r̂<sub><i>j</i></sub>),
+          with <i>i</i><sub><i>l</i></sub> the modified spherical Bessel function and α = 1/(2σ<sub>at</sub><sup>2</sup>):
+        </p>
+        <Math display tex={String.raw`\rho(r\hat{\mathbf r}) = \sum_{lm} c_{lm}(r)\, Y_{lm}(\hat{\mathbf r}), \qquad c_{lm}(r) = 4\pi \sum_j f_{\text{cut}}(r_j)\, e^{-\alpha (r^2 + r_j^2)}\, i_l(2\alpha r r_j)\, Y_{lm}(\hat{\mathbf r}_j)`} />
+        <p>
+          A rotation mixes the 2<i>l</i> + 1 coefficients of each <i>l</i> by an orthogonal Wigner matrix, and averaged over
+          rotations (normalised measure) the product of two Wigner matrix elements leaves δ’s divided by 2<i>l</i> + 1. So
+        </p>
+        <Math display tex={String.raw`\tilde k = \sum_l \frac{1}{2l+1} \iint r^2 r'^2\, \mathrm dr\, \mathrm dr'\; p_l(r, r')\, p'_l(r, r'), \qquad p_l(r, r') = \sum_m c_{lm}(r)\, c_{lm}(r')`} />
+        <p>
+          which is Eq. (4) with the radial index on a grid. The radial integrals can also be done exactly, using
+          ∫<sub>0</sub><sup>∞</sup> <i>r</i><sup>2</sup> e<sup>−<i>pr</i><sup>2</sup></sup> <i>i</i><sub><i>l</i></sub>(<i>ar</i>) <i>i</i><sub><i>l</i></sub>(<i>br</i>) d<i>r</i>
+          = (1/4<i>p</i>) √(π/<i>p</i>) e<sup>(<i>a</i><sup>2</sup>+<i>b</i><sup>2</sup>)/4<i>p</i></sup> <i>i</i><sub><i>l</i></sub>(<i>ab</i>/2<i>p</i>);
+          this reproduces the pairwise form of the 2013 paper <Cite id="bartok2013soap" locator="Eq. (33)" />. The figures use the
+          radial grid; <code>soap.test.ts</code> checks it against the closed form and against a direct Monte Carlo average of
+          the squared overlap over 40,000 random rotations.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="How similar are two crystal sites?" labels={['live-calculation']} number={1} id="fig-kernel" framed={false}>
+        <SoapKernel client:visible />
+        <Fragment slot="caption">
+          Seven environments with the same nearest-neighbour distance, compared by the SOAP kernel. The 3D view shows the row
+          environment: neighbours as spheres of radius σ, fading through the cutoff ramp between the two shells. With the Si GAP’s
+          σ and cutoff, fcc and hcp are close but distinct, and a 0.1 Å rattle moves fcc less than switching to hcp. The bars show
+          how the power spectrum’s weight is spread over angular channels.
+        </Fragment>
+        <Assumptions slot="assumptions" items={kernelAssumptions} />
+        <Fragment slot="source">Kernel as in <Cite id="bartok2013soap" locator="Eqs. (36)–(40)" /> and <Cite id="bartok2018silicon" locator="Eqs. (2)–(8)" />. Computed in your browser by <code>src/lib/models/soap.ts</code>; invariance, the closed form and the Haar average are tested in <code>soap.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="sparse-h">
+      <h2 id="sparse-h" class="h-section">Fitting: a sparse Gaussian process</h2>
+      <p>
+        A full Gaussian process would need one kernel column per atom of the training set. GAP instead projects onto
+        <i>M</i> representative environments. With <b>y</b> the training energies (and forces and virials), <b>L</b> the linear
+        operator that turns atomic energies into those observations, and <b>Λ</b> the diagonal matrix of their expected errors,
+        the coefficients of Eq. (1) are <Cite id="bartok2018silicon" locator="Eq. (9)" /><Cite id="bartok2015gaptutorial" locator="Eq. (32)" />
+      </p>
+      <Math display number="5" tex={String.raw`\boldsymbol\alpha = \left(\mathbf K_{MM} + \mathbf K_{MN} \mathbf L\, \boldsymbol\Lambda^{-1} \mathbf L^{\mathsf T} \mathbf K_{NM}\right)^{-1} \mathbf K_{MN} \mathbf L\, \boldsymbol\Lambda^{-1} \mathbf y`} />
+      <p>
+        The work of a prediction then grows with <i>M</i>, not with the size of the data
+        <Cite id="bartok2015gaptutorial" locator="Sparsification" />. The expected errors are not only numerical noise in DFT: they also
+        absorb what a local model with a finite cutoff cannot represent, and they can differ by configuration type
+        <Cite id="bartok2018silicon" locator="Sec. II A; Table I" />. The Bayesian reading gives a variance as well. The Si GAP uses
+        a simplified per-atom form <Cite id="bartok2018silicon" locator="Eq. (10)" />,
+      </p>
+      <Math display number="6" tex={String.raw`\sigma^2(\mathcal R_i) = K(\mathcal R_i, \mathcal R_i) - \mathbf k^{\mathsf T} \left(\mathbf K_{MM} + \sigma_e \mathbf I\right)^{-1} \mathbf k, \qquad k_s = K(\mathcal R_i, \mathcal R_s)`} />
+      <p>
+        read by the authors as the square of a one-sigma error bar on the atomic energy. No training energy appears in Eq. (6): it
+        says how far an environment is from the representative set, not how wrong the fit is there. Figure 2 trains a small
+        GAP from scratch to show both sides.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Train a GAP, then leave its data" labels={['toy-model', 'live-calculation']} number={2} id="fig-gap" framed={false}>
+        <GapLab client:visible />
+        <Fragment slot="caption">
+          A GAP fitted in your browser to the total energies of strained and rattled 8-atom silicon cells, with the
+          Stillinger–Weber potential as the reference. Inside the training range (shaded) it is accurate to a meV per atom or better.
+          Beyond it the error rises by orders of magnitude and the per-atom σ of Eq. (6) rises with it, but the two are not equal:
+          σ flags unfamiliar environments, it does not measure the error.
+        </Fragment>
+        <Assumptions slot="assumptions" items={gapAssumptions} />
+        <Fragment slot="source">Fit and variance from <Cite id="bartok2018silicon" locator="Eqs. (1), (8)–(10)" /> and <Cite id="bartok2015gaptutorial" locator="Eq. (32)" />; reference potential <Cite id="stillinger1985sw" />. Computed in your browser by <code>src/lib/models/gap.ts</code> (tests in <code>gap.test.ts</code>: training error, held-out cells, exact interpolation limit, σ growth away from the data).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="deg-h">
+      <h2 id="deg-h" class="h-section">What three-body features cannot see</h2>
+      <p>
+        Because the power spectrum is built from triangles, it was widely believed to identify an environment uniquely, up to
+        rotations and permutations of like atoms. Pozdnyakov et al. showed that it does not. Two environments with four
+        neighbours on a circle can share all distances and angles and still not be superimposable, and for four or more
+        neighbours such pairs form a manifold of codimension 2 in configuration space. The bispectrum, a four-body descriptor,
+        lifts this example but has degenerate pairs of its own <Cite id="pozdnyakov2020completeness" locator="Fig. 1; Figs. 2e–f; text" />.
+        The same applies to Behler–Parrinello symmetry functions, which rest on the same unordered sets of triangles
+        <Cite id="pozdnyakov2020completeness" locator="text after Fig. 4" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Same triangles, different environments" labels={['live-calculation']} number={3} id="fig-degenerate" framed={false}>
+        <SoapDegeneracy client:visible />
+        <Fragment slot="caption">
+          The pair of Pozdnyakov et al.’s Fig. 1a, rebuilt and compared live. In the plane every power-spectrum component of X⁺
+          and X⁻ agrees to rounding error, whatever the angular resolution; a four-body invariant separates them. Lift one
+          neighbour out of the plane and the power spectrum sees the difference too: exact degeneracy needs special geometry,
+          but nearby environments are compressed together in feature space.
+        </Fragment>
+        <Assumptions slot="assumptions" items={degAssumptions} />
+        <Fragment slot="source">Construction from <Cite id="pozdnyakov2020completeness" locator="Fig. 1a" />. Computed in your browser by <code>src/lib/models/soap.ts</code>; equal angle lists, non-congruence, identical power spectra, different bispectra and rotation invariance are tested in <code>soap.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="deg2-h">
+      <p>
+        The degenerate set is thin, but it distorts feature space around it and hinders regression whether or not degenerate
+        pairs are in the training set <Cite id="pozdnyakov2020completeness" locator="text after Fig. 2" />. For CH<sub>4</sub>, a GPR model on the carbon-centred
+        SOAP power spectrum had errors far from zero not only on the degenerate line but around it, while adding hydrogen-centred
+        environments or the bispectrum cut the error by orders of magnitude <Cite id="pozdnyakov2020completeness" locator="Fig. 3" />.
+        Summing many atom-centred terms into a total energy mitigates, but does not remove, the problem
+        <Cite id="pozdnyakov2020completeness" locator="Abstract" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="gp-int" checked />
+        <label for="gp-int">Intuition</label>
+        <input type="radio" name="depth" id="gp-tech" />
+        <label for="gp-tech">Technical</label>
+        <input type="radio" name="depth" id="gp-res" />
+        <label for="gp-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Blur every neighbour into a small cloud. Two atoms have similar surroundings when their clouds overlap well, however
+            one of them is turned. GAP stores a few thousand typical atoms with a weight each, and predicts the energy of a new
+            atom by how much it resembles each stored one. When it resembles none of them, the model says so: its uncertainty
+            grows.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Eq. (1) is kernel regression; with a Gaussian prior on the weights it is a Gaussian process whose covariance is
+            the kernel, and with the norm αᵀ<b>K</b>α it is the same as kernel ridge regression
+            <Cite id="bartok2015gaptutorial" locator="Eqs. (2)–(11)" />. SOAP’s rotation average makes the kernel exactly
+            invariant, the Gaussians make it smooth, and normalisation fixes K(ρ, ρ) = δ², so every environment has the same prior
+            variance. Forces
+            follow from derivatives of the kernel, so the potential is conservative. Fitting is one linear solve (Eq. 5) of size
+            <i>M</i>; in the Si GAP, <i>M</i> = 9000 and the data are 531,710 energies, force components and virial components
+            <Cite id="bartok2018silicon" locator="Sec. II B" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            The power spectrum is the three-body member of a hierarchy of density correlations: the bispectrum is four-body and
+            ACE’s products of density coefficients reach any body order (see <a href="/models/grace/">GRACE</a>). Raising the
+            normalised kernel to ζ makes the model nonlinear in the power spectrum, but any function of the power spectrum still
+            gives one prediction for both environments of Fig. 3, so the degenerate manifolds bound what such a model can learn
+            <Cite id="pozdnyakov2020completeness" locator="text after Fig. 2" />. Two properties set GAP apart from the neural
+            families on this site: a variance for every prediction (Eq. 6) and a fit that is a single linear solve (Eq. 5), whose
+            size grows with the number of representative environments.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and virial stress as derivatives, and a predicted variance per atomic energy
+        <Cite id="bartok2018silicon" locator="Sec. II A, Eq. (10)" />. A GAP can combine several kernels on different descriptors,
+        for instance two-body, three-body and many-body terms with prior variances chosen to reflect their expected share of the
+        energy <Cite id="bartok2015gaptutorial" locator="Eqs. (18)–(21)" />. The Si GAP adds a fixed repulsive pair potential fitted to
+        the DFT dimer, so that the steep exchange repulsion is not left to the kernel <Cite id="bartok2018silicon" locator="Sec. II A" />.
+        There is no electrostatic term in the SOAP model itself.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Interactions end at the cutoff, so no GAP of this kind has image charges, Coulomb
+        tails or LO–TO splitting (<a href="/physics-lab/ewald/">P6</a>; <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>).
+        Even short-range forces have a floor: the force on an atom varies with atoms outside its cutoff, which bounds the error of
+        any local model <Cite id="bartok2010gap" locator="Fig. 1" />; for a 5 Å cutoff in diamond Si this is about 0.1 eV/Å, and larger
+        for metallic β-Sn <Cite id="bartok2018silicon" locator="Sec. II C" />. The SOAP power spectrum cannot separate some distinct
+        environments (Fig. 3). The variance of Eq. (6) measures novelty relative to the representative set, so it can be small where
+        the training data were themselves inadequate.
+      </p>
+      <p>
+        <strong>From a fitted model.</strong> A GAP knows what its database contains. The Si GAP’s authors state that their database
+        is not complete and that, for applications well represented in it, accuracy can only improve with a larger cutoff and more
+        data <Cite id="bartok2018silicon" locator="Sec. II C" />. Kernel models also cost more per atom as <i>M</i> grows, since every
+        prediction evaluates <i>M</i> kernels.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Model</th><th>Training data</th><th>SOAP</th><th>Kernel</th><th>Representative environments</th><th>Files</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck.name}</td>
+              <td>{db.name}: {db.size?.structures.toLocaleString('en')} cells (PW91)</td>
+              <td>r<sub>c</sub> = {GAP18_SOAP.rc} Å, σ = {GAP18_SOAP.sigma} Å, n<sub>max</sub> = {GAP18_SOAP.nmax}, l<sub>max</sub> = {GAP18_SOAP.lmax}</td>
+              <td>ζ = {GAP18_SOAP.zeta}, δ = {GAP18_SOAP.delta} eV</td>
+              <td>{GAP18_SOAP.nSparse.toLocaleString('en')} (CUR)</td>
+              <td><a href={ck.weights?.url}>parameter files</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Settings read from the command line stored in the released parameter file <code>gp_iter6_sparse9k.xml</code>; the paper
+        gives σ, ζ, δ and <i>M</i> <Cite id="bartok2018silicon" locator="Sec. II A–B" />. The file stores a {GAP18_SOAP.dims}-component
+        descriptor: (l<sub>max</sub> + 1) × n<sub>max</sub>(n<sub>max</sub> + 1)/2 = 13 × 55 = 715 power-spectrum components plus one.
+        Weights licence: {ck.licence} GAP models are usually fitted for one system rather than released as foundation models; more
+        will be recorded here as they are checked.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/behler-parrinello/">Behler–Parrinello</a> networks also use fixed three-body descriptors but regress with
+        neural networks. <a href="/models/grace/">ACE and GRACE</a> extend the density expansion to every body order with linear
+        coefficients. <a href="/models/mace/">MACE</a> builds the same density products as many-body messages.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The original GAP letter: <Cite id="bartok2010gap" />.</li>
+        <li>SOAP, the power spectrum and the bispectrum: <Cite id="bartok2013soap" />.</li>
+        <li>A tutorial on GAP fitting with total energies, derivatives and sparsification: <Cite id="bartok2015gaptutorial" />.</li>
+        <li>The general-purpose Si GAP and its tests: <Cite id="bartok2018silicon" />; files and tests in <a href="https://github.com/libAtoms/silicon-testing-framework">libAtoms/silicon-testing-framework</a>.</li>
+        <li>Degenerate environments for three- and four-body descriptors: <Cite id="pozdnyakov2020completeness" />.</li>
+        <li>Code: <a href="https://github.com/libAtoms/QUIP">QUIP / quippy</a> and <a href="https://github.com/libAtoms/GAP">GAP</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #gp-int:checked ~ .depth-int,
+  #gp-tech:checked ~ .depth-tech,
+  #gp-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

@@ -1,0 +1,20 @@
+title: Incompleteness of atomic structure representations
+topic: descriptors-locality
+authors:
+  - 'Pozdnyakov, S. N.'
+  - 'Willatt, M. J.'
+  - 'Bartók, A. P.'
+  - 'Ortner, C.'
+  - 'Csányi, G.'
+  - 'Ceriotti, M.'
+year: 2020
+venue: Physical Review Letters 125, 166001
+type: article
+identifiers:
+  doi: 10.1103/PhysRevLett.125.166001
+  arxiv: '2001.11696'
+edges:
+  - { type: responds-to, target: bartok2013soap, documented: true }
+  - { type: responds-to, target: behler2011symmetry, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read arXiv v2 (titled "On the completeness of atomic structure representations"): Fig. 1 (degenerate pairs), Figs. 2–3 (CH4 manifolds, GPR errors), text on bispectrum incompleteness. Title as published in PRL.' }

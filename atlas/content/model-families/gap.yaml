@@ -1,0 +1,16 @@
+name: Gaussian approximation potential (GAP) with SOAP
+aliases: [GAP, SOAP-GAP, Gaussian approximation potential]
+paradigms: [descriptor-regression]
+introduced_in: bartok2010gap
+year: 2010
+summary: >-
+  The total energy is a sum of local energies, each a sparse Gaussian-process (kernel) regression on the atom's
+  environment, fitted to total energies, forces and virials. Environments are compared with the SOAP kernel, the
+  rotation-averaged overlap of two neighbour densities built from Gaussians, normalised and raised to a power ζ; it is a
+  dot product of power spectra, a three-body descriptor. Every prediction comes with a variance.
+locality: { kind: strictly-local, note: 'One cutoff per descriptor (5 Å for SOAP in the Si GAP of 2018), with a cosine ramp of width 1 Å.' }
+symmetry: invariant
+body_order: 'SOAP power spectrum: three-body features (the kernel power ζ makes the regression many-body in them); two- and three-body descriptors can be added as separate kernels.'
+implementations: [quip-gap]
+claims: [gap-local-kernel-regression, soap-kernel-power-spectrum, gap-sparse-solution, gap-variance, soap-power-spectrum-degeneracy, gap-si18-config, gap-si18-database, gap-locality-limit]
+review: { status: draft, last_checked: 2026-10-17, notes: 'Read the 2010 GAP letter, the 2013 SOAP paper, the 2015 tutorial and the 2018 Si paper (arXiv full texts), Pozdnyakov et al. 2020, and the released Si parameter file.' }

@@ -103,6 +103,610 @@
    "referenced_works": []
   }
  },
+ "bartok2010gap": {
+  "arxiv": {
+   "authors": [
+    "Albert P. Bartók",
+    "Mike C. Payne",
+    "Risi Kondor",
+    "Gábor Csányi"
+   ],
+   "id": "0910.1019v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2009-10-06",
+   "title": "Gaussian Approximation Potentials: the accuracy of quantum mechanics, without the electrons",
+   "updated": "2009-12-07"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2010; fetched [2009, 2010]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bartók, A. P.' vs fetched ['bartok', 'bartok']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized"
+  ],
+  "crossref": {
+   "article_number": "136403",
+   "authors": [
+    {
+     "family": "Bartók",
+     "given": "Albert P."
+    },
+    {
+     "family": "Payne",
+     "given": "Mike C."
+    },
+    {
+     "family": "Kondor",
+     "given": "Risi"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    }
+   ],
+   "container": "Physical Review Letters",
+   "doi": "10.1103/physrevlett.104.136403",
+   "issue": "13",
+   "page": null,
+   "title": "Gaussian Approximation Potentials: The Accuracy of Quantum Mechanics, without the Electrons",
+   "type": "journal-article",
+   "volume": "104",
+   "year": 2010
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 3123,
+   "id": "W2083415705",
+   "publication_year": 2010,
+   "referenced_works": [
+    "W1502922572",
+    "W1520120563",
+    "W1579533523",
+    "W1607198972",
+    "W1645422644",
+    "W1647376582",
+    "W1746819321",
+    "W1979408061",
+    "W1984768526",
+    "W1999215959",
+    "W2001415212",
+    "W2002716490",
+    "W2005944647",
+    "W2006009797",
+    "W2018650755",
+    "W2025274238",
+    "W2025444507",
+    "W2035346756",
+    "W2051382106",
+    "W2056403786",
+    "W2098432400",
+    "W2140884041",
+    "W2159752439",
+    "W2415374455",
+    "W2947000318",
+    "W2990138404",
+    "W3140968660",
+    "W4211049957",
+    "W4213223317"
+   ]
+  }
+ },
+ "bartok2013soap": {
+  "arxiv": {
+   "authors": [
+    "Albert P. Bartók",
+    "Risi Kondor",
+    "Gábor Csányi"
+   ],
+   "id": "1209.3140v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2012-09-14",
+   "title": "On representing chemical environments",
+   "updated": "2013-03-20"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2013; fetched [2012, 2013]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bartók, A. P.' vs fetched ['bartok', 'bartok']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "behler2007generalized",
+   "behler2011symmetry"
+  ],
+  "crossref": {
+   "article_number": "184115",
+   "authors": [
+    {
+     "family": "Bartók",
+     "given": "Albert P."
+    },
+    {
+     "family": "Kondor",
+     "given": "Risi"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.87.184115",
+   "issue": "18",
+   "page": null,
+   "title": "On representing chemical environments",
+   "type": "journal-article",
+   "volume": "87",
+   "year": 2013
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 2556,
+   "id": "W2029413789",
+   "publication_year": 2013,
+   "referenced_works": [
+    "W179392144",
+    "W1579533523",
+    "W1600418041",
+    "W1607198972",
+    "W1635256758",
+    "W1964882117",
+    "W1966295044",
+    "W1966432511",
+    "W1966968029",
+    "W1967108496",
+    "W1975997599",
+    "W1979030522",
+    "W1979408061",
+    "W1986350436",
+    "W1986912357",
+    "W1989805067",
+    "W1993191606",
+    "W1993485325",
+    "W1996993578",
+    "W1998860313",
+    "W2000957843",
+    "W2013580289",
+    "W2014567599",
+    "W2015541791",
+    "W2017891892",
+    "W2021891874",
+    "W2022568518",
+    "W2023401924",
+    "W2023915622",
+    "W2025444507",
+    "W2027049592",
+    "W2045648661",
+    "W2048715654",
+    "W2052615508",
+    "W2053117030",
+    "W2054063254",
+    "W2060410316",
+    "W2061179540",
+    "W2063686375",
+    "W2072411508",
+    "W2083415705",
+    "W2083956694",
+    "W2085765555",
+    "W2090004196",
+    "W2092204065",
+    "W2093526634",
+    "W2104489082",
+    "W2118689184",
+    "W2130437470",
+    "W2132223912",
+    "W2135827618",
+    "W2137262074",
+    "W2140053963",
+    "W2150071897",
+    "W2242243803",
+    "W2316524229",
+    "W2950674591",
+    "W3099108283",
+    "W4213223317",
+    "W4230324145"
+   ]
+  }
+ },
+ "bartok2015gaptutorial": {
+  "arxiv": {
+   "authors": [
+    "Albert P. Bartók",
+    "Gábor Csányi"
+   ],
+   "id": "1502.01366v2",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2015-02-04",
+   "title": "Gaussian Approximation Potentials: a brief tutorial introduction",
+   "updated": "2020-02-05"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2015; fetched [2015]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bartók, A. P.' vs fetched ['bartok', 'bartok']"
+   }
+  ],
+  "cites": [
+   "bartok2013soap",
+   "behler2007generalized",
+   "stillinger1985sw"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Bartók",
+     "given": "Albert P."
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    }
+   ],
+   "container": "International Journal of Quantum Chemistry",
+   "doi": "10.1002/qua.24927",
+   "issue": "16",
+   "page": "1051-1057",
+   "title": "<scp>G</scp>aussian approximation potentials: A brief tutorial introduction",
+   "type": "journal-article",
+   "volume": "115",
+   "year": 2015
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 613,
+   "id": "W1978183953",
+   "publication_year": 2015,
+   "referenced_works": [
+    "W1560724230",
+    "W1567512734",
+    "W1571870753",
+    "W1607198972",
+    "W1972135189",
+    "W1979408061",
+    "W1998260904",
+    "W2025444507",
+    "W2029413789",
+    "W2037782625",
+    "W2058370262",
+    "W2063007245",
+    "W2095516151",
+    "W2104489082",
+    "W2312528888",
+    "W2990138404",
+    "W3140968660",
+    "W3144619878",
+    "W4211049957"
+   ]
+  }
+ },
+ "bartok2018silicon": {
+  "arxiv": {
+   "authors": [
+    "Albert P. Bartok",
+    "James Kermode",
+    "Noam Bernstein",
+    "Gabor Csanyi"
+   ],
+   "id": "1805.01568v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2018-05-03",
+   "title": "Machine learning a general purpose interatomic potential for silicon",
+   "updated": "2018-05-03"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2018; fetched [2018]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bartók, A. P.' vs fetched ['bartok', 'bartok']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "bartok2015gaptutorial",
+   "behler2007generalized",
+   "schutt2018schnet",
+   "stillinger1985sw",
+   "zhang2018deepmd"
+  ],
+  "crossref": {
+   "article_number": "041048",
+   "authors": [
+    {
+     "family": "Bartók",
+     "given": "Albert P."
+    },
+    {
+     "family": "Kermode",
+     "given": "James"
+    },
+    {
+     "family": "Bernstein",
+     "given": "Noam"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    }
+   ],
+   "container": "Physical Review X",
+   "doi": "10.1103/physrevx.8.041048",
+   "issue": "4",
+   "page": null,
+   "title": "Machine Learning a General-Purpose Interatomic Potential for Silicon",
+   "type": "journal-article",
+   "volume": "8",
+   "year": 2018
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 471,
+   "id": "W2800301423",
+   "publication_year": 2018,
+   "referenced_works": [
+    "W26088913",
+    "W55912154",
+    "W832976576",
+    "W1520120563",
+    "W1531674615",
+    "W1537320059",
+    "W1571870753",
+    "W1584846110",
+    "W1596185547",
+    "W1602127108",
+    "W1772769290",
+    "W1816466342",
+    "W1865667476",
+    "W1964081167",
+    "W1964820753",
+    "W1964882117",
+    "W1965287289",
+    "W1970571366",
+    "W1971044734",
+    "W1971920777",
+    "W1972135189",
+    "W1972382242",
+    "W1973019260",
+    "W1973318095",
+    "W1974672343",
+    "W1976258195",
+    "W1978183953",
+    "W1978538703",
+    "W1979004349",
+    "W1979408061",
+    "W1980882915",
+    "W1983077902",
+    "W1983912717",
+    "W1986028710",
+    "W1986483589",
+    "W1986912357",
+    "W1987274641",
+    "W1987577630",
+    "W1992442681",
+    "W1993863601",
+    "W1995955548",
+    "W1998260904",
+    "W1998459222",
+    "W1998866028",
+    "W1998894799",
+    "W2000957843",
+    "W2002162440",
+    "W2004165324",
+    "W2004419921",
+    "W2007000597",
+    "W2012345033",
+    "W2016197031",
+    "W2017447741",
+    "W2018701784",
+    "W2019465613",
+    "W2021068311",
+    "W2021562775",
+    "W2025444507",
+    "W2026684305",
+    "W2027413169",
+    "W2028938338",
+    "W2029413789",
+    "W2030454524",
+    "W2031430816",
+    "W2033187512",
+    "W2033206800",
+    "W2034094514",
+    "W2035047819",
+    "W2035817882",
+    "W2036016904",
+    "W2036034530",
+    "W2036113194",
+    "W2037637323",
+    "W2037782625",
+    "W2039959185",
+    "W2043712657",
+    "W2043807583",
+    "W2043964180",
+    "W2045273690",
+    "W2046001409",
+    "W2051382106",
+    "W2053107051",
+    "W2053549579",
+    "W2055400640",
+    "W2055432682",
+    "W2055934415",
+    "W2057858097",
+    "W2059295501",
+    "W2060410316",
+    "W2061179540",
+    "W2061291529",
+    "W2061846512",
+    "W2062810454",
+    "W2062811765",
+    "W2062896489",
+    "W2064489628",
+    "W2065754910",
+    "W2071267590",
+    "W2073022234",
+    "W2073413952",
+    "W2076605490",
+    "W2078323060",
+    "W2078678909",
+    "W2080635178",
+    "W2082144555",
+    "W2083415705",
+    "W2083956694",
+    "W2085312955",
+    "W2088621693",
+    "W2092204065",
+    "W2095198441",
+    "W2095516151",
+    "W2097153055",
+    "W2104489082",
+    "W2108461878",
+    "W2128157605",
+    "W2128873947",
+    "W2139062161",
+    "W2140884041",
+    "W2141696759",
+    "W2141852676",
+    "W2147415793",
+    "W2148603752",
+    "W2153483479",
+    "W2159752439",
+    "W2164805481",
+    "W2197007850",
+    "W2200589053",
+    "W2225949634",
+    "W2310703973",
+    "W2312528888",
+    "W2312878083",
+    "W2316524229",
+    "W2326919640",
+    "W2337338982",
+    "W2337496963",
+    "W2346312840",
+    "W2406696299",
+    "W2415374455",
+    "W2482265744",
+    "W2509678043",
+    "W2514794892",
+    "W2524910928",
+    "W2527189750",
+    "W2530960271",
+    "W2541404351",
+    "W2547447472",
+    "W2551595960",
+    "W2566573083",
+    "W2566642125",
+    "W2574215409",
+    "W2582607092",
+    "W2585189033",
+    "W2593724699",
+    "W2594340878",
+    "W2600764488",
+    "W2601081289",
+    "W2603068161",
+    "W2609382539",
+    "W2617604238",
+    "W2619773496",
+    "W2620687153",
+    "W2650911154",
+    "W2725390203",
+    "W2725771565",
+    "W2727229501",
+    "W2728984672",
+    "W2730802076",
+    "W2736064465",
+    "W2736528612",
+    "W2742127985",
+    "W2744546448",
+    "W2746244909",
+    "W2749006386",
+    "W2751979200",
+    "W2752773318",
+    "W2753962198",
+    "W2757878424",
+    "W2759315951",
+    "W2761704992",
+    "W2761947594",
+    "W2764105275",
+    "W2764267192",
+    "W2765459427",
+    "W2765910566",
+    "W2765966278",
+    "W2766518642",
+    "W2767229396",
+    "W2769775068",
+    "W2772764871",
+    "W2774180927",
+    "W2778051509",
+    "W2780173879",
+    "W2783428669",
+    "W2785434749",
+    "W2788317900",
+    "W2788873578",
+    "W2790176708",
+    "W2792137452",
+    "W2792407267",
+    "W2795523124",
+    "W2799063346",
+    "W2963048569",
+    "W2963784900",
+    "W2964186609",
+    "W2964294860",
+    "W2990138404",
+    "W3100156508",
+    "W3102449990",
+    "W3206606417",
+    "W4211049957",
+    "W4212863985",
+    "W4232148735"
+   ]
+  }
+ },
  "batatia2022mace": {
   "arxiv": {
    "authors": [
@@ -261,6 +865,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2018silicon",
    "batzner2022nequip",
    "behler2007generalized",
    "bochkarev2024grace",
@@ -977,6 +1583,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "drautz2019ace",
    "gasteiger2020dimenet",
@@ -1213,6 +1820,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized"
   ],
   "crossref": {
@@ -1577,6 +2185,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
@@ -1860,6 +2470,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "gasteiger2020dimenet"
   ],
   "crossref": null,
@@ -2023,6 +2634,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "schutt2017schnet",
    "zhang2018deepmd"
@@ -2147,12 +2759,15 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
    "fu2022forces",
    "musaelian2023allegro",
+   "pozdnyakov2020completeness",
    "schutt2017schnet",
    "wang2018deepmdkit"
   ],
@@ -2257,6 +2872,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "batzner2022nequip",
    "behler2007generalized",
    "cheng2024cace",
@@ -2736,6 +3353,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "stillinger1985sw"
   ],
@@ -4157,6 +4776,7 @@
   ],
   "cites": [
    "barrosoluque2024omat24",
+   "bartok2010gap",
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",
@@ -4318,6 +4938,7 @@
   ],
   "cites": [
    "barrosoluque2024omat24",
+   "bartok2010gap",
    "batzner2022nequip",
    "behler2007generalized",
    "chen2022m3gnet",
@@ -4499,6 +5120,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "batzner2022nequip",
    "behler2007generalized",
    "cheng2024cace",
@@ -4508,6 +5130,7 @@
    "eastman2022spice",
    "gonze1997dfpt",
    "ko2021fourth",
+   "pozdnyakov2020completeness",
    "prodan2005nearsightedness",
    "rappe1991qeq"
   ],
@@ -4650,6 +5273,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "behler2011symmetry",
    "drautz2019ace",
@@ -4972,6 +5596,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",
@@ -5163,6 +5788,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "chanussot2020oc20",
    "deng2023chgnet",
@@ -5354,6 +5980,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
@@ -5638,6 +6266,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "batzner2022nequip",
    "behler2007generalized",
    "chen2022m3gnet",
@@ -5857,6 +6486,134 @@
    "referenced_works": []
   }
  },
+ "pozdnyakov2020completeness": {
+  "arxiv": {
+   "authors": [
+    "Sergey N. Pozdnyakov",
+    "Michael J. Willatt",
+    "Albert P. Bartók",
+    "Christoph Ortner",
+    "Gábor Csányi",
+    "Michele Ceriotti"
+   ],
+   "id": "2001.11696v2",
+   "primary_category": "physics.chem-ph",
+   "published": "2020-01-31",
+   "title": "On the Completeness of Atomic Structure Representations",
+   "updated": "2020-06-05"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2020; fetched [2020]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Pozdnyakov, S. N.' vs fetched ['pozdnyakov', 'pozdnyakov']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "bartok2018silicon",
+   "behler2007generalized",
+   "drautz2019ace"
+  ],
+  "crossref": {
+   "article_number": "166001",
+   "authors": [
+    {
+     "family": "Pozdnyakov",
+     "given": "Sergey N."
+    },
+    {
+     "family": "Willatt",
+     "given": "Michael J."
+    },
+    {
+     "family": "Bartók",
+     "given": "Albert P."
+    },
+    {
+     "family": "Ortner",
+     "given": "Christoph"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    },
+    {
+     "family": "Ceriotti",
+     "given": "Michele"
+    }
+   ],
+   "container": "Physical Review Letters",
+   "doi": "10.1103/physrevlett.125.166001",
+   "issue": "16",
+   "page": null,
+   "title": "Incompleteness of Atomic Structure Representations",
+   "type": "journal-article",
+   "volume": "125",
+   "year": 2020
+  },
+  "fetched": "2026-10-17",
+  "openalex": {
+   "cited_by_count": 197,
+   "id": "W3003838176",
+   "publication_year": 2020,
+   "referenced_works": [
+    "W26088913",
+    "W1964882117",
+    "W1970595491",
+    "W1972135189",
+    "W1980666386",
+    "W2025444507",
+    "W2029413789",
+    "W2051376093",
+    "W2079698839",
+    "W2083415705",
+    "W2105616783",
+    "W2141696759",
+    "W2146179131",
+    "W2197007850",
+    "W2254735683",
+    "W2514794892",
+    "W2527189750",
+    "W2566573083",
+    "W2585152223",
+    "W2610514561",
+    "W2614157797",
+    "W2620687153",
+    "W2757878424",
+    "W2761704992",
+    "W2765966278",
+    "W2777227381",
+    "W2780173879",
+    "W2782772320",
+    "W2792348590",
+    "W2793179281",
+    "W2795523124",
+    "W2800301423",
+    "W2889703828",
+    "W2891523768",
+    "W2900483837",
+    "W2910857709",
+    "W2913034365",
+    "W2955413888",
+    "W2991533556",
+    "W3012140320",
+    "W4212774754",
+    "W4308897973"
+   ]
+  }
+ },
  "pozdnyakov2022incompleteness": {
   "arxiv": {
    "authors": [
@@ -5887,9 +6644,12 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "behler2011symmetry",
    "drautz2019ace",
+   "pozdnyakov2020completeness",
    "schutt2018schnet"
   ],
   "crossref": {
@@ -6402,6 +7162,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "behler2011symmetry"
   ],
@@ -6479,6 +7241,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "behler2011symmetry"
   ],
@@ -6605,6 +7369,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "behler2011symmetry",
    "schutt2018schnet",
@@ -7470,6 +8235,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "zhang2018deepmd"
   ],
@@ -7865,6 +8632,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "stillinger1985sw",
    "wang2018deepmdkit"
@@ -7987,6 +8755,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "behler2007generalized",
    "wang2018deepmdkit",
    "zhang2018deepmd"
@@ -8065,6 +8835,7 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
    "behler2007generalized",
    "chanussot2020oc20",
    "chen2022m3gnet",
@@ -8198,6 +8969,8 @@
    }
   ],
   "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",

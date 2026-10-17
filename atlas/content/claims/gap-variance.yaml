@@ -1,0 +1,11 @@
+statement: >-
+  The Si GAP reports a predicted error for each atomic energy from the simplified variance
+  K(R_i, R_i) − kᵀ (K_MM + σ_e I)⁻¹ k, where k holds the kernel between the atom and the representative environments
+  and σ_e is typically 1 meV; the authors interpret it as the square of a one-sigma error bar. It depends on the
+  representative set only, not on the fitted energies.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2018silicon, locator: 'arXiv v1, Sec. II A, Eq. (10)' }
+scope: { model_families: [gap], checkpoints: [si-gap-18] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'That the formula involves no training targets is read off Eq. (10) itself; the GAP page demonstrates it on a toy model.' }

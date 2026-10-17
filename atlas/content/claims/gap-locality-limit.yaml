@@ -1,0 +1,11 @@
+statement: >-
+  A strictly local model cannot have a force error below the variation of the true force caused by atoms outside its
+  cutoff. The 2010 GAP letter estimates this floor for C, Si and Ge; the 2018 Si paper quotes earlier work that a 5 Å
+  cutoff implies errors of about 0.1 eV/Å in diamond Si and argues that the locality error is larger for metallic β-Sn.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2010gap, locator: 'Fig. 1 and text' }
+  - { paper: bartok2018silicon, locator: 'arXiv v1, Sec. II C' }
+scope: { model_families: [gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17 }

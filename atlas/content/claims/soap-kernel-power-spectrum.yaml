@@ -1,0 +1,12 @@
+statement: >-
+  The SOAP kernel is the overlap of two Gaussian neighbour densities, squared and integrated over all rotations, then
+  normalised by the self-overlaps and raised to a positive integer power ζ. Expanding the densities in an orthonormal
+  radial basis and spherical harmonics turns the rotation integral into a dot product of power spectra, so SOAP is
+  equivalent to the SO(3) power spectrum with Gaussian densities and a dot-product kernel.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: bartok2013soap, locator: 'arXiv text, Sec. IV, Eqs. (32)–(40)' }
+  - { paper: bartok2015gaptutorial, locator: 'arXiv v2, Eqs. (36)–(44)' }
+scope: { model_families: [gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-17, notes: 'The closed-form Haar average (1/(2l+1) per angular channel) and the radial integral are derived on the GAP page and checked against a Monte Carlo rotation average in src/lib/models/soap.test.ts.' }
