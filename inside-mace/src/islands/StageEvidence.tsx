@@ -32,25 +32,33 @@ function EdgeEvidence({ m, frame }: { m: Manifest; frame: number }) {
         <table className="mono">
           <thead>
             <tr>
-              <th>from atom</th>
-              <th>r (Å)</th>
-              <th>R₁…R₁₀ (colour: ±{max.toPrecision(2)})</th>
-              <th>Y₁ (x, y, z)</th>
+              <th>
+                from atom
+                <br />r (Å)
+              </th>
+              <th>
+                R₁…R₁₀ (colour: ±{max.toPrecision(2)})
+                <br />Y₁ (x, y, z)
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.j}>
-                <td>{row.j}</td>
-                <td>{row.r.toFixed(4)}</td>
                 <td>
+                  {row.j}
+                  <br />
+                  {row.r.toFixed(4)}
+                </td>
+                <td className="ev__edge">
                   <span className="ev__strip">
                     {row.radial.map((v, n) => (
                       <span key={n} title={`R${n + 1} = ${v.toPrecision(4)}`} style={{ background: v >= 0 ? `rgb(240 169 69 / ${Math.abs(v) / max})` : `rgb(58 159 140 / ${Math.abs(v) / max})` }} />
                     ))}
                   </span>
+                  <br />
+                  {row.sh.slice(1, 4).map((v) => v.toFixed(3).replace('-', '−')).join(', ')}
                 </td>
-                <td>{row.sh.slice(1, 4).map((v) => v.toFixed(3)).join(', ')}</td>
               </tr>
             ))}
           </tbody>
