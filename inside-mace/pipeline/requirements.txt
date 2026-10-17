@@ -1,0 +1,10 @@
+# Copied from pipeline/requirements-xray.txt (MLIP Atlas): same pinned CPU stack.
+# Architecture X-ray and Representation Map precompute (CPU). Separate from requirements.txt because mace-torch
+# constrains numpy. Install torch from the CPU index first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1
+mace-torch==0.3.16
+e3nn==0.4.4
+ase==3.29.0
+pytest==9.1.1
+pyyaml==6.0.3

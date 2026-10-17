@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+pipeline/.cache/
+__pycache__/
+*.model

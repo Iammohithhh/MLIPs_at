@@ -1,0 +1,12 @@
+{
+ "format": "inside-mace-index",
+ "schema": 1,
+ "experiments": [
+  {
+   "id": "si-bond-stretch",
+   "title": "Silicon: push one atom along a Si\u2013Si bond",
+   "n": 216,
+   "frames": 25
+  }
+ ]
+}
