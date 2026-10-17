@@ -168,3 +168,13 @@ test('side by side: two synchronised scenes on desktop, one scene on mobile', as
   }
   expect(errors).toEqual([]);
 });
+
+test('architecture diagram: a block opens its walkthrough stage and the stage emphasises its blocks', async ({ page }) => {
+  await page.goto('/');
+  const arch = page.locator('figure.arch');
+  await arch.getByRole('button', { name: /Readout 2/ }).click();
+  await expect(page).toHaveURL(/mode=walk/);
+  await expect(page).toHaveURL(/stage=energy/);
+  await expect(arch.getByRole('button', { name: /Readout 1/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(arch.getByRole('button', { name: /Spherical harmonics/ })).toHaveAttribute('aria-pressed', 'false');
+});

@@ -794,3 +794,101 @@
     max-width: none;
   }
 }
+
+/* Architecture diagram (ArchitectureDiagram.tsx) */
+.arch {
+  margin: 0;
+  background: var(--im-stage);
+  color: var(--im-stage-ink);
+  border-radius: var(--im-radius);
+  padding: 1rem;
+}
+.arch__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.arch__row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: stretch;
+  position: relative;
+}
+.arch__row + .arch__row::before {
+  content: '↓';
+  position: absolute;
+  top: -0.62rem;
+  left: 1.6rem;
+  font-size: 0.7rem;
+  color: var(--im-stage-muted);
+}
+.arch__label {
+  font: 600 0.68rem/1.2 var(--im-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--im-stage-muted);
+  align-self: center;
+}
+.arch__blocks {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+.arch__block {
+  display: grid;
+  gap: 0.15rem;
+  align-content: start;
+  text-align: left;
+  font: inherit;
+  background: var(--im-stage-2);
+  color: var(--im-stage-ink);
+  border: 1px solid var(--im-stage-rule);
+  border-left: 3px solid var(--im-teal);
+  border-radius: 5px;
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.arch__block.is-on {
+  border-color: var(--im-mint);
+  border-left-color: var(--im-mint);
+  background: #213a33;
+  box-shadow: 0 0 0 1px var(--im-mint);
+}
+.arch__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.arch__shape {
+  font-size: 0.72rem;
+  color: var(--im-mint);
+}
+.arch__note {
+  font-size: 0.7rem;
+  color: var(--im-stage-muted);
+}
+.arch figcaption {
+  font-size: 0.75rem;
+  color: var(--im-stage-muted);
+  margin-top: 0.6rem;
+}
+@media (max-width: 700px) {
+  .arch__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .arch__blocks {
+    grid-auto-flow: row;
+  }
+  .arch__row + .arch__row::before {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arch__block {
+    transition: none;
+  }
+}

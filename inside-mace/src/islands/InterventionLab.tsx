@@ -29,6 +29,7 @@ import { ResponsePlots } from './ResponsePlots';
 import { RotationDemo } from './RotationDemo';
 import { StageEvidence } from './StageEvidence';
 import { TraceChange } from './TraceChange';
+import { ArchitectureDiagram } from './ArchitectureDiagram';
 import { StageDetail, StageNav } from './StagePanel';
 import './InterventionLab.css';
 
@@ -203,6 +204,7 @@ export default function InterventionLab() {
           </div>
         </aside>
       </div>
+      <ArchitectureDiagram stage={s.mode === 'walk' ? s.stage : null} onStage={(st) => set({ mode: 'walk', stage: st })} />
       <section className="lab__inspect" aria-labelledby="inspect-title">
         <h3 id="inspect-title">Which parts of the model respond?</h3>
         <ResponsePlots m={m} atom={s.atom} frame={frame} onFrame={(k) => set({ frame: k })} />
