@@ -211,7 +211,7 @@ unchanged; scene renders, no overflow).
    after impostor-depth verification (§4, may be judged not worth it — record why).
 
 
-### Session 5 — 2026-10-17 22:16 → 22:52 UTC
+### Session 5 — 2026-10-17 22:16 → 22:54 UTC
 
 **State found:** branch at `0fd7591` (session 4 handoff), working tree clean. Re-read BRIEF, HANDOFF, CLAUDE.md.
 
@@ -275,6 +275,10 @@ re-evaluation of stored frames for both experiments. Venv recipe as in session 1
   the force-scale caption once the stage stopped stretching). Screenshot-checked at 1440×900 (ZnO split).
 - Re-verified at 22:51 after the layout change: astro check 0 errors, Vitest 75/75, Playwright desktop + mobile
   50 passed / 2 skipped.
+
+- `ba8ba7e` desktop (≥ 901 × 640 px): the scene stage is `position: sticky` (top 0.75 rem), so it stays in view while
+  the walkthrough text / controls scroll; checked by screenshot (ZnO, stage 7). Playwright desktop + mobile
+  50 passed / 2 skipped after this change (22:53 UTC).
 
 **Open problems / known gaps:**
 - Baseline ZnO forces (0.037 eV/Å) are below the 0.12 eV/Å arrow threshold, so the d = 0 ZnO scene shows no
