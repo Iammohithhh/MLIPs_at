@@ -1,0 +1,7 @@
+name: ACEpotentials.jl
+repo: https://github.com/ACEsuit/ACEpotentials.jl
+language: Julia
+framework: julia
+licence: MIT
+families: [ace]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit 1aa7731 (v0.10.2): src/ace_heuristics.jl (default pair transform agnesi(1, 4)), src/smoothness_priors.jl (algebraic prior (l/w_l)^p + (n/w_n)^p, w_l = 2/3 by default, which differs from Witt et al. Eq. 10).' }

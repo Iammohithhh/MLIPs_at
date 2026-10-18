@@ -1,0 +1,18 @@
+name: Atomic cluster expansion (ACE)
+aliases: [ACE, linear ACE, PACE, pacemaker, ACEpotentials.jl, nonlinear ACE]
+paradigms: [descriptor-regression]
+introduced_in: drautz2019ace
+year: 2019
+summary: >-
+  The site energy is expanded in a complete basis of body-ordered polynomials of the neighbour positions. Each
+  neighbour is projected on one-particle functions R_n(r) Y_lm(r̂) and summed into the atomic base A_nlm; products
+  of ν such sums cover every (ν + 1)-body term at a cost linear in the number of neighbours, and generalised
+  Clebsch–Gordan coupling plus a rank reduction leaves the independent rotation- and permutation-invariant
+  functions. The energy is linear in their coefficients (ACEpotentials.jl, linear ACE in pacemaker) or a fixed
+  nonlinear function of a few such expansions, as in PACE's Finnis–Sinclair-like ρ₁ − √ρ₂.
+locality: { kind: strictly-local, note: 'One cutoff per element pair: 7.4 Å in the released PACE Cu potential, 5.5 Å for its Si potential.' }
+symmetry: invariant
+body_order: 'Correlation order ν gives (ν + 1)-body functions; the released Cu PACE potential goes to ν = 6, the Si one to ν = 4.'
+implementations: [pacemaker, acepotentials-jl]
+claims: [ace-density-trick, ace-self-interactions, ace-completeness, ace-rpi-reduction, ace-soap-bispectrum-mtp, ace-sw-is-nu2, pace-embedding, pace-timing, pace-cu-parameters, pace-si-accuracy, acepotentials-sparsification, ace-extrapolation-grade]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Drautz 2019 (PRB) not read: paywalled and not on arXiv; its equations are cited through Dusson et al. 2022 (arXiv v4) and Lysogorskiy et al. 2021 (arXiv v1), which restate them. Code read: ICAMS/python-ace 66c35ea, ACEsuit/ACEpotentials.jl 1aa7731.' }

@@ -1,0 +1,11 @@
+statement: >-
+  Summing a product basis Φ_v = Π_t φ_{v_t}(r_{j_t i}) over all ν-tuples of neighbours equals the product of the
+  atomic-base sums, Π_t A_{i v_t} with A_{iv} = Σ_j φ_v(r_ji), so a ν-body term costs time linear in the number of
+  neighbours and linear in ν instead of growing as N^ν.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2021pace, locator: 'arXiv v1, Sec. I, Eqs. (2)–(5) and the paragraph after Eq. (5)' }
+  - { paper: dusson2022ace, locator: 'arXiv v4, Eqs. (4.2)–(4.3)' }
+scope: { model_families: [ace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,6 @@
+name: PBE (FHI-aims, Cu reference data of Lysogorskiy et al.)
+method: DFT
+functional: PBE
+codes: [FHI-aims]
+notes: 'Energies and forces of about 50,000 Cu structures computed with PBE in FHI-aims (Lysogorskiy et al. 2021, Sec. II.1). Basis and k-point settings are not restated here.'
+review: { status: draft, last_checked: 2026-10-18 }

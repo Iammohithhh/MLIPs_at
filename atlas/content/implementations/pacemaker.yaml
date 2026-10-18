@@ -1,0 +1,7 @@
+name: pacemaker / python-ace (PACE)
+repo: https://github.com/ICAMS/python-ace
+language: Python, C++
+framework: tensorflow
+licence: Academic Software Licence (ASL; academic, non-commercial use). The LAMMPS evaluator (ICAMS/lammps-user-pace, ML-PACE) is GPL.
+families: [ace]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit 66c35ea: lib/ace/ace-evaluator/src/ace-evaluator/ace_radial.cpp (ChebExpCos: x = 1 − 2(e^{−λr/r_c} − e^{−λ})/(1 − e^{−λ}), g_0 = 1, g_k = ½(1 − T_k(x)), times ½(1 + cos πr/r_c); ChebPow: x = 1 − 2(1 − r/r_c)^λ; radcore: pre·e^{−λr²}/r times the cosine envelope), ace_abstract_basis.cpp (FinnisSinclair and FinnisSinclairShiftedScaled embeddings), src/pyace/pyacefit.py (loss with κ, L1/L2 and radial smoothness terms), docs/pacemaker/inputfile.md (example: ChebExpCos λ = 5.25, core-repulsion [100, 5], r_in 1.0, Δ_in 0.5).' }

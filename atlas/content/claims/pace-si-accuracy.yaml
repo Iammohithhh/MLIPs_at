@@ -1,0 +1,9 @@
+statement: >-
+  A linear ACE for Si with 6827 basis functions up to ν = 4, fitted to the Si GAP database, had an energy error of
+  1.81 meV/atom for structures within 1 eV of the ground state, against 1.25 meV/atom for the GAP on the same database.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2021pace, locator: 'arXiv v1, Sec. II.2' }
+scope: { model_families: [ace, gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,10 @@
+statement: >-
+  The SOAP power spectrum is a sub-basis of the ACE functions of correlation order ν ≤ 2 (three-body), the SNAP
+  bispectrum can be written exactly as ν = 3 (four-body) ACE functions, and suitably chosen finite sets of moment
+  tensor and ACE basis functions span the same space.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: dusson2022ace, locator: 'arXiv v4, App. B.2 (MTP), B.3 (SOAP), B.4 and Eq. (B.3) (bispectrum)' }
+scope: { model_families: [ace, gap, mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

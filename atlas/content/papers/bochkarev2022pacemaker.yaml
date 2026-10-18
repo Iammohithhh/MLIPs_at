@@ -1,0 +1,18 @@
+title: Efficient parametrization of the atomic cluster expansion
+topic: descriptors-locality
+authors:
+  - 'Bochkarev, A.'
+  - 'Lysogorskiy, Y.'
+  - 'Menon, S.'
+  - 'Qamar, M.'
+  - 'Mrovec, M.'
+  - 'Drautz, R.'
+year: 2022
+venue: Physical Review Materials 6, 013804
+type: article
+identifiers:
+  doi: 10.1103/PhysRevMaterials.6.013804
+edges:
+  - { type: extends, target: lysogorskiy2021pace, documented: true }
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-18, notes: 'Paywalled and not on arXiv; not read. Cited only as the paper that introduced pacemaker; the loss, regularisation and ladder fitting described on the page are read from the pacemaker code and documentation (ICAMS/python-ace 66c35ea).' }

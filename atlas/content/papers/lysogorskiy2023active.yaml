@@ -1,0 +1,18 @@
+title: Active learning strategies for atomic cluster expansion models
+topic: descriptors-locality
+authors:
+  - 'Lysogorskiy, Y.'
+  - 'Bochkarev, A.'
+  - 'Mrovec, M.'
+  - 'Drautz, R.'
+year: 2023
+venue: Physical Review Materials 7, 043801
+type: article
+identifiers:
+  doi: 10.1103/PhysRevMaterials.7.043801
+  arxiv: '2212.08716'
+edges:
+  - { type: reuses-mechanism, target: podryabinkin2017active, documented: true, note: 'D-optimality and MaxVol for the extrapolation grade' }
+  - { type: extends, target: lysogorskiy2021pace, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v1 (ar5iv): Sec. III.2, Eqs. (7)–(13).' }

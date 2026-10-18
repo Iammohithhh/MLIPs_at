@@ -1,0 +1,26 @@
+title: 'Performant implementation of the atomic cluster expansion (PACE) and application to copper and silicon'
+topic: descriptors-locality
+authors:
+  - 'Lysogorskiy, Y.'
+  - 'van der Oord, C.'
+  - 'Bochkarev, A.'
+  - 'Menon, S.'
+  - 'Rinaldi, M.'
+  - 'Hammerschmidt, T.'
+  - 'Mrovec, M.'
+  - 'Thompson, A.'
+  - 'Csányi, G.'
+  - 'Ortner, C.'
+  - 'Drautz, R.'
+year: 2021
+venue: npj Computational Materials 7, 97
+type: article
+identifiers:
+  doi: 10.1038/s41524-021-00559-9
+  arxiv: '2103.00814'
+edges:
+  - { type: extends, target: drautz2019ace, documented: true }
+  - { type: extends, target: dusson2022ace, documented: true }
+  - { type: compares-against, target: bartok2018silicon, documented: true, note: 'Si ACE fitted to the same database as the Si GAP' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v1 (HTML): Sec. I, Eqs. (1)–(8); Sec. II.1–II.3, II.5; Methods III.1–III.3; Supplementary Methods Eqs. (15)–(24) from the npj SI PDF. Equation numbers follow the arXiv/npj numbering, which agree.' }

@@ -1,0 +1,10 @@
+statement: >-
+  The sum over all neighbour tuples in a product of atomic-base functions includes tuples in which a neighbour
+  repeats; these self-interaction terms are lower-order functions, and ACE drops them from the order-ν basis and
+  absorbs them into the order-(ν − 1) basis instead of subtracting them.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: dusson2022ace, locator: 'arXiv v4, Eq. (4.4) and the paragraph after it' }
+scope: { model_families: [ace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

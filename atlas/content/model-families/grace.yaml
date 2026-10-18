@@ -11,6 +11,7 @@ summary: >-
 locality: { kind: message-passing, note: 'GRACE-1L and GRACE-FS are strictly local (stars within 6 Å); a T-layer model reaches T × 6 Å along chains of bonds. Foundation models: r_cut = 6 Å (SMAX models 5.0–7.5 Å, element-dependent).' }
 symmetry: equivariant
 body_order: 'Product order 4 per layer in the foundation models (five-body stars in GRACE-1L); higher through the tree recursion.'
+extends: [ace]
 implementations: [gracemaker]
 claims: [grace-graph-basis, grace-semilocal-range, grace-layer-recursion, grace-self-interactions, grace-chemical-embedding, grace-foundation-config, grace-foundation-training, grace-alkali-cutoff, grace-local-parallel, grace-frozen-finetuning]
 review: { status: draft, last_checked: 2026-10-16, notes: 'Read arXiv v2 HTML of both papers and gracemaker at commit 4729845 (2026-10-15).' }

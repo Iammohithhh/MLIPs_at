@@ -1,0 +1,17 @@
+name: PACE Cu (Lysogorskiy et al. 2021)
+family: ace
+implementation: pacemaker
+version: Cu_npj_CompMat2021.ace
+release: { date: 2021-05-03, source: lysogorskiy2021pace }
+elements: 1
+parameters: { total: 2072 }
+training:
+  - stage: training
+    dataset: cu-pace-pbe
+    level_of_theory: pbe-fhiaims-cu-pace
+    note: 'Energies and forces; fitted, then fine-tuned towards structures close to the ground state (Sec. II.2).'
+outputs: [energy, forces, stress]
+licence: CC-BY-4.0 (Zenodo record)
+weights: { url: 'https://zenodo.org/records/4734036/files/Cu_npj_CompMat2021.ace', sha256: d56d1de57ece6d69189698f5ff15c5711cb923f833aa9fb894b9ad376a13f75a }
+claims: [pace-cu-parameters, pace-embedding, pace-timing]
+review: { status: draft, last_checked: 2026-10-18, notes: 'File md5 584ab71f… as listed by Zenodo; identical to LAMMPS potentials/Cu-PBE-core-rep.ace apart from its header line. Read by atlas_pipeline.ace_pace: 742 basis functions (rank 1–6: 16, 105, 548, 66, 3, 4), two densities with FinnisSinclairShiftedScaled [1, 1, 1, 0.5], ChebPow λ = 2, nradbase 16, nradmax 5, lmax 6, r_c = 7.4 Å, core repulsion [400, 7]. Parameter count 2072 is from the paper.' }

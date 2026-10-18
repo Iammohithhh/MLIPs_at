@@ -201,3 +201,16 @@ mkdir mtps && for L in 02 04 06 08 10 12 14 16 18 20 22 24 26 28; do curl -sSL -
 git clone --depth 1 https://github.com/materialsvirtuallab/mlearn
 ../.venv/bin/python -m atlas_pipeline.mtp si mlearn/data/Si 10c427a5480c6281c15c64efaf869b03be04818f ../atlas/src/data/models/mtp-si.json
 ```
+
+### PACE copper potential (`ace_pace.py`)
+
+`ace_pace.py` reads the released PACE Cu potential of Lysogorskiy et al. 2021 (`Cu_npj_CompMat2021.ace`, Zenodo
+10.5281/zenodo.4734036, CC-BY-4.0; md5 checked), summarises its basis by rank and evaluates it on CPU with the authors'
+python-ace (`pip install python-ace`, a CPU wheel) for the ACE page: the Cu₂ dimer and fcc/bcc/hcp E(V), each split
+exactly into ρ₁, the square-root embedding F(ρ₂) and the core repulsion by re-evaluating the file with density
+coefficients zeroed. Output: `atlas/src/data/models/ace-pace-cu.json`.
+
+```sh
+curl -L -o Cu_npj_CompMat2021.ace https://zenodo.org/api/records/4734036/files/Cu_npj_CompMat2021.ace/content
+<venv with python-ace>/bin/python -m atlas_pipeline.ace_pace Cu_npj_CompMat2021.ace ../atlas/src/data/models/ace-pace-cu.json
+```

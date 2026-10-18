@@ -1,0 +1,484 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import AceCount from '~/islands/AceCount';
+import AceFit from '~/islands/AceFit';
+import AcePace from '~/islands/AcePace';
+import pace from '~/data/models/ace-pace-cu.json';
+import { getEntry } from 'astro:content';
+import type { Checkpoint, Dataset } from '~/content/schemas';
+import { LAB_MAX_RATTLE, LAB_MAX_STRAIN, LAB_RADIAL, LAB_SPEC } from '~/lib/models/ace-fit';
+
+const cu = (await getEntry('checkpoints', 'pace-cu-2021'))!.data as Checkpoint;
+const cuData = (await getEntry('datasets', 'cu-pace-pbe'))!.data as Dataset;
+const s = pace.summary;
+
+const countAssumptions = [
+  { term: 'Construction', value: 'Every coupling tree ((l₁ l₂)L₁ l₃)L₂ … → 0 of the sorted tuple, from Clebsch–Gordan coefficients (Racah’s formula, Condon–Shortley phase) mapped to the real harmonics of the Atlas by a unitary matrix computed by quadrature. Real and imaginary parts of each tree are candidates.' },
+  { term: 'Rank test', value: 'Candidates evaluated on 3 × (candidates) + 6 random environments; Gram–Schmidt keeps one when it adds a direction larger than 10⁻⁷ of its norm. This is Dusson et al.’s linear-algebra step, done with random samples instead of an SVD of the coefficient matrix.' },
+  { term: 'Characters', value: 'Eq. (5) integrated with a midpoint rule in the rotation angle, exact because the integrand is a cosine polynomial of known degree.' },
+  { term: 'Growth curve', value: 'One species, n ≥ 1, Σ_t (n_t + l_t) ≤ D for every order (w_L = 1), Σl even. Dashed lines count the distinct products Π A over m before coupling, which is what an A-basis evaluator multiplies.' },
+];
+const fitAssumptions = [
+  { term: 'Reference', value: 'Stillinger–Weber Si (LAMMPS Si.sw) or Tersoff Si(B) (LAMMPS Si.tersoff, Tersoff 1988), so every energy is exact. Forces by central differences of the total energy (h = 10⁻⁴ Å).' },
+  { term: 'Data', value: `8-atom diamond cells, isotropic strain uniform in ±${100 * LAB_MAX_STRAIN} %, Gaussian rattle with amplitude uniform in [0, ${LAB_MAX_RATTLE}] Å per component; 16 test cells drawn the same way with another seed. Fixed seeds.` },
+  { term: 'Basis', value: `Linear ACE, one species: ν ≤ ${LAB_SPEC.numax}, n ≤ ${LAB_SPEC.nmax}, l ≤ ${LAB_SPEC.lmax}, Σ(n + l) ≤ ${LAB_SPEC.degree.join(', ')} for ν = 1 … ${LAB_SPEC.numax}; ChebExpCos radial functions with λ = ${LAB_RADIAL.lambda}, r_c = ${LAB_RADIAL.rc} Å (no learned radial coefficients). Each grid cell is the subset with ν and l at most the values shown.` },
+  { term: 'Fit', value: 'Least squares on energies per atom and force components with equal weight (eV/atom and eV/Å), ridge λ relative to unit-RMS columns, plus a constant per atom. Normal equations, Cholesky.' },
+  { term: 'Curves', value: 'Dimer: E(r) − 2E_atom of two atoms in vacuum; the reference is the potential’s pair term. Strain: perfect diamond. Core repulsion, when added, is pacemaker’s pre·exp(−λr²)/r times the cosine envelope with the documentation example’s pre = 100 eV·Å, λ = 5 Å⁻², added after the fit (it is below 10⁻⁵ eV per atom on every training cell).' },
+  { term: 'Not shown', value: 'Not pacemaker or ACEpotentials.jl defaults: no learned radial functions, no smoothness prior, no nonlinear embedding, a tiny cell. Computed in your browser in a Web Worker in a few seconds.' },
+];
+const paceAssumptions = [
+  { term: 'Potential', value: `${s.total_functions} basis functions in ${cu.version}, md5 ${pace.source.md5.slice(0, 8)}…, from Zenodo ${pace.source.doi} (CC-BY-4.0).` },
+  { term: 'Evaluator', value: `${pace.source.evaluator}, run by atlas_pipeline.ace_pace.` },
+  { term: 'Split', value: 'The file evaluated three more times: with every density-2 coefficient set to zero (ρ₁ + core), with every density-1 coefficient zero (F(ρ₂) + core), with both zero (core). The three parts add up to the total within 10⁻¹³ eV.' },
+  { term: 'Structures', value: 'Dimer in a 40 Å box without periodicity; fcc and bcc cubic cells and ideal hcp (c/a = √(8/3)) on 25 volumes each.' },
+];
+---
+
+<BaseLayout
+  title="Atomic cluster expansion"
+  description="The atomic cluster expansion (ACE): a complete, body-ordered basis of the site energy built from products of density projections. Its basis counted two ways and checked against Dusson et al., a linear ACE fitted live to Stillinger–Weber and Tersoff silicon, and the released PACE copper potential split into its linear and square-root parts."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">Atomic cluster expansion</h1>
+      <p class="lede">
+        The atomic cluster expansion (ACE) writes an atom’s energy in a basis that can represent any smooth function of its
+        neighbours, ordered by how many neighbours each term involves <Cite id="dusson2022ace" locator="Theorem 8" />. Its trick
+        is the order of operations: project the neighbour density on one-particle functions first, then multiply, so that a
+        term coupling ν neighbours costs a single pass over them <Cite id="lysogorskiy2021pace" locator="Eqs. (2)–(5)" />. SOAP,
+        the bispectrum and moment tensors are all subsets or re-expressions of the same space
+        <Cite id="dusson2022ace" locator="App. B" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exact invariance: Clebsch–Gordan-coupled products</dd></div>
+        <div><dt>Locality</dt><dd>Strictly local: 5.5–7.4 Å in the PACE potentials</dd></div>
+        <div><dt>Regression</dt><dd>Linear in the coefficients, or a fixed nonlinear function of a few linear expansions</dd></div>
+        <div><dt>Body order</dt><dd>Any: ν products give (ν + 1)-body terms</dd></div>
+        <div><dt>Cost</dt><dd>Linear in neighbours; 0.32 ms/atom per force call for the Cu PACE</dd></div>
+        <div><dt>Introduced</dt><dd>PRB 2019; PACE and pacemaker 2021–22; ACEpotentials.jl 2023</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/ICAMS/python-ace">pacemaker</a> (ASL), <a href="https://github.com/ACEsuit/ACEpotentials.jl">ACEpotentials.jl</a> (MIT), LAMMPS ML-PACE</dd></div>
+      </dl>
+      <p class="rule-note">
+        <Badge label="schematic" /> The <strong>architecture</strong> is a basis; ACE potentials are fitted per system. One
+        released checkpoint, the PACE copper potential, is evaluated in Figure 3. The message-passing descendant is on the
+        <a href="/models/grace/">GRACE page</a>, which also shows the density trick’s self-interaction terms.
+      </p>
+    </header>
+
+    <section class="block" aria-labelledby="dens-h">
+      <h2 id="dens-h" class="h-section">Densities, then products</h2>
+      <p>
+        The neighbours of atom <i>i</i> are a density ρ<sub><i>i</i></sub>(<b>r</b>) = Σ<sub><i>j</i></sub> δ(<b>r</b> − <b>r</b><sub><i>ji</i></sub>).
+        ACE projects it on one-particle functions, a radial function times a spherical harmonic, to get the atomic base
+        <Cite id="lysogorskiy2021pace" locator="Eqs. (2), (3), (10), (11)" /><Cite id="dusson2022ace" locator="Eq. (4.2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`A_{i,nlm} = \sum_{j} R_{nl}(r_{ji})\, Y_{lm}(\hat{\mathbf r}_{ji})`} />
+      <p>
+        and multiplies ν of them. The product of sums is the sum over all ν-tuples of neighbours of a ν-neighbour function, so a
+        (ν + 1)-body term costs one pass over the neighbours and ν − 1 multiplications instead of a loop over all tuples
+        <Cite id="lysogorskiy2021pace" locator="Eqs. (4)–(5), (12)" />:
+      </p>
+      <Math display number="2" tex={String.raw`\mathbf A_{i,\mathbf{nlm}} = \prod_{t=1}^{\nu} A_{i,n_t l_t m_t} = \sum_{j_1,\dots,j_\nu}\ \prod_{t=1}^{\nu} R_{n_t l_t}(r_{j_t i})\,Y_{l_t m_t}(\hat{\mathbf r}_{j_t i})`} />
+      <p>
+        The sum includes tuples in which a neighbour repeats. Those terms have fewer distinct neighbours, so they are lower-order
+        functions; ACE keeps them and lets the lower orders absorb them rather than subtracting them
+        <Cite id="dusson2022ace" locator="Eq. (4.4)" />. The products turn with the atom’s surroundings. A fixed linear combination
+        over the <i>m</i>’s, the generalised Clebsch–Gordan coupling <Cite id="lysogorskiy2021pace" locator="Eq. (13) and after" />,
+        gives functions that do not:
+      </p>
+      <Math display number="3" tex={String.raw`B_{i,\mathbf{nl}k} = \sum_{\mathbf m} \mathcal C^{\mathbf{nl}}_{k,\mathbf m}\ \mathbf A_{i,\mathbf{nlm}}, \qquad E_i = \sum_{\nu}\sum_{\mathbf{nl}k} c_{\mathbf{nl}k}\, B_{i,\mathbf{nl}k}`} />
+      <p>
+        and the energy is linear in the <i>c</i>’s (Eq. 6 of the PACE paper). Because <i>B</i> = 𝒞<b>A</b>, the fitted coefficients can
+        be pushed through the coupling once, <i>c̃</i> = 𝒞<sup>T</sup><i>c</i>, and the potential evaluated directly on the products;
+        this is the “ctilde” basis stored in PACE files <Cite id="lysogorskiy2021pace" locator="Sec. III.1.1" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="count-h">
+      <h2 id="count-h" class="h-section">How many invariants?</h2>
+      <p>
+        For a tuple of degrees <b>l</b> = (<i>l</i><sub>1</sub>, …, <i>l</i><sub>ν</sub>) the couplings are the ways of adding the angular
+        momenta to zero: couple <i>l</i><sub>1</sub> and <i>l</i><sub>2</sub> to some <i>L</i><sub>1</sub>, that with <i>l</i><sub>3</sub>
+        to <i>L</i><sub>2</sub>, and so on, each step obeying the triangle rule. With every (<i>n</i>, <i>l</i>) different, each such tree is
+        a new invariant. When labels repeat, the product <b>A</b> is symmetric in the repeated factors, and trees that differ by
+        exchanging them give the same function, so fewer survive <Cite id="dusson2022ace" locator="Sec. 3.5, Table 1" />. Dusson et
+        al. remove the dependences numerically, from the rank of a matrix built from the couplings
+        <Cite id="dusson2022ace" locator="Lemma 2, Eq. (3.13)" />. The count can also be written down in closed form. Group the
+        tuple into distinct labels with multiplicities <i>k</i>; the products then span the representation
+        ⊗<sub>groups</sub> Sym<sup><i>k</i></sup>(<i>V</i><sub><i>l</i></sub>) of the rotation group, and the number of invariants in a
+        representation is the average of its character over rotations. Characters depend only on the rotation angle θ, the Haar
+        measure in θ is (1 − cos θ)/π on [0, π], <i>V</i><sub><i>l</i></sub> has character χ<sub><i>l</i></sub>(θ) = sin((<i>l</i> + ½)θ)/sin(θ/2), and
+        the character of a symmetric power follows from Newton’s identity for complete symmetric polynomials. Inversion multiplies
+        the whole product by (−1)<sup>Σ<i>l</i></sup>, so for O(3)
+      </p>
+      <Math display number="4" tex={String.raw`h_k(\theta) = \frac1k \sum_{q=1}^{k} \chi_l(q\theta)\, h_{k-q}(\theta), \quad h_0 = 1, \qquad \chi_l(\theta) = \frac{\sin\big((l+\tfrac12)\theta\big)}{\sin(\theta/2)}`} />
+      <Math display number="5" tex={String.raw`\#\mathrm{RPI}(\mathbf n, \mathbf l) = \frac{1 + (-1)^{\sum_t l_t}}{2}\ \frac1\pi\int_0^\pi (1-\cos\theta) \prod_{\text{groups}} h_{k}^{(l)}(\theta)\, d\theta`} />
+      <p>
+        With all labels distinct every <i>h</i> is a plain χ<sub><i>l</i></sub>, and Eq. (5) counts the coupling trees: the number Dusson et
+        al. call #RI. Figure 1 builds the invariants both ways, the trees with a rank test and the integral, and compares them with
+        the published table.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Coupling, symmetry and the size of a complete basis" labels={['live-calculation', 'reproduced']} number={1} id="fig-count" framed={false}>
+        <AceCount client:visible />
+        <Fragment slot="caption">
+          Left: choose a correlation (ν labels (<i>n</i>, <i>l</i>)) or one of Dusson et al.’s rows. The numbers follow the construction:
+          products, coupling trees, rotation invariants if every <i>n</i> differed, and the independent functions that survive the
+          rank test, with the character prediction beside them. Every row of the paper’s Table 1 is reproduced, and each function
+          passes a rotation test. Right: the size of the complete basis against total degree, per order. A truncated ACE is a
+          choice of where to cut this growth.
+        </Fragment>
+        <Assumptions slot="assumptions" items={countAssumptions} />
+        <Fragment slot="source">Table 1 and the rank construction of <Cite id="dusson2022ace" locator="Sec. 3.3–3.5, Table 1, App. A.3" />. Computed in your browser by <code>src/lib/models/ace.ts</code>; tests in <code>ace.test.ts</code> check every Table 1 entry both ways, Clebsch–Gordan orthonormality, rotation, reflection and permutation invariance, and exact derivatives.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="sw-h" id="sw">
+      <h2 id="sw-h" class="h-section">Stillinger–Weber is an ACE with ν = 2</h2>
+      <p>
+        Body order is a property of the target as well as of the model, and a classical potential shows it exactly. Stillinger–Weber
+        silicon has a pair term φ<sub>2</sub> and a three-body term centred on each atom, with <i>s</i>(<i>r</i>) = exp(γσ/(<i>r</i> − <i>a</i>σ))
+        and the tetrahedral angle preferred (LAMMPS <code>pair_style sw</code> with the parameters of <Cite id="stillinger1985sw" />):
+      </p>
+      <Math display number="6" tex={String.raw`E_i = \tfrac12 \sum_j \phi_2(r_{ij}) + \lambda\varepsilon \sum_{j<k} s(r_{ij})\, s(r_{ik}) \left(\cos\theta_{jik} + \tfrac13\right)^2`} />
+      <p>
+        Write the angular factor in Legendre polynomials, (<i>c</i> + ⅓)² = ⁴⁄₉ <i>P</i><sub>0</sub>(<i>c</i>) + ⅔ <i>P</i><sub>1</sub>(<i>c</i>) + ⅔ <i>P</i><sub>2</sub>(<i>c</i>)
+        (check: 16/9 at <i>c</i> = 1, zero at <i>c</i> = −⅓), use the addition theorem <i>P</i><sub><i>l</i></sub>(<b>r̂</b><sub><i>j</i></sub>·<b>r̂</b><sub><i>k</i></sub>) = 4π/(2<i>l</i> + 1) Σ<sub><i>m</i></sub> <i>Y</i><sub><i>lm</i></sub>(<b>r̂</b><sub><i>j</i></sub>)<i>Y</i><sub><i>lm</i></sub>(<b>r̂</b><sub><i>k</i></sub>),
+        and replace Σ<sub><i>j</i>&lt;<i>k</i></sub> by half the full double sum minus its <i>j</i> = <i>k</i> terms, where the angle is zero and the factor is 16/9:
+      </p>
+      <Math display number="7" tex={String.raw`E_i = \sum_j \Big[\tfrac12\phi_2(r_{ij}) - \tfrac89\lambda\varepsilon\, s(r_{ij})^2\Big] + \frac{\lambda\varepsilon}{2} \sum_{l=0}^{2} a_l\,\frac{4\pi}{2l+1} \sum_{m} A_{lm}^2, \qquad A_{lm} = \sum_j s(r_{ij})\,Y_{lm}(\hat{\mathbf r}_{ij}),\ \ a = \big(\tfrac49, \tfrac23, \tfrac23\big)`} />
+      <p>
+        The first sum is a ν = 1 function and the second is made of ν = 2 invariants with <i>l</i> ≤ 2 and one radial function. So a
+        linear ACE with ν ≤ 2, <i>l</i> ≤ 2 and radial functions able to represent <i>s</i>, <i>s</i>² and φ<sub>2</sub> reproduces
+        Stillinger–Weber exactly; with ν = 1 or <i>l</i> ≤ 1 it cannot, whatever the data. The <i>j</i> = <i>k</i> terms are exactly
+        the self-interactions of Eq. (2), landing in the order below. Tersoff’s potential is different: its bond order
+        (1 + βⁿζⁿ)<sup>−1/2<i>n</i></sup> with <i>n</i> ≈ 23 is a steep function of a sum over all other neighbours, so expanded in body
+        order it has terms of every order (LAMMPS <code>pair_style tersoff</code>, <Cite id="tersoff1988new" />).
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Fitting a linear ACE to two classical silicon potentials" labels={['live-calculation', 'toy-model']} number={2} id="fig-fit" framed={false}>
+        <AceFit client:visible />
+        <Fragment slot="caption">
+          One feature computation, sixteen fits: every combination of maximum body order and <i>l</i><sub>max</sub> is a subset of the
+          same basis. For Stillinger–Weber the error collapses where Eq. (7) says it must, at ν = 2 and <i>l</i> = 2; the remainder is
+          the radial basis approximating <i>s</i>(<i>r</i>). For Tersoff it falls slowly with ν, and the larger bases fit the training
+          cells better than the test cells. In 3D: one test cell with the reference and ACE forces. Below: two configurations no
+          training cell contains.
+        </Fragment>
+        <Assumptions slot="assumptions" items={fitAssumptions} />
+        <Fragment slot="source">Derivation above (Eq. 7). Basis <code>src/lib/models/ace.ts</code>; references, features, fit and curves <code>src/lib/models/ace-fit.ts</code> and <code>src/lib/physics/tersoff.ts</code>, tested in <code>ace-fit.test.ts</code> (Stillinger–Weber falls by several times from <i>l</i> ≤ 1 to <i>l</i> ≤ 2 at ν = 2 and is not represented at ν = 1; force features against finite differences; Tersoff and SW diamond energies). Radial functions as pacemaker’s ChebExpCos (<code>ace_radial.cpp</code>), core repulsion as its <code>radcore</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="emb-h">
+      <h2 id="emb-h" class="h-section">Nonlinear embedding: PACE’s square root</h2>
+      <p>
+        A linear ACE needs high orders when the target depends nonlinearly on a sum over neighbours, as Tersoff does. The
+        tight-binding second-moment picture of metals, the basis of Finnis–Sinclair and embedded-atom potentials, has that form: the
+        bonding energy grows as the square root of a pair density. PACE therefore allows the energy to be a fixed function of several
+        ACE expansions φ<sup>(<i>p</i>)</sup>, each linear in its own coefficients <Cite id="lysogorskiy2021pace" locator="Eqs. (6)–(8)" />:
+      </p>
+      <Math display number="8" tex={String.raw`E_i = \varphi_i^{(1)} - \sqrt{\varphi_i^{(2)}}, \qquad \varphi_i^{(p)} = \sum_{\mathbf{nlm}} \tilde c^{(p)}_{\mathbf{nlm}}\, \mathbf A_{i,\mathbf{nlm}}`} />
+      <p>
+        In the released files the square root is pacemaker’s <code>FinnisSinclairShiftedScaled</code> embedding with <i>m</i> = ½, smoothed
+        at zero and carrying the sign of ρ (python-ace, <code>ace_abstract_basis.cpp</code>):
+      </p>
+      <Math display number="9" tex={String.raw`F(\rho) = \operatorname{sign}(\rho)\Big(\sqrt{\tfrac14 e^{-|\rho|} + |\rho|} - \tfrac12 e^{-|\rho|}\Big), \qquad F(0) = 0,\quad F'(0) = \tfrac54,\quad F(\rho) \to \operatorname{sign}(\rho)\sqrt{|\rho|}`} />
+      <p>
+        Short distances are guarded by a separate core repulsion, <i>pre</i>·exp(−λ<i>r</i>²)/<i>r</i> per pair times the cosine
+        envelope (<code>ace_radial.cpp</code>, <code>radcore</code>), with an optional cut on a core density
+        <Cite id="lysogorskiy2021pace" locator="Suppl. Methods, Eqs. (19)–(21)" />. For copper this form matters because the filled
+        <i>d</i> shell makes angular terms small in the bulk, so the paper starts from the Finnis–Sinclair form and lets both densities
+        include many-atom terms; silicon was fitted as a linear ACE with 6,827 functions up to ν = 4
+        <Cite id="lysogorskiy2021pace" locator="Sec. I; Sec. II.2" />. Figure 3 opens the released copper potential.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Inside the released PACE copper potential" labels={['precomputed']} number={3} id="fig-pace" framed={false}>
+        <AcePace client:visible />
+        <Fragment slot="caption">
+          Left: the potential’s basis by order. Most functions are three- and four-body (ν = 2, 3) with <i>l</i> up to 6; a handful reach
+          ν = 6 with <i>l</i> ≤ 1. Right: the Cu₂ dimer energy split into the linear density ρ₁, the embedded density F(ρ₂) and the core
+          repulsion, and the E(V) curves of three crystal structures. The split is exact (the parts add to the total), but neither
+          density is a physical quantity: both are fitted. At the dimer’s minimum F(ρ₂) carries most of the binding, and the short-range wall comes from ρ₁, not from the core term.
+        </Fragment>
+        <Assumptions slot="assumptions" items={paceAssumptions} />
+        <Fragment slot="source"><Cite id="lysogorskiy2021pace" locator="Sec. II.2; Suppl. Methods Eqs. (15)–(22)" />; file from <a href={pace.source.url}>Zenodo {pace.source.doi}</a>. Parsed and evaluated by <code>pipeline/atlas_pipeline/ace_pace.py</code> (tests in <code>pipeline/tests/test_ace_pace.py</code>: parsing, density zeroing, embedding and core-repulsion closed forms, closure of the split, fcc &lt; hcp &lt; bcc).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="fitp-h">
+      <h2 id="fitp-h" class="h-section">Choosing and fitting a basis</h2>
+      <p>
+        A complete basis must be cut somewhere. ACEpotentials.jl keeps the functions whose total degree is within a budget per order,
+        and stabilises the least-squares fit with a prior that penalises rough functions <Cite id="witt2023acepotentials" locator="Eqs. (9), (10), (12)" />:
+      </p>
+      <Math display number="10" tex={String.raw`\sum_{t=1}^{\nu} \big(n_t + w_L\, l_t\big) \le D_\nu, \qquad \min_{c}\ \big\| W (y - \mathsf A c) \big\|^2 + \lambda \big\| \Gamma c \big\|^2, \quad \Gamma_{kk} = \sum_t n_t^{p} + w_L\, l_t^{p}`} />
+      <p>
+        with <i>p</i> = 4 by default; the current code weights <i>l</i> by 1/<i>w</i><sub>l</sub> with <i>w</i><sub>l</sub> = ⅔ instead
+        (<code>smoothness_priors.jl</code> at v0.10.2). pacemaker fits learned radial functions and the nonlinear embedding by
+        minimising (1 − κ) times the energy error plus κ times the force error, with ℓ1, ℓ2 and radial-smoothness penalties, and can
+        grow the basis in steps (“ladder” fitting) (python-ace <code>pyacefit.py</code>; <Cite id="bochkarev2022pacemaker" />). For
+        a linear model the extrapolation grade of MTP carries over directly: with an active set of atomic environments chosen by MaxVol,
+        γ<sub><i>i</i></sub> = max |<b>B</b><sub><i>i</i></sub> · <i>A</i><sub>active</sub><sup>−1</sup>|, and the derivatives with respect to
+        the coefficients replace <b>B</b> for nonlinear ACE <Cite id="lysogorskiy2023active" locator="Eqs. (12)–(13)" /> (the method is
+        shown live on the <a href="/models/mtp/#fig-si">MTP page</a>).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="ace-int" checked />
+        <label for="ace-int">Intuition</label>
+        <input type="radio" name="depth" id="ace-tech" />
+        <label for="ace-tech">Technical</label>
+        <input type="radio" name="depth" id="ace-res" />
+        <label for="ace-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Describe the neighbours of an atom by how much of them lies along each direction at each distance: a handful of numbers per
+            atom. Multiply those numbers in pairs, triples and so on, and average away the orientation. Pairs see angles between two
+            neighbours, triples see the shape of three, and so on: with enough of them, any arrangement can be told apart from any
+            other, and the energy is a weighted sum. Counting the distinct combinations is a question about symmetry with an exact
+            answer.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            One-particle basis <i>R</i><sub><i>nl</i></sub>(<i>r</i>)<i>Y</i><sub><i>lm</i></sub>(<b>r̂</b>), density projections <i>A</i><sub><i>nlm</i></sub> (Eq. 1),
+            products of ν projections (Eq. 2), and O(3) invariants by generalised Clebsch–Gordan coupling (Eq. 3), with dependences from
+            repeated labels removed by a rank computation and counted by Eq. (5). Forces are exact derivatives through <i>A</i>, one pass
+            over the neighbours; the recursive evaluator builds high-order products from pairs of lower-order ones, which cut the Si
+            potential’s cost from 1.84 to 0.80 ms/atom <Cite id="lysogorskiy2021pace" locator="Sec. III.3" />. Multicomponent systems add
+            species to every index, and the number of functions grows with the number of species combinations.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            The invariant basis of all orders is linearly independent and complete in the smooth symmetric functions of the neighbourhood
+            <Cite id="dusson2022ace" locator="Theorems 6, 8" />, and SOAP, SNAP and MTP are subsets or re-expansions of it
+            <Cite id="dusson2022ace" locator="App. B.2–B.4" />. Completeness says nothing about how fast a truncation converges: Eq. (7)
+            converges at ν = 2 because Stillinger–Weber is three-body, while Tersoff’s bond order spreads over every order (Figure 2).
+            That is the case for nonlinear embeddings (Eq. 8) and, one step further, for message passing on tree graphs, where GRACE builds
+            high effective orders from low-order layers (<a href="/models/grace/">GRACE</a>). The self-interaction terms make the
+            lower-order coefficients absorb parts of higher-order physics, which changes conditioning but not the span
+            <Cite id="dusson2022ace" locator="Eq. (4.4); Sec. 8, Table 2" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and stresses as its derivatives; in pacemaker also the extrapolation grade per atom for active learning
+        <Cite id="lysogorskiy2023active" locator="Sec. III.2" />. MD runs in LAMMPS through the ML-PACE package. There are no charges
+        or electrostatics.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Nothing beyond the cutoff exists: no Coulomb tails, image charges or LO–TO splitting
+        (<a href="/physics-lab/ewald/">P6</a>; <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>). A polynomial basis is
+        unconstrained outside the data, and Figure 2’s dimers and compressed cells show how far a fit can fall when it has never seen a
+        short bond; this is why pacemaker adds a core repulsion and ACEpotentials.jl a repulsive pair envelope
+        <Cite id="witt2023acepotentials" locator="Eq. (7)" />, which only help if they are strong enough at the distances reached. The basis
+        grows quickly with order and degree (Figure 1), and its size multiplies with the number of species combinations. A target that
+        depends nonlinearly on all neighbours at once converges slowly in body order unless the model’s nonlinearity matches it.
+      </p>
+      <p>
+        <strong>From a fitted model.</strong> An ACE potential inherits its reference data and functional: the Cu PACE is a PBE copper
+        model fitted to about {cuData.size?.structures.toLocaleString('en')} FHI-aims calculations <Cite id="lysogorskiy2021pace" locator="Sec. II.1" />,
+        and its two densities are fitted quantities, not electron densities (Figure 3). The fits are system-specific: the Cu and Si
+        potentials do not transfer to other elements, and their accuracy figures (2.9 meV/atom for Cu near the ground state, 1.81 meV/atom
+        for Si within 1 eV) hold for their own test sets <Cite id="lysogorskiy2021pace" locator="Sec. II.2" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Basis</th><th>Embedding</th><th>Cutoff</th><th>Training data</th><th>Licence</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{cu.name}</td>
+              <td>{s.total_functions} functions, ν ≤ {s.rankmax}, l ≤ {s.lmax}; {cu.parameters?.total?.toLocaleString('en')} parameters (paper)</td>
+              <td>ρ₁ + F(ρ₂), m = {s.densities[1]!.m}</td>
+              <td>{s.cutoff} Å</td>
+              <td>{cuData.name}</td>
+              <td>{cu.licence}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        The paper reports 756 expansion coefficients per density <Cite id="lysogorskiy2021pace" locator="Sec. II.2" />; the released file
+        holds {s.total_functions} basis functions, each with one coefficient per density. The Si potential of the same paper
+        (<code>Si_npj_CompMat2021.ace</code>, same Zenodo record) is not yet recorded here. Foundation-scale ACE descendants are on the
+        <a href="/models/grace/">GRACE page</a>.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/mtp/">Moment tensor potentials</a> span the same space with Cartesian tensors and introduced the extrapolation
+        grade. <a href="/models/gap/">GAP</a> uses the ν = 2 SOAP subset with a kernel. <a href="/models/mace/">MACE</a> builds ACE-like
+        products inside message passing, and <a href="/models/grace/">GRACE</a> generalises ACE from stars to trees.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The original expansion: <Cite id="drautz2019ace" />.</li>
+        <li>Completeness, the symmetric basis and its evaluation: <Cite id="dusson2022ace" />.</li>
+        <li>PACE, the Cu and Si potentials and the recursive evaluator: <Cite id="lysogorskiy2021pace" />; pacemaker: <Cite id="bochkarev2022pacemaker" />; active learning: <Cite id="lysogorskiy2023active" />.</li>
+        <li>ACEpotentials.jl, sparsification and smoothness priors: <Cite id="witt2023acepotentials" />.</li>
+        <li>Code: <a href="https://github.com/ICAMS/python-ace">python-ace / pacemaker</a>, <a href="https://github.com/ICAMS/lammps-user-pace">LAMMPS ML-PACE</a>, <a href="https://github.com/ACEsuit/ACEpotentials.jl">ACEpotentials.jl</a>; released Cu and Si potentials: <a href="https://doi.org/10.5281/zenodo.4734036">Zenodo 4734036</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #ace-int:checked ~ .depth-int,
+  #ace-tech:checked ~ .depth-tech,
+  #ace-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

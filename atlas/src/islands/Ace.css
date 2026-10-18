@@ -1,0 +1,208 @@
+/* ACE page islands (AceCount, AceFit, AcePace). Uses PhysicsLab.css for the lab frame. */
+
+.ace-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  min-width: 0;
+}
+
+.ace-wait {
+  display: grid;
+  place-items: center;
+  min-height: 18rem;
+  margin: 0;
+}
+
+.ace-grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  font: 0.8rem/1.3 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.2s;
+}
+.ace-grid.is-stale {
+  opacity: 0.45;
+}
+.ace-grid caption {
+  caption-side: bottom;
+  text-align: left;
+  padding-top: 0.35rem;
+  font-size: 0.74rem;
+  color: var(--atlas-ink-muted);
+}
+.ace-grid th {
+  font: 600 0.68rem var(--font-sans);
+  letter-spacing: 0.03em;
+  color: var(--atlas-ink-muted);
+  text-align: center;
+  padding: 0.2rem;
+}
+.ace-grid th[scope='row'] {
+  text-align: left;
+  white-space: nowrap;
+}
+.ace-grid td {
+  padding: 0;
+  border-radius: 0.35rem;
+  background: var(--atlas-surface);
+  border: 1px solid var(--atlas-rule);
+}
+.ace-grid td.is-good {
+  background: color-mix(in srgb, var(--atlas-verified) 22%, var(--atlas-surface));
+}
+.ace-grid td.is-mid {
+  background: color-mix(in srgb, var(--atlas-caveat) 18%, var(--atlas-surface));
+}
+.ace-grid td.is-bad {
+  background: color-mix(in srgb, var(--atlas-fail) 18%, var(--atlas-surface));
+}
+.ace-grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0.35rem 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--atlas-ink);
+  font: 600 0.9rem var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  border-radius: 0.35rem;
+}
+.ace-grid button small {
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: var(--atlas-ink-muted);
+}
+.ace-grid button[aria-pressed='true'] {
+  outline: 2px solid var(--atlas-arch);
+  outline-offset: -2px;
+}
+.ace-grid button:focus-visible {
+  outline: 2px solid var(--atlas-arch);
+}
+
+.ace-check {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font: 0.82rem/1.35 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+
+.lab-panel > .ace-plots,
+.lab-panel > .lab-note {
+  grid-column: 1 / -1;
+}
+.ace-plots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.ace-plot-title {
+  font-weight: 600;
+  fill: var(--atlas-ink) !important;
+}
+
+/* Basis counting (AceCount) */
+.ace-count-wrap {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  min-width: 0;
+}
+.ace-tuple {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  font: 0.85rem var(--font-sans);
+}
+.ace-slot {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.45rem;
+  background: var(--atlas-surface);
+}
+.ace-slot label {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  font: 0.75rem var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.ace-slot select {
+  font: 600 0.85rem var(--font-sans);
+  color: var(--atlas-ink);
+  background: var(--atlas-canvas);
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 0.3rem;
+}
+.ace-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+.ace-steps > div {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--atlas-rule);
+  border-radius: 0.5rem;
+  background: var(--atlas-surface);
+}
+.ace-steps dt {
+  font: 600 0.66rem var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--atlas-ink-muted);
+}
+.ace-steps dd {
+  margin: 0.15rem 0 0;
+  font: 600 1.25rem var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+.ace-steps dd small {
+  display: block;
+  font: 400 0.72rem/1.3 var(--font-sans);
+  color: var(--atlas-ink-muted);
+}
+.ace-steps .is-key {
+  border-color: var(--atlas-arch);
+}
+.ace-paper {
+  font: 0.8rem/1.4 var(--font-sans);
+  color: var(--atlas-ink-muted);
+  margin: 0;
+}
+.ace-paper strong {
+  color: var(--atlas-verified);
+}
+.ace-paper .is-miss {
+  color: var(--atlas-fail);
+}
+.ace-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.ace-presets button {
+  font: 0.75rem var(--font-sans);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--atlas-rule-strong);
+  border-radius: 999px;
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  cursor: pointer;
+}
+.ace-presets button[aria-pressed='true'] {
+  border-color: var(--atlas-arch);
+  color: var(--atlas-arch);
+}

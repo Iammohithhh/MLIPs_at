@@ -1,0 +1,10 @@
+statement: >-
+  The Cu PACE potential has 2072 parameters, of which 756 are expansion coefficients for each of its two densities and
+  560 parametrise the radial functions; its cutoff of 7.4 Å was chosen because DFT interactions between rigidly
+  separated slabs fall below 1 meV beyond it. The released file holds 742 basis functions per density.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2021pace, locator: 'arXiv v1, Sec. II.2' }
+scope: { model_families: [ace], checkpoints: [pace-cu-2021] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The 742 is counted in the released file by atlas_pipeline.ace_pace; the difference from the paper''s 756 is not explained in either source.' }

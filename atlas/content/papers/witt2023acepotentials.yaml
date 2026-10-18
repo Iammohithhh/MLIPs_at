@@ -1,0 +1,27 @@
+title: 'ACEpotentials.jl: A Julia implementation of the atomic cluster expansion'
+topic: descriptors-locality
+authors:
+  - 'Witt, W. C.'
+  - 'van der Oord, C.'
+  - 'Gelžinytė, E.'
+  - 'Järvinen, T.'
+  - 'Ross, A.'
+  - 'Darby, J. P.'
+  - 'Ho, C. H.'
+  - 'Baldwin, W. J.'
+  - 'Sachs, M.'
+  - 'Kermode, J.'
+  - 'Bernstein, N.'
+  - 'Csányi, G.'
+  - 'Ortner, C.'
+year: 2023
+venue: The Journal of Chemical Physics 159, 164101
+type: article
+identifiers:
+  doi: 10.1063/5.0158783
+  arxiv: '2309.03161'
+edges:
+  - { type: extends, target: dusson2022ace, documented: true }
+  - { type: compares-against, target: zuo2020performance, documented: true, note: 'Table 2: the Zuo et al. benchmark' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v2 (HTML): Eqs. (2a)/(2b), (7), (9), (10), (12); Table 2; Sec. III.1.2. Code at ACEsuit/ACEpotentials.jl 1aa7731 (v0.10.2) differs from the paper in the smoothness-prior weights.' }

@@ -5,6 +5,6 @@ statement: >-
 grade: PUBLISHED_RESULT
 sources:
   - { paper: dusson2022ace, locator: 'arXiv v4, App. B.2, Eq. (B.2) and the paragraph after it' }
-scope: { model_families: [mtp, grace] }
+scope: { model_families: [mtp, grace, ace] }
 verified_against: full-text
 review: { status: draft, last_checked: 2026-10-18 }

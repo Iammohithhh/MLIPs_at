@@ -1,0 +1,9 @@
+statement: >-
+  With the recursive evaluator a single force call of the Cu and Si ACE models took 0.32 and 0.80 ms per atom on one
+  core (from 0.43 and 1.84 ms without it); the Si ACE was about 30 times faster than the Si GAP.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2021pace, locator: 'arXiv v1, Sec. II.2; Sec. III.3; Sec. II.5' }
+scope: { model_families: [ace], checkpoints: [pace-cu-2021] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

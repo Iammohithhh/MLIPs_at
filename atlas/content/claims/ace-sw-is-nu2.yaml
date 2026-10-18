@@ -1,0 +1,9 @@
+statement: >-
+  The Stillinger–Weber potential is exactly an ACE of correlation order ν ≤ 2 with l ≤ 2: its angular factor
+  (cos θ + 1/3)² is a combination of Legendre polynomials of degree ≤ 2, its three-body radial factor is a product
+  of one function of each bond length, and the j = k terms of the resulting double sum are pair terms. A linear
+  ACE with ν = 1, or with l ≤ 1, cannot represent it.
+grade: THEORY
+derivation: /models/ace/#sw
+scope: { model_families: [ace] }
+review: { status: draft, last_checked: 2026-10-18 }

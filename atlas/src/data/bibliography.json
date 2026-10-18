@@ -607,6 +607,7 @@
    "schutt2018schnet",
    "shapeev2016mtp",
    "stillinger1985sw",
+   "tersoff1988new",
    "zhang2018deepmd"
   ],
   "crossref": {
@@ -1033,8 +1034,10 @@
    "grimme2011bj",
    "kim2024multifidelity",
    "ko2021fourth",
+   "lysogorskiy2021pace",
    "riebesell2023matbench",
    "schutt2018schnet",
+   "witt2023acepotentials",
    "zhang2024dpa1",
    "zhang2024dpa2",
    "zubatyuk2019aimnet"
@@ -2315,6 +2318,153 @@
    "referenced_works": []
   }
  },
+ "bochkarev2022pacemaker": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Bochkarev, A.' vs fetched ['bochkarev']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "behler2007generalized",
+   "drautz2019ace",
+   "ko2021fourth",
+   "lysogorskiy2021pace",
+   "podryabinkin2017active",
+   "pozdnyakov2020completeness",
+   "shapeev2016mtp",
+   "zhang2018deepmd"
+  ],
+  "crossref": {
+   "article_number": "013804",
+   "authors": [
+    {
+     "family": "Bochkarev",
+     "given": "Anton"
+    },
+    {
+     "family": "Lysogorskiy",
+     "given": "Yury"
+    },
+    {
+     "family": "Menon",
+     "given": "Sarath"
+    },
+    {
+     "family": "Qamar",
+     "given": "Minaam"
+    },
+    {
+     "family": "Mrovec",
+     "given": "Matous"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "Physical Review Materials",
+   "doi": "10.1103/physrevmaterials.6.013804",
+   "issue": "1",
+   "page": null,
+   "title": "Efficient parametrization of the atomic cluster expansion",
+   "type": "journal-article",
+   "volume": "6",
+   "year": 2022
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 114,
+   "id": "W4207013141",
+   "publication_year": 2022,
+   "referenced_works": [
+    "W26088913",
+    "W1979544533",
+    "W1985012653",
+    "W2006009797",
+    "W2025444507",
+    "W2029413789",
+    "W2065450924",
+    "W2074889196",
+    "W2083222334",
+    "W2083415705",
+    "W2122825543",
+    "W2148424525",
+    "W2157886206",
+    "W2197007850",
+    "W2200589053",
+    "W2316524229",
+    "W2547447472",
+    "W2605925159",
+    "W2620687153",
+    "W2728984672",
+    "W2742127985",
+    "W2749006386",
+    "W2766633754",
+    "W2766941201",
+    "W2883583109",
+    "W2886802770",
+    "W2898391453",
+    "W2900483837",
+    "W2906746015",
+    "W2910857709",
+    "W2923537029",
+    "W2935718355",
+    "W2937681869",
+    "W2943626891",
+    "W2946418155",
+    "W2964327629",
+    "W2971894235",
+    "W3003407145",
+    "W3003838176",
+    "W3004981459",
+    "W3009030042",
+    "W3012140320",
+    "W3018070591",
+    "W3037345525",
+    "W3042508420",
+    "W3084103887",
+    "W3086372695",
+    "W3089428833",
+    "W3090277172",
+    "W3093036756",
+    "W3093149769",
+    "W3096619549",
+    "W3102845444",
+    "W3103820571",
+    "W3118519758",
+    "W3119774682",
+    "W3120951562",
+    "W3127915450",
+    "W3164295949",
+    "W3164680271",
+    "W3176386153",
+    "W3183767639",
+    "W3183931249",
+    "W3185209683",
+    "W3185227028",
+    "W3205595470",
+    "W3208707586",
+    "W4230126906",
+    "W4297997644",
+    "W4401946486"
+   ]
+  }
+ },
  "bochkarev2024grace": {
   "arxiv": {
    "authors": [
@@ -2350,8 +2500,11 @@
    "bartok2013soap",
    "batzner2022nequip",
    "behler2007generalized",
+   "bochkarev2022pacemaker",
    "drautz2019ace",
    "dusson2022ace",
+   "lysogorskiy2021pace",
+   "lysogorskiy2023active",
    "shapeev2016mtp",
    "unke2019physnet",
    "zhang2018deepmd"
@@ -3003,6 +3156,7 @@
    "behler2007generalized",
    "schutt2017schnet",
    "shapeev2016mtp",
+   "tersoff1988new",
    "zhang2018deepmd",
    "zuo2020performance"
   ],
@@ -3134,12 +3288,14 @@
    "drautz2019ace",
    "dusson2022ace",
    "fu2022forces",
+   "lysogorskiy2021pace",
    "musaelian2023allegro",
    "pozdnyakov2020completeness",
    "schutt2017schnet",
    "shapeev2016mtp",
    "unke2019physnet",
-   "wang2018deepmdkit"
+   "wang2018deepmdkit",
+   "witt2023acepotentials"
   ],
   "crossref": {
    "article_number": "157",
@@ -6817,6 +6973,314 @@
    ]
   }
  },
+ "lysogorskiy2021pace": {
+  "arxiv": {
+   "authors": [
+    "Yury Lysogorskiy",
+    "Cas van der Oord",
+    "Anton Bochkarev",
+    "Sarath Menon",
+    "Matteo Rinaldi",
+    "Thomas Hammerschmidt",
+    "Matous Mrovec",
+    "Aidan Thompson",
+    "Gábor Csányi",
+    "Christoph Ortner",
+    "Ralf Drautz"
+   ],
+   "id": "2103.00814v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2021-03-01",
+   "title": "Performant implementation of the atomic cluster expansion (PACE): Application to copper and silicon",
+   "updated": "2021-03-01"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Lysogorskiy, Y.' vs fetched ['lysogorskiy', 'lysogorskiy']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "bartok2018silicon",
+   "behler2007generalized",
+   "behler2011symmetry",
+   "drautz2019ace",
+   "dusson2022ace",
+   "shapeev2016mtp",
+   "stillinger1985sw",
+   "tersoff1988new",
+   "zuo2020performance"
+  ],
+  "crossref": {
+   "article_number": "97",
+   "authors": [
+    {
+     "family": "Lysogorskiy",
+     "given": "Yury"
+    },
+    {
+     "family": "Oord",
+     "given": "Cas van der"
+    },
+    {
+     "family": "Bochkarev",
+     "given": "Anton"
+    },
+    {
+     "family": "Menon",
+     "given": "Sarath"
+    },
+    {
+     "family": "Rinaldi",
+     "given": "Matteo"
+    },
+    {
+     "family": "Hammerschmidt",
+     "given": "Thomas"
+    },
+    {
+     "family": "Mrovec",
+     "given": "Matous"
+    },
+    {
+     "family": "Thompson",
+     "given": "Aidan"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    },
+    {
+     "family": "Ortner",
+     "given": "Christoph"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "npj Computational Materials",
+   "doi": "10.1038/s41524-021-00559-9",
+   "issue": "1",
+   "page": null,
+   "title": "Performant implementation of the atomic cluster expansion (PACE) and application to copper and silicon",
+   "type": "journal-article",
+   "volume": "7",
+   "year": 2021
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 251,
+   "id": "W3176386153",
+   "publication_year": 2021,
+   "referenced_works": [
+    "W26088913",
+    "W98229209",
+    "W1549427706",
+    "W1813292561",
+    "W1968336455",
+    "W1970571366",
+    "W1973865926",
+    "W1975997599",
+    "W1981368803",
+    "W1983077902",
+    "W1993863601",
+    "W1998459222",
+    "W2002162440",
+    "W2006009797",
+    "W2019465613",
+    "W2025444507",
+    "W2029413789",
+    "W2033086537",
+    "W2033187512",
+    "W2035817882",
+    "W2036034530",
+    "W2037782625",
+    "W2042993721",
+    "W2043712657",
+    "W2052815382",
+    "W2060410316",
+    "W2064690388",
+    "W2066735815",
+    "W2076605490",
+    "W2083415705",
+    "W2085796756",
+    "W2088198226",
+    "W2102181526",
+    "W2104590473",
+    "W2118785939",
+    "W2135140949",
+    "W2139062161",
+    "W2147415793",
+    "W2148424525",
+    "W2157886206",
+    "W2159752439",
+    "W2197007850",
+    "W2333778265",
+    "W2478296885",
+    "W2751334278",
+    "W2771887016",
+    "W2800301423",
+    "W2807890728",
+    "W2910436199",
+    "W2910857709",
+    "W2921869462",
+    "W2964186609",
+    "W2996146227",
+    "W3000291311",
+    "W3009030042",
+    "W3012140320",
+    "W3038880267",
+    "W3041909131",
+    "W3042940323",
+    "W3044111935",
+    "W3121034290"
+   ]
+  }
+ },
+ "lysogorskiy2023active": {
+  "arxiv": {
+   "authors": [
+    "Yury Lysogorskiy",
+    "Anton Bochkarev",
+    "Matous Mrovec",
+    "Ralf Drautz"
+   ],
+   "id": "2212.08716v1",
+   "primary_category": "cond-mat.mtrl-sci",
+   "published": "2022-12-16",
+   "title": "Active learning strategies for atomic cluster expansion models",
+   "updated": "2022-12-16"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2022, 2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Lysogorskiy, Y.' vs fetched ['lysogorskiy', 'lysogorskiy']"
+   }
+  ],
+  "cites": [
+   "bartok2015gaptutorial",
+   "bartok2018silicon",
+   "batzner2022nequip",
+   "bochkarev2022pacemaker",
+   "drautz2019ace",
+   "dusson2022ace",
+   "grimme2010d3",
+   "lysogorskiy2021pace",
+   "podryabinkin2017active",
+   "shapeev2016mtp"
+  ],
+  "crossref": {
+   "article_number": "043801",
+   "authors": [
+    {
+     "family": "Lysogorskiy",
+     "given": "Yury"
+    },
+    {
+     "family": "Bochkarev",
+     "given": "Anton"
+    },
+    {
+     "family": "Mrovec",
+     "given": "Matous"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    }
+   ],
+   "container": "Physical Review Materials",
+   "doi": "10.1103/physrevmaterials.7.043801",
+   "issue": "4",
+   "page": null,
+   "title": "Active learning strategies for atomic cluster expansion models",
+   "type": "journal-article",
+   "volume": "7",
+   "year": 2023
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 85,
+   "id": "W4365144350",
+   "publication_year": 2023,
+   "referenced_works": [
+    "W26088913",
+    "W1601795611",
+    "W1978183953",
+    "W1979544533",
+    "W1984087004",
+    "W2007395042",
+    "W2040818206",
+    "W2045768714",
+    "W2047524879",
+    "W2055526416",
+    "W2079105963",
+    "W2083222334",
+    "W2092157292",
+    "W2141696759",
+    "W2197007850",
+    "W2346626577",
+    "W2592884795",
+    "W2601081289",
+    "W2614157797",
+    "W2749006386",
+    "W2775447200",
+    "W2795523124",
+    "W2800301423",
+    "W2809779474",
+    "W2892094491",
+    "W2910857709",
+    "W2937681869",
+    "W2971894235",
+    "W2981603605",
+    "W2990037784",
+    "W3006005697",
+    "W3009030042",
+    "W3044111935",
+    "W3045322909",
+    "W3084103887",
+    "W3119291344",
+    "W3119774682",
+    "W3176386153",
+    "W3179394515",
+    "W3200297442",
+    "W3201073812",
+    "W4205241325",
+    "W4206902561",
+    "W4207013141",
+    "W4225405705",
+    "W4283699517",
+    "W4294316513",
+    "W4323319736",
+    "W4323320070"
+   ]
+  }
+ },
  "lysogorskiy2026grace": {
   "arxiv": {
    "authors": [
@@ -6852,10 +7316,12 @@
    "batatia2023foundation",
    "batzner2022nequip",
    "behler2007generalized",
+   "bochkarev2022pacemaker",
    "chen2022m3gnet",
    "deng2023chgnet",
    "drautz2019ace",
    "kim2024multifidelity",
+   "lysogorskiy2021pace",
    "mazitov2025petmad",
    "musaelian2023allegro",
    "riebesell2023matbench",
@@ -9379,6 +9845,90 @@
    ]
   }
  },
+ "tersoff1988new": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1988; fetched [1988]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Tersoff, J.' vs fetched ['tersoff']"
+   }
+  ],
+  "cites": [
+   "stillinger1985sw"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Tersoff",
+     "given": "J."
+    }
+   ],
+   "container": "Physical Review B",
+   "doi": "10.1103/physrevb.37.6991",
+   "issue": "12",
+   "page": "6991-7000",
+   "title": "New empirical approach for the structure and energy of covalent systems",
+   "type": "journal-article",
+   "volume": "37",
+   "year": 1988
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 3530,
+   "id": "W2147415793",
+   "publication_year": 1988,
+   "referenced_works": [
+    "W1965633210",
+    "W1967945586",
+    "W1971526590",
+    "W1972382242",
+    "W1977230706",
+    "W1980539178",
+    "W1986420611",
+    "W1994666031",
+    "W1996078486",
+    "W2000726168",
+    "W2001265227",
+    "W2008597722",
+    "W2009306049",
+    "W2010871948",
+    "W2017104823",
+    "W2029326073",
+    "W2033517714",
+    "W2034485258",
+    "W2037782625",
+    "W2039959185",
+    "W2046001409",
+    "W2047724483",
+    "W2057536460",
+    "W2066901269",
+    "W2070294417",
+    "W2071707424",
+    "W2075263387",
+    "W2077313685",
+    "W2078515179",
+    "W2084391933",
+    "W2086728875",
+    "W2090004196",
+    "W2092035134",
+    "W2154923464",
+    "W2321781902",
+    "W2476860679"
+   ]
+  }
+ },
  "thaler2021difftre": {
   "arxiv": {
    "authors": [
@@ -10592,6 +11142,180 @@
    "id": "W7126276477",
    "publication_year": 2026,
    "referenced_works": []
+  }
+ },
+ "witt2023acepotentials": {
+  "arxiv": {
+   "authors": [
+    "William C. Witt",
+    "Cas van der Oord",
+    "Elena Gelžinytė",
+    "Teemu Järvinen",
+    "Andres Ross",
+    "James P. Darby",
+    "Cheuk Hin Ho",
+    "William J. Baldwin",
+    "Matthias Sachs",
+    "James Kermode",
+    "Noam Bernstein",
+    "Gábor Csányi",
+    "Christoph Ortner"
+   ],
+   "id": "2309.03161v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2023-09-06",
+   "title": "ACEpotentials.jl: A Julia Implementation of the Atomic Cluster Expansion",
+   "updated": "2023-09-07"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Witt, W. C.' vs fetched ['witt', 'witt']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2018silicon",
+   "batatia2022mace",
+   "behler2007generalized",
+   "bochkarev2022pacemaker",
+   "drautz2019ace",
+   "dusson2022ace",
+   "lysogorskiy2021pace",
+   "podryabinkin2017active",
+   "shapeev2016mtp",
+   "zuo2020performance"
+  ],
+  "crossref": {
+   "article_number": "164101",
+   "authors": [
+    {
+     "family": "Witt",
+     "given": "William C."
+    },
+    {
+     "family": "van der Oord",
+     "given": "Cas"
+    },
+    {
+     "family": "Gelžinytė",
+     "given": "Elena"
+    },
+    {
+     "family": "Järvinen",
+     "given": "Teemu"
+    },
+    {
+     "family": "Ross",
+     "given": "Andres"
+    },
+    {
+     "family": "Darby",
+     "given": "James P."
+    },
+    {
+     "family": "Ho",
+     "given": "Cheuk Hin"
+    },
+    {
+     "family": "Baldwin",
+     "given": "William J."
+    },
+    {
+     "family": "Sachs",
+     "given": "Matthias"
+    },
+    {
+     "family": "Kermode",
+     "given": "James"
+    },
+    {
+     "family": "Bernstein",
+     "given": "Noam"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    },
+    {
+     "family": "Ortner",
+     "given": "Christoph"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/5.0158783",
+   "issue": "16",
+   "page": null,
+   "title": "ACEpotentials.jl: A Julia implementation of the atomic cluster expansion",
+   "type": "journal-article",
+   "volume": "159",
+   "year": 2023
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 41,
+   "id": "W4387866108",
+   "publication_year": 2023,
+   "referenced_works": [
+    "W26088913",
+    "W28713913",
+    "W1972135189",
+    "W1981368803",
+    "W1987577630",
+    "W2016817819",
+    "W2025444507",
+    "W2026684305",
+    "W2067718414",
+    "W2083415705",
+    "W2141021363",
+    "W2146855196",
+    "W2159752439",
+    "W2197007850",
+    "W2230132442",
+    "W2601081289",
+    "W2620687153",
+    "W2749006386",
+    "W2800301423",
+    "W2900475422",
+    "W2910436199",
+    "W2910857709",
+    "W2971894235",
+    "W2999026783",
+    "W3000291311",
+    "W3044111935",
+    "W3120951562",
+    "W3176386153",
+    "W3185227028",
+    "W3186459065",
+    "W3189164715",
+    "W3201073812",
+    "W3208707586",
+    "W4207013141",
+    "W4281960103",
+    "W4283021369",
+    "W4283462329",
+    "W4286457309",
+    "W4290805632",
+    "W4294316513",
+    "W4308022370",
+    "W4311003603",
+    "W4381716411",
+    "W4383198377",
+    "W4386067762",
+    "W4386714071",
+    "W4390914083"
+   ]
   }
  },
  "wood2025uma": {

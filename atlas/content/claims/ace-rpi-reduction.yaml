@@ -1,0 +1,11 @@
+statement: >-
+  When (n, l) labels repeat in a correlation, permutation symmetry removes many of the rotation invariants: for
+  l = (2, 2, 2, 2, 2) there are 16 rotation invariants but only one rotation- and permutation-invariant function
+  when all five n are equal, and for l = (2, 2, 2, 2) with n = (0, 0, 1, 2) three of five remain.
+grade: REPRODUCED
+sources:
+  - { paper: dusson2022ace, locator: 'arXiv v4, Sec. 3.5, Table 1; App. A.3, Table 3' }
+scope: { model_families: [ace] }
+reproduction: { experiment: ace-basis-counts, date: 2026-10-18, matches: true, note: 'All 6 #RI and 10 #RPI entries of Table 1 reproduced by a character integral and, independently, by coupling trees plus a rank test (atlas/src/lib/models/ace.test.ts).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

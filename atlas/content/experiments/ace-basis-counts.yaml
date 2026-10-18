@@ -1,0 +1,12 @@
+title: Dusson et al.'s Table 1 of ACE basis sizes, recomputed two ways
+question: Do a character integral and an explicit coupling-plus-rank construction give the published numbers of rotation-invariant and rotation-and-permutation-invariant functions?
+kind: reproduction
+status: REPRODUCED
+tier: T0
+page: /models/ace/#fig-count
+assumptions:
+  - { term: Characters, value: 'n_v = ∫ Π_groups χ(Sym^k V_l)(R) dR over SO(3), zero when Σl is odd; trapezoid rule exact for the trigonometric polynomial in the rotation angle.' }
+  - { term: Construction, value: 'All coupling trees ((l₁l₂)L₁ l₃)L₂ … → 0 from Racah Clebsch–Gordan coefficients, mapped to real harmonics; real and imaginary parts as candidates; Gram–Schmidt rank on random environments with relative tolerance 10⁻⁷.' }
+  - { term: Indices, value: 'n in the paper is 0-based; the Atlas uses n + 1. Only equalities between n matter.' }
+claims: [ace-rpi-reduction]
+review: { status: draft, last_checked: 2026-10-18 }

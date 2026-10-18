@@ -1,0 +1,16 @@
+name: Cu PBE reference data of the PACE paper
+domain: [inorganic-materials]
+summary: >-
+  About 50,000 DFT total-energy calculations for copper: small clusters, bulk structures, surfaces and interfaces,
+  point defects and randomly modified variants of them, extending the data briefly described by Drautz (2019). The
+  energies and forces were used to fit the released Cu PACE potential.
+introduced_in: lysogorskiy2021pace
+levels_of_theory: [pbe-fhiaims-cu-pace]
+configuration_types: [single-point, rattled, other]
+size:
+  structures: 50000
+  approximate: true
+  source: { paper: lysogorskiy2021pace, locator: 'Sec. II.1, "about 50000 total energy calculations"' }
+licence: CC-BY-4.0
+url: https://doi.org/10.5281/zenodo.4734036
+review: { status: draft, last_checked: 2026-10-18, notes: 'Zenodo 10.5281/zenodo.4734036 lists Cu_FHIaims-PBE-dataset.json.zip (12.4 MB); not downloaded or counted.' }

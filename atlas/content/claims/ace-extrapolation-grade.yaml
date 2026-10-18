@@ -1,0 +1,10 @@
+statement: >-
+  For ACE the extrapolation grade of an atom is γ_i = max |B_i · A_active^{-1}|, with the active set chosen by MaxVol
+  (D-optimality) and, for nonlinear models, B_i replaced by the derivatives of E_i with respect to the coefficients;
+  γ ≤ 1 is interpolation and γ > 1 extrapolation.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2023active, locator: 'arXiv v1, Sec. III.2, Eqs. (7)–(13)' }
+scope: { model_families: [ace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

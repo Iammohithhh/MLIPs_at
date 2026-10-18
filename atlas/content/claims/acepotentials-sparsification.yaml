@@ -1,0 +1,10 @@
+statement: >-
+  ACEpotentials.jl selects basis functions by a total degree per correlation order, Σ_t (n_t + w_L l_t) ≤
+  totaldegree(ν), and regularises the least-squares fit with a smoothness prior that penalises high n and l, by
+  default algebraic, γ = Σ_t n_t^p + w_L l_t^p with p = 4.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: witt2023acepotentials, locator: 'arXiv v2, Eqs. (9), (10) and (12); Fig. 7' }
+scope: { model_families: [ace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

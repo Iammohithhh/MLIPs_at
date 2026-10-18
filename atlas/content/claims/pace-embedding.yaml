@@ -1,0 +1,10 @@
+statement: >-
+  PACE can write the site energy as a fixed nonlinear function of several ACE expansions; the Finnis–Sinclair-like
+  choice E_i = φ_i^(1) − √φ_i^(2) generalises the pair repulsion and pair density of a Finnis–Sinclair potential to
+  many-atom terms, and the released Cu potential uses two densities in this form.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: lysogorskiy2021pace, locator: 'arXiv v1, Eqs. (6)–(8); Sec. II.2; Supplementary Methods Eqs. (20), (22)' }
+scope: { model_families: [ace], checkpoints: [pace-cu-2021] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The paper writes −√φ; the released file uses pacemaker''s FinnisSinclairShiftedScaled with m = 1/2, F(ρ) = sign(ρ)(√(x_off + |ρ|) − y_off), which carries the sign of ρ₂ (ace_abstract_basis.cpp at python-ace 66c35ea).' }

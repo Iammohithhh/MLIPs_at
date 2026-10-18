@@ -1,0 +1,10 @@
+statement: >-
+  The union of the rotation- and permutation-invariant ACE bases of all orders is linearly independent, and its span
+  is dense in the smooth symmetric functions of the neighbour positions inside the cutoff, so a truncated ACE can
+  approximate any such site energy arbitrarily well as the order and degree grow.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: dusson2022ace, locator: 'arXiv v4, Sec. 4.1, Theorem 8 (with Theorem 6, Sec. 3.5)' }
+scope: { model_families: [ace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }
