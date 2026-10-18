@@ -1,0 +1,8 @@
+statement: >-
+  For two identical fragments farther apart than r_cut and a total charge Q, SpookyNet's charge embedding and its charge
+  correction both give each fragment exactly Q/2, so the predicted dissociation limit is twice the energy of one fragment
+  given charge Q/2 (with Eq. (10) as written), not the energy of one charged and one neutral fragment.
+grade: THEORY
+derivation: /models/spookynet/#fragments
+scope: { model_families: [spookynet] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derived on the page from Eqs. (10) and (24); tested with a toy SpookyNet. The reference code scales the charge-embedding keys by min(|Ψ|, 1), so a fragment at Q/2 = ½ is not exactly the isolated fragment given ½ there; the even split itself is unaffected.' }

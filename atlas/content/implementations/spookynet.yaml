@@ -1,0 +1,7 @@
+name: SpookyNet (reference implementation)
+repo: https://github.com/OUnke/SpookyNet
+language: Python
+framework: pytorch
+licence: MIT (LICENSE, copyright 2021 Oliver T. Unke)
+families: [spookynet]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit d57b1fc0 (2022-05-06): spookynet.py, modules/electronic_embedding.py, attention.py, local_interaction.py, nonlocal_interaction.py, electron_configurations.py. No trained weights are distributed in the repository. Constructor defaults (F = 64, K = 16, three modules) differ from the paper''s models (F = 128, T = 6). Keys of the charge embedding are scaled by min(|Ψ|, 1), which differs from Eq. (10) only for |Ψ| < 1.' }

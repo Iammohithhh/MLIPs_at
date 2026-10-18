@@ -1,0 +1,11 @@
+statement: >-
+  SpookyNet's nonlocal interaction is self-attention over all atoms, evaluated with the FAVOR+ approximation (positive
+  orthogonal random features, f = F of them, drawn once at initialisation and kept fixed so that the model is
+  deterministic), which scales linearly with the number of atoms instead of quadratically.
+grade: THEORY
+sources:
+  - { paper: unke2021spookynet, locator: 'Methods, Eqs. (18)–(20)' }
+  - { paper: choromanski2020performers, locator: 'Sec. 2.3, Lemma 1; Sec. 2.4' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

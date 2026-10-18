@@ -1,0 +1,17 @@
+title: A generally applicable atomic-charge dependent London dispersion correction
+topic: other
+authors:
+  - 'Caldeweyher, E.'
+  - 'Ehlert, S.'
+  - 'Hansen, A.'
+  - 'Neugebauer, H.'
+  - 'Spicher, S.'
+  - 'Bannwarth, C.'
+  - 'Grimme, S.'
+year: 2019
+venue: The Journal of Chemical Physics 150, 154122
+type: article
+identifiers:
+  doi: 10.1063/1.5090222
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-18, notes: 'DFT-D4. Cited for the dispersion term SpookyNet uses; its description (charge-dependent C6 interpolated from reference values, charges from charge equilibration in standard D4) is taken from the SpookyNet paper, Methods, not from this paper.' }

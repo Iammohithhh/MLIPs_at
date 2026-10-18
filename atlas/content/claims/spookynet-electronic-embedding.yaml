@@ -1,0 +1,10 @@
+statement: >-
+  SpookyNet takes the total charge Q and the number of unpaired electrons S as inputs and maps each to an atomic
+  embedding e_Ψ = resmlp(a v) with attention weights a_i = Ψ softplus(q_i·k/√F) / Σ_j softplus(q_j·k/√F), so that
+  Σ_i a_i = Ψ; separate key and value vectors are used for positive and negative charge, and the embedding is zero when Ψ = 0.
+grade: THEORY
+sources:
+  - { paper: unke2021spookynet, locator: 'Eq. (1); Methods, Eq. (10)' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

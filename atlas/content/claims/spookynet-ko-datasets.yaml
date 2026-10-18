@@ -1,0 +1,11 @@
+statement: >-
+  On the four datasets of Ko et al. (C₁₀H₂/C₁₀H₃⁺, Na₈/₉Cl₈⁺, Ag₃⁺/⁻, Au₂ on Al-doped MgO(001)), SpookyNet reported lower
+  energy, force and charge RMSEs than the 2G-, 3G- and 4G-BPNN values reported by Ko et al.; the BPNN numbers were taken
+  from that paper, not retrained, and both use the same data settings.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: unke2021spookynet, locator: 'Results, Nonlocal effects; Table 1' }
+  - { paper: ko2021fourth, locator: 'Table I' }
+scope: { model_families: [spookynet, hdnnp-4g] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

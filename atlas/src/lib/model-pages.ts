@@ -24,6 +24,7 @@ const PAGES: ReadonlyMap<string, string> = new Map([
   ['equiformer', 'equiformer'],
   ['mtp', 'mtp'],
   ['aimnet2', 'aimnet2'],
+  ['spookynet', 'spookynet'],
 ]);
 
 export const MODEL_PAGES: ReadonlySet<string> = new Set(PAGES.keys());

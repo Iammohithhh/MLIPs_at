@@ -1,0 +1,11 @@
+statement: >-
+  A single SpookyNet update resolves angular information up to l = 2 (s-, p- and d-like functions); the authors report
+  that with one message-passing step it distinguishes their environment pairs A and B but not C, D and E, that all five
+  pairs become distinguishable with two or more steps, and that adding f- or g-like interactions gave little benefit in
+  accuracy for the extra cost.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: unke2021spookynet, locator: 'Supplementary Information, completeness of atomic descriptors (table and text)' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read in the arXiv v2 LaTeX source of the Supplementary Information (the published Supplementary Information was not compared).' }

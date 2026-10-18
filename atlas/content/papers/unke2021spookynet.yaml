@@ -1,0 +1,24 @@
+title: 'SpookyNet: Learning force fields with electronic degrees of freedom and nonlocal effects'
+topic: electrostatics
+authors:
+  - 'Unke, O. T.'
+  - 'Chmiela, S.'
+  - 'Gastegger, M.'
+  - 'Schütt, K. T.'
+  - 'Sauceda, H. E.'
+  - 'Müller, K.-R.'
+year: 2021
+venue: Nature Communications 12, 7273
+type: article
+identifiers:
+  doi: 10.1038/s41467-021-27504-0
+  arxiv: '2105.00304'
+edges:
+  - { type: reuses-mechanism, target: choromanski2020performers, documented: true, note: 'Nonlocal interactions by self-attention with the FAVOR+ approximation (Methods, Eqs. 18–20).' }
+  - { type: reuses-mechanism, target: ziegler1985zbl, documented: true, note: 'Nuclear repulsion term based on the ZBL stopping potential (Methods, Eq. 22).' }
+  - { type: reuses-mechanism, target: caldeweyher2019d4, documented: true, note: 'Two-body D4 dispersion with the model''s own charges (Methods, Eq. 27).' }
+  - { type: extends, target: unke2019physnet, documented: true, note: 'Point-charge electrostatics and dispersion added to the energy following PhysNet and earlier work (Discussion; Methods).' }
+  - { type: compares-against, target: ko2021fourth, documented: true, note: 'Four datasets of Ko et al. with 2G/3G/4G-BPNN values taken from that paper (Table 1).' }
+  - { type: compares-against, target: pozdnyakov2020completeness, documented: true, note: 'Degenerate environments and the random CH₄ completeness test (Supplementary Information).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read the published full text (Europe PMC PMC8671403; equation numbers 1–32 match arXiv:2105.00304v2) and the arXiv LaTeX source of the main text and Supplementary Information (completeness of descriptors, the element descriptor table). Architecture details checked against OUnke/SpookyNet at commit d57b1fc0.' }

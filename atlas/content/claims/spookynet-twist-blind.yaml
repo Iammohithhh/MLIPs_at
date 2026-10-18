@@ -1,0 +1,9 @@
+statement: >-
+  Twisting one triangle of an ML₆ unit with six identical ligands at one distance (octahedron ↔ trigonal prism) leaves
+  every l = 1 and l = 2 sum Σ_j Y_l^m(r̂_j) around the centre unchanged, at any polar angle of the ligands, so the
+  centre's features after one SpookyNet module are identical along the whole twist for any weights; the f (l = 3)
+  invariant changes as 1 + cos 3τ. The ligands' features change, and the centre sees the twist from the second module on.
+grade: THEORY
+derivation: /models/spookynet/#twist
+scope: { model_families: [spookynet] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derived on the page; checked live and in src/lib/models/spookynet.test.ts with a toy SpookyNet (fixed random weights).' }

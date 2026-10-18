@@ -1,0 +1,9 @@
+statement: >-
+  Once two fragments are farther apart than r_cut, nothing a SpookyNet computes except the Coulomb and dispersion terms
+  depends on their separation. With the nonlocal block switched off and Q = S = 0, the network energy then equals the sum
+  of the fragments' energies; with nonlocal attention, unlike fragments keep a separation-independent offset, while
+  identical copies still add up, because softmax attention over duplicated keys and values returns the single-copy result.
+grade: THEORY
+derivation: /models/spookynet/#fragments
+scope: { model_families: [spookynet] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derived on the page; tested with a toy SpookyNet in src/lib/models/spookynet.test.ts. For FAVOR+ the identical-copy statement holds up to the small constants added for numerical stability in the reference code.' }

@@ -1,0 +1,11 @@
+statement: >-
+  SpookyNet's energy is a sum of learned atomic contributions plus three physical terms: a nuclear repulsion based on the
+  ZBL stopping potential (within the cutoff), Coulomb energy of atomic charges that are constrained to add up to the total
+  charge and switched to a damped 1/√(r² + 1) form at short range, and the two-body D4 dispersion term evaluated with the
+  model's own charges. The charges are fitted to reference dipole moments (or to reference charges where only those exist).
+grade: THEORY
+sources:
+  - { paper: unke2021spookynet, locator: 'Eq. (4); Methods, Eqs. (22)–(27), (31)–(32)' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

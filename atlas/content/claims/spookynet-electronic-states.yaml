@@ -1,0 +1,11 @@
+statement: >-
+  On GFN2-xTB data for Ag₃⁺/Ag₃⁻ and singlet/triplet CH₂, SpookyNet reproduced the reference potential energy surfaces of
+  both states with its charge/spin embeddings, and without them predicted qualitatively wrong surfaces and wrong global
+  minima (for CH₂, one surface for both spin states). On QMspin carbenes, the embeddings reduced the error for
+  unseen spin states substantially compared with the same model without them.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: unke2021spookynet, locator: 'Results, Electronic states; Fig. 4; Methods, Data generation' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

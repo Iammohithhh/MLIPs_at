@@ -1,0 +1,8 @@
+statement: >-
+  Because the queries of SpookyNet's charge and spin embeddings are a linear function of the nuclear embedding e_Z alone,
+  the share of Q (or S) that each atom receives depends only on its element and on how many atoms of each element the
+  structure contains, not on the geometry. Two identical fragments therefore always receive Ψ/2 each, at any separation.
+grade: THEORY
+derivation: /models/spookynet/#embedding
+scope: { model_families: [spookynet] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derived on the page from Eq. (10) and the reference code (charge_embedding is called with the nuclear embedding z); tested in src/lib/models/spookynet.test.ts.' }

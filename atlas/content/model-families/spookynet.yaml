@@ -1,0 +1,23 @@
+name: SpookyNet
+aliases: [SpookyNet]
+paradigms: [invariant-message-passing, long-range]
+introduced_in: unke2021spookynet
+year: 2021
+summary: >-
+  A message-passing network for molecules that takes the total charge Q and the number of unpaired electrons S as
+  inputs. Elements are embedded from their ground-state electron configuration; Q and S are spread over the atoms by an
+  attention-like weighting that depends only on the elements present. Each of T interaction modules adds a local update,
+  built from s-, p- and d-like functions (exponential Bernstein radial basis × real spherical harmonics up to l = 2)
+  reduced to invariants by scalar products, and a nonlocal update, self-attention over all atoms evaluated in linear time
+  with FAVOR+. The energy adds atomic contributions, a ZBL-based nuclear repulsion, Coulomb energy of charges fitted to
+  dipoles, and two-body D4 dispersion.
+locality:
+  kind: global
+  note: 'Local updates within r_cut = 10 a₀ (5.29 Å) per module; the nonlocal attention couples every pair of atoms in a structure regardless of distance, and the charge and spin embeddings depend on the composition of the whole structure. Coulomb and D4 terms over all pairs (Ewald for periodic systems).'
+symmetry: invariant
+body_order: 'One module resolves angular information up to l = 2 (s, p and d power-spectrum-like invariants mixed across channels); higher orders arise through the modules.'
+long_range: nonlocal-descriptor
+extends: []
+implementations: [spookynet]
+claims: [spookynet-energy-terms, spookynet-electronic-embedding, spookynet-element-sharing, spookynet-l2-update, spookynet-twist-blind, spookynet-separated-fragments, spookynet-symmetric-split, spookynet-favor, spookynet-electronic-states, spookynet-nonlocal-diatomics, spookynet-ko-datasets]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read Unke et al. 2021 (published full text and arXiv source incl. Supplementary Information); architecture details checked against OUnke/SpookyNet at commit d57b1fc0. No released checkpoint.' }

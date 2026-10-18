@@ -1,0 +1,11 @@
+statement: >-
+  Trained on bond scans of nine neutral singlet diatomics (H, Li, F, Na, Cl) with an 18 a₀ cutoff, SpookyNet without its
+  nonlocal interactions predicted an unphysical step at large separations; with them it reproduced the reference curves.
+  The authors note that a larger cutoff only moves the artefact outwards and that the electrostatics and dispersion
+  corrections did not remove it in these examples.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: unke2021spookynet, locator: 'Results, Nonlocal effects; Fig. 5; Methods, Data generation' }
+scope: { model_families: [spookynet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

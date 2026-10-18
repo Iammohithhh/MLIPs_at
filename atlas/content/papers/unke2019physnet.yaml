@@ -1,0 +1,12 @@
+title: 'PhysNet: A Neural Network for Predicting Energies, Forces, Dipole Moments, and Partial Charges'
+topic: electrostatics
+authors:
+  - 'Unke, O. T.'
+  - 'Meuwly, M.'
+year: 2019
+venue: Journal of Chemical Theory and Computation 15, 3678–3693
+type: article
+identifiers:
+  doi: 10.1021/acs.jctc.9b00181
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-18, notes: 'Cited only as the precursor whose charge, electrostatics and dispersion terms SpookyNet follows, as stated in the SpookyNet paper; PhysNet itself was not read.' }

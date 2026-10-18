@@ -1,0 +1,511 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import SpookyBasis from '~/islands/SpookyBasis';
+import SpookyTwist from '~/islands/SpookyTwist';
+import SpookyFragments from '~/islands/SpookyFragments';
+import SpookyAttention from '~/islands/SpookyAttention';
+import { BOHR, MAGIC_THETA, RC_PAPER } from '~/lib/models/spookynet';
+
+const toy = 'A SpookyNet with the paper’s functional form (Eqs. 1, 9–12, 18–21, 24) and fixed random weights: F = 12 features, K = 8 radial functions, three modules, one residual block per resmlp, silu at its initial α = 1, β = 1.702, r_cut = 10 a₀. Not trained; no trained SpookyNet weights have been released.';
+
+const basisAssumptions = [
+  { term: 'Basis', value: 'ρ_k(r) = C(K−1, k) x^k (1 − x)^{K−1−k} f_cut(r), x = e^{−γr} (Eqs. 14–16). γ is learned in SpookyNet; the slider starts at its initial value ½ a₀⁻¹ = 0.94 Å⁻¹.' },
+  { term: 'Units', value: `Distances in Å; the paper works in bohr (1 a₀ = ${BOHR.toFixed(6)} Å), so r_cut = 10 a₀ = ${RC_PAPER.toFixed(3)} Å.` },
+  { term: 'Live check', value: 'Σ_k ρ_k(r) is compared with f_cut(r) on the plotted grid.' },
+];
+const twistAssumptions = [
+  { term: 'Geometry', value: `Fe at the origin, six O at 2.0 Å: three at polar angle θ and azimuths τ, τ + 120°, τ + 240°, three at 180° − θ and azimuths 0°, 120°, 240°. τ = 60° with θ = ${MAGIC_THETA.toFixed(2)}° is a regular octahedron, τ = 0° a trigonal prism. A rigid geometric path; no hydrogens, no energies are compared with any reference.` },
+  { term: 'Live', value: 'a_l = Σ_m (Σ_j Y_l^m(r̂_j))² for the metal with the paper’s unnormalised real harmonics (Eq. 17); the toy model’s feature vector x after modules 1 and 2, compared with its value at τ = 60°.' },
+  { term: 'Toy model', value: toy },
+];
+const fragAssumptions = [
+  { term: 'Systems', value: 'LiF, NaCl, HF along x (d = bond length); benzene (C–C 1.397 Å, C–H 1.084 Å) and water (O–H 0.9572 Å, 104.52°) on the ring axis with one O–H pointing at the ring centre (d = ring centre to O); two benzenes face to face (d = ring to ring). Rigid fragments.' },
+  { term: 'Energies', value: 'Network energy Σ_i E_i only (Eq. 21), in toy units; E_rep, E_ele and E_vdw are not added. Integer limits: the same model on each fragment alone, with all of Q on one fragment and none on the other.' },
+  { term: 'Toy model', value: toy },
+];
+const attnAssumptions = [
+  { term: 'Inputs', value: 'Queries, keys and values of the toy model’s second nonlocal block for C₁₀H₂ (Q = 0) and C₁₀H₃⁺ (Q = +1) on the idealised chain of the long-range page (C–C 1.28 Å, C–H 1.06 Å, CH₂ end 1.09 Å at ±60°).' },
+  { term: 'Estimator', value: 'Positive (FAVOR+): φ(x) = exp(ω·x′ − |x′|²/2)/√m, x′ = x/F^{1/4}; sin/cos: exp(|x′|²/2)/√m [cos ω·x′, sin ω·x′]. ω drawn in orthogonal blocks with rows rescaled to χ-distributed norms, as in the reference code. The reference code also adds small constants for numerical stability, omitted here.' },
+  { term: 'Sharpening', value: 'The slider multiplies queries and keys by a common factor to make attention more peaked. It is a didactic knob, not part of SpookyNet.' },
+];
+---
+
+<BaseLayout
+  title="SpookyNet"
+  description="SpookyNet: a message-passing potential that takes total charge and spin as inputs, uses s-, p- and d-like interactions, and couples all atoms through linear-cost self-attention. What one update can see, where a total charge goes, what separated fragments see, and how FAVOR+ approximates attention, computed live."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">SpookyNet</h1>
+      <p class="lede">
+        Atomic numbers and positions do not say how many electrons a molecule has or how they are paired. SpookyNet adds both as inputs, the
+        total charge Q and the number of unpaired electrons S, and adds a second channel of communication between atoms that ignores distance
+        altogether: self-attention over every atom in the structure <Cite id="unke2021spookynet" locator="Introduction; Eqs. (1)–(2)" />. The name
+        refers to Einstein’s “spooky action at a distance”. This page takes the architecture apart with live calculations: what one update can
+        see, where a total charge goes, and what two molecules far apart still know about each other.
+      </p>
+      <dl class="glance">
+        <div><dt>Energy</dt><dd>Σ E<sub>i</sub> + E<sub>rep</sub> (ZBL-based) + E<sub>ele</sub> (charges) + E<sub>vdw</sub> (D4)</dd></div>
+        <div><dt>Inputs</dt><dd>Positions, elements, total charge Q and number of unpaired electrons S</dd></div>
+        <div><dt>Local update</dt><dd>s-, p- and d-like functions (l ≤ 2) inside r<sub>cut</sub> = 10 a₀, reduced to invariants</dd></div>
+        <div><dt>Nonlocal update</dt><dd>Self-attention over all atoms, FAVOR+ (linear in the number of atoms)</dd></div>
+        <div><dt>Paper’s models</dt><dd>T = 6 modules, F = 128 features, trained separately for each dataset</dd></div>
+        <div><dt>Introduced</dt><dd>Nat. Commun. 2021</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/OUnke/SpookyNet">OUnke/SpookyNet</a> (MIT); no trained weights released</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> The text is about the <strong>architecture</strong>. No trained checkpoint exists to run, so Figs. 2–4 use a <strong>toy model</strong> with the same functional form and random weights, and show only what holds for any weights.</p>
+    </header>
+
+    <section class="block" aria-labelledby="energy-h">
+      <h2 id="energy-h" class="h-section">Inputs, embeddings and the energy</h2>
+      <p>
+        Each atom starts from the sum of three embeddings: one for its element and one each for the charge and spin of the whole structure
+        <Cite id="unke2021spookynet" locator="Eq. (1)" />. A chain of T interaction modules then refines the features, each adding a local and a
+        nonlocal update <Cite id="unke2021spookynet" locator="Eq. (2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`\mathbf{x}^{(0)}_i = \mathbf{e}_{Z_i} + \mathbf{e}_{Q,i} + \mathbf{e}_{S,i}, \qquad \mathbf{x}_i^{(t)} = \mathbf{x}_i^{(t-1)} + \mathrm{local}^{(t)}\big(\{\mathbf{x}_j^{(t-1)}, \vec r_{ij}\}_{j\in\mathcal N(i)}\big) + \mathrm{nonlocal}^{(t)}\big(\{\mathbf{x}^{(t-1)}\}\big)`} />
+      <p>
+        Every module also emits an output y<sup>(t)</sup>; their sum is the atomic descriptor f<sub>i</sub>, from which a linear readout gives the atomic
+        energy E<sub>i</sub> and a partial charge <Cite id="unke2021spookynet" locator="Eqs. (3), (21), (24)" />. The total energy adds three
+        physically motivated terms <Cite id="unke2021spookynet" locator="Eq. (4)" />:
+      </p>
+      <Math display number="2" tex={String.raw`E_{\mathrm{pot}} = \sum_{i=1}^{N} E_i + E_{\mathrm{rep}} + E_{\mathrm{ele}} + E_{\mathrm{vdw}}`} />
+      <p>
+        E<sub>rep</sub> is a screened nuclear repulsion inside the cutoff based on the Ziegler–Biersack–Littmark potential
+        <Cite id="ziegler1985zbl" />, with its parameters starting from the literature values and then trained
+        <Cite id="unke2021spookynet" locator="Methods, Eq. (22); Training and hyperparameters" />. E<sub>ele</sub> is the Coulomb energy of the
+        predicted charges, softened to 1/√(r² + 1) (in bohr) at short range by a smooth switch between r<sub>cut</sub>/4 and 3r<sub>cut</sub>/4
+        <Cite id="unke2021spookynet" locator="Methods, Eqs. (23), (25)" />. E<sub>vdw</sub> is the two-body part of D4 dispersion
+        <Cite id="caldeweyher2019d4" />, evaluated with SpookyNet’s own charges, with the functional-dependent D4 parameters learned
+        <Cite id="unke2021spookynet" locator="Methods, Eq. (27)" />. The authors present these terms as fixing the behaviour at very short and very
+        long distances so the network has a smaller range of energies to learn <Cite id="unke2021spookynet" locator="Fig. 1c" />; they follow
+        PhysNet and earlier work <Cite id="unke2019physnet" />.
+      </p>
+      <p>
+        The element embedding is e<sub>Z</sub> = M d<sub>Z</sub> + ẽ<sub>Z</sub>, where d<sub>Z</sub> is a fixed 20-entry vector of the element’s
+        ground-state electron configuration (occupations of 1s to 6p, valence s, p, d and f counts, and Z, each divided by its value for radon) and
+        ẽ<sub>Z</sub> a free vector per element; the authors describe M d<sub>Z</sub> as a bias towards representations in which similar elements
+        are similar <Cite id="unke2021spookynet" locator="Methods, Eq. (9); Supplementary Information, element descriptor table" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="local-h">
+      <h2 id="local-h" class="h-section">Local interactions shaped like s, p and d orbitals</h2>
+      <p>
+        Inside the cutoff, atom i collects from its neighbours three kinds of sums: radial (s), vector (p, l = 1) and quadrupolar (d, l = 2), each
+        a learned per-feature mix of K basis functions <Cite id="unke2021spookynet" locator="Methods, Eqs. (12)–(13)" />. The p and d sums are
+        made invariant by scalar products of two learned projections:
+      </p>
+      <Math display number="3" tex={String.raw`\mathbf{s}_i = \sum_{j\in\mathcal N(i)} \mathrm{resmlp}_\mathrm{s}(\tilde{\mathbf{x}}_j)\odot \mathbf{G}_\mathrm{s}\mathbf{g}_\mathrm{s}(\vec r_{ij}),\quad \vec{\mathbf{p}}_i = \sum_{j} \mathrm{resmlp}_\mathrm{p}(\tilde{\mathbf{x}}_j)\odot \mathbf{G}_\mathrm{p}\vec{\mathbf{g}}_\mathrm{p}(\vec r_{ij}),\quad \mathbf{l}_i = \mathrm{resmlp}_\mathrm{l}\big(\mathbf{c}_i + \mathbf{s}_i + \langle \mathbf{P}_1\vec{\mathbf{p}}_i, \mathbf{P}_2\vec{\mathbf{p}}_i\rangle + \langle \mathbf{D}_1\vec{\mathbf{d}}_i, \mathbf{D}_2\vec{\mathbf{d}}_i\rangle\big)`} />
+      <p>
+        (d<sub>i</sub> is formed like p<sub>i</sub> with l = 2.) Each basis function is a radial part times a real spherical harmonic,
+        <sub>k</sub>g<sub>l</sub><sup>m</sup> = ρ<sub>k</sub>(r) Y<sub>l</sub><sup>m</sup>(r̂), and the radial part is a Bernstein polynomial of
+        e<sup>−γr</sup> <Cite id="unke2021spookynet" locator="Methods, Eqs. (13)–(16)" />:
+      </p>
+      <Math display number="4" tex={String.raw`\rho_k(r) = \binom{K-1}{k}\, x^k (1-x)^{K-1-k}\, f_{\mathrm{cut}}(r),\qquad x = e^{-\gamma r},\qquad f_{\mathrm{cut}}(r) = \exp\!\Big(-\frac{r^2}{(r_{\mathrm{cut}}-r)(r_{\mathrm{cut}}+r)}\Big)\ (r<r_{\mathrm{cut}})`} />
+      <p>
+        The exponential maps [0, ∞) onto (0, 1], where Bernstein polynomials can approximate any continuous function; the authors point out that
+        learned functions can then vary less quickly at large r, like orbitals that decay exponentially <Cite id="unke2021spookynet" locator="Methods, after Eq. (16)" />.
+        The harmonics of Eq. (17) are the standard real ones without the factor √(4π/(2l + 1)), so Σ<sub>m</sub> Y<sub>l</sub><sup>m</sup>(û)Y<sub>l</sub><sup>m</sup>(v̂) = P<sub>l</sub>(û·v̂)
+        (checked in the test suite). Including d-like terms costs one sum per neighbour, not one per pair of neighbours: angles enter without
+        computing any angle <Cite id="unke2021spookynet" locator="Introduction" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The radial basis" labels={['live-calculation']} number={1} id="fig-basis" framed={false}>
+        <SpookyBasis client:visible />
+        <Fragment slot="caption">
+          K exponential Bernstein functions under the cutoff. Their sum is the cutoff function itself, and their peaks crowd towards the nucleus:
+          equal steps in k are steps of ln((K − 1)/k)/γ in r.
+        </Fragment>
+        <Assumptions slot="assumptions" items={basisAssumptions} />
+        <Fragment slot="source">Eqs. (14)–(16) of <Cite id="unke2021spookynet" locator="Methods" />. Computed by <code>src/lib/models/spookynet.ts</code> (partition of unity tested).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="twist-h">
+      <h2 id="twist-h" class="h-section">What one update can and cannot see</h2>
+      <p>
+        With all neighbours at one distance, the radial factors are common to all of them, and what an update can tell apart reduces to angular
+        power-spectrum invariants a<sub>l</sub> = Σ<sub>m</sub>(Σ<sub>j</sub> Y<sub>l</sub><sup>m</sup>(r̂<sub>j</sub>))². The authors note that a
+        square planar and a tetrahedral environment share their s and p invariants and that SpookyNet’s update, with L = 2, separates them; with one
+        step it told apart two of their five hard environment pairs, with two or more steps all five, and adding f- or g-like terms gave little
+        gain for the cost <Cite id="unke2021spookynet" locator="Supplementary Information, completeness of atomic descriptors" />. Figure 2 builds
+        a pair that L = 2 cannot separate from a familiar shape change.
+      </p>
+      <Callout kind="derivation" title="A twist the first module cannot see">
+        <p id="twist">
+          In module 1, x̃<sub>j</sub> depends only on the element of j and on the composition, Q and S of the whole structure (Eq. 1), so for a centre
+          with six identical ligands at one distance every neighbour contributes the same vectors and the same ρ<sub>k</sub>. The centre’s s, p and d
+          sums are then fixed multiples of A<sub>l</sub><sup>m</sup> = Σ<sub>j</sub> Y<sub>l</sub><sup>m</sup>(r̂<sub>j</sub>) for l ≤ 2, and so are its
+          invariants; the nonlocal block of module 1 sees only elements too. Put three ligands at polar angle θ and azimuths τ + 2πk/3 and three at
+          π − θ and 2πk/3. For m = ±1 and ±2, Y<sub>l</sub><sup>m</sup> carries cos mφ or sin mφ, and Σ<sub>k</sub> e<sup>im(τ + 2πk/3)</sup> = 0 over
+          each triangle. For m = 0, Y<sub>1</sub><sup>0</sup> = z cancels between the triangles and Y<sub>2</sub><sup>0</sup> = P<sub>2</sub>(cos θ) gives
+          6P<sub>2</sub>(cos θ) for any τ. So every l ≤ 2 sum is independent of the twist τ, at any θ, and the centre’s features after module 1 are
+          identical along the whole path from octahedron to trigonal prism, for any weights. At l = 3 the m = ±3 terms give a<sub>3</sub> ∝ |1 + e<sup>3iτ</sup>|² = 2(1 + cos 3τ):
+          zero for the octahedron. The ligands are not blind: the distances between the two triangles change, and from module 2 on the centre reads
+          their updated features.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Octahedron to trigonal prism" labels={['live-calculation', 'toy-model']} number={2} id="fig-twist" framed={false}>
+        <SpookyTwist client:visible />
+        <Fragment slot="caption">
+          Twist the upper triangle of an FeO₆ core. The metal’s s, p and d invariants (green bars) never move and the toy model’s metal features
+          after one module stay identical at every τ; the f invariant and the oxygens’ features change, and the metal picks up the twist in
+          module 2. The θ slider changes the d invariant but not the blindness to τ.
+        </Fragment>
+        <Assumptions slot="assumptions" items={twistAssumptions} />
+        <Fragment slot="source">Local update and harmonics as <Cite id="unke2021spookynet" locator="Methods, Eqs. (12), (17)" />; derivation above. <code>src/lib/models/spookynet.ts</code>; the invariance along τ (to 10⁻¹²) and its loss in module 2 are tested in <code>spookynet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="emb-h">
+      <h2 id="emb-h" class="h-section">Charge and spin as inputs</h2>
+      <p>
+        The total charge and the number of unpaired electrons are embedded by an attention-like weighting over the atoms
+        <Cite id="unke2021spookynet" locator="Methods, Eq. (10)" />:
+      </p>
+      <Math display number="5" tex={String.raw`\mathbf q_i = \mathrm{linear}(\mathbf e_{Z_i}),\qquad a_i = \frac{\Psi\,\ln\!\big(1 + e^{\mathbf q_i^{\mathsf T}\mathbf k/\sqrt F}\big)}{\sum_{j=1}^{N}\ln\!\big(1 + e^{\mathbf q_j^{\mathsf T}\mathbf k/\sqrt F}\big)},\qquad \mathbf e_{\Psi,i} = \mathrm{resmlp}(a_i\mathbf v)`} />
+      <p>
+        with Ψ = Q or S, learned vectors k and v (separate ones for positive and negative charge) and no biases in the resmlp, so e<sub>Ψ</sub> = 0
+        when Ψ = 0 and Σ<sub>i</sub> a<sub>i</sub> = Ψ <Cite id="unke2021spookynet" locator="Methods, Eq. (10)" />. Partial charges for E<sub>ele</sub>
+        are read out from f<sub>i</sub> and shifted uniformly so that they add up to Q <Cite id="unke2021spookynet" locator="Methods, Eq. (24)" />:
+      </p>
+      <Math display number="6" tex={String.raw`q_i = \tilde q_i + \frac{1}{N}\Big(Q - \sum_{j=1}^{N}\tilde q_j\Big),\qquad \tilde q_i = \mathbf w_q^{\mathsf T}\mathbf f_i + \tilde q_{Z_i}`} />
+      <Callout kind="derivation" title="Where the total charge goes">
+        <p id="embedding">
+          In Eq. (5) q<sub>i</sub> is a linear function of e<sub>Z<sub>i</sub></sub> alone (the reference code passes the nuclear embedding, before
+          any interaction), so each element Z has one weight w<sub>Z</sub> and a<sub>i</sub> = Ψ w<sub>Z<sub>i</sub></sub> / Σ<sub>Z</sub> n<sub>Z</sub>w<sub>Z</sub>,
+          where n<sub>Z</sub> counts atoms of element Z. (i) The embedding ignores geometry: a triangular and a linear Ag₃⁺ receive the same
+          e<sub>Q</sub> on every atom, and any difference between them has to come from the interaction modules. (ii) Atoms of one element share
+          Ψ equally wherever they are; two identical fragments get Ψ/2 each at any separation. (iii) The correction in Eq. (6) is the same for every
+          atom, so a fragment of N<sub>A</sub> atoms takes N<sub>A</sub>/N of the mismatch Q − Σq̃, whatever it is made of; AIMNet2’s neural charge
+          equilibration instead shares it by learned weights (<a href="/models/aimnet2/">AIMNet2 page</a>).
+        </p>
+      </Callout>
+      <p>
+        The authors show what the embeddings are for: on GFN2-xTB data for Ag₃⁺/Ag₃⁻ and for singlet/triplet CH₂, models without them predicted
+        qualitatively wrong surfaces and wrong global minima, and for CH₂ one surface for both spin states; with them the reference surfaces were
+        reproduced <Cite id="unke2021spookynet" locator="Results, Electronic states; Fig. 4" />. Without a charge embedding the Ag₃ states still differed,
+        because the constrained charges enter E<sub>ele</sub>, which the authors call insufficient. On QMspin carbenes the embeddings
+        greatly reduced the error for spin states not seen for that structure <Cite id="unke2021spookynet" locator="Results, Electronic states" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="nl-h">
+      <h2 id="nl-h" class="h-section">Nonlocal interactions</h2>
+      <p>
+        The nonlocal update is self-attention over all atoms of the structure, with queries, keys and values computed from each atom’s features
+        <Cite id="unke2021spookynet" locator="Methods, Eqs. (18)–(19)" />:
+      </p>
+      <Math display number="7" tex={String.raw`\mathbf n_i = \frac{\sum_{j=1}^{N} \exp\!\big(\mathbf q_i^{\mathsf T}\mathbf k_j/\sqrt F\big)\,\mathbf v_j}{\sum_{j=1}^{N} \exp\!\big(\mathbf q_i^{\mathsf T}\mathbf k_j/\sqrt F\big)}`} />
+      <p>
+        No distance appears in Eq. (7). The motivation is physical: electrons can be delocalised, and charge or spin can move in response to distant
+        changes, as in the Au₂ cluster on MgO(001) whose preferred orientation changes when Al dopants more than 10 Å away are added
+        <Cite id="unke2021spookynet" locator="Introduction; Results, Nonlocal effects; Fig. 2b" /> <Cite id="ko2021fourth" />. For diatomics
+        pulled apart, the authors argue that energy contributions should depend on the partner even beyond the cutoff, and show that without the
+        nonlocal block a model trained on nine bond scans develops an unphysical step at large separation, which a larger cutoff only moves
+        outwards <Cite id="unke2021spookynet" locator="Results, Nonlocal effects; Fig. 5" />.
+      </p>
+      <Callout kind="derivation" title="What separated fragments see">
+        <p id="fragments">
+          Let fragments A and B be farther apart than r<sub>cut</sub>, so no local sum couples them and E<sub>rep</sub> between them is zero.
+          (i) Eq. (7) and Eq. (5) contain no distances, so nothing the network computes changes with the separation; only E<sub>ele</sub> and
+          E<sub>vdw</sub> still do. (ii) Without the nonlocal block and with Q = S = 0, e<sub>Q</sub> = e<sub>S</sub> = 0 and every atom’s features are
+          those of its fragment alone, so the network energy is E(A) + E(B). (iii) With attention, atom i in A attends to B’s keys and values,
+          so its features differ from A alone and the energy keeps an offset that does not decay; whether it is small is up to training.
+          (iv) If B is a copy of A, every key and value appears twice, which doubles numerator and denominator of Eq. (7) alike: identical copies
+          still add up exactly, and so they do in the FAVOR+ form below. (v) With a total charge Q, two identical fragments each receive Q/2
+          from Eq. (5) and from Eq. (6), so the far limit is 2E(A, Q/2), not E(A⁺) + E(A): exact theory puts a shared electron on the straight line
+          between integer charges <Cite id="perdew1982fractional" locator="Abstract" />, which a model’s E(Q) need not follow (compare the AIMNet2
+          page, Fig. 3).
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Two fragments pulled apart" labels={['live-calculation', 'toy-model']} number={3} id="fig-fragments" framed={false}>
+        <SpookyFragments client:visible />
+        <Fragment slot="caption">
+          Pull two fragments apart with and without the nonlocal block. Beyond the cutoff (shaded) both curves are flat. A neutral pair adds up
+          exactly without attention; with attention, unlike fragments keep an offset at any distance while two benzenes do not. A total charge
+          splits as the embedding and Eq. (6) dictate, identically at every distance.
+        </Fragment>
+        <Assumptions slot="assumptions" items={fragAssumptions} />
+        <Fragment slot="source">Eqs. (5)–(7) as <Cite id="unke2021spookynet" locator="Methods, Eqs. (10), (18)–(19), (24)" />; derivation above. Statements (i)–(v) are tested for the toy model in <code>src/lib/models/spookynet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="favor-h">
+      <h2 id="favor-h" class="h-section">Attention at linear cost</h2>
+      <p>
+        Eq. (7) needs all N² pairs. SpookyNet instead uses FAVOR+ <Cite id="choromanski2020performers" locator="Sec. 2" />: a random feature map
+        φ with E[φ(q)·φ(k)] = exp(q·k/√F) turns the attention matrix into a product of thin matrices
+        <Cite id="unke2021spookynet" locator="Methods, Eq. (20)" />,
+      </p>
+      <Math display number="8" tex={String.raw`\mathbf n_i \approx \frac{\phi(\mathbf q_i)^{\mathsf T}\sum_j \phi(\mathbf k_j)\,\mathbf v_j^{\mathsf T}}{\phi(\mathbf q_i)^{\mathsf T}\sum_j \phi(\mathbf k_j)},\qquad \phi(\mathbf x) = \frac{1}{\sqrt m}\exp\!\Big(\boldsymbol\omega_a^{\mathsf T}\mathbf x' - \tfrac12\|\mathbf x'\|^2\Big)_{a=1\ldots m},\quad \mathbf x' = \mathbf x/F^{1/4}`} />
+      <p>
+        whose cost grows linearly with N. The features are positive, which Choromanski et al. introduce because sin/cos features can give
+        unstable, even negative, normalisers where kernel values are small, and the ω are drawn orthogonal to reduce the variance
+        <Cite id="choromanski2020performers" locator="Sec. 2.3, Lemma 1; Sec. 2.4" />. SpookyNet uses m = F random features and draws them once at
+        initialisation, so the model is deterministic <Cite id="unke2021spookynet" locator="Methods, after Eq. (20)" />; the trained network is
+        then fitted with that one approximation in place, which is a fixed function, not a sample of exact attention.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Exact attention against FAVOR+" labels={['live-calculation', 'toy-model']} number={4} id="fig-favor" framed={false}>
+        <SpookyAttention client:visible />
+        <Fragment slot="caption">
+          Attention weights of every atom of C₁₀H₃⁺ on every other, exact and estimated with m random features. The error shrinks roughly as
+          1/√m; sharpen the attention and sin/cos features start to produce negative weights and non-positive normalisers, positive features
+          never do.
+        </Fragment>
+        <Assumptions slot="assumptions" items={attnAssumptions} />
+        <Fragment slot="source">FAVOR+: <Cite id="choromanski2020performers" locator="Sec. 2.3–2.4" />; its use in SpookyNet: <Cite id="unke2021spookynet" locator="Methods, Eq. (20)" />; random features as in OUnke/SpookyNet <code>modules/attention.py</code>. Unbiasedness, positivity and the error’s fall with m are tested in <code>spookynet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="train-h">
+      <h2 id="train-h" class="h-section">Training</h2>
+      <p>
+        The loss weighs root-mean-square errors of energies, forces and dipole moments Σ<sub>i</sub>q<sub>i</sub>r⃗<sub>i</sub>; dipoles are used to fit
+        the charges because they are observables, while reference charges from a partitioning scheme can replace them when that is all a dataset
+        has <Cite id="unke2021spookynet" locator="Methods, Eqs. (28)–(32)" />. Without dipoles or charges, E<sub>ele</sub> and E<sub>vdw</sub> are
+        dropped. The weights are equal except for MD17 and QM7-X, where forces are weighted 100 times more; training uses AMSGrad with an
+        exponential moving average of the parameters, and the paper’s models use T = 6, F = 128 and r<sub>cut</sub> = 10 a₀ unless stated
+        otherwise <Cite id="unke2021spookynet" locator="Methods, Training and hyperparameters" />. Every result below comes from a model trained for
+        that dataset alone.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ev-h">
+      <h2 id="ev-h" class="h-section">What the paper shows</h2>
+      <p>
+        On the four datasets of Ko et al. that probe nonlocal charge transfer (C₁₀H₂/C₁₀H₃⁺, Na₈/₉Cl₈⁺, Ag₃⁺/⁻ and Au₂ on doped MgO), SpookyNet
+        reported lower energy, force and charge errors than the second-, third- and fourth-generation Behler–Parrinello networks; those values are
+        quoted from Ko et al., not retrained, with the same data settings <Cite id="unke2021spookynet" locator="Table 1" /> <Cite id="ko2021fourth" locator="Table I" />.
+        The authors add that three of the four could be modelled without nonlocal interactions as long as charge embeddings are used. On QM7-X it
+        was more accurate than SchNet and PaiNN both for unseen conformations of known molecules and for entirely unseen molecules, and the QM7-X
+        model optimised much larger molecules and fullerenes, which have no counterpart in its training data
+        <Cite id="unke2021spookynet" locator="Table 2; Fig. 2c" />. On MD17 it matched or improved on the models compared
+        <Cite id="unke2021spookynet" locator="Table 3" />; on the randomly distorted CH₄ set of Pozdnyakov et al. it kept improving with more data
+        <Cite id="unke2021spookynet" locator="Supplementary Information" /> <Cite id="pozdnyakov2020completeness" />. These are published results
+        from different protocols and are not combined into a ranking here; the Atlas has not rerun them.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="l-int" checked />
+        <label for="l-int">Intuition</label>
+        <input type="radio" name="depth" id="l-tech" />
+        <label for="l-tech">Technical</label>
+        <input type="radio" name="depth" id="l-res" />
+        <label for="l-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Every atom is told what element it is, how charged and how magnetic the whole molecule is, and then looks around in two ways: closely,
+            noting how much of its neighbourhood lies in each direction, in shapes like s, p and d orbitals; and globally, by asking every other
+            atom, near or far, a question and listening most to the ones whose answers match. Physics fills in what is known exactly: nuclei repel
+            at short range, charges attract and repel at long range, and dispersion pulls weakly.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Local features are invariant contractions of l ≤ 2 sums over neighbours (Eq. 3), so one module resolves up to quadrupolar angular
+            structure at linear cost per neighbour; higher orders arise through the modules (Fig. 2). Q and S enter as per-atom embeddings whose
+            sharing depends on composition only (Eq. 5). The nonlocal block is permutation-equivariant and distance-free (Eq. 7) and is evaluated
+            with positive orthogonal random features (Eq. 8); its cost is linear in N. Charges are constrained to Σq = Q by a uniform shift
+            (Eq. 6) and fitted to dipoles. Forces are −∂E/∂r by automatic differentiation, so they are conservative.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            The global attention makes the energy non-additive for separated unlike fragments by construction (derivation (iii) above): size
+            consistency is left to the data, the price of letting distant changes matter. FAVOR+ with ω frozen at initialisation is one fixed
+            positive kernel, exp-like in expectation only, so the trained network is a linear-attention model rather than an approximation to a
+            softmax one. The electronic embedding is a learned, composition-only prior for where charge and spin sit; geometry-dependent
+            redistribution must be learned by the modules, and the integer-to-fractional behaviour of separated fragments is not constrained
+            (compare the charge equilibration of the <a href="/models/long-range/">4G-HDNNP</a> and AIMNet2’s NQE). The ground-state configuration
+            features of Eq. (9) and the s/p/d interaction shapes are inductive biases that the authors link to chemically interpretable
+            local chemical potentials <Cite id="unke2021spookynet" locator="Fig. 2a; Methods, local chemical potentials" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy and conservative forces for a given total charge and number of unpaired electrons, atomic partial charges and the dipole moment
+        built from them <Cite id="unke2021spookynet" locator="Methods, Eqs. (4), (24), (26)" />. The charges are fitted to dipoles (or to a chosen
+        charge partitioning) and are not an electronic-structure quantity; SpookyNet predicts no orbitals, spin densities, Fermi level or density of
+        states.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> A single module is blind to any change that keeps every l ≤ 2 neighbour sum, such as the trigonal
+        twist of Fig. 2; deeper modules recover it only indirectly. Separated unlike fragments are coupled by attention at any distance, so a neutral
+        pair need not dissociate to the sum of its parts unless training enforces it (Fig. 3). Identical fragments always split Q and S evenly, so a
+        charged dimer dissociates to two half-charged fragments, at whatever energy the model gives a fractional charge. The charge embedding is
+        blind to geometry and the charge correction shares by atom count. Attention over all atoms makes every prediction depend on everything in
+        the structure. For periodic systems the paper names Ewald summation for E<sub>ele</sub> <Cite id="unke2021spookynet" locator="Methods, after Eq. (24)" />;
+        the reference code’s attention runs over the atoms of each structure, that is, of the simulation cell and not its images. By derivation
+        (iv), a supercell made of identical copies gives the same features, but what each atom attends to is whatever the chosen cell contains.
+      </p>
+      <p>
+        <strong>From a trained model.</strong> There is no released checkpoint, so every trained SpookyNet is the one its user trains. The paper’s
+        models were each trained on one dataset (small organic molecules, GFN2-xTB clusters and scans, the Ko et al. sets), mostly with the
+        semi-empirical or DFT reference of that dataset; the authors name large heterogeneous condensed-phase systems such as solvated proteins as
+        a remaining challenge <Cite id="unke2021spookynet" locator="Discussion" />. The QM7-X model’s absolute energies were systematically too
+        high for large structures in a conformer benchmark, though relative conformer energies were good
+        <Cite id="unke2021spookynet" locator="Results, Generalization across chemical and conformational space; Supplementary Discussion" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <p>
+        None. The reference implementation (MIT) ships code and the D4 reference data but no trained weights, and the paper’s models are not
+        distributed. The Ag₃⁺/Ag₃⁻ and singlet/triplet carbene datasets generated for the paper are on Zenodo
+        (<a href="https://doi.org/10.5281/zenodo.5115732">10.5281/zenodo.5115732</a>). Note that the code’s constructor defaults (64 features,
+        16 radial functions, three modules) are not the paper’s settings. The <a href="/models/checkpoints/">checkpoints page</a> lists every recorded
+        checkpoint of other families.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/aimnet2/">AIMNet2</a> also takes the total charge as input but shares it by learned per-atom weights and has no global
+        attention. The <a href="/models/long-range/">4G-HDNNP</a> moves charge across a whole structure by charge equilibration, a linear solve;
+        LES learns latent charges with long-range electrostatics. <a href="/models/pet/">PET</a> and <a href="/models/equiformer/">Equiformer</a> use
+        attention only among neighbours inside a cutoff. <a href="/models/esen-uma/">UMA</a> takes charge and spin as inputs for molecules.
+        <a href="/models/schnet/">SchNet</a> is the distance-only message passing that SpookyNet adds angles, electronic inputs and nonlocality to.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>SpookyNet: <Cite id="unke2021spookynet" />; its precursor PhysNet: <Cite id="unke2019physnet" />.</li>
+        <li>FAVOR+ attention: <Cite id="choromanski2020performers" />. Dispersion: <Cite id="caldeweyher2019d4" />. Repulsion: <Cite id="ziegler1985zbl" />.</li>
+        <li>Datasets with nonlocal charge transfer: <Cite id="ko2021fourth" />. Degenerate environments: <Cite id="pozdnyakov2020completeness" />.</li>
+        <li>Code: <a href="https://github.com/OUnke/SpookyNet">OUnke/SpookyNet</a> (MIT, PyTorch, ASE calculator).</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #l-int:checked ~ .depth-int,
+  #l-tech:checked ~ .depth-tech,
+  #l-res:checked ~ .depth-res {
+    display: block;
+  }
+</style>

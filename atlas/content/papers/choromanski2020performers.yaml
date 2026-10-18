@@ -1,0 +1,23 @@
+title: Rethinking Attention with Performers
+topic: other
+authors:
+  - 'Choromanski, K.'
+  - 'Likhosherstov, V.'
+  - 'Dohan, D.'
+  - 'Song, X.'
+  - 'Gane, A.'
+  - 'Sarlos, T.'
+  - 'Hawkins, P.'
+  - 'Davis, J.'
+  - 'Mohiuddin, A.'
+  - 'Kaiser, L.'
+  - 'Belanger, D.'
+  - 'Colwell, L.'
+  - 'Weller, A.'
+year: 2020
+venue: International Conference on Learning Representations (ICLR) 2021; arXiv preprint 2020
+type: conference
+identifiers:
+  arxiv: '2009.14794'
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read Sec. 2 of the arXiv LaTeX source (v4): kernelised attention, why sin/cos random features give unstable (even negative) renormalisers when kernel scores are near zero (Sec. 2.3), positive random features (Lemma 1) and orthogonal random features (Sec. 2.4).' }
