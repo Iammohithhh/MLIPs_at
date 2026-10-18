@@ -1,0 +1,7 @@
+name: equiformer_v2
+repo: https://github.com/atomicarchitects/equiformer_v2
+language: Python
+framework: pytorch
+licence: MIT
+families: [equiformer]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit d5ad4be (2026-04-09): nets/equiformer_v2/so3.py (SO3_Grid: e3nn ToS2Grid/FromS2Grid, default resolution 2(L+1) × 2(L+1)+1), activation.py (S2Activation, SeparableS2Activation, SmoothLeakyReLU 0.2), transformer_block.py (alpha_norm LayerNorm, softmax over neighbours, no envelope), equiformer_v2_oc20.py (GaussianSmearing 600 functions to max_radius). The EquiformerV2 models in fairchem were moved out of its main tree; the OMat24 eqV2 checkpoints were released through fairchem.' }

@@ -1,0 +1,9 @@
+statement: >-
+  The EquiformerV2 OC20 S2EF-2M base model uses L_max = 6, M_max = 2, 128 channels per degree, 8 attention heads,
+  12 blocks, a 12 Å cutoff with at most 20 neighbours, 600 Gaussian radial functions and an 18 × 18 grid for the S2
+  activation; the larger S2EF-All model uses 20 blocks and M_max = 3 (153M parameters).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2023equiformerv2, locator: 'App. D, Table 7; App. A.4' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The released code (equiformer_v2_oc20.py) has no envelope: edges stop at max_radius.' }

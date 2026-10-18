@@ -1,0 +1,9 @@
+statement: >-
+  Equiformer replaces dot-product attention with MLP attention, in which attention weights are a softmax over neighbours
+  of a nonlinear function of invariant edge features, and uses non-linear equivariant messages as values.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2022equiformer, locator: Abstract }
+  - { paper: liao2023equiformerv2, locator: 'Sec. 2.2' }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Equiformer read through its abstract and EquiformerV2''s background section only.' }

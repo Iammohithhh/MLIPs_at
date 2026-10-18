@@ -1,0 +1,8 @@
+statement: >-
+  EquiformerV2's S2 activation is only approximately equivariant on a finite grid; with L_max = 6 and an 18 × 18 grid
+  the authors measured an equivariance error close to 0.2 %, and report that it approaches zero as the resolution grows.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2023equiformerv2, locator: 'App. A.4' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The Atlas toy (src/lib/models/equiformer.ts) gives errors of the same order on random inputs (about 0.4 % at L = 6, 18 × 18); the size depends on the input distribution.' }

@@ -1,0 +1,15 @@
+title: Generalizing Denoising to Non-Equilibrium Structures Improves Equivariant Force Fields
+topic: equivariant-message-passing
+authors:
+  - 'Liao, Y.-L.'
+  - 'Smidt, T.'
+  - 'Shuaibi, M.'
+  - 'Das, A.'
+year: 2024
+type: preprint
+identifiers:
+  arxiv: '2403.09549'
+edges:
+  - { type: extends, target: liao2023equiformerv2, documented: true }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Abstract only: DeNS adds noise to the coordinates of non-equilibrium structures and trains the model to predict it, with the original structure''s forces given as an extra input, because denoising a non-equilibrium structure is otherwise not uniquely defined.' }

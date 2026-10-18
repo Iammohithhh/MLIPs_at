@@ -1,0 +1,24 @@
+name: EquiformerV3+DeNS-MP
+family: equiformer
+implementation: equiformer-v3
+version: mptrj_gradient
+release: { date: 2026-04-07, source: liao2026equiformerv3 }
+parameters: { total: 30278113 }
+training:
+  - stage: pretraining
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Direct pre-training with a force head and DeNS denoising, 70 epochs, no stress (config equiformer_v3_N@7_L@4_..._dens-p@0.5-std@0.025 in experimental/configs/omat24/mptrj/experiments/direct/).'
+  - stage: finetuning
+    dataset: mptrj
+    level_of_theory: pbe-pbeu-mp
+    note: 'Energy head removed, then gradient (conservative) fine-tuning, 10 epochs (README, MPtrj steps 1–3).'
+outputs: [energy, forces, stress]
+licence: MIT
+weights: { url: 'https://huggingface.co/mirror-physics/equiformer_v3/resolve/main/checkpoint/mptrj_gradient.pt' }
+known_issues: []
+claims: [eqv3-architecture, eqv3-grid-resolutions]
+review:
+  status: draft
+  last_checked: 2026-10-18
+  notes: 'Settings from the fine-tuning config (equiformer_v3 a7300c5): L_max 4, M_max 2, 7 layers, 8 heads, 6 Å, at most 300 neighbours (enforced strictly), 10 radial functions, envelope on, attention grid [14, 8], FFN grid [14, 14], SwiGLU activations. Parameter count and release date from the Matbench Discovery model card (snapshot 2026-10-03), which lists it as trained on MPtrj only with gradient forces. File name from the Hugging Face listing (mirror-physics/equiformer_v3, sha ca3ce91, licence MIT); not downloaded.'

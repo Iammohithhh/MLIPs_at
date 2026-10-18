@@ -1,0 +1,17 @@
+title: 'EquiformerV2: Improved Equivariant Transformer for Scaling to Higher-Degree Representations'
+topic: equivariant-message-passing
+authors:
+  - 'Liao, Y.-L.'
+  - 'Wood, B.'
+  - 'Das, A.'
+  - 'Smidt, T.'
+year: 2023
+type: preprint
+identifiers:
+  arxiv: '2306.12059'
+edges:
+  - { type: extends, target: liao2022equiformer, documented: true }
+  - { type: reuses-mechanism, target: passaro2023escn, documented: true }
+  - { type: benchmarks, target: chanussot2020oc20, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v3 (HTML, 6 Mar 2024): Secs. 3.1–3.5 (eSCN convolutions, attention re-normalisation, separable S2 activation, separable layer norm, architecture), App. A.4 (grid resolution R = 18 for L_max = 6; equivariance error close to 0.2 %), App. C–D, Table 7 (OC20 hyperparameters: L_max 6, M_max 2, 128 channels, 8 heads, 12 blocks, 12 Å, 20 neighbours, 600 radial bases). Code read at atomicarchitects/equiformer_v2 commit d5ad4be (2026-04-09).' }

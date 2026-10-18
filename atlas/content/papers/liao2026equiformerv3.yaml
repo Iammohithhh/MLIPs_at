@@ -1,0 +1,18 @@
+title: 'EquiformerV3: Scaling Efficient, Expressive, and General SE(3)-Equivariant Graph Attention Transformers'
+topic: equivariant-message-passing
+authors:
+  - 'Liao, Y.-L.'
+  - 'Hoffman, A. J.'
+  - 'Shen, S. C.'
+  - 'Duval, A.'
+  - 'Norwood, S. W.'
+  - 'Smidt, T.'
+year: 2026
+type: preprint
+identifiers:
+  arxiv: '2604.09130'
+edges:
+  - { type: extends, target: liao2023equiformerv2, documented: true }
+  - { type: compares-against, target: fu2025esen, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v1 (HTML): Sec. 4.1 (software, 1.75x), Sec. 4.2 (merged layer norm; 4x FFN hidden size; smooth-cutoff attention, Eqs. 2–4), Sec. 4.3 (SwiGLU-S2, Eq. 7; grid tensor products, Eq. 6), Sec. 5.1 (grids (8, 20) in attention and (20, 20) in the FFN for L_max = 6 versus V2''s (18, 18)), App. C Tables 6–7 (equivariance errors), Tables 8–10 (hyperparameters). Code read at atomicarchitects/equiformer_v3 commit a7300c5 (2026-04-17).' }

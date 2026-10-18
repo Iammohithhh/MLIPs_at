@@ -1,0 +1,10 @@
+statement: >-
+  EquiformerV2 replaces Equiformer's SO(3) tensor products with eSCN SO(2) convolutions in the bond frame, adds a
+  LayerNorm before the LeakyReLU of the attention MLP (attention re-normalisation), applies a separable S2 activation
+  (SiLU on the degree-0 channels; SiLU on a spherical grid, y = G⁻¹(SiLU(G(x))), for the rest) and normalises degrees
+  above zero with one shared RMS scale (separable layer norm).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2023equiformerv2, locator: 'Secs. 3.1–3.5; Figs. 1–2' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The paper reports that replacing the gate with a plain S2 activation gave large gradients and unstable training, which the separable form avoids (Sec. 3.3).' }

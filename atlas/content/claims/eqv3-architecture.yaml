@@ -1,0 +1,10 @@
+statement: >-
+  EquiformerV3 keeps EquiformerV2's eSCN-based graph attention and adds an equivariant merged layer norm (one RMS scale
+  over all degrees), a 4× wider feed-forward network, an envelope that multiplies the exponentiated attention logits
+  inside the softmax and the values (smooth radius cutoff), and SwiGLU-S2 activations, σ(s)·G(x₁)⊙G(x₂) projected back,
+  which also give tensor products on the grid in O(L⁴).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2026equiformerv3, locator: 'Secs. 4.2–4.3; Eqs. 2–4, 6, 7' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Envelope: the same p = 5 polynomial as eSEN (envelope.py), applied through GraphSoftmax exp_rescale (softmax.py), commit a7300c5.' }

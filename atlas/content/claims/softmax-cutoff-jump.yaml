@@ -1,0 +1,7 @@
+statement: >-
+  In softmax attention over neighbours within a cutoff, multiplying only the message by an envelope does not make the
+  output continuous: a neighbour crossing r_c removes a finite term exp(z) from the softmax denominator, so every
+  other weight changes by the factor (1 − a) at once. Multiplying exp(z) by the envelope inside the softmax removes the jump.
+grade: THEORY
+derivation: /models/equiformer/#softmax-derivation
+review: { status: draft, last_checked: 2026-10-18, notes: 'Checked numerically in src/lib/models/equiformer.test.ts. EquiformerV3 makes the same argument against envelopes on messages only (Sec. 4.2).' }

@@ -1,0 +1,7 @@
+name: equiformer_v3
+repo: https://github.com/atomicarchitects/equiformer_v3
+language: Python
+framework: pytorch
+licence: MIT
+families: [equiformer]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit a7300c5 (2026-04-17): experimental/models/equiformer_v3/envelope.py (PolynomialEnvelope exponent 5), softmax.py (GraphSoftmax with exp_rescale: envelope multiplies exp(z) before the sum), equiformer_v3.py, configs under experimental/configs/omat24/ (L 4, M 2, 7 layers, 6 Å, 300 neighbours, attention grid [14, 8], FFN grid [14, 14]), experimental/tasks/test_equivariance (attention grid [14, 7]).' }

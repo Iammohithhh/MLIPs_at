@@ -5508,6 +5508,170 @@
    "referenced_works": []
   }
  },
+ "liao2022equiformer": {
+  "arxiv": {
+   "authors": [
+    "Yi-Lun Liao",
+    "Tess Smidt"
+   ],
+   "id": "2206.11990v2",
+   "primary_category": "cs.LG",
+   "published": "2022-06-23",
+   "title": "Equiformer: Equivariant Graph Attention Transformer for 3D Atomistic Graphs",
+   "updated": "2023-02-28"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Liao, Y.-L.' vs fetched ['liao']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 63,
+   "id": "W4283641078",
+   "publication_year": 2022,
+   "referenced_works": []
+  }
+ },
+ "liao2023equiformerv2": {
+  "arxiv": {
+   "authors": [
+    "Yi-Lun Liao",
+    "Brandon Wood",
+    "Abhishek Das",
+    "Tess Smidt"
+   ],
+   "id": "2306.12059v3",
+   "primary_category": "cs.LG",
+   "published": "2023-06-21",
+   "title": "EquiformerV2: Improved Equivariant Transformer for Scaling to Higher-Degree Representations",
+   "updated": "2024-03-06"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2023; fetched [2023]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Liao, Y.-L.' vs fetched ['liao']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 80,
+   "id": "W4381713642",
+   "publication_year": 2023,
+   "referenced_works": []
+  }
+ },
+ "liao2024dens": {
+  "arxiv": {
+   "authors": [
+    "Yi-Lun Liao",
+    "Tess Smidt",
+    "Muhammed Shuaibi",
+    "Abhishek Das"
+   ],
+   "id": "2403.09549v3",
+   "primary_category": "cs.LG",
+   "published": "2024-03-14",
+   "title": "Generalizing Denoising to Non-Equilibrium Structures Improves Equivariant Force Fields",
+   "updated": "2024-12-19"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2024; fetched [2024]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Liao, Y.-L.' vs fetched ['liao']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 5,
+   "id": "W4392873911",
+   "publication_year": 2024,
+   "referenced_works": []
+  }
+ },
+ "liao2026equiformerv3": {
+  "arxiv": {
+   "authors": [
+    "Yi-Lun Liao",
+    "Alexander J. Hoffman",
+    "Sabrina C. Shen",
+    "Alexandre Duval",
+    "Sam Walton Norwood",
+    "Tess Smidt"
+   ],
+   "id": "2604.09130v1",
+   "primary_category": "cs.LG",
+   "published": "2026-04-10",
+   "title": "EquiformerV3: Scaling Efficient, Expressive, and General SE(3)-Equivariant Graph Attention Transformers",
+   "updated": "2026-04-10"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2026; fetched [2026]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Liao, Y.-L.' vs fetched ['liao']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 1,
+   "id": "W7154044755",
+   "publication_year": 2026,
+   "referenced_works": []
+  }
+ },
  "lyddane1941lst": {
   "arxiv": null,
   "checks": [
@@ -8977,6 +9141,8 @@
    "chanussot2020oc20",
    "chen2022m3gnet",
    "deng2023chgnet",
+   "liao2022equiformer",
+   "liao2023equiformerv2",
    "musaelian2023allegro",
    "schutt2017schnet",
    "zhang2018deepmd",

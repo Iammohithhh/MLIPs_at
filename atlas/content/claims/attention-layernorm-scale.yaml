@@ -1,0 +1,7 @@
+statement: >-
+  A LayerNorm on the invariant features before the attention nonlinearity makes the attention logits independent of the
+  overall scale of those features (up to its ε), so the softmax cannot saturate because features grow; without it, scaling
+  the features scales the logits and concentrates the attention on one neighbour.
+grade: THEORY
+derivation: /models/equiformer/#fig-attention
+review: { status: draft, last_checked: 2026-10-18, notes: 'EquiformerV2 motivates its attention re-normalisation by training stability as L_max grows (Sec. 3.2, citing ViT-22B); the scale invariance is a property of LayerNorm, checked in src/lib/models/equiformer.test.ts.' }

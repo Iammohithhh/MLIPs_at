@@ -1,0 +1,13 @@
+title: 'Equiformer: Equivariant Graph Attention Transformer for 3D Atomistic Graphs'
+topic: equivariant-message-passing
+authors:
+  - 'Liao, Y.-L.'
+  - 'Smidt, T.'
+year: 2022
+type: preprint
+identifiers:
+  arxiv: '2206.11990'
+edges:
+  - { type: extends, target: geiger2022e3nn, documented: true }
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Abstract (arXiv v2, Feb 2023): replaces dot-product attention with MLP attention and adds non-linear message passing, built from e3nn-style irreps tensor products. Published at ICLR 2023 (mlanthology.org entry liao2023iclr-equiformer); venue not cross-checked against the proceedings. The page describes Equiformer only through EquiformerV2''s Sec. 2.2 summary.' }

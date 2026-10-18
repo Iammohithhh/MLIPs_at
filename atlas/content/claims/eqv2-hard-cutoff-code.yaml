@@ -1,0 +1,8 @@
+statement: >-
+  The released EquiformerV2 code applies no envelope to edges or attention: an edge contributes with its full radial
+  weight up to max_radius and not at all beyond, with at most max_neighbors edges per atom.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2023equiformerv2, locator: 'App. D, Table 7 (cutoff, max neighbours)' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Code read at atomicarchitects/equiformer_v2 d5ad4be: no envelope in transformer_block.py or equiformer_v2_oc20.py; GaussianSmearing(0, cutoff, 600, 2.0). EquiformerV3 lists smooth-cutoff attention as a change (Sec. 4.2).' }

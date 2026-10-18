@@ -1,0 +1,557 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import EquiformerS2 from '~/islands/EquiformerS2';
+import EquiformerAttention from '~/islands/EquiformerAttention';
+import snapshot from '~/data/benchmarks/matbench-discovery.json';
+import { eqv2DefaultGrid, swigluExactGrid } from '~/lib/models/equiformer';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const v3 = (await getEntry('checkpoints', 'equiformer-v3-dens-mp'))!.data as Checkpoint;
+const board = snapshot.models.filter((m) => m.family_dir === 'eqv2' || m.family_dir === 'equiformer_v3');
+
+// Grids the models use, against the smallest grids on which a product activation is exact.
+const grids = [
+  { model: 'EquiformerV2, OC20 (SiLU on the grid)', where: 'attention and FFN', L: 6, M: 6, used: [18, 18], act: 'S²' },
+  { model: 'EquiformerV2 code default', where: 'L = 6, global frame', L: 6, M: 6, used: [eqv2DefaultGrid(6).nBeta, eqv2DefaultGrid(6).nAlpha], act: 'S²' },
+  { model: 'EquiformerV3, L = 6', where: 'attention (bond frame, M = 2)', L: 6, M: 2, used: [20, 8], act: 'SwiGLU-S²' },
+  { model: 'EquiformerV3, L = 6', where: 'feed-forward network', L: 6, M: 6, used: [20, 20], act: 'SwiGLU-S²' },
+  { model: 'EquiformerV3 released L = 4 models', where: 'attention (bond frame, M = 2)', L: 4, M: 2, used: [14, 8], act: 'SwiGLU-S²' },
+  { model: 'EquiformerV3 released L = 4 models', where: 'feed-forward network', L: 4, M: 4, used: [14, 14], act: 'SwiGLU-S²' },
+].map((g) => {
+  const e = swigluExactGrid(g.L, g.M);
+  return { ...g, exact: e, ok: g.act !== 'S²' && g.used[0]! >= e.nBeta && g.used[1]! >= e.nAlpha };
+});
+
+const s2Assumptions = [
+  { term: 'Feature', value: 'One channel with degrees l ≤ L, random coefficients of size up to amplitude/√(l+1), fixed seed. Real orthonormal harmonics with the polar axis along z.' },
+  { term: 'Grid', value: 'e3nn’s, as both EquiformerV2 and V3 use it: N_β latitudes β_j = π(j + ½)/N_β (N_β even), N_α longitudes α_k = 2πk/N_α, Kostelec–Rockmore weights in β. G evaluates the feature at the points; G⁻¹ integrates against each harmonic with those weights.' },
+  { term: 'Activations', value: 'Gate: SiLU on l = 0, other degrees scaled by σ(s). S²: G⁻¹ SiLU G. Separable S²: as S², with the l = 0 output replaced by SiLU(s). SwiGLU-S²: G⁻¹(σ(s) · G x₁ ⊙ G x₂) with a second random feature x₂. s = 0.3 is an invariant scalar.' },
+  { term: 'Test', value: 'Equivariance error: ‖act(D x) − D act(x)‖ / ‖D act(x)‖ for one fixed rotation; the plot uses square grids N_β = N_α = N. The 3D view turns the input while the grid stays fixed, and compares with the rotated output at 0°.' },
+  { term: 'Not modelled', value: 'Channels, learned weights, the m_max truncation in the bond frame (covered in the derivation), e3nn’s extra m_max rescaling. Random inputs: the size of the error is illustrative only.' },
+];
+const attnAssumptions = [
+  { term: 'Model', value: 'One attention head over seven neighbours of a centre atom. Invariant edge features f⁽⁰⁾ = Wφ(r) + b with 10 Gaussians on [0, 6] Å and 8 hidden channels; logits z = aᵀ SmoothLeakyReLU(LN(f⁽⁰⁾)), as in EquiformerV2’s code; a scalar value v(r). Random, untrained weights.' },
+  { term: 'Modes', value: 'Hard: edges inside 6 Å with full weight, none beyond (EquiformerV2). Message: v multiplied by the envelope, softmax unchanged (an envelope on messages only, as eSEN applies it). Smooth: envelope multiplying exp(z) inside the softmax and the value (EquiformerV3 Eq. 4). Envelope: the p = 5 polynomial both eSEN and EquiformerV3 use.' },
+  { term: 'Scale', value: 'Multiplies f⁽⁰⁾ before the LayerNorm, to show what the re-normalisation removes. With LN off the logits are aᵀ SmoothLeakyReLU(f⁽⁰⁾), as in Equiformer.' },
+  { term: 'Not modelled', value: 'Equivariant values (only the l = 0 part is kept), several heads, the softmax ε of the V3 code, neighbour caps. The moving neighbour travels on a fixed ray; the others are fixed.' },
+];
+---
+
+<BaseLayout
+  title="Equiformer"
+  description="Equiformer, EquiformerV2 and EquiformerV3: equivariant graph attention on spherical-harmonic features, activations computed on a grid on the sphere and when they are exactly equivariant, and attention that stays smooth at the cutoff. Equations, two live toys, failure modes and checkpoints."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">Equiformer</h1>
+      <p class="lede">
+        Equiformer is a Transformer for atoms in which attention weights come from invariant features and values are
+        equivariant messages <Cite id="liao2022equiformer" locator="Abstract" />. EquiformerV2 made it scale to high
+        angular degree by borrowing eSCN’s SO(2) convolutions, and replaced the gate nonlinearity with a function applied on
+        a grid of points on the sphere <Cite id="liao2023equiformerv2" locator="Secs. 3.1, 3.3" />. That grid costs exact
+        symmetry. EquiformerV3 changed the nonlinearity to a product that a finite grid handles exactly, and moved the cutoff
+        envelope into the attention softmax so that the energy stays smooth when neighbours come and go
+        <Cite id="liao2026equiformerv3" locator="Secs. 4.2–4.3" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Equivariant; exact with the gate and SwiGLU-S², approximate with SiLU on a grid</dd></div>
+        <div><dt>Locality</dt><dd>Message passing; V2 12 Å, 20 neighbours (OC20); V3 6 Å (OMat24, MPtrj)</dd></div>
+        <div><dt>Messages</dt><dd>Graph attention: softmax of an MLP of scalars × non-linear equivariant values</dd></div>
+        <div><dt>Forces</dt><dd>V2 models: direct heads. V3: −∂E/∂r after direct pre-training</dd></div>
+        <div><dt>Introduced</dt><dd>Equiformer 2022; V2 2023; V3 2026</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/atomicarchitects/equiformer_v2">equiformer_v2</a>, <a href="https://github.com/atomicarchitects/equiformer_v3">equiformer_v3</a> (MIT)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architectures</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="arch-h">
+      <h2 id="arch-h" class="h-section">Attention on spherical-harmonic features</h2>
+      <p>
+        Each atom carries, in every channel, a stack of spherical-harmonic coefficients <i>x</i><sub>lm</sub> with
+        <i>l</i> ≤ <i>L</i>, as in <a href="/models/nequip/">NequIP</a> and <a href="/models/esen-uma/">eSEN</a>. A
+        Transformer block lets each atom attend to its neighbours. Equiformer’s choice was to compute the attention
+        weight from an MLP of the invariant part of an edge feature rather than a dot product of queries and keys, and to let
+        the value itself be a non-linear function of the edge <Cite id="liao2023equiformerv2" locator="Sec. 2.2" />.
+      </p>
+      <p>
+        EquiformerV2 builds the edge feature with eSCN’s trick: rotate the two atoms’ features into the bond frame with the
+        Wigner matrix <i>D</i><sub>ij</sub>, where a tensor product with the bond’s harmonics becomes an SO(2) linear layer
+        that mixes each order <i>m</i> with −<i>m</i> <Cite id="liao2023equiformerv2" locator="Sec. 3.1" /> <Cite id="passaro2023escn" locator="Sec. 3, Eq. 14" />.
+        The <a href="/models/esen-uma/#fig-edge">eSEN page</a> shows that step live. The result is split into scalars
+        <Math tex={String.raw`f^{(0)}_{ij}`} /> and higher-degree parts. The scalars give the attention weight
+        <Cite id="liao2023equiformerv2" locator="Secs. 3.2, 3.5" />:
+      </p>
+      <Math display number="1" tex={String.raw`f_{ij} = \mathrm{SO2}_1\big(D_{ij}\,[\,x_i \,\Vert\, x_j\,]\big), \qquad z_{ij} = \mathbf a^{\mathsf T}\,\mathrm{LeakyReLU}\big(\mathrm{LN}(f^{(0)}_{ij})\big), \qquad a_{ij} = \frac{e^{z_{ij}}}{\sum_{k \in \mathcal N(i)} e^{z_{ik}}}`} />
+      <p>
+        The whole edge feature passes through a nonlinearity and a second SO(2) layer to give the value, which is weighted,
+        rotated back and summed <Cite id="liao2023equiformerv2" locator="Sec. 3.5; Fig. 1" />:
+      </p>
+      <Math display number="2" tex={String.raw`v_{ij} = \mathrm{SO2}_2\big(\phi(f_{ij})\big), \qquad \mathbf m_i = \sum_{j \in \mathcal N(i)} D_{ij}^{-1}\big(a_{ij}\, v_{ij}\big)`} />
+      <p>
+        Several heads run in parallel and are concatenated. Because <i>a</i><sub>ij</sub> is built from scalars, multiplying
+        an equivariant value by it keeps the message equivariant. The LayerNorm in Eq. (1) is V2’s attention
+        re-normalisation. The authors added it, following ViT-22B, to keep the inputs of the nonlinearity and softmax in range
+        as <i>L</i> grows <Cite id="liao2023equiformerv2" locator="Sec. 3.2" />. Raising <i>L</i> was the point of V2: eSCN
+        convolutions made <i>L</i> = 6 to 8 affordable on OC20, where Equiformer’s tensor products had stopped at
+        <i>L</i> = 2 <Cite id="liao2023equiformerv2" locator="Sec. 3.1" />. The OC20 base model uses <i>L</i> = 6,
+        <i>M</i><sub>max</sub> = 2, 128 channels per degree, 8 heads and 12 blocks, with a 12 Å cutoff and at most 20
+        neighbours <Cite id="liao2023equiformerv2" locator="App. D, Table 7" />.
+      </p>
+      <ol class="flow" aria-label="One EquiformerV2 attention block">
+        <li><span>rotate</span> D<sub>ij</sub>: bond onto the polar axis</li>
+        <li><span>SO(2)</span> edge feature f<sub>ij</sub></li>
+        <li class="key"><span>weights</span> LN → LeakyReLU → aᵀ → softmax</li>
+        <li class="key"><span>values</span> activation on the sphere, SO(2)</li>
+        <li><span>back</span> D<sub>ij</sub><sup>−1</sup>, sum over j</li>
+      </ol>
+    </section>
+
+    <section class="block" aria-labelledby="s2-h">
+      <h2 id="s2-h" class="h-section">Nonlinearities on the sphere</h2>
+      <p>
+        An equivariant network needs a nonlinearity that commutes with rotations. The gate used by NequIP and Equiformer
+        scales each degree-<i>l</i> block by a function of a scalar. It is exact, but it never mixes directions. EquiformerV2
+        instead reads the coefficients as a function on the sphere, <i>f</i>(û) = Σ <i>x</i><sub>lm</sub> <i>Y</i><sub>lm</sub>(û),
+        samples it on a grid (<i>G</i>), applies SiLU at every point and projects back (<i>G</i><sup>−1</sup>)
+        <Cite id="liao2023equiformerv2" locator="Sec. 3.3; Fig. 2" />:
+      </p>
+      <Math display number="3" tex={String.raw`y = G^{-1}\big(\mathrm{SiLU}(G(x))\big), \qquad G(x)_{jk} = \sum_{l \le L,\,m} x_{lm}\, Y_{lm}(\beta_j, \alpha_k), \qquad G^{-1}(v)_{lm} = \sum_{j,k} w_j\,\frac{2\pi}{N_\alpha}\, Y_{lm}(\beta_j, \alpha_k)\, v_{jk}`} />
+      <p>
+        with e3nn’s grid, β<sub>j</sub> = π(<i>j</i> + ½)/<i>N</i><sub>β</sub> and α<sub>k</sub> = 2π<i>k</i>/<i>N</i><sub>α</sub>, and
+        Kostelec–Rockmore weights <i>w</i><sub>j</sub> (e3nn <code>o3/_s2grid.py</code>, which both codes call). Applying this to
+        every channel, degree 0 included, gave large gradients and unstable training. The separable version keeps a SiLU on
+        an extra set of scalars for the degree-0 output, and uses the grid only for the rest
+        <Cite id="liao2023equiformerv2" locator="Sec. 3.3" />. SiLU(<i>f</i>) is no longer band-limited, though. Its projection
+        onto degree ≤ <i>L</i> depends on where the grid points fall, so turning the input does not exactly turn the output.
+        With <i>L</i> = 6 on the 18 × 18 grid used for OC20 the authors measured an equivariance error close to 0.2 %
+        <Cite id="liao2023equiformerv2" locator="App. A.4" />. eSEN’s ablations later found that low-resolution grids also broke
+        energy conservation in molecular dynamics <Cite id="fu2025esen" locator="Sec. 5.2; Fig. 4 (b)" />.
+      </p>
+      <p>
+        EquiformerV3 replaced SiLU on the grid with a gated product of two grid functions
+        <Cite id="liao2026equiformerv3" locator="Sec. 4.3, Eq. 7" />:
+      </p>
+      <Math display number="4" tex={String.raw`\mathrm{SwiGLU\text{-}S^2}(s, x_1, x_2) = G^{-1}\Big(\sigma(s)\cdot G(x_1) \odot G(x_2)\Big)`} />
+      <p>
+        where <i>s</i> is an invariant scalar. The same pointwise product, without the gate, gives tensor products of two
+        features on the grid at <i>O</i>(<i>L</i><sup>4</sup>) cost instead of <i>O</i>(<i>L</i><sup>6</sup>)
+        <Cite id="liao2026equiformerv3" locator="Sec. 4.3, Eq. 6" />. A product of two degree-<i>L</i> functions has degree
+        2<i>L</i> exactly, so a finite grid can integrate it without error. Figure 1 compares the four choices.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Activations on the sphere, and when a grid is exact" labels={['toy-model', 'live-calculation']} number={1} id="fig-s2" framed={false}>
+        <EquiformerS2 client:visible />
+        <Fragment slot="caption">
+          Left, a random degree-<i>L</i> feature as a polar plot (distance from the centre is |<i>f</i>|, colour its sign) and the
+          grid points around it, sized by the value of the pointwise function there. Right, the output of the chosen
+          activation. Turn the feature: the grid does not turn with it. The plot shows the equivariance error against the
+          grid resolution, with the EquiformerV2 default, the 18 × 18 OC20 grid and 3<i>L</i> + 1 marked.
+        </Fragment>
+        <Assumptions slot="assumptions" items={s2Assumptions} />
+        <Fragment slot="source">Activations from <Cite id="liao2023equiformerv2" locator="Sec. 3.3" /> and <Cite id="liao2026equiformerv3" locator="Eq. 7" />; grid and weights from e3nn (commit 2aa7f58); default resolution from equiformer_v2 <code>so3.py</code> (d5ad4be). Computed in your browser by the tested module <code>src/lib/models/equiformer.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="exact-h">
+      <Callout kind="derivation" title="How many grid points a product needs">
+        <p id="exact-grid">
+          Projecting back computes, for each output coefficient, the integral of <i>Y</i><sub>l₃m₃</sub> times the product
+          <i>f</i><sub>1</sub><i>f</i><sub>2</sub>, a sum of terms
+          <Math tex={String.raw`Y_{l_1 m_1} Y_{l_2 m_2} Y_{l_3 m_3}`} /> with every <i>l</i> ≤ <i>L</i> and |<i>m</i>| ≤
+          <i>M</i><sub>max</sub>. Each term is a product of cos or sin of <i>m</i>α and associated Legendre functions of cos β. The
+          α sum over <i>N</i><sub>α</sub> equally spaced points is exact for every frequency below <i>N</i><sub>α</sub>, and the
+          largest frequency is 3<i>M</i><sub>max</sub>, so <i>N</i><sub>α</sub> ≥ 3<i>M</i><sub>max</sub> + 1 leaves exactly the
+          terms whose orders cancel. In those, the powers of sin β add up to |<i>m</i>₁| + |<i>m</i>₂| + |<i>m</i>₃|, which is even
+          when the orders cancel, so each is a polynomial in cos β of degree <i>l</i>₁ + <i>l</i>₂ + <i>l</i>₃ ≤ 3<i>L</i>. The
+          Kostelec–Rockmore rule on <i>N</i><sub>β</sub> points integrates polynomials of degree below <i>N</i><sub>β</sub>
+          exactly, so <i>N</i><sub>β</sub> ≥ 3<i>L</i> + 1 suffices. Then <i>G</i><sup>−1</sup> is the exact projection, which
+          commutes with rotations. In the bond frame only rotations about the bond matter, and <i>M</i><sub>max</sub> is the
+          truncation order. For SiLU no such bound exists, because SiLU(<i>f</i>) has components of every degree. The bounds,
+          and the fact that one point fewer breaks exactness, are checked in <code>src/lib/models/equiformer.test.ts</code>.
+        </p>
+      </Callout>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Model and block</th><th>Activation</th><th>L, M<sub>max</sub></th><th>Grid used (N<sub>β</sub>, N<sub>α</sub>)</th><th>Exact from (derived)</th><th>Exact?</th></tr></thead>
+          <tbody>
+            {
+              grids.map((g) => (
+                <tr>
+                  <td>{g.model}<br /><span class="small">{g.where}</span></td>
+                  <td>{g.act}</td>
+                  <td>{g.L}, {g.M}</td>
+                  <td>({g.used[0]}, {g.used[1]})</td>
+                  <td>{g.act === 'S²' ? 'never' : `(${g.exact.nBeta}, ${g.exact.nAlpha})`}</td>
+                  <td>{g.ok ? 'yes' : 'no, approximate'}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Grids used: <Cite id="liao2023equiformerv2" locator="App. A.4; Table 7" />, <Cite id="liao2026equiformerv3" locator="Sec. 5.1" />,
+        the equiformer_v2 code default and the released equiformer_v3 configs (a7300c5), which list grids as (latitudes,
+        longitudes). EquiformerV3 reports equivariance errors at the level of the gate baseline for its (8, 8) grid at
+        <i>L</i> = 2 and its (8, 20) attention grid at <i>L</i> = 6 <Cite id="liao2026equiformerv3" locator="App. C, Tables 6–7" />.
+        Every V3 grid sits at or one point above the derived minimum. The repository’s own equivariance test uses an
+        attention grid of (14, 7), exactly the minimum for <i>L</i> = 4.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="cut-h">
+      <h2 id="cut-h" class="h-section">Attention that stays smooth at the cutoff</h2>
+      <p>
+        EquiformerV2’s released code has no envelope. An edge contributes with its full radial weight up to the cutoff and not
+        at all beyond it, and each atom keeps at most 20 neighbours (<code>equiformer_v2_oc20.py</code>, <code>transformer_block.py</code>)
+        <Cite id="liao2023equiformerv2" locator="Table 7" />. For energies of relaxed adsorbates that hardly matters. For molecular
+        dynamics a step in <i>E</i>(<b>r</b>) does, as the <a href="/models/esen-uma/#smooth-h">eSEN page</a> explains. The obvious
+        fix, multiplying each message by an envelope that goes to zero at <i>r</i><sub>c</sub>, is not enough for attention,
+        because the softmax still changes all at once when a neighbour leaves <Cite id="liao2026equiformerv3" locator="Sec. 4.2" />.
+        EquiformerV3 multiplies the exponentials themselves <Cite id="liao2026equiformerv3" locator="Sec. 4.2, Eq. 4" />:
+      </p>
+      <Math display number="5" tex={String.raw`a_{ij} = \frac{u(r_{ij})\, e^{z_{ij}}}{\sum_{k} u(r_{ik})\, e^{z_{ik}}}, \qquad \mathbf m_i = \sum_j D_{ij}^{-1}\Big(a_{ij}\,\big(u(r_{ij})\, v_{ij}\big)\Big), \qquad u(r) = 1 - 21\Big(\frac{r}{r_c}\Big)^{5} + 35\Big(\frac{r}{r_c}\Big)^{6} - 15\Big(\frac{r}{r_c}\Big)^{7}`} />
+      <p>
+        The envelope <i>u</i> is the same <i>p</i> = 5 polynomial eSEN uses, zero beyond <i>r</i><sub>c</sub>
+        (equiformer_v3 <code>envelope.py</code>; it enters as <code>exp_rescale</code> in <code>softmax.py</code>).
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A neighbour leaves the cutoff" labels={['toy-model', 'live-calculation']} number={2} id="fig-attention" framed={false}>
+        <EquiformerAttention client:visible />
+        <Fragment slot="caption">
+          A centre atom attends over seven neighbours; bond thickness is the attention weight. Drag the red neighbour out
+          through the 6 Å sphere. Top plot: the aggregated output for the three ways a cutoff can enter, drawn with a gap where it
+          jumps. Bottom: the moving neighbour’s weight. The LayerNorm switch and the feature scale show what attention
+          re-normalisation removes.
+        </Fragment>
+        <Assumptions slot="assumptions" items={attnAssumptions} />
+        <Fragment slot="source">Attention from <Cite id="liao2023equiformerv2" locator="Sec. 3.2" /> and the equiformer_v2 code (SmoothLeakyReLU 0.2); smooth cutoff from <Cite id="liao2026equiformerv3" locator="Eq. 4" /> and the equiformer_v3 code (a7300c5). Computed in your browser by the tested module <code>src/lib/models/equiformer.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="sm-h">
+      <Callout kind="derivation" title="Why an envelope on the message is not enough">
+        <p id="softmax-derivation">
+          Let neighbour <i>k</i> reach <i>r</i><sub>c</sub> with logit <i>z</i><sub>k</sub>. Just inside, its weight is
+          <i>a</i><sub>k</sub> = <i>e</i><sup><i>z</i><sub>k</sub></sup> / (<i>S</i> + <i>e</i><sup><i>z</i><sub>k</sub></sup>),
+          where <i>S</i> is the sum over the others, and every other weight is <i>e</i><sup><i>z</i><sub>j</sub></sup> /
+          (<i>S</i> + <i>e</i><sup><i>z</i><sub>k</sub></sup>). Just outside, those become <i>e</i><sup><i>z</i><sub>j</sub></sup> /
+          <i>S</i>. Each other weight therefore jumps by the factor 1/(1 − <i>a</i><sub>k</sub>). An envelope on <i>v</i><sub>k</sub>
+          only silences neighbour <i>k</i>’s own message, so the output still jumps by
+          <i>a</i><sub>k</sub> Σ<sub>j≠k</sub> <i>a</i><sub>j</sub><sup>out</sup> <i>v</i><sub>j</sub>. With <i>u</i>(<i>r</i><sub>k</sub>)
+          multiplying <i>e</i><sup><i>z</i><sub>k</sub></sup>, <i>a</i><sub>k</sub> → 0 continuously, and since <i>u</i> has zero
+          slope and curvature at <i>r</i><sub>c</sub>, so do the first two derivatives of the weights. A softmax can also only
+          redistribute weight. If the attention concentrates because the scalar features grow, a LayerNorm in front of the
+          nonlinearity undoes the growth, because LN(<i>c</i><b>f</b>) = LN(<b>f</b>) for <i>c</i> &gt; 0 (up to its ε). Both
+          statements are checked in <code>src/lib/models/equiformer.test.ts</code>.
+        </p>
+      </Callout>
+      <p>
+        <strong>Layer norms.</strong> V2’s separable layer norm normalises the degree-0 channels by their mean and standard
+        deviation, and all higher degrees by one shared root-mean-square scale,
+        <Math tex={String.raw`\sigma^{(L>0)} = \big(\tfrac{1}{L_{\max}}\sum_{L=1}^{L_{\max}} (\sigma^{(L)})^2\big)^{1/2}`} />, so that the
+        relative size of different degrees survives <Cite id="liao2023equiformerv2" locator="Sec. 3.4" />. V3 merges this
+        into one scale over all degrees, still subtracting the mean of the scalars, and widens the feed-forward network
+        fourfold <Cite id="liao2026equiformerv3" locator="Sec. 4.2" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="o-int" checked />
+        <label for="o-int">Intuition</label>
+        <input type="radio" name="depth" id="o-tech" />
+        <label for="o-tech">Technical</label>
+        <input type="radio" name="depth" id="o-res" />
+        <label for="o-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Each atom keeps a small 3D shape that describes its surroundings. In every layer it looks at its neighbours, decides
+            how much attention each deserves from quantities that do not depend on orientation, and collects shaped messages
+            from them. To bend those shapes non-linearly, EquiformerV2 samples them at a few hundred directions, applies a
+            simple function at each and fits a shape again. That fit is slightly different if the atoms are turned, so the
+            model is almost, not exactly, symmetric. EquiformerV3 multiplies two shapes instead, which a fine enough set of
+            directions captures exactly. It also lets far neighbours fade out of the attention gradually instead of dropping out.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Eqs. (1)–(2) are equivariant because <i>a</i><sub>ij</sub> is invariant, the SO(2) layers commute with rotations about
+            the bond, and <i>D</i><sub>ij</sub><sup>−1</sup> undoes the frame. The activations of Eqs. (3)–(4) are equivariant if
+            <i>G</i><sup>−1</sup>∘<i>F</i>∘<i>G</i> commutes with the Wigner matrices. That holds when <i>F</i> maps band-limited
+            functions to band-limited ones and the quadrature is exact for the resulting degree, which is the derivation
+            above. For SiLU it fails, and the error is aliasing: the part of SiLU(<i>f</i>) above degree <i>L</i>, sampled on the
+            grid, folds into the kept coefficients in a rotation-dependent way. The error falls with the resolution and grows
+            with the size of <i>f</i> (Fig. 1). Forces and stress inherit the energy’s smoothness. A hard cutoff, a neighbour cap or
+            an envelope outside the softmax each put a step into <i>E</i>(<b>r</b>) (Fig. 2).
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Three points remain open. First, the grid is an exact tool only for polynomial nonlinearities. SwiGLU-S² is quadratic in
+            the features at fixed gate, so a single layer adds body order in steps of two. Expressivity then comes from depth and
+            from the gate, as in <a href="/models/mace/">MACE</a>’s polynomial construction, rather than from a transcendental
+            function on the sphere. How that compares with SiLU-S² in accuracy per cost is an empirical question that the V3
+            ablations address only for their own settings <Cite id="liao2026equiformerv3" locator="Sec. 5.1" />. Second, attention
+            normalises over the neighbourhood. A softmax output is an average, not a sum, so a message cannot directly count how
+            many neighbours of a kind there are. Counting has to come from elsewhere, such as the values or the residual
+            stream. Third, the eqV2 models on Matbench Discovery predict forces directly, and the OMat24 paper trained them that
+            way. Their energies and forces are not guaranteed to be consistent, which matters for MD and phonons. Compare
+            <a href="/models/esen-uma/">eSEN</a>, released by the FAIR Chemistry team that also released the eqV2 OMat24
+            models, which was designed around that problem.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy and forces, plus stress for the materials models. In EquiformerV2 forces come from a final graph-attention block whose
+        <i>l</i> = 1 output on each atom is the force (<code>force_block</code> in <code>equiformer_v2_oc20.py</code>), not from a gradient. The eqV2 models on Matbench Discovery are labelled as direct-force models
+        (snapshot {snapshot.source.commit_date}). EquiformerV3’s materials models are pre-trained with a direct force head and DeNS
+        denoising, then fine-tuned with forces and stress as gradients of the energy
+        <Cite id="liao2026equiformerv3" locator="Secs. 5.2–5.3; Tables 2–4" />. In DeNS the model sees a noised structure and the
+        original structure’s forces, and learns to predict the noise. The forces are needed because denoising a structure that is
+        not at a minimum is otherwise ill-posed <Cite id="liao2024dens" locator="Abstract" />. No member of the family has a
+        long-range term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> SiLU on a grid is only approximately equivariant (Fig. 1). The error is small at the
+        published resolutions, but it is not zero, and a rotated structure gives a slightly different energy. V2’s hard cutoff
+        and 20-neighbour cap make <i>E</i>(<b>r</b>) discontinuous (Fig. 2; compare <a href="/models/orb/#fig-limit">Orb’s
+        neighbour limit</a>). Direct-force heads are not conservative
+        (<a href="/failures/nonconservative-forces/">non-conservative forces</a>). V3 caps neighbours too, at 300 within 6 Å,
+        which a dense crystal does not reach. The receptive field is finite, and there are no explicit electrostatics
+        (<a href="/physics-lab/ewald/">P6</a>, <a href="/failures/electrostatics-at-electrodes/">electrodes</a>).
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> V2 was developed on OC20 (RPBE adsorbates on surfaces). Its materials checkpoints were
+        released with OMat24 <Cite id="barrosoluque2024omat24" locator="Abstract" />, with the training sets listed below. The V3 checkpoint
+        recorded here learned MPtrj only. Each inherits its data’s functional and coverage. The eqV2 weights carry a separate
+        licence from the MIT code (listed below). Use the protocol of a reported benchmark before comparing numbers.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Forces</th><th>Parameters</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            {
+              board.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.training_sets.join(', ')}</td>
+                  <td>{m.targets.endsWith('_G') ? 'conservative' : 'direct'}</td>
+                  <td>{m.params ? `${(m.params / 1e6).toFixed(1)} M` : '—'}</td>
+                  <td>{m.licence_checkpoint ?? '—'}</td>
+                  <td><a href={m.key === 'equiformer-v3-mp' ? v3.weights?.url : m.checkpoint_url}>{m.version}</a></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Rows are the models submitted to Matbench Discovery (snapshot {snapshot.source.commit_date}; leaderboard parameter counts,
+        training-set labels and licences), whose results are on the <a href="/benchmarks/">Benchmarks</a> page. The
+        {v3.name} row links to its file on Hugging Face ({v3.version}); its architecture settings are recorded on the
+        <a href="/models/checkpoints/">checkpoint card</a>. The OC20 checkpoints of V2 are not listed. Benchmark numbers from
+        different protocols are not compared here.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/esen-uma/">eSEN and UMA</a> share the eSCN convolution and drop grids altogether.
+        <a href="/models/nequip/">NequIP</a> and <a href="/models/mace/">MACE</a> use Clebsch–Gordan tensor products and gates.
+        <a href="/models/pet/">PET</a> is also a Transformer but learns rotational symmetry instead of building it in.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>Equiformer: <Cite id="liao2022equiformer" />.</li>
+        <li>EquiformerV2, the S² activation and its grid error: <Cite id="liao2023equiformerv2" />.</li>
+        <li>EquiformerV3, SwiGLU-S² and smooth-cutoff attention: <Cite id="liao2026equiformerv3" />.</li>
+        <li>DeNS, denoising non-equilibrium structures: <Cite id="liao2024dens" />.</li>
+        <li>Code: <a href="https://github.com/atomicarchitects/equiformer_v2">equiformer_v2</a>, <a href="https://github.com/atomicarchitects/equiformer_v3">equiformer_v3</a>; grids from <a href="https://github.com/e3nn/e3nn">e3nn</a>; V3 weights: <a href="https://huggingface.co/mirror-physics/equiformer_v3">mirror-physics/equiformer_v3</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #o-int:checked ~ .depth-int,
+  #o-tech:checked ~ .depth-tech,
+  #o-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

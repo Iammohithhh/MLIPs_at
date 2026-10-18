@@ -1,0 +1,9 @@
+statement: >-
+  For L_max = 6 EquiformerV3 uses grids of (8, 20) points in attention and (20, 20) in the feed-forward network, against
+  EquiformerV2's (18, 18), and reports equivariance errors at the level of the gate baseline; the released L_max = 4
+  models use (14, 8) in attention and (14, 14) in the feed-forward network.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: liao2026equiformerv3, locator: 'Sec. 5.1; App. C, Tables 6–7' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'L_max = 4 grids from the released configs (attn_grid_resolution_list [14, 8], ffn_grid_resolution_list [14, 14]); the repository equivariance test uses [14, 7]. The code passes grids as (latitudes, longitudes) (so3.py SO3_Grid), and its L_max = 6 defaults are attention [20, 8] and FFN [20, 20] (equiformer_v3.py), so the paper''s (8, 20) means 8 longitudes and 20 latitudes.' }

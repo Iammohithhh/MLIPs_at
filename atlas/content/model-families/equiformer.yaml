@@ -1,0 +1,17 @@
+name: Equiformer
+aliases: [Equiformer, EquiformerV2, eqV2, EquiformerV3]
+paradigms: [equivariant, foundation]
+introduced_in: liao2022equiformer
+year: 2023
+summary: >-
+  An equivariant graph-attention Transformer on spherical-harmonic node features. Attention weights are a softmax over
+  neighbours of an MLP of invariant edge features, and values are non-linear equivariant messages. EquiformerV2 swaps the
+  tensor products for eSCN SO(2) convolutions to reach degree 6–8 and adds attention re-normalisation, a separable S2
+  activation on a spherical grid and separable layer norm. EquiformerV3 adds smooth-cutoff attention and SwiGLU-S2
+  activations, which are exactly equivariant on a finite grid.
+locality: { kind: message-passing, note: 'EquiformerV2 on OC20: 12 Å, at most 20 neighbours, 12 blocks, hard cutoff. EquiformerV3 on OMat24/MPtrj: 6 Å, at most 300 neighbours, 7 blocks, polynomial envelope inside the attention softmax.' }
+symmetry: equivariant
+body_order: Unrestricted (non-linear messages and activations on the sphere).
+implementations: [equiformer-v2, equiformer-v3]
+claims: [equiformer-mlp-attention, eqv2-architecture, eqv2-oc20-settings, eqv2-s2-grid-error, eqv3-architecture, eqv3-grid-resolutions, swiglu-s2-exact-grid, softmax-cutoff-jump, attention-layernorm-scale, eqv2-hard-cutoff-code]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Architecture read from the arXiv HTML of EquiformerV2 (v3) and EquiformerV3 (v1), and from atomicarchitects/equiformer_v2 (d5ad4be) and equiformer_v3 (a7300c5). Equiformer (V1) is described only through its abstract and V2 Sec. 2.2.' }

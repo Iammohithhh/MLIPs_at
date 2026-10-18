@@ -1,0 +1,8 @@
+statement: >-
+  On e3nn's latitude–longitude grid with Kostelec–Rockmore weights, an activation that multiplies two degree-≤L
+  features pointwise and projects back onto degree ≤ L is exactly equivariant if N_β ≥ 3L + 1 latitudes and N_α ≥
+  3·M_max + 1 longitudes, because the integrand is band-limited to degree 3L; SiLU applied on the grid is never exact.
+  These bounds reproduce EquiformerV3's chosen grids.
+grade: THEORY
+derivation: /models/equiformer/#exact-grid
+review: { status: draft, last_checked: 2026-10-18, notes: 'Checked numerically, including that one point fewer breaks exactness, in src/lib/models/equiformer.test.ts. For rotations about the bond only (edge frame, M_max < L) the longitude bound uses M_max.' }
