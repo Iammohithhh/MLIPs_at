@@ -1,0 +1,500 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import DimeNetBasis from '~/islands/DimeNetBasis';
+import DimeNetRings from '~/islands/DimeNetRings';
+import GemNetTorsion from '~/islands/GemNetTorsion';
+import GemNetCost from '~/islands/GemNetCost';
+import { getEntry } from 'astro:content';
+import type { Checkpoint } from '~/content/schemas';
+
+const dpp = (await getEntry('checkpoints', 'dimenetpp-oc20-s2ef-all'))!.data as Checkpoint;
+const goc = (await getEntry('checkpoints', 'gemnet-oc-oc20-s2ef-all'))!.data as Checkpoint;
+const MODELS_MD = 'https://github.com/Open-Catalyst-Project/ocp/blob/v0.1.0/MODELS.md';
+const FAIRCHEM = 'https://github.com/FAIR-Chem/fairchem';
+
+const basisAssumptions = [
+  { term: 'Basis', value: 'ã_SBF,ln(d, α) of Eq. (6) times the envelope u(d/c) of Eq. (8) with p = 6; c = 5 Å, the published cutoff. Roots z_ln found numerically and checked against tabulated values.' },
+  { term: 'Geometry', value: 'The relief lies in the plane of the triplet; its height and colour are the basis value, scaled to the largest magnitude of that (l, n) function. It is symmetric about the j→i axis because only m = 0 harmonics are used.' },
+  { term: 'Code vs paper', value: 'The reference code multiplies the 2D basis by u(d)/d rather than u(d), an extra 1/d not in Eq. (6). The figure follows the paper.' },
+];
+const ringAssumptions = [
+  { term: 'Structures', value: 'A planar hexagon and two equilateral triangles of carbon atoms, every bond 1.5 Å, no hydrogens; the triangles are 40 Å apart in the calculation. Idealised: real cyclohexane is not planar.' },
+  { term: 'Models', value: 'Real forward passes with fixed random (untrained) weights: a toy SchNet (16 features, 3 blocks, Gaussian filters, cosine cutoff) and a toy DimeNet (16 features, 3 interaction blocks, N_SHBF = 7, N_SRBF = N_RBF = 6, N_bilinear = 8, swish, the reference code’s block layout). Magnitudes mean nothing; zero versus non-zero is exact.' },
+  { term: 'Measure', value: 'Relative difference of one atom’s features between the two structures (every atom is equivalent within each); for DimeNet the output block’s gated message sum Σ_j (e_RBF W) ∘ m_ji. Values below 10⁻¹² are drawn on the zero lane.' },
+];
+const torsionAssumptions = [
+  { term: 'Molecule', value: 'An H–O–O–H chain with O–O 1.45 Å, O–H 0.97 Å and H–O–O angles of 100° (illustrative values near hydrogen peroxide, not a fitted geometry). Only the dihedral changes.' },
+  { term: 'Models', value: 'The toy DimeNet of Fig. 2 and the same network, weight for weight, plus one quadruplet term per block in the form of GemNet’s Eq. (11) (3D spherical Fourier–Bessel basis with real Y_lm, l < 7; circular and radial bases; bilinear layer). Not the full GemNet block: no symmetric message passing, atom self-interaction or scaling factors, and a single cutoff for the embedding and interaction graphs.' },
+  { term: 'Measure', value: 'Relative change, after 3 blocks, of all four atoms’ gated message sums between the dihedral you set and every other one.' },
+];
+const costAssumptions = [
+  { term: 'Crystals', value: 'Cu fcc (a = 3.615 Å) and Si diamond (a = 5.431 Å) from the Atlas structure set; every atom is equivalent, so per-atom counts are exact.' },
+  { term: 'Counting', value: 'Messages pointing into one atom per interaction block: edges k, triplets k(k − 1), quadruplets by GemNet’s rule (c ∈ N_a, b ∈ N_a^int \\ {c}, d ∈ N_b \\ {a, c}); checked against brute-force enumeration in the test suite. The slider sets c_emb = c_int.' },
+  { term: 'GemNet-OC', value: 'Bounds from its neighbour limits (30 per atom, 8 for quadruplets; Table 3): 30, 30·29 and 30·8·29. They are ceilings, not counts.' },
+];
+---
+
+<BaseLayout
+  title="DimeNet and GemNet"
+  description="DimeNet, DimeNet++ and GemNet: messages on directed edges that carry bond angles, two-hop messages that carry dihedrals, live demonstrations of what each can see at a given cutoff, what they cost in real crystals, their checkpoints and their limits."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">DimeNet and GemNet</h1>
+      <p class="lede">
+        <a href="/models/schnet/">SchNet</a>’s messages know how far a neighbour is, never in which direction. DimeNet moves
+        the messages onto directed edges, so that one update combines two bonds and the angle between them
+        <Cite id="gasteiger2020dimenet" locator="Sec. 4, Eq. 4" />; GemNet adds a second hop and with it the dihedral angle
+        <Cite id="gasteiger2021gemnet" locator="Sec. 5, Eq. 11" />. The features stay invariant: only distances and angles
+        enter. This page shows what the extra geometry buys at a given cutoff, and what it costs.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Invariant (distances, angles, dihedrals)</dd></div>
+        <div><dt>Messages</dt><dd>On directed edges m<sub>ji</sub>; atoms are sums of messages</dd></div>
+        <div><dt>Body order</dt><dd>3-body per block (DimeNet, GemNet-T); 4-body (GemNet-Q)</dd></div>
+        <div><dt>Bases</dt><dd>Spherical Bessel × spherical harmonics, polynomial envelope</dd></div>
+        <div><dt>Introduced</dt><dd>ICLR 2020 · NeurIPS 2021 · TMLR 2022 (OC)</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/gasteigerjo/dimenet">dimenet</a>, <a href={FAIRCHEM}>fairchem</a></dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architectures</strong>; trained checkpoints are listed separately below.</p>
+    </header>
+
+    <section class="block" aria-labelledby="arch-h">
+      <h2 id="arch-h" class="h-section">Messages on directed edges</h2>
+      <p>
+        DimeNet embeds every atom as the sum of the messages arriving at it, and updates the message from <i>j</i> to
+        <i>i</i> with the messages arriving at <i>j</i> from all its other neighbours <i>k</i>
+        <Cite id="gasteiger2020dimenet" locator="Sec. 4, Eq. (4), Fig. 1" />:
+      </p>
+      <Math display number="1" tex={String.raw`h_i = \sum_{j \in \mathcal N_i} m_{ji}, \qquad m_{ji}^{(l+1)} = f_{\mathrm{update}}\Big(m_{ji}^{(l)},\ \sum_{k \in \mathcal N_j \setminus \{i\}} f_{\mathrm{in}\mathrm{t}}\big(m_{kj}^{(l)},\, e_{\mathrm{RBF}}^{(ji)},\, a_{\mathrm{SBF}}^{(kj,ji)}\big)\Big)`} />
+      <p>
+        The interaction sees the distance <i>d</i><sub>kj</sub> and the angle
+        <Math tex={String.raw`\alpha_{(kj,ji)} = \angle\, \mathbf x_k \mathbf x_j \mathbf x_i`} /> at <i>j</i>, both invariant. The
+        first messages come from the two atoms’ element embeddings and the distance
+        <Cite id="gasteiger2020dimenet" locator="Eq. (9)" />:
+      </p>
+      <Math display number="2" tex={String.raw`m_{ji}^{(1)} = \sigma\big([\,h_j^{(0)} \,\|\, h_i^{(0)} \,\|\, e_{\mathrm{RBF}}^{(ji)}\,]\,W + b\big), \qquad \sigma(x) = x \cdot \mathrm{sigmoid}(x)`} />
+      <p>
+        Distances and distance–angle pairs are expanded in bases derived from a particle in a sphere of radius <i>c</i>
+        (the Helmholtz equation with Ψ(<i>c</i>) = 0), giving a radial Bessel basis and a 2D spherical Fourier–Bessel basis
+        <Cite id="gasteiger2020dimenet" locator="Sec. 5, Eqs. (5)–(7)" />:
+      </p>
+      <Math display number="3" tex={String.raw`\tilde e_{\mathrm{RBF},n}(d) = \sqrt{\frac{2}{c}}\,\frac{\sin(n\pi d/c)}{d}, \qquad \tilde a_{\mathrm{SBF},ln}(d,\alpha) = \sqrt{\frac{2}{c^3\, j_{l+1}^2(z_{ln})}}\; j_l\!\Big(\frac{z_{ln}}{c}\,d\Big)\, Y_l^0(\alpha)`} />
+      <p>
+        where <i>j<sub>l</sub></i> is a spherical Bessel function and <i>z<sub>ln</sub></i> its <i>n</i>-th root. Both are
+        multiplied by an envelope with a triple root at the cutoff, so value, slope and curvature vanish there
+        (<i>d</i> in units of <i>c</i>, <i>p</i> = 6) <Cite id="gasteiger2020dimenet" locator="Eq. (8)" />:
+      </p>
+      <Math display number="4" tex={String.raw`u(d) = 1 - \frac{(p+1)(p+2)}{2}\,d^{p} + p(p+2)\,d^{p+1} - \frac{p(p+1)}{2}\,d^{p+2}`} />
+      <ol class="flow" aria-label="One DimeNet interaction block">
+        <li><span>dense</span> m<sub>ji</sub> and m<sub>kj</sub>, swish</li>
+        <li><span>gate</span> m<sub>kj</sub> ∘ (e<sub>RBF</sub> W)</li>
+        <li class="key"><span>bilinear</span> with a<sub>SBF</sub>(d<sub>kj</sub>, α), Σ<sub>k</sub></li>
+        <li><span>residual</span> 1 layer, skip, 2 layers</li>
+        <li><span>output</span> Σ<sub>j</sub> (e<sub>RBF</sub>W) ∘ m<sub>ji</sub> → t<sub>i</sub></li>
+      </ol>
+      <p>
+        Every block, including the embedding, feeds an output block; the energy is
+        <Math tex={String.raw`E = \sum_i \sum_l t_i^{(l)}`} /> and forces are its negative gradient, so they conserve energy
+        <Cite id="gasteiger2020dimenet" locator="Sec. 6; Sec. 3" />. The published model has 6 blocks, 128 features,
+        N<sub>SHBF</sub> = 7, N<sub>SRBF</sub> = N<sub>RBF</sub> = 6 and a 5 Å cutoff
+        <Cite id="gasteiger2020dimenet" locator="App. B" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The 2D spherical Fourier–Bessel basis over a triplet" labels={['live-calculation']} number={1} id="fig-basis" framed={false}>
+        <DimeNetBasis client:visible />
+        <Fragment slot="caption">
+          One basis function as a relief over the plane of a triplet k → j → i, with j at the centre and i along the axis.
+          Moving k reads off the value its message is weighted with. The paper’s Fig. 2 shows the same functions on a
+          half-disc; the full set is 7 × 6 = 42 such functions per triplet.
+        </Fragment>
+        <Assumptions slot="assumptions" items={basisAssumptions} />
+        <Fragment slot="source">Eqs. (6)–(8) of <Cite id="gasteiger2020dimenet" />; computed in your browser by the tested module <code>src/lib/models/dimenet.ts</code> (orthonormality, roots and the envelope’s triple root in <code>dimenet.test.ts</code>).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="see-h">
+      <h2 id="see-h" class="h-section">What an angle buys: the hexagon and the two triangles</h2>
+      <p>
+        The DimeNet paper motivates directional messages with a pair of structures: a hexagon and two triangles with the same
+        bond length <Cite id="gasteiger2020dimenet" locator="Sec. 4; App. A, Fig. 6" />. While the cutoff is shorter than the
+        hexagon’s second-neighbour distance <i>d</i>√3, every atom in both sees exactly two neighbours at <i>d</i>. A
+        network that only sums functions of distances then computes the same features for every atom in both structures,
+        block after block: the neighbours’ features are themselves identical, so nothing new enters. DimeNet’s triplets
+        carry the angle at the shared atom — 120° in one, 60° in the other.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A distance-only network cannot tell a hexagon from two triangles; DimeNet can" labels={['toy-model', 'live-calculation']} number={2} id="fig-rings" framed={false}>
+        <DimeNetRings client:visible />
+        <Fragment slot="caption">
+          Drag the cutoff. Inside the red band the toy SchNet curves sit on the zero lane at every depth; DimeNet’s
+          differ from its first interaction block. Past <i>d</i>√3 the hexagon gains second neighbours the triangles do not
+          have, and distances alone suffice.
+        </Fragment>
+        <Assumptions slot="assumptions" items={ringAssumptions} />
+        <Fragment slot="source">Example from <Cite id="gasteiger2020dimenet" locator="App. A, Fig. 6" />; the bound d√3 derived on the page and checked to round-off in <code>src/lib/models/dimenet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="gem-h">
+      <h2 id="gem-h" class="h-section">GemNet: a second hop and the dihedral angle</h2>
+      <p>
+        GemNet keeps directional embeddings — it writes <Math tex={String.raw`m_{ca}`} /> for the embedding of atom
+        <i>a</i> in the direction of <i>c</i> — and adds two-hop message passing over quadruplets: atoms <i>a</i> and
+        <i>b</i> interact, while <i>c</i> and <i>d</i> set the two directions
+        <Cite id="gasteiger2021gemnet" locator="Sec. 5, Fig. 1" />:
+      </p>
+      <Math display number="5" tex={String.raw`\tilde m_{ca} = \sum_{\substack{b \in \mathcal N_a^{\mathrm{in}\mathrm{t}} \setminus \{c\} \\ d \in \mathcal N_b^{\mathrm{emb}} \setminus \{a, c\}}} \big(W_{\mathrm{SBF}}\, e_{\mathrm{SBF}}(x_{ca}, \varphi_{cab}, \theta_{cabd})\big)^{\!\top} \mathbf W \Big( \big(W_{\mathrm{CBF}}\, e_{\mathrm{CBF}}(x_{ba}, \varphi_{abd})\big) \odot \big(W_{\mathrm{RBF}}\, e_{\mathrm{RBF}}(x_{db})\big) \odot m_{db} \Big)`} />
+      <p>
+        <Math tex={String.raw`\theta_{cabd}`} /> is the dihedral angle between the directions <i>a</i>→<i>c</i> and
+        <i>b</i>→<i>d</i> seen along the <i>b</i>–<i>a</i> axis, and <i>e</i><sub>SBF</sub> is now a 3D spherical
+        Fourier–Bessel basis with all <i>Y<sub>lm</sub></i> <Cite id="gasteiger2021gemnet" locator="Eqs. (8)–(11)" />. W
+        without bias keeps the cutoff smooth. GemNet-Q has this term; GemNet-T keeps only the one-hop, DimeNet-like triplet
+        interaction, a direct ablation of the second hop <Cite id="gasteiger2021gemnet" locator="Sec. 6" />. The motivation is
+        theoretical: GemNet proves that rotationally equivariant functions can be approximated from representations on
+        the sphere (for configurations that are not planar), while noting that a discretised model may lose the guarantee
+        <Cite id="gasteiger2021gemnet" locator="Sec. 3, Thms. 2–3; Sec. 4" />. The theorem is not a proof that the model
+        with cutoffs is complete.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A torsion that triplets cannot see and a quadruplet can" labels={['toy-model', 'live-calculation']} number={3} id="fig-torsion" framed={false}>
+        <GemNetTorsion client:visible />
+        <Fragment slot="caption">
+          Set a dihedral, then read off which other dihedrals the networks can tell apart from it. With the bare chain in the
+          graph (the default cutoff) the triplet-only network is blind along the whole torsion; the quadruplet term is not.
+          With the 5 Å cutoffs these models actually use, the 1–3 edges are present and both see this torsion: the lesson is
+          about which geometry each graph exposes, not about peroxide.
+        </Fragment>
+        <Assumptions slot="assumptions" items={torsionAssumptions} />
+        <Fragment slot="source">Quadruplet term after <Cite id="gasteiger2021gemnet" locator="Eqs. (10)–(11)" />; derivation on the page, exact zeros checked in <code>src/lib/models/dimenet.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="cost-h">
+      <h2 id="cost-h" class="h-section">What the extra geometry costs</h2>
+      <p>
+        Messages on edges multiply the work. With <i>k</i> neighbours an atom receives <i>k</i>(<i>k</i> − 1) triplet
+        updates per block, and quadruplets scale as <i>k</i><sub>int</sub><i>k</i><sub>emb</sub>²; the GemNet paper gives
+        complexities O(<i>n</i> <i>k</i><sub>int</sub> <i>k</i><sub>emb</sub>²) for GemNet-Q and O(<i>n</i> <i>k</i><sub>emb</sub>²)
+        for GemNet-T <Cite id="gasteiger2021gemnet" locator="Sec. 6" />. In molecules with a 5 Å embedding cutoff and a
+        10 Å interaction cutoff <Cite id="gasteiger2021gemnet" locator="App. G, Table 6" /> this is affordable; in a dense
+        crystal it is not. DimeNet++ attacked the constant factor — a Hadamard product instead of the bilinear layer and
+        smaller projected embeddings, about 8× faster per QM9 epoch <Cite id="gasteiger2020dimenetpp" locator="Sec. 2, Table 1" />.
+        GemNet-OC attacked the count: nearest-neighbour graphs with at most 30 neighbours and only 8 for quadruplets, cheap
+        atom-to-atom messages over 12 Å for the longer range, and simpler bases
+        <Cite id="gasteiger2022gemnetoc" locator="Sec. 4, Table 3" />.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Edges, triplets and quadruplets per atom in two crystals" labels={['live-calculation']} number={4} id="fig-cost" framed={false}>
+        <GemNetCost client:visible />
+        <Fragment slot="caption">
+          Exact counts for one atom against the cutoff. In fcc Cu at 5 Å each atom already has over a thousand triplets and
+          tens of thousands of quadruplets per block, and the 10 Å quadruplet cutoff of GemNet’s molecular setting
+          multiplies the latter about ninefold in Cu (see the readout); GemNet-OC’s neighbour limits put a ceiling on both regardless of
+          density (dashed), at the price of a graph that changes discontinuously when neighbours swap rank — see the
+          <a href="/models/orb/">Orb</a> page for what such limits do in real crystals.
+        </Fragment>
+        <Assumptions slot="assumptions" items={costAssumptions} />
+        <Fragment slot="source">Counting rule from <Cite id="gasteiger2021gemnet" locator="Eq. (11)" />; limits from <Cite id="gasteiger2022gemnetoc" locator="Table 3" />; counted by <code>interactionCounts</code> in <code>src/lib/models/dimenet.ts</code>, checked against brute force.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="n-int" checked />
+        <label for="n-int">Intuition</label>
+        <input type="radio" name="depth" id="n-tech" />
+        <label for="n-tech">Technical</label>
+        <input type="radio" name="depth" id="n-res" />
+        <label for="n-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Instead of each atom keeping one list of numbers, each bond keeps one per direction: “what atom j tells atom i”.
+            When that note is rewritten, atom j passes on what it has heard from its other neighbours, together with the
+            angle between where that came from and where it is going. Angles, like distances, do not change when the
+            molecule turns, so the answer does not either. GemNet lets the note travel one bond further and also records
+            how the far bond is twisted relative to the near one.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            DimeNet is message passing on the line graph: nodes are directed edges, and two edges are linked when one ends
+            where the other starts. The interaction contracts a learned projection of the 42-dimensional basis
+            a<sub>SBF</sub>(<i>d</i><sub>kj</sub>, α) with the gated message through a bilinear tensor of size
+            N<sub>bilinear</sub> × F × F <Cite id="gasteiger2020dimenet" locator="Sec. 6" />, which DimeNet++ replaces by
+            element-wise products with MLP-transformed bases <Cite id="gasteiger2020dimenetpp" locator="Sec. 2" />. Smoothness is
+            designed in: swish activations, the envelope and bases with bounded frequencies make the model twice
+            continuously differentiable <Cite id="gasteiger2020dimenet" locator="Secs. 5–6" />. GemNet adds the quadruplet
+            term of Eq. (5) and symmetric message passing, in which one update serves both m<sub>ca</sub> and
+            m<sub>ac</sub> with separate weights <Cite id="gasteiger2021gemnet" locator="Sec. 5" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Distances and angles between edges sharing an atom are a strict refinement of distances, but they are still
+            local invariants: the paper argues that edge (pair) embeddings put DimeNet beyond the 1-Weisfeiler–Leman limit of
+            distance-only networks <Cite id="gasteiger2020dimenet" locator="Sec. 4" />, and Fig. 3 shows the next gap — a
+            torsion is invisible to triplets unless a 1–3 edge exists. GemNet’s answer is to make the dihedral an input. Its
+            universality theorem is stated for the continuous spherical representation and non-planar configurations, so
+            completeness of the practical, cut-off model is not established
+            <Cite id="gasteiger2021gemnet" locator="Thms. 2–3; Sec. 4" />. Equivariant models take the other route: tensor
+            features that carry direction (<a href="/models/nequip/">NequIP</a>, <a href="/models/mace/">MACE</a>,
+            <a href="/models/esen-uma/">eSEN</a>); M3GNet and CHGNet put DimeNet-style bond-angle terms into materials
+            models (<a href="/models/m3gnet-chgnet/">page</a>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy as a sum of per-atom, per-block contributions; DimeNet and GemNet (by default) take forces as its negative
+        gradient, so they are conservative <Cite id="gasteiger2020dimenet" locator="Sec. 6" />
+        <Cite id="gasteiger2021gemnet" locator="Sec. 6" />. GemNet’s direct-force variants (GemNet-dT, -dQ) and every
+        GemNet-OC model instead predict a magnitude per directional embedding and sum the vectors, which is cheaper but not
+        conservative <Cite id="gasteiger2021gemnet" locator="Sec. 6" /> <Cite id="gasteiger2022gemnetoc" locator="Table 3; App. A" />.
+        None of these architectures has charges or a long-range term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> What a triplet model sees depends on which edges the cutoff admits: a
+        torsion is invisible without 1–3 edges (Fig. 3), and anything beyond the receptive field is invisible to all of these
+        models (<a href="/physics-lab/beyond-the-cutoff/">P1</a>), as are electrostatics (<a href="/physics-lab/ewald/">P6</a>).
+        The cost grows with the square or cube of the neighbour count (Fig. 4), which forces either short cutoffs or
+        neighbour limits; GemNet-OC’s limits make the graph discontinuous in principle, which its authors found harmless in
+        their setting <Cite id="gasteiger2022gemnetoc" locator="Sec. 4" />. Direct forces are not gradients of an energy:
+        <a href="/failures/nonconservative-forces/">energy drift</a> in molecular dynamics is a known consequence.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> The released weights below learned adsorbates on catalyst surfaces at the RPBE
+        level (OC20) and say nothing about, say, liquid water or bulk oxides. The pretrained models in the reference
+        repository are QM9 models, one per target property (for example U<sub>0</sub>), for small organic molecules at
+        their equilibrium geometries: property predictors, not force fields
+        (<a href="https://github.com/gasteigerjo/dimenet">README</a>).
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <p>Both families appear among the Open Catalyst baselines; two released checkpoints are recorded here:</p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Training data</th><th>Outputs</th><th>Weights licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{dpp.name}</td>
+              <td>OC20 (S2EF “All”), RPBE</td>
+              <td>{dpp.outputs.join(', ')} (gradient)</td>
+              <td>{dpp.licence}</td>
+              <td><a href={dpp.weights!.url}>{dpp.version}</a></td>
+            </tr>
+            <tr>
+              <td>{goc.name}</td>
+              <td>OC20 (S2EF “All”), RPBE</td>
+              <td>{goc.outputs.join(', ')} (direct forces)</td>
+              <td>{goc.licence}</td>
+              <td><a href={goc.weights!.url}>{goc.version}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Validation errors for these files are reported on the OC20 protocol in the <a href={MODELS_MD}>OCP model table</a>
+        and the fairchem documentation; they belong to that protocol and are not compared with other benchmarks here.
+      </p>
+      <Callout kind="note" title="Related families">
+        DimeNet extends <a href="/models/schnet/">SchNet</a>’s continuous filters to angles; its Bessel radial basis and
+        polynomial envelope were taken up widely — <a href="/models/nequip/">NequIP</a> and <a href="/models/mace/">MACE</a>
+        use both. <a href="/models/m3gnet-chgnet/">M3GNet and CHGNet</a> bring explicit three-body terms to materials.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>DimeNet: <Cite id="gasteiger2020dimenet" />; DimeNet++: <Cite id="gasteiger2020dimenetpp" />.</li>
+        <li>GemNet: <Cite id="gasteiger2021gemnet" />; GemNet-OC: <Cite id="gasteiger2022gemnetoc" />.</li>
+        <li>Reference implementation of DimeNet and DimeNet++: <a href="https://github.com/gasteigerjo/dimenet">gasteigerjo/dimenet</a> (TensorFlow, Hippocratic License 2.1).</li>
+        <li>GemNet, GemNet-OC and DimeNet++ for OC20: <a href={FAIRCHEM}>fairchem</a> (formerly ocp; MIT) <Cite id="chanussot2020oc20" />.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #n-int:checked ~ .depth-int,
+  #n-tech:checked ~ .depth-tech,
+  #n-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

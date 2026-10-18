@@ -1,0 +1,10 @@
+statement: >-
+  If the graph of a four-atom chain contains only its three bonds, every message of a distance-and-angle network such as
+  DimeNet depends only on the bond lengths and the two bond angles, so the torsion (dihedral) angle is invisible at any
+  depth; a quadruplet term with the dihedral in its basis, as in GemNet's Eq. (11), sees it in one block. Once the 1–3
+  distances are inside the cutoff, the angle at the central atoms between a 1–3 edge and a bond depends on the
+  dihedral, and DimeNet sees it too.
+grade: THEORY
+derivation: /models/dimenet-gemnet/#fig-torsion
+scope: { model_families: [dimenet, gemnet] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derived on the page; exact zeros checked in src/lib/models/dimenet.test.ts with a toy DimeNet and the same network plus a GemNet-style quadruplet term on an H–O–O–H chain.' }

@@ -25,6 +25,8 @@ const PAGES: ReadonlyMap<string, string> = new Map([
   ['mtp', 'mtp'],
   ['aimnet2', 'aimnet2'],
   ['spookynet', 'spookynet'],
+  ['dimenet', 'dimenet-gemnet'],
+  ['gemnet', 'dimenet-gemnet'],
 ]);
 
 export const MODEL_PAGES: ReadonlySet<string> = new Set(PAGES.keys());

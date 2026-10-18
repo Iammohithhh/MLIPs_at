@@ -1,0 +1,10 @@
+statement: >-
+  The published DimeNet uses 6 interaction blocks, embeddings of size 128, N_SHBF = 7, N_SRBF = N_RBF = 6, N_bilinear = 8,
+  a 5 Å cutoff and the swish activation σ(x) = x·sigmoid(x), chosen so that the model is twice continuously
+  differentiable.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2020dimenet, locator: 'App. B; Sec. 6 ("Continuous differentiability")' }
+scope: { model_families: [dimenet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Sec. 5 says N_RBF = 16 is "more than sufficient"; App. B and the reference config.yaml use 6.' }

@@ -1,0 +1,11 @@
+statement: >-
+  GemNet-OC builds its graphs from a fixed number of nearest neighbours instead of a distance cutoff (at most 30, and 8
+  for quadruplet interactions, within 12 Å), decouples the radial from the angular basis and replaces spherical
+  harmonics by products of Legendre polynomials, and adds atom-to-atom, atom-to-edge and edge-to-atom interactions so
+  that cheap medium-range messages complement the expensive short-range quadruplets.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2022gemnetoc, locator: 'Sec. 4, Fig. 1, App. A Table 3' }
+scope: { model_families: [gemnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The paper reports that breaking differentiability with nearest-neighbour graphs "is not an issue in practice" for its setting.' }

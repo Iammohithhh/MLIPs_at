@@ -1,0 +1,11 @@
+statement: >-
+  GemNet-Q updates the directional embedding m_ca from m_db through the edge between interacting atoms a and b, summing
+  over b ∈ N_a^int \ {c} and d ∈ N_b^emb \ {a, c} a bilinear combination of a 3D spherical Fourier–Bessel basis of
+  (x_ca, φ_cab, θ_cabd), where θ_cabd is the dihedral angle between x̂_ca and x̂_db about x̂_ba, with a circular basis of
+  (x_ba, φ_abd) and a radial basis of x_db; GemNet-T keeps only the one-hop triplet interaction.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2021gemnet, locator: 'Sec. 5 ("Geometric representation"), Eqs. (8)–(11), Fig. 1; Sec. 6 ("GemNet-Q and GemNet-T")' }
+scope: { model_families: [gemnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,12 @@
+statement: >-
+  DimeNet embeds each atom as the sum of its incoming directional messages, h_i = Σ_j m_ji, and updates each message
+  from the messages arriving at its source atom, m_ji ← f_update(m_ji, Σ_{k ∈ N_j \ {i}} f_int(m_kj, e_RBF^(ji),
+  a_SBF^(kj,ji))), where the 2D basis a_SBF encodes the distance d_kj and the angle α_(kj,ji) = ∠x_k x_j x_i; because only
+  distances and angles enter, the prediction is invariant to translation, rotation and inversion, and forces are the
+  negative gradient of the predicted energy.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2020dimenet, locator: 'Sec. 4 ("Directional embeddings", "Message embeddings"), Eq. (4), Fig. 1; Sec. 6' }
+scope: { model_families: [dimenet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

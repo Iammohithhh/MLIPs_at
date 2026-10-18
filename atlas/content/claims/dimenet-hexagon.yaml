@@ -1,0 +1,12 @@
+statement: >-
+  A hexagon and two triangles with the same bond length d give every atom the same in-cutoff neighbourhood (two
+  neighbours at d) for any cutoff below the hexagon's second-neighbour distance d√3, so a distance-only message-passing
+  network produces identical atom features at every depth; DimeNet's messages carry the 120° and 60° angles and differ
+  from the first interaction block.
+grade: THEORY
+sources:
+  - { paper: gasteiger2020dimenet, locator: 'Sec. 4 ("Directionality"); App. A, Fig. 6' }
+derivation: /models/dimenet-gemnet/#fig-rings
+scope: { model_families: [dimenet, schnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The paper states the example for cutoffs up to about 2.5 Å with cyclohexane- and cyclopropane-like rings; the d√3 bound and the exact zeros are derived on the page and checked in src/lib/models/dimenet.test.ts with toy SchNet and DimeNet networks.' }

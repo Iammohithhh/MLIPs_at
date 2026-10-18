@@ -1,0 +1,16 @@
+title: Fast and uncertainty-aware directional message passing for non-equilibrium molecules
+topic: equivariant-message-passing
+authors:
+  - 'Gasteiger, J.'
+  - 'Giri, S.'
+  - 'Margraf, J. T.'
+  - 'Günnemann, S.'
+year: 2020
+venue: Machine Learning for Molecules Workshop, NeurIPS 2020
+type: conference
+identifiers:
+  arxiv: '2011.14115'
+edges:
+  - { type: extends, target: gasteiger2020dimenet, documented: true, note: 'Keeps the bases and replaces the bilinear layer by a Hadamard product with down- and up-projections; 4 blocks instead of 6 (Sec. 2, Fig. 1, Table 1).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v3. First author published as J. Klicpera. Hyperparameters not tabulated in the paper; the reference code config_pp.yaml (gasteigerjo/dimenet) gives int_emb_size 64, out_emb_size 256, basis_emb_size 8, 4 blocks.' }

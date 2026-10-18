@@ -1,0 +1,20 @@
+title: 'GemNet-OC: Developing graph neural networks for large and diverse molecular simulation datasets'
+topic: foundation-models-data
+authors:
+  - 'Gasteiger, J.'
+  - 'Shuaibi, M.'
+  - 'Sriram, A.'
+  - 'Günnemann, S.'
+  - 'Ulissi, Z.'
+  - 'Zitnick, C. L.'
+  - 'Das, A.'
+year: 2022
+venue: Transactions on Machine Learning Research (TMLR)
+type: article
+identifiers:
+  arxiv: '2204.02782'
+edges:
+  - { type: extends, target: gasteiger2021gemnet, documented: true, note: 'Nearest-neighbour graphs, simplified bases, an atom-to-atom / atom-to-edge / edge-to-atom interaction hierarchy and direct force prediction (Sec. 4, Table 3).' }
+  - { type: benchmarks, target: chanussot2020oc20, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v3 (TMLR version).' }

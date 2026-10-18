@@ -1,0 +1,15 @@
+title: 'GemNet: Universal directional graph neural networks for molecules'
+topic: equivariant-message-passing
+authors:
+  - 'Gasteiger, J.'
+  - 'Becker, F.'
+  - 'Günnemann, S.'
+year: 2021
+venue: Advances in Neural Information Processing Systems 34 (NeurIPS 2021)
+type: conference
+identifiers:
+  arxiv: '2106.08903'
+edges:
+  - { type: extends, target: gasteiger2020dimenet, documented: true, note: 'Adds two-hop (quadruplet) message passing with dihedral angles to DimeNet-style triplet interactions (Secs. 5–6, Eq. 11).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v10 (NeurIPS text; same equation numbering as v1). The universality theorems (Thms. 2–3) concern the continuous spherical representation; the paper notes a discretisation may lose the guarantee (Sec. 4).' }

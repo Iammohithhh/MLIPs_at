@@ -1,0 +1,11 @@
+statement: >-
+  DimeNet++ leaves DimeNet's bases unchanged and replaces the bilinear layer of the interaction block by a Hadamard
+  product, adds MLPs for the basis representations, reduces the triplet embedding to 64 with down- and up-projections,
+  raises the output (atom) embedding to 256 and uses 4 instead of 6 blocks; the authors report it about 8× faster than
+  DimeNet per QM9 training epoch, with the Hadamard product alone giving a factor of 5.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2020dimenetpp, locator: 'Sec. 2, Fig. 1, Table 1; Sec. 5' }
+scope: { model_families: [dimenet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'The hardware for the timings is not stated in the paper.' }

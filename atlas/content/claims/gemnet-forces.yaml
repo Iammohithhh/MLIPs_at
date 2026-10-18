@@ -1,0 +1,11 @@
+statement: >-
+  GemNet computes forces as −∂E/∂x by default, which guarantees a conservative force field, and has direct-force
+  variants (GemNet-dT, GemNet-dQ); GemNet-OC predicts forces directly in all its OC20 models because gradient-based
+  training on that dataset was reported to be numerically unstable, so its forces are not conservative.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2021gemnet, locator: 'Sec. 6 ("Direct force predictions")' }
+  - { paper: gasteiger2022gemnetoc, locator: 'Table 3; App. A; Sec. 6' }
+scope: { model_families: [gemnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

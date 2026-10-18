@@ -3,5 +3,5 @@ repo: https://github.com/Open-Catalyst-Project/ocp
 language: Python
 framework: pytorch
 licence: MIT
-families: [schnet]
+families: [schnet, dimenet, gemnet]
 review: { status: draft, last_checked: 2026-10-16, notes: 'Licence from LICENSE.md at tag v0.1.0. The repository now lives at github.com/FAIR-Chem/fairchem.' }

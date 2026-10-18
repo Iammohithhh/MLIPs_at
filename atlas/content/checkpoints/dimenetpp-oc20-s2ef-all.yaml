@@ -1,0 +1,17 @@
+name: DimeNet++ OC20 S2EF (All)
+family: dimenet
+implementation: ocp
+version: dimenetpp_all.pt
+release: { source: chanussot2020oc20 }
+training:
+  - stage: training
+    dataset: oc20
+    level_of_theory: rpbe-oc20
+    note: Trained on the S2EF "All" split of OC20 (structure → energy and forces).
+outputs: [energy, forces]
+licence: Not stated for the weights (repository code MIT; OC20 data CC BY 4.0)
+weights: { url: 'https://dl.fbaipublicfiles.com/opencatalystproject/models/2021_02/s2ef/dimenetpp_all.pt' }
+review:
+  status: draft
+  last_checked: 2026-10-18
+  notes: 'Listed in the OCP model table (MODELS.md at tag v0.1.0, "S2EF models: optimized for EFwT") and in fairchem as DimeNet++-S2EF-OC20-All; config configs/s2ef/all/dimenet_plus_plus/dpp.yml. The 2021_02 path suggests a February 2021 upload; no exact date stated. URL answered with a content length on 2026-10-18. Validation metrics not copied.'

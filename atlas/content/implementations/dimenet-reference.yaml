@@ -1,0 +1,7 @@
+name: DimeNet reference implementation (gasteigerjo/dimenet)
+repo: https://github.com/gasteigerjo/dimenet
+language: Python
+framework: tensorflow
+licence: Hippocratic License 2.1
+families: [dimenet]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Licence from LICENSE.md on master. Contains DimeNet and DimeNet++ (config.yaml, config_pp.yaml) and pretrained QM9 models, one per target (pretrained/ folder; the README notes an off-by-one error in the QM9 data used, issue #24).' }

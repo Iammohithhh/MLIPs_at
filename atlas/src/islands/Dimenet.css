@@ -1,0 +1,14 @@
+/* DimeNet and GemNet figures */
+.lab-plot .dn-band--fail {
+  fill: color-mix(in oklab, var(--atlas-fail) 9%, transparent);
+}
+.lab-plot .dn-band--phys {
+  fill: color-mix(in oklab, var(--atlas-phys) 10%, transparent);
+}
+.dn-mini svg {
+  max-height: 11rem;
+}
+.dn-plot svg {
+  width: 100%;
+  height: auto;
+}

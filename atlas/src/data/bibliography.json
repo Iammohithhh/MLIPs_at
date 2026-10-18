@@ -1744,6 +1744,7 @@
    "behler2007generalized",
    "drautz2019ace",
    "gasteiger2020dimenet",
+   "gasteiger2021gemnet",
    "schutt2017schnet",
    "shapeev2016mtp",
    "unke2019physnet",
@@ -2834,7 +2835,8 @@
   ],
   "cites": [
    "bartok2010gap",
-   "gasteiger2020dimenet"
+   "gasteiger2020dimenet",
+   "gasteiger2020dimenetpp"
   ],
   "crossref": null,
   "fetched": "2026-10-15",
@@ -4668,6 +4670,131 @@
    "cited_by_count": 304,
    "id": "W4287828570",
    "publication_year": 2020,
+   "referenced_works": []
+  }
+ },
+ "gasteiger2020dimenetpp": {
+  "arxiv": {
+   "authors": [
+    "Johannes Gasteiger",
+    "Shankari Giri",
+    "Johannes T. Margraf",
+    "Stephan Günnemann"
+   ],
+   "id": "2011.14115v3",
+   "primary_category": "cs.LG",
+   "published": "2020-11-28",
+   "title": "Fast and Uncertainty-Aware Directional Message Passing for Non-Equilibrium Molecules",
+   "updated": "2022-04-05"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2020; fetched [2020]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gasteiger, J.' vs fetched ['gasteiger']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 187,
+   "id": "W4287586570",
+   "publication_year": 2020,
+   "referenced_works": []
+  }
+ },
+ "gasteiger2021gemnet": {
+  "arxiv": {
+   "authors": [
+    "Johannes Gasteiger",
+    "Florian Becker",
+    "Stephan Günnemann"
+   ],
+   "id": "2106.08903v10",
+   "primary_category": "physics.comp-ph",
+   "published": "2021-06-02",
+   "title": "GemNet: Universal Directional Graph Neural Networks for Molecules",
+   "updated": "2024-06-22"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gasteiger, J.' vs fetched ['gasteiger']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 124,
+   "id": "W4287126984",
+   "publication_year": 2021,
+   "referenced_works": []
+  }
+ },
+ "gasteiger2022gemnetoc": {
+  "arxiv": {
+   "authors": [
+    "Johannes Gasteiger",
+    "Muhammed Shuaibi",
+    "Anuroop Sriram",
+    "Stephan Günnemann",
+    "Zachary Ulissi",
+    "C. Lawrence Zitnick",
+    "Abhishek Das"
+   ],
+   "id": "2204.02782v3",
+   "primary_category": "cs.LG",
+   "published": "2022-04-06",
+   "title": "GemNet-OC: Developing Graph Neural Networks for Large and Diverse Molecular Simulation Datasets",
+   "updated": "2022-09-30"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Gasteiger, J.' vs fetched ['gasteiger']"
+   }
+  ],
+  "cites": [],
+  "crossref": null,
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 50,
+   "id": "W4298178320",
+   "publication_year": 2022,
    "referenced_works": []
   }
  },
@@ -9283,6 +9410,7 @@
   ],
   "cites": [
    "behler2007generalized",
+   "gasteiger2020dimenetpp",
    "ko2021fourth",
    "stillinger1985sw"
   ],
@@ -10845,6 +10973,7 @@
    "chanussot2020oc20",
    "chen2022m3gnet",
    "drautz2019ace",
+   "gasteiger2022gemnetoc",
    "musaelian2023allegro",
    "podryabinkin2017active",
    "schutt2017schnet",
@@ -10983,6 +11112,8 @@
    "chanussot2020oc20",
    "chen2022m3gnet",
    "deng2023chgnet",
+   "gasteiger2020dimenetpp",
+   "gasteiger2022gemnetoc",
    "liao2022equiformer",
    "liao2023equiformerv2",
    "musaelian2023allegro",

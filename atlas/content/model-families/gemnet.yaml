@@ -1,0 +1,18 @@
+name: GemNet
+aliases: [GemNet-T, GemNet-Q, GemNet-OC]
+paradigms: [invariant-message-passing]
+introduced_in: gasteiger2021gemnet
+year: 2021
+summary: >-
+  Directional message passing extended to two hops: a message m_ca is updated from m_db through the edge between a and
+  b, with the dihedral angle between the c–a and d–b directions about the a–b axis entering a 3D spherical
+  Fourier–Bessel basis (GemNet-Q); GemNet-T keeps only the one-hop, DimeNet-like triplet interaction. GemNet-OC, built
+  for OC20, uses nearest-neighbour graphs, simpler bases, an atom/edge interaction hierarchy and direct force
+  prediction.
+locality: { kind: message-passing, note: 'GemNet (molecules): embedding cutoff 5 Å, quadruplet interaction cutoff 10 Å, 4 blocks. GemNet-OC: 12 Å cutoffs with at most 30 neighbours per atom and 8 for quadruplets.' }
+symmetry: invariant
+body_order: 'Explicit four-body (dihedral) terms in GemNet-Q; three-body in GemNet-T.'
+extends: [dimenet]
+implementations: [ocp]
+claims: [gemnet-quadruplet, gemnet-universality-scope, gemnet-forces, gemnet-oc-changes, torsion-bonds-only]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read GemNet (arXiv v10, NeurIPS 2021) and GemNet-OC (arXiv v3, TMLR 2022).' }

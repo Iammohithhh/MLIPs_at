@@ -1,0 +1,11 @@
+statement: >-
+  GemNet's universality results (Theorems 2 and 3) show that rotationally equivariant functions can be approximated
+  with representations on the S² sphere, for configurations whose relative vectors do not all lie in a plane; the
+  paper notes that a discretised mesh may not keep the guarantee, so the results do not prove that the practical model
+  with cutoffs is universal.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2021gemnet, locator: 'Sec. 3, Theorems 2–3; Sec. 4' }
+scope: { model_families: [gemnet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

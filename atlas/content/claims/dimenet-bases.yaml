@@ -1,0 +1,12 @@
+statement: >-
+  DimeNet represents distances with the radial Bessel basis ẽ_RBF,n(d) = √(2/c) sin(nπd/c)/d and distance–angle pairs
+  with the 2D spherical Fourier–Bessel basis ã_SBF,ln(d, α) = √(2/(c³ j_{l+1}²(z_ln))) j_l(z_ln d/c) Y_l⁰(α), both derived
+  from the Helmholtz equation in a sphere of radius c with Ψ(c) = 0, and multiplies them by the polynomial envelope
+  u(d) = 1 − (p+1)(p+2)/2 dᵖ + p(p+2) dᵖ⁺¹ − p(p+1)/2 dᵖ⁺² (d in units of c, p = 6), which has a root of multiplicity 3 at
+  the cutoff.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: gasteiger2020dimenet, locator: 'Sec. 5, Eqs. (5)–(8), Figs. 2–3' }
+scope: { model_families: [dimenet] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'In the reference code the envelope layer returns u(d)/d and multiplies both bases, which supplies the 1/d of Eq. (7) but adds a 1/d factor to the 2D basis that Eq. (6) does not have (dimenet/model/layers/envelope.py, spherical_basis_layer.py).' }

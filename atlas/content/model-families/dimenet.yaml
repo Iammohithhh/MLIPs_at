@@ -1,0 +1,17 @@
+name: DimeNet
+aliases: [DimeNet++, Directional Message Passing Neural Network]
+paradigms: [invariant-message-passing]
+introduced_in: gasteiger2020dimenet
+year: 2020
+summary: >-
+  Invariant message passing on directed edges: each message m_ji from atom j to atom i is updated from the messages
+  m_kj arriving at j, weighted by a 2D spherical Fourier–Bessel basis of the distance d_kj and the angle at j between
+  the two edges. Atoms are the sums of their incoming messages. DimeNet++ keeps the bases and replaces the bilinear
+  layer by a Hadamard product with smaller projected embeddings.
+locality: { kind: message-passing, note: 'Cutoff 5 Å; 6 interaction blocks (DimeNet), 4 (DimeNet++). Messages live on directed edges, so one block already couples three atoms.' }
+symmetry: invariant
+body_order: 'Explicit three-body (distance + angle) terms in every block; higher orders through composition.'
+extends: [schnet]
+implementations: [dimenet-reference, ocp]
+claims: [dimenet-directional-mp, dimenet-bases, dimenet-hyperparameters, dimenet-hexagon, dimenetpp-changes, torsion-bonds-only]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read DimeNet (ICLR 2020, arXiv v4 PDF) and DimeNet++ (arXiv v3); block layout checked against gasteigerjo/dimenet (master, dimenet/model/layers).' }
