@@ -1,0 +1,10 @@
+statement: >-
+  Each moment tensor is a linear combination of ACE's atomic-base functions A_{μνlm} with radial part f_μ(r) r^ν, so
+  suitably chosen finite sets of MTP and ACE basis functions span the same space, and completeness results transfer
+  between the two constructions.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: dusson2022ace, locator: 'arXiv v4, App. B.2, Eq. (B.2) and the paragraph after it' }
+scope: { model_families: [mtp, grace] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

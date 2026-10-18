@@ -1,0 +1,10 @@
+statement: >-
+  In 300 K MD of bcc Li with an MTP of 100 basis functions, the RMS force error of 95 % of time steps lay between
+  0.04 γ and 0.22 γ eV/Å, so the extrapolation grade predicted the order of magnitude of the error without a DFT
+  calculation.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: podryabinkin2017active, locator: 'arXiv, Sec. 4.3 and Fig. 3' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

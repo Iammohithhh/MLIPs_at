@@ -1,0 +1,548 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import MtpMoments from '~/islands/MtpMoments';
+import MtpBasis from '~/islands/MtpBasis';
+import MtpActive1D from '~/islands/MtpActive1D';
+import MtpActiveSi from '~/islands/MtpActiveSi';
+import templates from '~/data/models/mtp-templates.json';
+import { getEntry } from 'astro:content';
+import type { Dataset } from '~/content/schemas';
+
+const db = (await getEntry('datasets', 'mlearn-si'))!.data as Dataset;
+const t = (L: number) => templates.templates.find((x) => x.level === L)!;
+const params = (L: number) => t(L).alpha_scalar_moments + 1 + t(L).radial_funcs_count * t(L).radial_basis_size;
+
+const momentAssumptions = [
+  { term: 'Environments', value: 'Exact lattices with the Si nearest-neighbour distance 2.35 Å for every structure, so only the arrangement differs: diamond, fcc, hcp (ideal c/a), bcc; diamond with one nearest neighbour removed; a bulk-terminated diamond (001) surface atom (every atom above it removed). Optional rattle: each neighbour displaced by up to the chosen amount per component (fixed seed).' },
+  { term: 'Moments', value: 'M(μ,ν) = Σ_j f_μ(r_j) r̂_j ⊗ … ⊗ r̂_j (ν factors) with unit vectors, as mlip-2 computes them (src/mtp.cpp); f_μ is the μ-th Chebyshev radial function of mlip-2 on [1.9, 5.0] Å, fixed rather than learned.' },
+  { term: 'Surface', value: 'Distance from the centre in direction n̂ is |M[n̂,…,n̂]| scaled so the largest is 1.45 Å; colour is its sign. A symmetric tensor is fixed by this polynomial, so nothing is hidden.' },
+  { term: 'Invariants', value: 'All 16 basis functions of level ≤ 10 (mlip-2’s 10.mtp has 16). “0” means below 10⁻⁹ of the scale; the rotation test compares with the unrotated neighbourhood.' },
+];
+const basisAssumptions = [
+  { term: 'Enumeration', value: 'Every loopless multigraph with at most 4 nodes, node labels μ ≤ 5, degrees ν ≤ 10 and Σ(2 + 4μ + ν) ≤ lev_max, up to relabelling of the nodes. This rule is inferred by the Atlas from the template files; the papers define the level, not the caps.' },
+  { term: 'Template data', value: 'alpha_scalar_moments, alpha_index_basic_count, radial_funcs_count and radial_basis_size copied from mlip-2’s untrained_mtps/02–28.mtp at commit fc3b0721 by atlas_pipeline.mtp.' },
+  { term: 'Parameters', value: 'Basis functions + 1 constant + radial functions × radial basis size (8 in every template), for one species. More species add radial coefficients per species pair.' },
+];
+const oneDAssumptions = [
+  { term: 'Reference', value: 'E_qm(x) = x² + x³ exp(−x²/2), the paper’s one-degree-of-freedom example; model θ₁x² + θ₂x³.' },
+  { term: 'Passive fit', value: 'Least squares weighted by exp(−E_qm/kT) on 8001 points of [−4, 4]: the limit of an arbitrarily long MD at temperature kT (the paper uses kT = 1).' },
+  { term: 'Active fit', value: 'Two parameters, two configurations: the fit passes through both. γ(x) = max |(x², x³) A⁻¹| with A the 2 × 2 matrix of the chosen points.' },
+  { term: 'Barrier', value: 'Flagged when the model has a maximum inside [−4, −1] and is lower at x = −4, so a trajectory crossing it would run away.' },
+];
+const siAssumptions = [
+  { term: 'Data', value: `${db.name}: ${db.size?.structures} periodic Si cells with PBE total energies (214 training, 25 test, as released), in four groups. Forces and stresses are not used.` },
+  { term: 'Model', value: 'Linear MTP with fixed radial functions, f_μ equal to the μ-th Chebyshev function Q (the 2016 form, not the learned radial functions of the MLIP package), R_min = 1.9 Å, R_cut = 5.0 Å, plus a per-atom constant. Basis values summed over the atoms of each cell were precomputed on CPU (atlas_pipeline.mtp); the fit and the selection run in your browser.' },
+  { term: 'Fit', value: 'Energy per atom, least squares with Shapeev’s ℓ2 regularisation, γ = 10⁻¹⁰ relative to diag(XᵀX). Either on every training cell or only on the active set.' },
+  { term: 'Active set', value: 'Maxvol on the configuration-level rows b_j(cfg) (Podryabinkin & Shapeev’s QS1): a greedy start, then row swaps until no training cell has |c_j| > 1. Columns are rescaled first, which leaves γ unchanged.' },
+  { term: 'Not shown', value: 'This is not the MTP of Zuo et al. (level 24, R_cut = 4.7 Å, learned radial functions, fitted to forces too), and not a published result. The thresholds 2 and 10 are the MLIP package’s typical values, not calibrated here.' },
+];
+---
+
+<BaseLayout
+  title="Moment tensor potentials"
+  description="Moment tensor potentials (MTP): moments of inertia of a neighbourhood contracted into invariant polynomials, fitted linearly, with D-optimal active learning. Moment tensors in 3D, the basis enumerated and checked against mlip-2, and the extrapolation grade on a toy and on real Si DFT data."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">Moment tensor potentials</h1>
+      <p class="lede">
+        A moment tensor potential (MTP) describes an atom’s neighbourhood by its moments of inertia, weighted by distance, and
+        multiplies and contracts them into scalars until every invariant polynomial of the neighbour positions can be written
+        as a sum of them <Cite id="shapeev2016mtp" locator="Sec. 3.1, Theorem 3.1" />. The energy is linear in their coefficients,
+        and that linearity gives MTP its second idea: a geometric test of whether a new configuration lies inside what the
+        training data determine, used to grow the training set while a simulation runs
+        <Cite id="podryabinkin2017active" locator="Sec. 3" />.
+      </p>
+      <dl class="glance">
+        <div><dt>Symmetry</dt><dd>Exact invariance: full contractions of tensors</dd></div>
+        <div><dt>Locality</dt><dd>Strictly local: one cutoff (5 Å in mlip-2’s templates)</dd></div>
+        <div><dt>Regression</dt><dd>Linear in the basis; radial functions learned in the MLIP package</dd></div>
+        <div><dt>Body order</dt><dd>Up to five-body in the shipped templates (≤ 4 moments per term)</dd></div>
+        <div><dt>Training data</dt><dd>D-optimal active learning: the extrapolation grade γ</dd></div>
+        <div><dt>Introduced</dt><dd>Multiscale Model. Simul. 2016; MLIP package 2021</dd></div>
+        <div><dt>Code</dt><dd><a href="https://gitlab.com/ashapeev/mlip-2">mlip-2</a> (BSD-2-Clause), LAMMPS interface</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> This page is about the <strong>architecture</strong> and its training method; MTPs are usually fitted for one system, and no trained MTP is recorded here yet.</p>
+    </header>
+
+    <section class="block" aria-labelledby="moments-h">
+      <h2 id="moments-h" class="h-section">Moments of a neighbourhood</h2>
+      <p>
+        As in every strictly local potential, the energy is a sum of site energies, one per atom, each a function of the
+        neighbours inside a cutoff. MTP writes the site energy as a linear combination of basis functions
+        <Cite id="novikov2021mlip" locator="Eqs. (1)–(2)" />:
+      </p>
+      <Math display number="1" tex={String.raw`E = \sum_i V(\mathfrak n_i), \qquad V(\mathfrak n_i) = \sum_\alpha \xi_\alpha\, B_\alpha(\mathfrak n_i)`} />
+      <p>
+        The building blocks are the moment tensors of the neighbourhood <Cite id="shapeev2016mtp" locator="Sec. 3.1; Eq. (4.1)" /><Cite id="novikov2021mlip" locator="Eq. (3)" />:
+      </p>
+      <Math display number="2" tex={String.raw`M_{\mu,\nu}(\mathfrak n_i) = \sum_j f_\mu(r_{ij})\; \underbrace{\mathbf r_{ij} \otimes \cdots \otimes \mathbf r_{ij}}_{\nu\ \text{times}}`} />
+      <p>
+        With unit weights, <i>M</i><sub>0,0</sub> counts the neighbours (their mass), <i>M</i><sub>0,1</sub> is their mass times their
+        centre of mass, <i>M</i><sub>0,2</sub> the tensor of second moments of inertia; other μ weight each atom by a radial function
+        <Cite id="shapeev2016mtp" locator="Sec. 3.1" />. A moment costs time linear in the number of neighbours but exponential in
+        its rank ν. In the MLIP package the radial functions are learned combinations of fixed ones
+        <Cite id="novikov2021mlip" locator="Eqs. (3)–(4)" />,
+      </p>
+      <Math display number="3" tex={String.raw`f_\mu(r) = \sum_{\beta} c^{(\beta)}_{\mu, z_i, z_j}\, Q^{(\beta)}(r), \qquad Q^{(\beta)}(r) = \varphi^{(\beta)}(r)\,(R_{\text{cut}} - r)^2 \quad (r < R_{\text{cut}})`} />
+      <p>
+        where φ<sup>(β)</sup> are Chebyshev polynomials on [<i>R</i><sub>min</sub>, <i>R</i><sub>cut</sub>]; the factor
+        (<i>R</i><sub>cut</sub> − <i>r</i>)² takes every term to zero with zero slope at the cutoff, so energies and forces stay
+        continuous as atoms cross it. The coefficients <i>c</i> depend on the species of both atoms, which is how one MTP handles
+        several elements, and they make the model nonlinear in its parameters; the original MTP fixed the radial functions and was
+        linear throughout <Cite id="novikov2021mlip" locator="Sec. 1" /><Cite id="shapeev2016mtp" locator="Sec. 5" />. The code divides
+        the tensor product by <i>r</i><sup>ν</sup>, using unit vectors (mlip-2 <code>src/mtp.cpp</code>); the difference is a factor
+        <i>r</i><sup>ν</sup> absorbed into <i>f</i><sub>μ</sub>.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="The moments of one atom’s neighbourhood" labels={['live-calculation']} number={1} id="fig-moments" framed={false}>
+        <MtpMoments client:visible />
+        <Fragment slot="caption">
+          A tensor of rank ν is drawn as the surface n̂ ↦ M[n̂, …, n̂]: a sphere for ν = 0, a dipole lobe for ν = 1, an
+          ellipsoid-like shape for ν = 2. Symmetry decides which moments survive: odd ranks cancel at centrosymmetric sites, the
+          tetrahedral diamond site has a rank-3 moment but no vector, and removing a neighbour or cutting a surface switches odd
+          moments on. The invariants in the table are what the regression sees; they do not change when the neighbourhood turns.
+        </Fragment>
+        <Assumptions slot="assumptions" items={momentAssumptions} />
+        <Fragment slot="source">Moments as in <Cite id="shapeev2016mtp" locator="Sec. 3.1" /> and <Cite id="novikov2021mlip" locator="Eqs. (3)–(4)" />, radial basis as in mlip-2’s <code>src/radial_basis.cpp</code>. Computed in your browser by <code>src/lib/models/mtp.ts</code>; invariance, direct-sum checks and the symmetry zeros are tested in <code>mtp.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="contract-h">
+      <h2 id="contract-h" class="h-section">Contracting moments into invariants</h2>
+      <p>
+        A moment tensor turns with the neighbourhood. Contracting every index of a product of moments with an index of another
+        leaves a scalar, which does not. Shapeev encodes a contraction by a symmetric integer matrix α: α<sub><i>ii</i></sub> is the μ
+        of the <i>i</i>-th moment, α<sub><i>ij</i></sub> the number of indices contracted between moments <i>i</i> and <i>j</i>, and the
+        rank of moment <i>i</i> is its off-diagonal row sum α′<sub><i>i</i></sub> <Cite id="shapeev2016mtp" locator="Eqs. (3.2), (3.4)" />:
+      </p>
+      <Math display number="4" tex={String.raw`B_\alpha = \prod_{i=1}^{k}{}^{\!\alpha}\; M_{\alpha_{ii},\, \alpha'_i}, \qquad \text{e.g.}\quad M_{\mu_1,1} \cdot M_{\mu_2,1}, \quad M_{\mu_1,2} : M_{\mu_2,2}, \quad (M_{\mu_1,2}\, M_{\mu_2,1}) \cdot M_{\mu_3,1}`} />
+      <p>
+        These <i>B</i><sub>α</sub> span every polynomial of the neighbour vectors that is invariant to permutations, rotations and
+        reflections (Theorem 3.1), but not as a basis in the strict sense: a polynomial can be written in more than one way, so the
+        functions are linearly dependent <Cite id="shapeev2016mtp" locator="Theorem 3.1" /><Cite id="dusson2022ace" locator="App. B.2" />.
+        Drawn as a graph, with a node per moment and a line per pair of contracted indices, α is a multigraph without loops, and a
+        node’s number of lines is its rank. The MLIP package decides which graphs to include by a <em>level</em>
+        <Cite id="novikov2021mlip" locator="Eq. (5)" />,
+      </p>
+      <Math display number="5" tex={String.raw`\operatorname{lev} M_{\mu,\nu} = 2 + 4\mu + \nu, \qquad \operatorname{lev} B_\alpha = \sum_{\text{moments}} \operatorname{lev} M, \qquad \text{MTP of level } L:\ \{B_\alpha : \operatorname{lev} B_\alpha \le L\}`} />
+      <p>
+        whose coefficients 2, 4 and 1 were chosen empirically and are fixed in the code; level 8 gives nine functions
+        <Cite id="novikov2021mlip" locator="Eqs. (5)–(6)" />. The papers do not say how far the contractions go. Enumerating every graph
+        with at most four moments, μ ≤ 5 and ν ≤ 10 reproduces the size of every untrained template shipped with mlip-2, from 1 at
+        level 2 to {t(28).alpha_scalar_moments.toLocaleString('en')} at level 28 (Figure 2). Each moment is a sum over neighbours, so a
+        product of <i>k</i> moments is a sum over <i>k</i>-tuples of neighbours: with the central atom, a (<i>k</i> + 1)-body term. The
+        shipped templates are therefore at most five-body.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Every basis function is a contraction graph" labels={['live-calculation', 'precomputed']} number={2} id="fig-basis" framed={false}>
+        <MtpBasis client:visible />
+        <Fragment slot="caption">
+          The basis grows roughly geometrically with the level. The bars are the sizes stored in mlip-2’s templates; the dots, the
+          number of distinct graphs this page enumerates, agree at every level, as do the number of moment components each template
+          computes and its number of radial functions. The parameter count reproduces the {params(16)}, {params(20)} and {params(24)} free
+          parameters listed for the level-16, 20 and 24 MTPs of one comparison study <Cite id="zuo2020performance" locator="SI, Table S10" />.
+        </Fragment>
+        <Assumptions slot="assumptions" items={basisAssumptions} />
+        <Fragment slot="source">Level from <Cite id="novikov2021mlip" locator="Eqs. (5)–(6)" />; template sizes from <a href="https://gitlab.com/ashapeev/mlip-2/-/tree/fc3b0721b4d0eb1befcc4eb48269dfc6812f37d4/untrained_mtps">mlip-2 untrained_mtps</a> (BSD-2-Clause), copied by <code>pipeline/atlas_pipeline/mtp.py</code>. Enumeration in <code>src/lib/models/mtp.ts</code>, tested against all 14 templates and the pipeline’s own enumeration.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="ace-h">
+      <h2 id="ace-h" class="h-section">The same space as ACE</h2>
+      <p>
+        ACE builds its invariants from spherical harmonics instead of Cartesian tensors (see <a href="/models/grace/">GRACE</a>). The two
+        are linear transformations of each other: the tensor product r̂ ⊗ ⋯ ⊗ r̂ expands in spherical harmonics of degree up to ν, so
+        every moment tensor is a linear combination of ACE’s atomic-base functions <i>A</i><sub>μνlm</sub> with radial part
+        <i>f</i><sub>μ</sub>(<i>r</i>)<i>r</i><sup>ν</sup>, and suitably chosen finite sets of MTP and ACE functions span the same
+        space <Cite id="dusson2022ace" locator="App. B.2, Eq. (B.2)" />. A rank-ν tensor has 3<sup>ν</sup> entries but only (ν + 1)²
+        harmonics are needed, and Shapeev’s completeness theorem carries over to ACE; the authors judge the spherical form easier
+        to reduce to a true basis, while MTP’s sparse fitting lessens the need to <Cite id="dusson2022ace" locator="App. B.2" />.
+        MTP’s implementation does not store full tensors either: only the distinct moment components, (ν + 1)(ν + 2)/2 per moment,
+        then products of two tensors at a time, chosen during a precomputation step
+        <Cite id="shapeev2016mtp" locator="Sec. 4.1" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fit-h">
+      <h2 id="fit-h" class="h-section">Fitting, and knowing when the fit extrapolates</h2>
+      <p>
+        With fixed radial functions every energy, force and stress is linear in the coefficients, so training is an
+        overdetermined linear system <i>X</i><b>c</b> = <b>g</b>, solved with regularisation; Shapeev’s ℓ2 form scales the penalty to
+        the data <Cite id="shapeev2016mtp" locator="Sec. 4.2.1" />:
+      </p>
+      <Math display number="6" tex={String.raw`\mathbf c = \left(X^{\mathsf T} X + \gamma\, \operatorname{diag}(X^{\mathsf T} X)\right)^{-1} X^{\mathsf T}\mathbf g`} />
+      <p>
+        On the tungsten database of the W GAP, an MTP with about as many coefficients as the GAP fitted forces about 1.5 times more
+        accurately at about 40 times lower cost per atom, and a sparse MTP selected by ℓ0 regularisation matched the GAP at more than two
+        orders of magnitude lower cost <Cite id="shapeev2016mtp" locator="Sec. 5.2, Table 1" /> (one database, one CPU, timings without
+        neighbour lists).
+      </p>
+      <p>
+        Linearity also says which configurations the training data actually pin down. Take <i>m</i> training configurations, one per
+        coefficient, and stack their basis values into an <i>m</i> × <i>m</i> matrix <i>A</i>. For a new configuration with basis
+        values <b>b</b>, Podryabinkin and Shapeev define <Cite id="podryabinkin2017active" locator="Eqs. (8)–(9)" />
+      </p>
+      <Math display number="7" tex={String.raw`\mathbf C = \mathbf b\, A^{-1}, \qquad \gamma = \max_{k} |C_k|, \qquad E(\mathbf x^*) = \sum_{k=1}^{m} C_k\, E(\mathbf x_k)`} />
+      <Callout kind="derivation" title="Why γ measures extrapolation">
+        <p>
+          If the model is fitted to the <i>m</i> active configurations exactly, <b>c</b> = <i>A</i><sup>−1</sup><b>E</b>, so the prediction
+          for a new configuration is <b>b</b> · <b>c</b> = (<b>b</b><i>A</i><sup>−1</sup>) · <b>E</b> = Σ<sub><i>k</i></sub> <i>C</i><sub><i>k</i></sub>
+          <i>E</i><sub><i>k</i></sub>: a weighted sum of the training energies. With all |<i>C</i><sub><i>k</i></sub>| ≤ 1 it is an
+          interpolation; a weight above 1 amplifies a training energy, and its error with it. Second, <b>b</b> = Σ<sub><i>k</i></sub>
+          <i>C</i><sub><i>k</i></sub><b>a</b><sub><i>k</i></sub> in terms of the rows <b>a</b><sub><i>k</i></sub> of <i>A</i>. Replace row
+          <i>k</i> by <b>b</b>: the determinant is linear in that row and vanishes when two rows are equal, so only the term
+          <i>C</i><sub><i>k</i></sub><b>a</b><sub><i>k</i></sub> survives and |det| changes by the factor |<i>C</i><sub><i>k</i></sub>|.
+          A configuration with γ &gt; 1 would enlarge the volume spanned by the active set: it is new in exactly the directions the
+          model can use <Cite id="podryabinkin2017active" locator="Sec. 3, after Eq. (8)" />. Neither statement involves a DFT
+          number; <code>active-learning.test.ts</code> checks both.
+        </p>
+      </Callout>
+      <p>
+        The D-optimal training set is the one with the largest |det <i>A</i>|, found by the maxvol algorithm, which swaps rows while some
+        candidate has |<i>C</i><sub><i>k</i></sub>| above a threshold <Cite id="podryabinkin2017active" locator="App. B" />. The paper’s
+        own first example has one degree of freedom, and it already shows why this choice beats fitting whatever MD visits.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Fitting MD samples versus choosing the extremes" labels={['toy-model', 'reproduced']} number={3} id="fig-1d" framed={false}>
+        <MtpActive1D client:visible />
+        <Fragment slot="caption">
+          The paper’s Sec. 4.1 example, recomputed. The fit to MD samples is more accurate where the system lives (RMS 0.25) but
+          invents a barrier near x = −3 beyond which the energy falls without bound; the D-optimal pair x = ±4 gives a worse average
+          error (0.46) and the right behaviour at both edges. γ of the active pair is at most 1 everywhere between its points and grows
+          outside them.
+        </Fragment>
+        <Assumptions slot="assumptions" items={oneDAssumptions} />
+        <Fragment slot="source">Example from <Cite id="podryabinkin2017active" locator="Sec. 4.1, Fig. 2" />; thresholds from <Cite id="novikov2021mlip" locator="Sec. 2.3, Fig. 2" />. Computed by <code>src/lib/models/active-learning.ts</code>; the coefficients 0.93 and 0.21, both RMS errors, the barrier position and the D-optimal pair are reproduced in <code>active-learning.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="al-h">
+      <h2 id="al-h" class="h-section">Active learning in practice</h2>
+      <p>
+        In a simulation, every configuration’s γ is computed alongside its energy, at the cost of a vector–matrix product. The MLIP
+        package uses two thresholds: above γ<sub>select</sub>, typically about 2, a configuration is set aside for DFT; above
+        γ<sub>break</sub>, about 10, the simulation stops. The authors report 1.1 ≲ γ<sub>select</sub> ≲ 5 and 3 ≲ γ<sub>break</sub> ≲ 20
+        as working for every system they had tried, and advise testing <Cite id="novikov2021mlip" locator="Sec. 2.3, Fig. 2" />. Selected
+        configurations are computed, added, the potential is refitted and the simulation restarted, until a run finishes below
+        γ<sub>break</sub> <Cite id="novikov2021mlip" locator="Sec. 2.4, Fig. 3" />. For the nonlinear MTP, <b>b</b> becomes the derivative
+        of the energy with respect to all parameters at their current values <Cite id="novikov2021mlip" locator="Sec. 2.3" />.
+      </p>
+      <p>
+        γ is not an error bar. For bcc Li at 300 K the force errors of 95 % of MD steps lay between 0.04γ and 0.22γ eV/Å: the
+        right order of magnitude, from geometry alone <Cite id="podryabinkin2017active" locator="Sec. 4.3, Fig. 3" />. And it changed
+        what MD could do: an MTP fitted to a fixed database escaped into unphysical bond lengths about every 15 ps near the melting
+        point, a periodic learn-on-the-fly scheme reached about 150 ps at the cost of about 1,500 extra DFT calculations, and active
+        learning ran an effective 0.5 µs without a failure with about 50 <Cite id="podryabinkin2017active" locator="Sec. 4.4, Fig. 5" />.
+        Figure 4 runs the same test on real DFT data in your browser.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Which silicon cells does a linear MTP extrapolate to?" labels={['precomputed', 'live-calculation']} number={4} id="fig-si" framed={false}>
+        <MtpActiveSi client:visible />
+        <Fragment slot="caption">
+          A linear MTP fitted to PBE energies of strained crystals, AIMD snapshots, vacancy cells and slabs of silicon. With every
+          group in training, test cells interpolate (γ near or below 1) and their errors are a few to tens of meV per atom. Leave the
+          surfaces out and the model has never seen an under-coordinated atom: the slabs land at γ well above the selection threshold
+          with errors tens of times larger. Leaving out vacancies or AIMD snapshots moves them less, because strained and hot bulk cells
+          already span most of their basis values.
+        </Fragment>
+        <Assumptions slot="assumptions" items={siAssumptions} />
+        <Fragment slot="source">Data <Cite id="zuo2020performance" locator="Sec. II B" /> from <a href="https://github.com/materialsvirtuallab/mlearn/tree/10c427a5480c6281c15c64efaf869b03be04818f/data/Si">materialsvirtuallab/mlearn</a> (BSD-3-Clause); method <Cite id="podryabinkin2017active" locator="Eqs. (8)–(9), QS1, App. B" /> and <Cite id="shapeev2016mtp" locator="Sec. 4.2.1" />. Basis values by <code>pipeline/atlas_pipeline/mtp.py</code> (tests in <code>pipeline/tests/test_mtp.py</code>); fit and maxvol by <code>src/lib/models/mtp-fit.ts</code> and <code>active-learning.ts</code> (tests: training cells at γ ≤ 1, left-out surfaces above 2 with errors over 3 × the test error).</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="mt-int" checked />
+        <label for="mt-int">Intuition</label>
+        <input type="radio" name="depth" id="mt-tech" />
+        <label for="mt-tech">Technical</label>
+        <input type="radio" name="depth" id="mt-res" />
+        <label for="mt-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Describe the atoms around a site the way an engineer describes a rigid body: how many there are, where their centre is,
+            how they are spread out in each direction, and finer and finer details of their shape, each weighted by distance. Combine
+            those descriptions in every way that does not depend on which way the body is turned, and add the results up with fitted
+            weights. Because the sum is linear, the model can also tell you when a new arrangement lies outside the range its training
+            examples cover.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Each <i>B</i><sub>α</sub> is a full contraction of symmetric Cartesian tensors, so it is invariant under O(3) and, being a sum
+            over neighbours inside every moment, under permutations of like atoms. The site energy (Eq. 1) is linear in ξ; with learned
+            radial coefficients (Eq. 3) the fit is nonlinear and is done by minimising weighted squared errors in energies, forces and
+            stresses <Cite id="novikov2021mlip" locator="Eq. (7)" />. Forces come from reverse-mode differentiation of the energy
+            <Cite id="shapeev2016mtp" locator="Sec. 4.1" />, so they are conservative. The extrapolation grade (Eq. 7) costs
+            O(<i>m</i>²) per configuration once <i>A</i><sup>−1</sup> is stored, and a row swap updates <i>A</i><sup>−1</sup> by a
+            Sherman–Morrison step <Cite id="podryabinkin2017active" locator="Sec. 3" />.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            Theorem 3.1 makes MTP complete as a polynomial expansion, and Shapeev bounds the error of fitting a tight-binding site
+            energy by polynomials, exponentially small in the degree (Theorem 3.2), with an observed algebraic decay of the force error
+            with basis size on tungsten <Cite id="shapeev2016mtp" locator="Sec. 3.2; Sec. 5.1, Fig. 2" />. The spanning set is
+            overcomplete, which ℓ0 sparsification exploits <Cite id="shapeev2016mtp" locator="Sec. 4.2.2" /><Cite id="dusson2022ace" locator="App. B.2" />.
+            D-optimality minimises the noise in the fitted parameters if the right-hand sides carry Gaussian noise, which is the
+            classical justification; the volume reading of γ is what makes it a geometric novelty detector
+            <Cite id="podryabinkin2017active" locator="Sec. 3; Sec. 5" />. It is the linear-model counterpart of GAP’s predictive variance
+            (<a href="/models/gap/#fig-gap">GAP Fig. 2</a>), and like it, it says where the data are thin, not how wrong the model is there.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, with forces and stresses as its derivatives, and the extrapolation grade of each configuration (or of each
+        neighbourhood) when active learning is on <Cite id="podryabinkin2017active" locator="Eqs. (3)–(4); QS1–QS3" />. The MLIP package
+        drives the bootstrapping loop of selection, DFT and refitting <Cite id="novikov2021mlip" locator="Sec. 2.4" />; MD runs through a
+        separately distributed LAMMPS interface (mlip-2 README).
+        There is no charge or electrostatic term.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Everything beyond the cutoff is invisible, so an MTP has no Coulomb tails, image charges or
+        LO–TO splitting (<a href="/physics-lab/ewald/">P6</a>; <a href="/failures/electrostatics-at-electrodes/">Failure Atlas</a>). Polynomials
+        grow without bound outside the region they were fitted on; the cutoff envelope tames large distances, not unusual short ones,
+        which is why extrapolation shows up as atoms collapsing onto each other <Cite id="podryabinkin2017active" locator="Sec. 4.4" />. The
+        number of basis functions grows roughly geometrically with the level (Figure 2), and so does the data needed to determine them:
+        in Figure 4, level 16 with energies alone fits the training cells far better than the test cells. γ is computed in the space of
+        the model’s own features, so it cannot flag a configuration whose basis values look familiar but whose physics is different.
+      </p>
+      <p>
+        <strong>From a fitted model.</strong> An MTP is as good as its active set. Configurations a simulation never visited during active
+        learning were never tested, and a potential trained on one phase can fail on another: MTPs trained on crystalline Li failed on
+        the liquid until liquid configurations were learned, after which the crystalline errors rose somewhat
+        <Cite id="podryabinkin2017active" locator="Sec. 4.4, Table 3" />. The γ thresholds are empirical and the authors advise users to
+        test their own <Cite id="novikov2021mlip" locator="Sec. 2.3" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <p>
+        MTPs are fitted for one system at a time, usually by active learning around the simulation that needs them, and are not
+        released as foundation models. None is recorded on the Atlas yet. The untrained templates in mlip-2 fix the functional form
+        only; their sizes are below.
+      </p>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Template</th><th>Basis functions</th><th>Radial functions × basis</th><th>Moment components</th><th>Free parameters (one species)</th></tr></thead>
+          <tbody>
+            {[8, 12, 16, 20, 24, 28].map((L) => (
+              <tr>
+                <td>{String(L).padStart(2, '0')}.mtp</td>
+                <td>{t(L).alpha_scalar_moments.toLocaleString('en')}</td>
+                <td>{t(L).radial_funcs_count} × {t(L).radial_basis_size}</td>
+                <td>{t(L).alpha_index_basic_count.toLocaleString('en')}</td>
+                <td>{params(L).toLocaleString('en')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        From the template headers at mlip-2 commit {templates.source.commit.slice(0, 8)}. The Si MTP of Zuo et al. used level 24 with
+        a 4.7 Å cutoff, fitted to energies and forces <Cite id="zuo2020performance" locator="SI, Table S10" />; its parameter file is not in
+        the released repository, which holds the data used in Figure 4 and the other models’ files.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/grace/">ACE and GRACE</a> span the same invariant polynomials with spherical harmonics.
+        <a href="/models/gap/">GAP</a> fixes three-body SOAP features and regresses with a kernel, with a variance in place of γ.
+        <a href="/models/behler-parrinello/">Behler–Parrinello</a> networks use fixed two- and three-body descriptors and a neural network.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>The original paper, with the completeness theorem and the comparison with GAP: <Cite id="shapeev2016mtp" />.</li>
+        <li>D-optimal active learning and the extrapolation grade: <Cite id="podryabinkin2017active" />.</li>
+        <li>The MLIP package, learned radial functions, levels and the active-learning workflow: <Cite id="novikov2021mlip" />.</li>
+        <li>MTP and ACE as the same space: <Cite id="dusson2022ace" />.</li>
+        <li>A six-element comparison of GAP, MTP, NNP and SNAP, with the Si data used above: <Cite id="zuo2020performance" />.</li>
+        <li>Code: <a href="https://gitlab.com/ashapeev/mlip-2">mlip-2</a>, its <a href="https://gitlab.com/ashapeev/interface-lammps-mlip-2">LAMMPS interface</a> and <a href="https://gitlab.com/ashapeev/mlip-2-tutorials">tutorials</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #mt-int:checked ~ .depth-int,
+  #mt-tech:checked ~ .depth-tech,
+  #mt-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .flow {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1.2rem 0;
+    font: 0.9rem/1.35 var(--font-sans);
+    counter-reset: step;
+  }
+  .flow li {
+    flex: 1 1 9rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .flow li.key {
+    border-color: var(--atlas-arch);
+  }
+  .flow span {
+    display: block;
+    font: 600 0.68rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

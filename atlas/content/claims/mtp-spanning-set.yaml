@@ -1,0 +1,11 @@
+statement: >-
+  The basis functions B_α, full contractions of products of moment tensors encoded by a symmetric integer matrix α,
+  form a spanning set of the polynomials invariant to permutations and to rotations and reflections (Theorem 3.1); the
+  representation of a given polynomial is in general not unique, so the B_α are linearly dependent.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: shapeev2016mtp, locator: 'arXiv v2, Sec. 3.1, Eq. (3.4) and Theorem 3.1; proof in Sec. 3.3' }
+  - { paper: dusson2022ace, locator: 'arXiv v4, App. B.2' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,11 @@
+statement: >-
+  On the tungsten database of the W GAP (9,693 configurations), an MTP with about as many basis functions as the GAP
+  fitted forces about 1.5 times better at about 40 times lower CPU time per atom, and a sparser MTP (760 basis
+  functions) matched the GAP's force error at more than two orders of magnitude lower cost (single-core laptop timings,
+  excluding neighbour lists).
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: shapeev2016mtp, locator: 'arXiv v2, Sec. 5.2 text and Table 1' }
+scope: { model_families: [mtp, gap] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,21 @@
+title: 'Atomic cluster expansion: completeness, efficiency and stability'
+topic: descriptors-locality
+authors:
+  - 'Dusson, G.'
+  - 'Bachmayr, M.'
+  - 'Csányi, G.'
+  - 'Drautz, R.'
+  - 'Etter, S.'
+  - 'van der Oord, C.'
+  - 'Ortner, C.'
+year: 2022
+venue: Journal of Computational Physics 454, 110946
+type: article
+identifiers:
+  doi: 10.1016/j.jcp.2022.110946
+  arxiv: '1911.03550'
+edges:
+  - { type: extends, target: drautz2019ace, documented: true }
+  - { type: compares-against, target: shapeev2016mtp, documented: true, note: 'App. B.2: MTP and ACE bases span the same space' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v4 (12 May 2021): Introduction and App. B.2 (moment tensors as linear combinations of A_{μνlm}; suitably chosen finite MTP and ACE sets span the same space; linear dependence and ℓ0 sparsification).' }

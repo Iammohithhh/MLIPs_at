@@ -1,0 +1,12 @@
+title: The one-dimensional active-learning example of Podryabinkin and Shapeev, recomputed
+question: Does a fit to infinitely long MD create a spurious barrier that the D-optimal choice of training points avoids, with the published coefficients and errors?
+kind: reproduction
+status: REPRODUCED
+tier: T0
+page: /models/mtp/#fig-1d
+assumptions:
+  - { term: Model, value: 'E_qm(x) = x² + x³ e^{−x²/2} on [−4, 4]; fit E(x) = θ₁x² + θ₂x³ (Sec. 4.1 of the paper).' }
+  - { term: Passive fit, value: 'Least squares weighted by e^{−E_qm/kT} with kT = 1, on 8001 grid points (the limit of arbitrarily long MD).' }
+  - { term: Error, value: 'Root-mean-square of E − E_qm under the same Boltzmann weight.' }
+claims: [mtp-1d-example]
+review: { status: draft, last_checked: 2026-10-18 }

@@ -1,0 +1,12 @@
+statement: >-
+  The MLIP package uses two thresholds on the extrapolation grade: above γ_select (typically about 2) a configuration is
+  kept for training, above γ_break (about 10) the simulation stops. The authors report 1.1 ≲ γ_select ≲ 5 and
+  3 ≲ γ_break ≲ 20 as working for every system they tried and advise users to test their own; the 2017 paper found a
+  threshold between 2 and 11 a good choice for bulk Li.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: novikov2021mlip, locator: 'arXiv v1, Sec. 2.3 and Fig. 2' }
+  - { paper: podryabinkin2017active, locator: 'arXiv, Sec. 4.4 and Table 2' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

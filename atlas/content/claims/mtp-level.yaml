@@ -1,0 +1,10 @@
+statement: >-
+  In the MLIP package the level of a moment is lev M_{μ,ν} = 2 + 4μ + ν, the level of a contraction is the sum over
+  its moments, and an MTP of level lev_max contains every contraction with level ≤ lev_max; the coefficients 2, 4 and
+  1 were found empirically and are fixed in the code. Level 8 gives nine basis functions.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: novikov2021mlip, locator: 'arXiv v1, Sec. 2.1, Eqs. (5)–(6)' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

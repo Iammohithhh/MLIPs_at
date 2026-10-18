@@ -1,0 +1,7 @@
+name: PBE (Zuo et al. mlearn data)
+method: DFT
+functional: PBE
+basis: 'Plane waves, 520 eV cutoff; PAW'
+codes: [VASP]
+notes: 'VASP 5.4.1; 4×4×4 k-point mesh for Si supercells; energies converged to 10⁻⁵ eV and forces to 0.02 eV/Å; AIMD run at Γ only and non-spin-polarised, snapshots recomputed statically with the same settings (Zuo et al., J. Phys. Chem. A 124, 731, Sec. II B).'
+review: { status: draft, last_checked: 2026-10-18 }

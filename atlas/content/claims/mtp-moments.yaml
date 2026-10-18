@@ -1,0 +1,12 @@
+statement: >-
+  MTP describes a neighbourhood by moment tensors M_{μ,ν} = Σ_j f_μ(r_j) r_j ⊗ … ⊗ r_j (ν factors). With unit weights,
+  M_{0,0} is the number of neighbours (their mass), M_{0,1} is that mass times their centre of mass, M_{0,2} is the
+  tensor of second moments of inertia; for other μ the atoms are weighted by the radial function. Computing a moment
+  is linear in the number of neighbours and exponential in ν.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: shapeev2016mtp, locator: 'arXiv v2, Sec. 3.1 ("The M polynomials"), Eq. (4.1)' }
+  - { paper: novikov2021mlip, locator: 'arXiv v1, Sec. 2.1, Eq. (3)' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

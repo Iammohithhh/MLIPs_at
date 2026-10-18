@@ -452,7 +452,9 @@
    "bartok2013soap",
    "bartok2015gaptutorial",
    "behler2007generalized",
+   "podryabinkin2017active",
    "schutt2018schnet",
+   "shapeev2016mtp",
    "stillinger1985sw",
    "zhang2018deepmd"
   ],
@@ -875,6 +877,7 @@
    "deng2023chgnet",
    "deng2024softening",
    "drautz2019ace",
+   "dusson2022ace",
    "kim2024multifidelity",
    "ko2021fourth",
    "riebesell2023matbench",
@@ -1588,6 +1591,7 @@
    "drautz2019ace",
    "gasteiger2020dimenet",
    "schutt2017schnet",
+   "shapeev2016mtp",
    "zhang2018deepmd",
    "zhang2018deeppotse"
   ],
@@ -2190,6 +2194,8 @@
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
+   "dusson2022ace",
+   "shapeev2016mtp",
    "zhang2018deepmd"
   ],
   "crossref": {
@@ -2637,7 +2643,9 @@
    "bartok2010gap",
    "behler2007generalized",
    "schutt2017schnet",
-   "zhang2018deepmd"
+   "shapeev2016mtp",
+   "zhang2018deepmd",
+   "zuo2020performance"
   ],
   "crossref": {
    "article_number": null,
@@ -2765,10 +2773,12 @@
    "batzner2022nequip",
    "behler2007generalized",
    "drautz2019ace",
+   "dusson2022ace",
    "fu2022forces",
    "musaelian2023allegro",
    "pozdnyakov2020completeness",
    "schutt2017schnet",
+   "shapeev2016mtp",
    "wang2018deepmdkit"
   ],
   "crossref": {
@@ -2879,7 +2889,8 @@
    "cheng2024cace",
    "deng2023chgnet",
    "drautz2019ace",
-   "rappe1991qeq"
+   "rappe1991qeq",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "80",
@@ -3356,6 +3367,7 @@
    "bartok2010gap",
    "bartok2013soap",
    "behler2007generalized",
+   "shapeev2016mtp",
    "stillinger1985sw"
   ],
   "crossref": {
@@ -3458,6 +3470,163 @@
     "W3121659139",
     "W4249212414",
     "W4297997644"
+   ]
+  }
+ },
+ "dusson2022ace": {
+  "arxiv": {
+   "authors": [
+    "Genevieve Dusson",
+    "Markus Bachmayr",
+    "Gabor Csanyi",
+    "Ralf Drautz",
+    "Simon Etter",
+    "Cas van der Oord",
+    "Christoph Ortner"
+   ],
+   "id": "1911.03550v4",
+   "primary_category": "math.NA",
+   "published": "2019-11-08",
+   "title": "Atomic Cluster Expansion: Completeness, Efficiency and Stability",
+   "updated": "2021-05-12"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2022; fetched [2019, 2022]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Dusson, G.' vs fetched ['dusson', 'dusson']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "bartok2018silicon",
+   "behler2007generalized",
+   "drautz2019ace",
+   "pozdnyakov2020completeness",
+   "shapeev2016mtp"
+  ],
+  "crossref": {
+   "article_number": "110946",
+   "authors": [
+    {
+     "family": "Dusson",
+     "given": "Geneviève"
+    },
+    {
+     "family": "Bachmayr",
+     "given": "Markus"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    },
+    {
+     "family": "Drautz",
+     "given": "Ralf"
+    },
+    {
+     "family": "Etter",
+     "given": "Simon"
+    },
+    {
+     "family": "van der Oord",
+     "given": "Cas"
+    },
+    {
+     "family": "Ortner",
+     "given": "Christoph"
+    }
+   ],
+   "container": "Journal of Computational Physics",
+   "doi": "10.1016/j.jcp.2022.110946",
+   "issue": null,
+   "page": "110946",
+   "title": "Atomic cluster expansion: Completeness, efficiency and stability",
+   "type": "journal-article",
+   "volume": "454",
+   "year": 2022
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 140,
+   "id": "W3044111935",
+   "publication_year": 2022,
+   "referenced_works": [
+    "W26088913",
+    "W50417968",
+    "W638800637",
+    "W1558674489",
+    "W1559907478",
+    "W1579533523",
+    "W1661624894",
+    "W1964882117",
+    "W1972135189",
+    "W1994047930",
+    "W1998260904",
+    "W2001238335",
+    "W2020083546",
+    "W2025444507",
+    "W2029413789",
+    "W2031075370",
+    "W2039959185",
+    "W2046505730",
+    "W2052815382",
+    "W2065451462",
+    "W2078402226",
+    "W2083415705",
+    "W2105616783",
+    "W2147363238",
+    "W2159752439",
+    "W2197007850",
+    "W2245704740",
+    "W2316418224",
+    "W2509779244",
+    "W2550524953",
+    "W2566642125",
+    "W2612640872",
+    "W2620687153",
+    "W2728984672",
+    "W2764267192",
+    "W2765459427",
+    "W2771560613",
+    "W2780173879",
+    "W2782772320",
+    "W2786721297",
+    "W2798718650",
+    "W2800301423",
+    "W2804739027",
+    "W2889002363",
+    "W2897388712",
+    "W2910857709",
+    "W2946418155",
+    "W2954891798",
+    "W2963373387",
+    "W2964186609",
+    "W2991533556",
+    "W3003838176",
+    "W3009030042",
+    "W3012140320",
+    "W3033241142",
+    "W3041909131",
+    "W3100571530",
+    "W3106048414",
+    "W3142873602",
+    "W4213223317",
+    "W4236657544",
+    "W4285719527",
+    "W4288938614",
+    "W4391733868"
    ]
   }
  },
@@ -3818,7 +3987,9 @@
    "batzner2022nequip",
    "bochkarev2024grace",
    "chen2022m3gnet",
-   "deng2023chgnet"
+   "deng2023chgnet",
+   "shapeev2016mtp",
+   "zuo2020performance"
   ],
   "crossref": {
    "article_number": null,
@@ -4954,6 +5125,7 @@
    "levine2025omol25",
    "musaelian2023allegro",
    "passaro2023escn",
+   "shapeev2016mtp",
    "wang2018deepmdkit",
    "wood2025uma",
    "zhong2025response"
@@ -5127,12 +5299,14 @@
    "cheng2025les",
    "deng2023chgnet",
    "drautz2019ace",
+   "dusson2022ace",
    "eastman2022spice",
    "gonze1997dfpt",
    "ko2021fourth",
    "pozdnyakov2020completeness",
    "prodan2005nearsightedness",
-   "rappe1991qeq"
+   "rappe1991qeq",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "8763",
@@ -5279,7 +5453,8 @@
    "drautz2019ace",
    "prodan2005nearsightedness",
    "rappe1991qeq",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "398",
@@ -5770,7 +5945,8 @@
    "kim2024multifidelity",
    "mazitov2025petmad",
    "musaelian2023allegro",
-   "riebesell2023matbench"
+   "riebesell2023matbench",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "114",
@@ -6152,6 +6328,7 @@
    "geiger2022e3nn",
    "schutt2017schnet",
    "schutt2018schnet",
+   "shapeev2016mtp",
    "zhang2018deepmd"
   ],
   "crossref": {
@@ -6398,6 +6575,171 @@
    ]
   }
  },
+ "novikov2021mlip": {
+  "arxiv": {
+   "authors": [
+    "Ivan S. Novikov",
+    "Konstantin Gubaev",
+    "Evgeny V. Podryabinkin",
+    "Alexander V. Shapeev"
+   ],
+   "id": "2007.08555v1",
+   "primary_category": "physics.comp-ph",
+   "published": "2020-07-16",
+   "title": "The MLIP package: Moment Tensor Potentials with MPI and Active Learning",
+   "updated": "2020-07-16"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2020, 2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Novikov, I. S.' vs fetched ['novikov', 'novikov']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "behler2007generalized",
+   "drautz2019ace",
+   "podryabinkin2017active",
+   "pozdnyakov2020completeness",
+   "shapeev2016mtp",
+   "zhang2018deepmd",
+   "zuo2020performance"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Novikov",
+     "given": "Ivan S"
+    },
+    {
+     "family": "Gubaev",
+     "given": "Konstantin"
+    },
+    {
+     "family": "Podryabinkin",
+     "given": "Evgeny V"
+    },
+    {
+     "family": "Shapeev",
+     "given": "Alexander V"
+    }
+   ],
+   "container": "Machine Learning: Science and Technology",
+   "doi": "10.1088/2632-2153/abc9fe",
+   "issue": "2",
+   "page": "025002",
+   "title": "The MLIP package: moment tensor potentials with MPI and active learning",
+   "type": "journal-article",
+   "volume": "2",
+   "year": 2021
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 594,
+   "id": "W3042629843",
+   "publication_year": 2020,
+   "referenced_works": [
+    "W26088913",
+    "W1531674615",
+    "W1972135189",
+    "W1978538703",
+    "W2007395042",
+    "W2020786104",
+    "W2025444507",
+    "W2029413789",
+    "W2037464828",
+    "W2057858097",
+    "W2071267590",
+    "W2079105963",
+    "W2083222334",
+    "W2083415705",
+    "W2104489082",
+    "W2109939806",
+    "W2121020550",
+    "W2124820885",
+    "W2128873947",
+    "W2134329894",
+    "W2197007850",
+    "W2225949634",
+    "W2316524229",
+    "W2337496963",
+    "W2496219407",
+    "W2509678043",
+    "W2514794892",
+    "W2527189750",
+    "W2541404351",
+    "W2547447472",
+    "W2566599006",
+    "W2566642125",
+    "W2585152223",
+    "W2599726788",
+    "W2606780347",
+    "W2742127985",
+    "W2749006386",
+    "W2753962198",
+    "W2757878424",
+    "W2759315951",
+    "W2761704992",
+    "W2774180927",
+    "W2785813126",
+    "W2788484525",
+    "W2809779474",
+    "W2886026382",
+    "W2886802770",
+    "W2895329553",
+    "W2898391453",
+    "W2910857709",
+    "W2914331073",
+    "W2937681869",
+    "W2942913009",
+    "W2943626891",
+    "W2946418155",
+    "W2955922545",
+    "W2956468808",
+    "W2963159296",
+    "W2963711743",
+    "W2964186609",
+    "W2964327629",
+    "W2968408489",
+    "W2972401268",
+    "W2980888952",
+    "W2989585264",
+    "W2990037784",
+    "W3000291311",
+    "W3003486042",
+    "W3003838176",
+    "W3010382286",
+    "W3012140320",
+    "W3017031438",
+    "W3020095916",
+    "W3021494087",
+    "W3022217410",
+    "W3022916199",
+    "W3026469900",
+    "W3032943144",
+    "W3033674026",
+    "W3035012408",
+    "W3045322909",
+    "W3102845444",
+    "W3104182741",
+    "W3106017885",
+    "W4206723194"
+   ]
+  }
+ },
  "park2024sevennet": {
   "arxiv": {
    "authors": [
@@ -6436,7 +6778,8 @@
    "chen2022m3gnet",
    "deng2023chgnet",
    "musaelian2023allegro",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": null,
@@ -6609,6 +6952,123 @@
    ]
   }
  },
+ "podryabinkin2017active": {
+  "arxiv": {
+   "authors": [
+    "Evgeny V. Podryabinkin",
+    "Alexander V. Shapeev"
+   ],
+   "id": "1611.09346v3",
+   "primary_category": "physics.comp-ph",
+   "published": "2016-11-28",
+   "title": "Active learning of linearly parametrized interatomic potentials",
+   "updated": "2017-08-22"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2017; fetched [2016, 2017]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Podryabinkin, E. V.' vs fetched ['podryabinkin', 'podryabinkin']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "behler2007generalized",
+   "behler2011symmetry",
+   "shapeev2016mtp"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Podryabinkin",
+     "given": "Evgeny V."
+    },
+    {
+     "family": "Shapeev",
+     "given": "Alexander V."
+    }
+   ],
+   "container": "Computational Materials Science",
+   "doi": "10.1016/j.commatsci.2017.08.031",
+   "issue": null,
+   "page": "171-180",
+   "title": "Active learning of linearly parametrized interatomic potentials",
+   "type": "journal-article",
+   "volume": "140",
+   "year": 2017
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 677,
+   "id": "W2749006386",
+   "publication_year": 2017,
+   "referenced_works": [
+    "W26088913",
+    "W1131018472",
+    "W1520120563",
+    "W1970127494",
+    "W1972135189",
+    "W1974672343",
+    "W1975997599",
+    "W1978005976",
+    "W1978538703",
+    "W1981368803",
+    "W1984087004",
+    "W2007395042",
+    "W2012679265",
+    "W2020786104",
+    "W2025444507",
+    "W2029413789",
+    "W2037464828",
+    "W2054121315",
+    "W2057858097",
+    "W2058214407",
+    "W2058370262",
+    "W2071267590",
+    "W2074001047",
+    "W2078394884",
+    "W2079105963",
+    "W2083222334",
+    "W2083415705",
+    "W2084656090",
+    "W2104489082",
+    "W2107360059",
+    "W2107952203",
+    "W2115462899",
+    "W2121020550",
+    "W2128873947",
+    "W2159357141",
+    "W2197007850",
+    "W2200589053",
+    "W2225949634",
+    "W2291925970",
+    "W2496219407",
+    "W2503343131",
+    "W2509678043",
+    "W2541404351",
+    "W2566573083",
+    "W2566642125",
+    "W2592939032",
+    "W2903158431",
+    "W2951345469",
+    "W2964186609",
+    "W4298362969",
+    "W6729325528"
+   ]
+  }
+ },
  "pota2024kappa": {
   "arxiv": {
    "authors": [
@@ -6688,7 +7148,8 @@
    "bartok2013soap",
    "bartok2018silicon",
    "behler2007generalized",
-   "drautz2019ace"
+   "drautz2019ace",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "166001",
@@ -6814,7 +7275,8 @@
    "behler2011symmetry",
    "drautz2019ace",
    "pozdnyakov2020completeness",
-   "schutt2018schnet"
+   "schutt2018schnet",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": null,
@@ -7408,7 +7870,9 @@
    "bartok2010gap",
    "bartok2013soap",
    "behler2007generalized",
-   "behler2011symmetry"
+   "behler2011symmetry",
+   "podryabinkin2017active",
+   "shapeev2016mtp"
   ],
   "crossref": {
    "article_number": "241722",
@@ -7536,6 +8000,7 @@
    "bartok2010gap",
    "behler2007generalized",
    "behler2011symmetry",
+   "podryabinkin2017active",
    "schutt2018schnet",
    "zhang2018deepmd"
   ],
@@ -7631,6 +8096,97 @@
     "W4234552385",
     "W4240768087",
     "W4308897973"
+   ]
+  }
+ },
+ "shapeev2016mtp": {
+  "arxiv": {
+   "authors": [
+    "Alexander V. Shapeev"
+   ],
+   "id": "1512.06054v2",
+   "primary_category": "physics.comp-ph",
+   "published": "2015-12-18",
+   "title": "Moment Tensor Potentials: a class of systematically improvable interatomic potentials",
+   "updated": "2016-07-23"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2016; fetched [2015, 2016]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Shapeev, A. V.' vs fetched ['shapeev', 'shapeev']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "behler2007generalized",
+   "behler2011symmetry"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Shapeev",
+     "given": "Alexander V."
+    }
+   ],
+   "container": "Multiscale Modeling &amp; Simulation",
+   "doi": "10.1137/15m1054183",
+   "issue": "3",
+   "page": "1153-1173",
+   "title": "Moment Tensor Potentials: A Class of Systematically Improvable Interatomic Potentials",
+   "type": "journal-article",
+   "volume": "14",
+   "year": 2016
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 1511,
+   "id": "W2197007850",
+   "publication_year": 2016,
+   "referenced_works": [
+    "W26088913",
+    "W136603598",
+    "W1459519259",
+    "W1483804921",
+    "W1520120563",
+    "W1557924697",
+    "W1859116975",
+    "W1897152737",
+    "W1964882117",
+    "W1972135189",
+    "W1975997599",
+    "W1984087004",
+    "W2018435387",
+    "W2020503492",
+    "W2025444507",
+    "W2029413789",
+    "W2046402929",
+    "W2057858097",
+    "W2083372231",
+    "W2083415705",
+    "W2093400126",
+    "W2118578397",
+    "W2135046866",
+    "W2210673834",
+    "W2228700150",
+    "W2245704740",
+    "W2322420755",
+    "W2963759396",
+    "W2963911961",
+    "W2990168612",
+    "W4295022726"
    ]
   }
  },
@@ -9005,6 +9561,7 @@
    "chen2022m3gnet",
    "drautz2019ace",
    "musaelian2023allegro",
+   "podryabinkin2017active",
    "schutt2017schnet",
    "zhang2018deepmd",
    "zhang2018deeppotse"
@@ -9145,6 +9702,7 @@
    "liao2023equiformerv2",
    "musaelian2023allegro",
    "schutt2017schnet",
+   "shapeev2016mtp",
    "zhang2018deepmd",
    "zhang2018deeppotse",
    "zhang2024dpa1"
@@ -9580,7 +10138,8 @@
    "cheng2024cace",
    "cheng2025les",
    "drautz2019ace",
-   "gonze1997dfpt"
+   "gonze1997dfpt",
+   "shapeev2016mtp"
   ],
   "crossref": null,
   "fetched": "2026-10-17",
@@ -9745,6 +10304,226 @@
     "W6600310979",
     "W6601361027",
     "W6810461179"
+   ]
+  }
+ },
+ "zuo2020performance": {
+  "arxiv": {
+   "authors": [
+    "Yunxing Zuo",
+    "Chi Chen",
+    "Xiangguo Li",
+    "Zhi Deng",
+    "Yiming Chen",
+    "Jörg Behler",
+    "Gábor Csányi",
+    "Alexander V. Shapeev",
+    "Aidan P. Thompson",
+    "Mitchell A. Wood",
+    "Shyue Ping Ong"
+   ],
+   "id": "1906.08888v4",
+   "primary_category": "physics.comp-ph",
+   "published": "2019-06-20",
+   "title": "A Performance and Cost Assessment of Machine Learning Interatomic Potentials",
+   "updated": "2019-07-24"
+  },
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2020; fetched [2019, 2020]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zuo, Y.' vs fetched ['zuo', 'zuo']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "bartok2013soap",
+   "bartok2018silicon",
+   "behler2007generalized",
+   "behler2011symmetry",
+   "podryabinkin2017active",
+   "schutt2018schnetpack",
+   "shapeev2016mtp",
+   "zhang2018deepmd"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Zuo",
+     "given": "Yunxing"
+    },
+    {
+     "family": "Chen",
+     "given": "Chi"
+    },
+    {
+     "family": "Li",
+     "given": "Xiangguo"
+    },
+    {
+     "family": "Deng",
+     "given": "Zhi"
+    },
+    {
+     "family": "Chen",
+     "given": "Yiming"
+    },
+    {
+     "family": "Behler",
+     "given": "Jörg"
+    },
+    {
+     "family": "Csányi",
+     "given": "Gábor"
+    },
+    {
+     "family": "Shapeev",
+     "given": "Alexander V."
+    },
+    {
+     "family": "Thompson",
+     "given": "Aidan P."
+    },
+    {
+     "family": "Wood",
+     "given": "Mitchell A."
+    },
+    {
+     "family": "Ong",
+     "given": "Shyue Ping"
+    }
+   ],
+   "container": "The Journal of Physical Chemistry A",
+   "doi": "10.1021/acs.jpca.9b08723",
+   "issue": "4",
+   "page": "731-745",
+   "title": "Performance and Cost Assessment of Machine Learning Interatomic Potentials",
+   "type": "journal-article",
+   "volume": "124",
+   "year": 2020
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 920,
+   "id": "W3000291311",
+   "publication_year": 2020,
+   "referenced_works": [
+    "W26088913",
+    "W1531674615",
+    "W1584846110",
+    "W1798528872",
+    "W1963989017",
+    "W1964746686",
+    "W1970127494",
+    "W1972135189",
+    "W1975997599",
+    "W1981368803",
+    "W1983912717",
+    "W1984003326",
+    "W1988079673",
+    "W1994213727",
+    "W1998894799",
+    "W2002155301",
+    "W2002484561",
+    "W2010457530",
+    "W2012911467",
+    "W2015197254",
+    "W2015421649",
+    "W2017425597",
+    "W2019465613",
+    "W2023434820",
+    "W2025444507",
+    "W2029413789",
+    "W2030971064",
+    "W2031430816",
+    "W2037545515",
+    "W2047942079",
+    "W2055526416",
+    "W2057858097",
+    "W2058370262",
+    "W2059295501",
+    "W2061291529",
+    "W2062811765",
+    "W2078678909",
+    "W2083222334",
+    "W2083415705",
+    "W2083956694",
+    "W2084412062",
+    "W2085822586",
+    "W2093216633",
+    "W2100768323",
+    "W2104489082",
+    "W2111639451",
+    "W2127193535",
+    "W2127887268",
+    "W2128873947",
+    "W2155155530",
+    "W2197007850",
+    "W2200589053",
+    "W2225949634",
+    "W2230728100",
+    "W2254282797",
+    "W2310703973",
+    "W2335542964",
+    "W2337496963",
+    "W2470768373",
+    "W2518696367",
+    "W2520022941",
+    "W2530960271",
+    "W2541404351",
+    "W2547447472",
+    "W2557728737",
+    "W2563206649",
+    "W2566642125",
+    "W2585152223",
+    "W2600764488",
+    "W2601213625",
+    "W2725771565",
+    "W2728984672",
+    "W2742127985",
+    "W2746244909",
+    "W2749006386",
+    "W2764267192",
+    "W2765459427",
+    "W2765910566",
+    "W2768213699",
+    "W2772764871",
+    "W2774180927",
+    "W2786721297",
+    "W2788484525",
+    "W2792137452",
+    "W2800301423",
+    "W2807890728",
+    "W2809779474",
+    "W2889002363",
+    "W2891365537",
+    "W2895329553",
+    "W2900475422",
+    "W2911490414",
+    "W2911495555",
+    "W2914038900",
+    "W2914218087",
+    "W2917426598",
+    "W2937681869",
+    "W2945309682",
+    "W2958445743",
+    "W2963159296",
+    "W2963373387",
+    "W2964186609",
+    "W2968558338",
+    "W2976720228",
+    "W3100571530"
    ]
   }
  }

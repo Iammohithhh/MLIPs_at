@@ -1,0 +1,13 @@
+statement: >-
+  For a potential linear in its parameters, D-optimal active learning keeps the m configurations whose m × m matrix A
+  of basis values has the largest |det A|. For a new configuration with basis values b, the coefficients c = b A⁻¹
+  express its predicted energy through the active set's energies, and replacing row k of A by b multiplies |det A| by
+  |c_k|; the extrapolation grade γ = max_k |c_k| therefore marks interpolation (γ ≤ 1) or extrapolation (γ > 1). It
+  uses no quantum-mechanical data.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: podryabinkin2017active, locator: 'arXiv, Sec. 3, Eqs. (8)–(9) and the text after them' }
+  - { paper: novikov2021mlip, locator: 'arXiv v1, Sec. 2.3' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

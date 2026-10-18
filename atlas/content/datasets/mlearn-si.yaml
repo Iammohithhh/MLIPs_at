@@ -1,0 +1,17 @@
+name: Si set of Zuo et al. (mlearn)
+domain: [inorganic-materials]
+summary: >-
+  Periodic silicon cells from high-throughput DFT: the ground-state crystal, 2 × 2 × 2 diamond supercells strained by
+  −10 % to +10 % in six modes, slabs up to Miller index 3, NVT AIMD snapshots of the bulk at several temperatures, and
+  AIMD snapshots of a cell with one vacancy. Each cell has a total energy, forces and a virial stress. The released
+  files split it into 214 training and 25 test cells, labelled AIMD-NVT, Elastic, Vacancy and Surface.
+introduced_in: zuo2020performance
+levels_of_theory: [pbe-mlearn]
+configuration_types: [aimd, single-point, other]
+size:
+  structures: 239
+  approximate: false
+  source: { paper: zuo2020performance, locator: 'Counted in data/Si/training.json (214) and test.json (25) of materialsvirtuallab/mlearn, commit 10c427a; construction in Sec. II B' }
+licence: BSD-3-Clause
+url: https://github.com/materialsvirtuallab/mlearn/tree/master/data/Si
+review: { status: draft, last_checked: 2026-10-18, notes: 'Counts and group labels read from the released JSON (pipeline/atlas_pipeline/mtp.py); construction and DFT settings from arXiv:1906.08888v4 Sec. II B.' }

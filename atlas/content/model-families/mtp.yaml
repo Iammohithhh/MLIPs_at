@@ -1,0 +1,18 @@
+name: Moment tensor potential (MTP)
+aliases: [MTP, moment tensor potentials, MLIP package]
+paradigms: [descriptor-regression]
+introduced_in: shapeev2016mtp
+year: 2016
+summary: >-
+  The energy is a sum of site energies, each a linear combination of basis functions B_α. A basis function is a full
+  contraction of moment tensors M_{μ,ν} = Σ_j f_μ(r_j) r̂_j^⊗ν, the radially weighted moments of inertia of the
+  neighbourhood, so it is invariant to rotations, reflections and permutations by construction, and the B_α span all
+  such polynomials. In the MLIP package a level 2 + 4μ + ν per moment decides which contractions enter; the radial
+  functions are learned, the rest is linear. Training sets are grown by D-optimal active learning: the extrapolation
+  grade γ of a configuration says whether its energy is an interpolation of the active set's.
+locality: { kind: strictly-local, note: 'One cutoff, typically 4–6 Å (mlip-2 templates: 5 Å); no messages.' }
+symmetry: invariant
+body_order: 'A product of k moments is a (k + 1)-body function; the mlip-2 templates contract at most four moments, so five-body.'
+implementations: [mlip-2]
+claims: [mtp-moments, mtp-spanning-set, mtp-level, mtp-template-rule, mtp-radial-learned, mtp-vs-gap-tungsten, mtp-ace-same-span, mtp-extrapolation-grade, mtp-gamma-thresholds, mtp-gamma-error-correlation, mtp-active-reliability, mtp-1d-example, mtp-parameter-count]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read Shapeev 2016, Podryabinkin & Shapeev 2017, Novikov et al. 2021 and Dusson et al. 2022 App. B.2 (arXiv full texts); basis sizes checked against the mlip-2 templates (commit fc3b0721); moments as computed in mlip-2 src/mtp.cpp.' }

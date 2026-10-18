@@ -1,0 +1,11 @@
+statement: >-
+  For MD of bulk Li near melting, an MTP trained on a fixed database escaped into unphysical configurations about every
+  15 ps, a classical learn-on-the-fly scheme raised this to about 150 ps at the cost of about 1,500 extra DFT
+  calculations, and active learning on the fly ran an effective 0.5 µs (parallel replica) without a failure with about
+  50 extra DFT calculations.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: podryabinkin2017active, locator: 'arXiv, Sec. 4.4 ("Comparison with classical learning on the fly") and Fig. 5' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

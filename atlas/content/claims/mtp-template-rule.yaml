@@ -1,0 +1,9 @@
+statement: >-
+  The untrained single-species templates shipped with mlip-2 (levels 2 to 28) contain exactly the distinct scalar
+  contractions of at most four moments with μ ≤ 5 and ν ≤ 10 whose level is at most the template's level: an
+  enumeration with this rule reproduces every template's number of basis functions, of moment components and of
+  radial functions. At most four moments means at most five-body basis functions.
+grade: THEORY
+derivation: /models/mtp/#fig-basis
+scope: { model_families: [mtp] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'The rule is inferred by the Atlas, not stated by the authors; tested in src/lib/models/mtp.test.ts against atlas/src/data/models/mtp-templates.json (mlip-2 commit fc3b0721).' }

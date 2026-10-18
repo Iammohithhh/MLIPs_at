@@ -1,0 +1,11 @@
+statement: >-
+  For E_qm(x) = x² + x³ e^{−x²/2} on [−4, 4] and the model θ₁x² + θ₂x³, the fit to Boltzmann-sampled MD at kT = 1 is
+  0.93x² + 0.21x³ (RMS error 0.25) and has a spurious barrier near x = −3 beyond which the system can escape; the
+  D-optimal pair x = ±4 gives x² + 3 × 10⁻⁴ x³, a larger RMS error (0.46) but the correct barriers at the edges.
+grade: REPRODUCED
+sources:
+  - { paper: podryabinkin2017active, locator: 'arXiv, Sec. 4.1 and Fig. 2' }
+verified_against: full-text
+reproduction: { experiment: mtp-active-learning-1d, date: 2026-10-18, matches: true, note: 'Coefficients, both RMS errors and the barrier position agree to the printed precision (src/lib/models/active-learning.test.ts).' }
+scope: { model_families: [mtp] }
+review: { status: draft, last_checked: 2026-10-18 }

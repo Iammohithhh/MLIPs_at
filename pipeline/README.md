@@ -172,3 +172,18 @@ rank-equalised radii, into `atlas/public/data/citation-universe.json`. Pass a ca
 ```bash
 ../.venv/bin/python -m atlas_pipeline.citations ../atlas/src/data/bibliography.json ../atlas/public/data/citation-universe.json /tmp/oa-works.json
 ```
+
+## Moment tensor potentials
+
+`mtp.py` mirrors the MTP basis enumeration of `atlas/src/lib/models/mtp.ts`. `templates` copies the basis sizes
+of mlip-2's untrained templates (`untrained_mtps/02–28.mtp`, BSD-2-Clause) into
+`atlas/src/data/models/mtp-templates.json`; `si` turns the Si cells of Zuo et al. (materialsvirtuallab/mlearn,
+`data/Si`, BSD-3-Clause) into configuration-level basis values for a linear MTP up to level 16,
+`atlas/src/data/models/mtp-si.json`.
+
+```bash
+mkdir mtps && for L in 02 04 06 08 10 12 14 16 18 20 22 24 26 28; do curl -sSL -o mtps/$L.mtp https://gitlab.com/ashapeev/mlip-2/-/raw/fc3b0721b4d0eb1befcc4eb48269dfc6812f37d4/untrained_mtps/$L.mtp; done
+../.venv/bin/python -m atlas_pipeline.mtp templates mtps fc3b0721b4d0eb1befcc4eb48269dfc6812f37d4 ../atlas/src/data/models/mtp-templates.json
+git clone --depth 1 https://github.com/materialsvirtuallab/mlearn
+../.venv/bin/python -m atlas_pipeline.mtp si mlearn/data/Si 10c427a5480c6281c15c64efaf869b03be04818f ../atlas/src/data/models/mtp-si.json
+```

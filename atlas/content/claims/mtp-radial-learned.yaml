@@ -1,0 +1,11 @@
+statement: >-
+  The MTP of the MLIP package learns its radial functions: f_μ(r) = Σ_β c^{(β)}_{μ,z_i,z_j} Q^{(β)}(r), with Q^{(β)}
+  Chebyshev polynomials on [R_min, R_cut] times (R_cut − r)², so the energy is linear in the basis coefficients but not
+  in the radial coefficients. The first MTP (2016) fixed the radial functions and was linear in all its parameters.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: novikov2021mlip, locator: 'arXiv v1, Sec. 1 ("Moment Tensor Potentials") and Sec. 2.1, Eqs. (3)–(4)' }
+  - { paper: shapeev2016mtp, locator: 'arXiv v2, Sec. 4 (Eq. 4.1) and Sec. 5 (orthonormalised radial functions)' }
+scope: { model_families: [mtp] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

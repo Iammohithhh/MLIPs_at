@@ -1,0 +1,18 @@
+title: 'The MLIP package: moment tensor potentials with MPI and active learning'
+topic: descriptors-locality
+authors:
+  - 'Novikov, I. S.'
+  - 'Gubaev, K.'
+  - 'Podryabinkin, E. V.'
+  - 'Shapeev, A. V.'
+year: 2021
+venue: 'Machine Learning: Science and Technology 2, 025002'
+type: article
+identifiers:
+  doi: 10.1088/2632-2153/abc9fe
+  arxiv: '2007.08555'
+edges:
+  - { type: extends, target: shapeev2016mtp, documented: true }
+  - { type: extends, target: podryabinkin2017active, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v1 (16 Jul 2020): Sec. 2.1 (Eqs. 1–6: moments, learned radial functions, level, the nine level-8 basis functions), Sec. 2.2 (training, Eqs. 7–12), Sec. 2.3 (D-optimality, γ, two-threshold scheme, Fig. 2, nonlinear generalisation), Sec. 2.4 (bootstrapping, Fig. 3).' }

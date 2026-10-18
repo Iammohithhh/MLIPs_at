@@ -1,0 +1,7 @@
+name: MLIP (mlip-2)
+repo: https://gitlab.com/ashapeev/mlip-2
+language: C++
+framework: cpp
+licence: BSD-2-Clause (LICENSE, copyright 2023 A. Shapeev, Skoltech)
+families: [mtp]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit fc3b0721 (2026-05-05): LICENSE, README, src/radial_basis.cpp (RBChebyshev: T_β(ξ)(r − R_cut)²), src/mtp.cpp (moments f_μ(r) x^a y^b z^c / r^ν; constant basis function), untrained_mtps/02–28.mtp. A LAMMPS interface is distributed separately (gitlab.com/ashapeev/interface-lammps-mlip-2).' }

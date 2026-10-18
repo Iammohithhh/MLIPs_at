@@ -1,0 +1,15 @@
+title: Active learning of linearly parametrized interatomic potentials
+topic: descriptors-locality
+authors:
+  - 'Podryabinkin, E. V.'
+  - 'Shapeev, A. V.'
+year: 2017
+venue: Computational Materials Science 140, 171
+type: article
+identifiers:
+  doi: 10.1016/j.commatsci.2017.08.031
+  arxiv: '1611.09346'
+edges:
+  - { type: extends, target: shapeev2016mtp, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read the arXiv full text: Sec. 2 (linear potentials, fitting), Sec. 3 (D-optimality, Eqs. 8–10, QS1–QS3, learning on the fly), Sec. 4.1 (one-dimensional example, Fig. 2), Sec. 4.3–4.4 (Fig. 3, Table 2, γ_th between 2 and 11), App. B (maxvol), App. C (Tables 4–5).' }

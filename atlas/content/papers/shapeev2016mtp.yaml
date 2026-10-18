@@ -1,0 +1,14 @@
+title: 'Moment tensor potentials: a class of systematically improvable interatomic potentials'
+topic: descriptors-locality
+authors:
+  - 'Shapeev, A. V.'
+year: 2016
+venue: Multiscale Modeling & Simulation 14, 1153
+type: article
+identifiers:
+  doi: 10.1137/15M1054183
+  arxiv: '1512.06054'
+edges:
+  - { type: compares-against, target: bartok2010gap, documented: true, note: 'Sec. 5: MTP vs the tungsten GAP on the same database' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v2 (23 Jul 2016): Sec. 2 (R1–R3), Sec. 3.1 (moments, contraction, B_α, Theorem 3.1), Sec. 4 (radial functions, precomputation, ℓ2 and ℓ0 regularisation), Sec. 5 (W database, Fig. 2, Table 1).' }

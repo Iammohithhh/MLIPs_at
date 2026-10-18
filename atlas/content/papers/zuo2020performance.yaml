@@ -1,0 +1,26 @@
+title: Performance and cost assessment of machine learning interatomic potentials
+topic: benchmarks-failures
+authors:
+  - 'Zuo, Y.'
+  - 'Chen, C.'
+  - 'Li, X.'
+  - 'Deng, Z.'
+  - 'Chen, Y.'
+  - 'Behler, J.'
+  - 'Csányi, G.'
+  - 'Shapeev, A. V.'
+  - 'Thompson, A. P.'
+  - 'Wood, M. A.'
+  - 'Ong, S. P.'
+year: 2020
+venue: The Journal of Physical Chemistry A 124, 731
+type: article
+identifiers:
+  doi: 10.1021/acs.jpca.9b08723
+  arxiv: '1906.08888'
+edges:
+  - { type: benchmarks, target: shapeev2016mtp, documented: true }
+  - { type: benchmarks, target: bartok2010gap, documented: true }
+  - { type: benchmarks, target: behler2007generalized, documented: true }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read arXiv v4 (24 Jul 2019): Sec. II A 4 (MTP), II B (data sets: ground state, strains, slabs, AIMD with and without a vacancy; VASP PBE, 520 eV, 4×4×4 k-points), SI Sec. I E and Table S10 (MTP hyperparameters). Data released in materialsvirtuallab/mlearn under BSD-3-Clause.' }

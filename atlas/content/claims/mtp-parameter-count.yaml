@@ -1,0 +1,11 @@
+statement: >-
+  A single-species mlip-2 template has (number of basis functions) + 1 constant + (radial functions × radial basis size)
+  free parameters; with the templates' 8 Chebyshev functions this gives 125, 329 and 913 parameters at levels 16, 20
+  and 24, the numbers listed for the Li, the Ni/Cu/Mo and the Si/Ge MTPs of Zuo et al.
+grade: THEORY
+derivation: /models/mtp/#fig-basis
+sources:
+  - { paper: zuo2020performance, locator: 'Supporting information, Table S10 (polynomial powers 16/20/24; free parameters 125/329/913)' }
+verified_against: full-text
+scope: { model_families: [mtp], datasets: [mlearn-si] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Counts from atlas/src/data/models/mtp-templates.json; mlip-2 src/mtp.cpp adds the constant basis function.' }
