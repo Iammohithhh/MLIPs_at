@@ -615,11 +615,11 @@ function Plots({ frame, onFrame, d }: { frame: number; onFrame: (k: number) => v
   const vals = m.displacement.values;
   const W = 300;
   const H = 150;
-  const pad = { l: 46, r: 10, t: 12, b: 30 };
+  const pad = { l: 46, r: 10, t: 24, b: 36 };
   const x = (v: number) => pad.l + ((v - vals[0]!) / (vals.at(-1)! - vals[0]!)) * (W - pad.l - pad.r);
   const series = [
-    { key: 'E', title: 'ΔE total (eV)', get: (k: number) => energyChange(m, k) },
-    { key: 'F', title: 'F·û on moved atom (eV/Å)', get: (k: number) => axialForce(m, k) },
+    { key: 'E', title: 'ΔE total (eV)', yLabel: 'ΔE total (eV)', get: (k: number) => energyChange(m, k) },
+    { key: 'F', title: 'F·û on moved atom (eV/Å)', yLabel: 'F·û, moved atom (eV/Å)', get: (k: number) => axialForce(m, k) },
   ];
   return (
     <div className="lab__plots">
@@ -654,11 +654,22 @@ function Plots({ frame, onFrame, d }: { frame: number; onFrame: (k: number) => v
               <text x={pad.l - 6} y={y(lo) + 4} className="tick" textAnchor="end">
                 {mn(lo.toPrecision(2))}
               </text>
-              <text x={x(vals[0]!)} y={H - 10} className="tick" textAnchor="start">
+              <text x={x(vals[0]!)} y={H - pad.b + 12} className="tick" textAnchor="start">
                 {mn(vals[0]!.toFixed(2))}
               </text>
-              <text x={x(vals.at(-1)!)} y={H - 10} className="tick" textAnchor="end">
+              <text x={x(vals.at(-1)!)} y={H - pad.b + 12} className="tick" textAnchor="end">
                 +{vals.at(-1)!.toFixed(2)} Å
+              </text>
+              {lo < 0 && hi > 0 && (
+                <text x={pad.l - 6} y={y(0) + 3} className="tick" textAnchor="end">
+                  0
+                </text>
+              )}
+              <text x={pad.l} y={12} className="axis-label" textAnchor="start">
+                {sr.yLabel}
+              </text>
+              <text x={(pad.l + W - pad.r) / 2} y={H - 4} className="axis-label" textAnchor="middle">
+                displacement d along û (Å)
               </text>
             </svg>
             <figcaption>

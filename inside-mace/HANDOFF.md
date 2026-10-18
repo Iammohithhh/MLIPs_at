@@ -358,3 +358,14 @@ Overflow sweep: 0 px at 320, 768, 844 (landscape), 1024, 1920 widths for walk st
    with the same storage format), a relaxed ZnO baseline as a separate experiment, per-edge message contributions in the
    chunks so the trace can animate individual edges, a CPU inference service for arbitrary displacements (brief §8
    "separate extension").
+
+### Local session (owner's Windows machine) — 2026-10-18
+
+- Response plots (ΔE total, F·û on the moved atom) gain in-figure axis titles, a 0 tick on the y axis when the
+  range spans zero, and larger tick text. Session 2 had started this but was stopped by a usage limit before
+  committing (sessions 2–3 were cut short by the account's five-hour limit; sessions 4–6 ran normally).
+- Verified: astro check 0 errors; Vitest 80/80; build OK; screenshots in Edge at 1440×1000 (Si, ZnO) and Pixel 7 (Si),
+  0 px horizontal overflow, no page errors. Playwright `--project=edge`: 27 passed, 2 skipped, 1 failed under parallel
+  load (`experiments.spec.ts` "a ZnO link restores…", first `aria-pressed` assertion times out at 5 s while the lazy
+  instrument and ZnO data load); the same file passes 7/7 when run alone. Timing flake on this machine, not caused by
+  the plot change; worth a longer timeout for that first assertion.
