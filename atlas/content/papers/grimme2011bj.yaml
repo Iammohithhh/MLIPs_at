@@ -1,0 +1,13 @@
+title: 'Effect of the damping function in dispersion corrected density functional theory'
+topic: other
+authors:
+  - 'Grimme, S.'
+  - 'Ehrlich, S.'
+  - 'Goerigk, L.'
+year: 2011
+venue: Journal of Computational Chemistry 32, 1456
+type: article
+identifiers:
+  doi: 10.1002/jcc.21759
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Cited only as the origin of Becke–Johnson damping in D3(BJ), the form AIMNet2 uses (its paper links this DOI).' }

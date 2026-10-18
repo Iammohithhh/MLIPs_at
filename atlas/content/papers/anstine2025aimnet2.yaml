@@ -1,0 +1,17 @@
+title: 'AIMNet2: a neural network potential to meet your neutral, charged, organic, and elemental-organic needs'
+topic: electrostatics
+authors:
+  - 'Anstine, D. M.'
+  - 'Zubatyuk, R.'
+  - 'Isayev, O.'
+year: 2025
+venue: Chemical Science 16, 10228
+type: article
+identifiers:
+  doi: 10.1039/d4sc08572h
+edges:
+  - { type: extends, target: zubatyuk2019aimnet, documented: true, note: 'Second generation of the atoms-in-molecules network (Introduction; Model design).' }
+  - { type: reuses-mechanism, target: zubatyuk2021nse, documented: true, note: 'Neural charge equilibration (NQE), adapted from AIMNet-NSE (Model design, Eq. 6).' }
+  - { type: compares-against, target: ko2021fourth, documented: true, note: 'Contrasted with charge equilibration in the 4G-HDNNP (Model design; Conclusion).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read the open-access full text (Europe PMC PMC12057637). Eqs. (2) and (4)–(6) are images in that copy; their content was checked against the released code (isayevlab/aimnetcentral at commit d1469283: aimnet/modules/aev.py, aimnet/models/aimnet2.py, aimnet/ops.py).' }

@@ -1,0 +1,18 @@
+name: AIMNet2 ωB97M-D3 (ensemble member 0)
+family: aimnet2
+implementation: aimnetcentral
+version: aimnet2_wb97m_d3_0.pt (aimnet2v2 format)
+release: { source: anstine2025aimnet2 }
+elements: 14
+parameters: { total: 2205557 }
+training:
+  - stage: training
+    dataset: aimnet2-data
+    level_of_theory: wb97m-def2tzvpp-aimnet2
+    note: 'Grown by data distillation on B97-3c labels, then four ensemble members retrained from scratch on the ωB97M labels (Data distillation).'
+outputs: [energy, forces, charges]
+long_range: explicit-charges
+licence: 'MIT (aimnetcentral LICENSE; the registry serves the weights with the code)'
+weights: { url: 'https://storage.googleapis.com/aimnetcentral/aimnet2v2/AIMNet2/aimnet2_wb97m_d3_0.pt', sha256: f0f7c054539ad3261bd36f9b11c56d12f87cb723e25bea7521755bbd3ec24e28 }
+claims: [aimnet2-first-pass-blind, aimnet2-symmetric-split, aimnet2-fractional-limit, aimnet2-neutral-residual-charge]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Downloaded 2026-10-18 (SHA-256 matches model_registry.yaml at commit d1469283) and read with torch.load(weights_only=True). Stored model definition: 16 features × 16 shells, 12 vector combinations, MLPs [512, 380], [512, 380], [512, 380, 380], AIM size 256, cutoff 5 Å, short-range Coulomb envelope inside 4.6 Å (coulomb_mode sr_embedded), D3(BJ) s8 0.3908, a1 0.566, a2 3.128. 2,205,557 trainable parameters counted from the state dict (fixed basis buffers excluded). Members 1–3 not used here. The total charge must be given; spin is not an input (a separate NSE family is).' }

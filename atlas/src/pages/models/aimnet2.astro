@@ -1,0 +1,477 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Figure from '~/components/Figure.astro';
+import Assumptions from '~/components/Assumptions.astro';
+import Callout from '~/components/Callout.astro';
+import Math from '~/components/Math.astro';
+import Badge from '~/components/Badge.astro';
+import Cite from '~/components/Cite.astro';
+import AimnetMethane from '~/islands/AimnetMethane';
+import AimnetDimer from '~/islands/AimnetDimer';
+import AimnetCharge from '~/islands/AimnetCharge';
+import { DATA, HP, TD_THETA } from '~/lib/models/aimnet2';
+import { getEntry } from 'astro:content';
+import type { Checkpoint, Dataset } from '~/content/schemas';
+
+const ck = (await getEntry('checkpoints', 'aimnet2-wb97m-d3'))!.data as Checkpoint;
+const ds = (await getEntry('datasets', 'aimnet2-data'))!.data as Dataset;
+const shortSha = DATA.model.sha256.slice(0, 12);
+const run = `aimnetcentral ${DATA.provenance.aimnet.slice(0, 8)}, torch ${DATA.provenance.torch}, CPU, ${DATA.provenance.dtype}`;
+
+const methaneAssumptions = [
+  { term: 'Geometry', value: `CH₄ with H₁,₂ = r(±sin θ, 0, cos θ), H₃,₄ = r(0, ±sin θ, −cos θ), r = 1.087 Å, θ = 30°–90° in 1° steps; θ = ${TD_THETA.toFixed(2)}° is tetrahedral, 90° square planar. Rigid: not a reaction path, and far outside the training data at large twists.` },
+  { term: 'Live check', value: `Carbon’s first-pass building blocks S_Z[s] = Σ_j g_s(r_j) and P_ZZ′[s,t] = (Σ_j g_s r̂_j)·(Σ_k g_t r̂_k) with the checkpoint’s own ${HP.shifts.length} shifts (${HP.shifts[0]}–${HP.shifts[HP.shifts.length - 1]} Å), η = ${HP.eta.toFixed(2)} Å⁻² and cosine cutoff ${HP.rc} Å, compared with Td. Every learned first-pass feature is a function of these.` },
+  { term: 'Precomputed', value: `The released ωB97M-D3 checkpoint (member 0, SHA-256 ${shortSha}…), Q = 0, run with the authors’ calculator (${run}). x is the output of each pass’s neighbour convolution of atom features (ConvSV over the 16 shells, l = 0 and l = 1), recorded for C and H₁.` },
+];
+const dimerAssumptions = [
+  { term: 'Systems', value: '(C₆H₆)₂⁺: two D6h benzenes (C–C 1.397 Å, C–H 1.084 Å) stacked face to face, Q = +1. C₆H₆·H₂O: water (O–H 0.9572 Å, 104.52°) on the ring axis with one O–H pointing at the ring centre, Q = +1 and Q = 0. Fragment B moved along the axis, d from 3.4 to 20 Å in 0.2 Å steps (d = ring–ring or ring centre–H distance). Rigid monomers.' },
+  { term: 'Model', value: `Released ωB97M-D3 checkpoint, ensemble member 0, with the calculator’s defaults for molecules: Coulomb over all pairs and D3(BJ) (s₈ = ${HP.d3.s8}, a₁ = ${HP.d3.a1}, a₂ = ${HP.d3.a2} Å) with the calculator’s 15 Å cutoff. ${run}.` },
+  { term: 'Terms', value: 'U_disp is the difference with D3 switched off; U_Coul = k Σ_{i<j} q_i q_j (1 − f_c(r_ij))/r_ij recomputed from the charges (the model subtracts the enveloped short-range part internally, which the pipeline checked against the calculator); U_local is the rest.' },
+  { term: 'Integer limits', value: 'Energies of the isolated fragments with integer charges, from the same checkpoint. No DFT reference is computed here: the figure tests the model against itself.' },
+];
+const chargeAssumptions = [
+  { term: 'Left', value: 'The same benzene as in Fig. 2, run with total charge Q = −1 to +2 in steps of 0.05 e. Only integer Q were in the training data; benzene’s anion and dication are included only to draw the chords.' },
+  { term: 'Exact line', value: 'Straight segments between the model’s own integer-charge energies: the shape exact theory requires for a fractional average electron number, not DFT energies.' },
+  { term: 'Right', value: 'Eq. (5) applied to fragment sums (two fragments on separate graphs, so each fragment’s raw charges and weights add up independently). F share = F_A/(F_A + F_B). Presets load the checkpoint’s sums from its second charge update at d = 20 Å.' },
+];
+---
+
+<BaseLayout
+  title="AIMNet2"
+  description="AIMNet2: an invariant message-passing potential for neutral and charged molecules of 14 elements, with neural charge equilibration, explicit Coulomb and D3 dispersion. What its l ≤ 1 features can and cannot see, how NQE shares charge, and what happens when a charged dimer comes apart, run with the released checkpoint on CPU."
+>
+  <article class="page-grid model-page">
+    <header class="wide head">
+      <p class="eyebrow"><a href="/models/">Models</a> · Model family</p>
+      <h1 class="h-display">AIMNet2</h1>
+      <p class="lede">
+        AIMNet2 is a potential for molecules that is told their total charge. A short-range network refines atom features over three passes; on the
+        way it predicts partial charges, and a one-line rule, neural charge equilibration, makes them add up to the charge it was given. The
+        charges then interact by Coulomb’s law at any distance, and Grimme’s D3 adds dispersion <Cite id="anstine2025aimnet2" locator="Model design, Eq. (1)" />.
+        The pretrained models cover 14 elements and charged species, which the authors present as most non-metallic compounds
+        <Cite id="anstine2025aimnet2" locator="Abstract" />. This page runs the released checkpoint to show what the charge rule does well and where
+        it has to guess.
+      </p>
+      <dl class="glance">
+        <div><dt>Energy</dt><dd>U<sub>local</sub> (network) + U<sub>disp</sub> (D3(BJ)) + U<sub>Coul</sub> (predicted charges)</dd></div>
+        <div><dt>Inputs</dt><dd>Positions, elements and the total charge Q; spin in a separate NSE variant</dd></div>
+        <div><dt>Features</dt><dd>16 Gaussian shells inside 5 Å × l = 0 and l = 1; 16 × 16 element embeddings; three passes</dd></div>
+        <div><dt>Charges</dt><dd>Predicted in passes 1 and 2, then shifted by NQE so Σq = Q; learned to reproduce DFT dipoles and quadrupoles</dd></div>
+        <div><dt>Elements</dt><dd>H, B, C, N, O, F, Si, P, S, Cl, As, Se, Br, I</dd></div>
+        <div><dt>Introduced</dt><dd>Chem. Sci. 2025 (AIMNet 2019; NQE in AIMNet-NSE, 2021)</dd></div>
+        <div><dt>Code</dt><dd><a href="https://github.com/isayevlab/aimnetcentral">isayevlab/aimnetcentral</a> (MIT)</dd></div>
+      </dl>
+      <p class="rule-note"><Badge label="schematic" /> The text is about the <strong>architecture</strong>; Figs. 1–3 use one released <strong>checkpoint</strong>, named in each figure.</p>
+    </header>
+
+    <section class="block" aria-labelledby="energy-h">
+      <h2 id="energy-h" class="h-section">The energy in three parts</h2>
+      <p>
+        AIMNet2 writes the energy as a local configurational term, an explicit dispersion correction and the electrostatics of atom-centred point
+        charges <Cite id="anstine2025aimnet2" locator="Model design, Eq. (1)" />:
+      </p>
+      <Math display number="1" tex={String.raw`U_{\mathrm{Total}} = U_{\mathrm{Local}} + U_{\mathrm{Disp}} + U_{\mathrm{Coul}}`} />
+      <p>
+        U<sub>Local</sub> sees 5 Å per pass; U<sub>Coul</sub> and U<sub>Disp</sub> are computed for the whole system or with a cutoff such as 15 Å
+        <Cite id="anstine2025aimnet2" locator="Model design" />. U<sub>Disp</sub> is two-body DFT-D3 with Becke–Johnson damping
+        <Cite id="grimme2010d3" /> <Cite id="grimme2011bj" />, because the training energies were computed without any dispersion correction
+        <Cite id="anstine2025aimnet2" locator="Data distillation" />. In the released code the Coulomb term is the full pair sum minus a part the
+        network replaces at short range, switched off by a smooth envelope that is 1 at r = 0 and 0 at r<sub>c</sub> = {HP.coulomb_sr_rc.toFixed(1)} Å
+        (<a href="https://github.com/isayevlab/aimnetcentral/blob/main/aimnet/modules/lr.py">aimnet/modules/lr.py</a>, SRCoulomb and LRCoulomb):
+      </p>
+      <Math display number="2" tex={String.raw`U_{\mathrm{Coul}} = k_e \sum_{i<j} \frac{q_i q_j}{r_{ij}}\,\big(1 - f_{\mathrm{env}}(r_{ij})\big), \qquad f_{\mathrm{env}}(r) = e\,\exp\!\Big(\!-\frac{1}{1 - r^2/r_c^2}\Big)\ (r<r_c)`} />
+      <p>
+        For molecules the pair sum runs over all atoms. For periodic cells the code offers damped shifted force <Cite id="fennell2006dsf" />,
+        used with a 15 Å cutoff for the paper’s CO₂ simulation, or Ewald and PME sums <Cite id="anstine2025aimnet2" locator="Methods, MD simulations" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="feat-h">
+      <h2 id="feat-h" class="h-section">Features: shells, element matrices and l ≤ 1</h2>
+      <p>
+        Distances are expanded in 16 Gaussians damped by a cosine cutoff at 5 Å <Cite id="anstine2025aimnet2" locator="Model design, Eq. (2)" />; in the
+        code the centres r<sub>s</sub> are evenly spaced from {HP.shifts[0]} Å and η follows from their spacing ({HP.eta.toFixed(2)} Å⁻² in the released
+        model). Each element starts as a learned 16 × 16 matrix a<sub>ds</sub>, one row of d features per shell, so a convolution can weight neighbours
+        differently in each shell and one network serves every element <Cite id="anstine2025aimnet2" locator="Model design, Eqs. (3)–(5)" />. The
+        environment of atom i combines both, with l = 0 and l = 1 harmonics only; the l = 1 part is mixed over shells by learned weights w and reduced
+        to a squared norm (code: <a href="https://github.com/isayevlab/aimnetcentral/blob/main/aimnet/modules/aev.py">aimnet/modules/aev.py</a>, ConvSV):
+      </p>
+      <Math display number="3" tex={String.raw`g_s(r) = e^{-\eta (r - r_s)^2} f_c(r), \qquad v^{s}_{i,ds} = \sum_{j} a_{j,ds}\, g_s(r_{ij}), \qquad v^{v}_{i,dh} = \Big\| \sum_s w_{dsh} \sum_j a_{j,ds}\, g_s(r_{ij})\, \hat{\mathbf r}_{ij} \Big\|^2`} />
+      <p>
+        The squared norm is where angles enter: ‖Σ<sub>j</sub> c<sub>j</sub> r̂<sub>ij</sub>‖² = Σ<sub>j,k</sub> c<sub>j</sub>c<sub>k</sub> cos θ<sub>jik</sub>, a three-body
+        sum with only cos θ in it. From the second pass on, the charges are convolved the same way and every input grows by q<sub>i</sub> and its
+        convolutions <Cite id="anstine2025aimnet2" locator="Model design" />. Each pass is an MLP that returns updates of the features (and, in passes 1
+        and 2, charges); the third returns the 256-dimensional AIM vector from which U<sub>Local</sub> is read out
+        <Cite id="anstine2025aimnet2" locator="Model design; Fig. 1" />.
+      </p>
+      <Callout kind="derivation" title="What the first pass cannot see">
+        <p id="first-pass">
+          In pass 1, a<sub>j</sub> depends only on the element of j, so every first-pass feature of atom i is a linear function of two kinds of sum for
+          each pair of neighbour elements Z, Z′: S<sub>Z</sub>[s] = Σ<sub>j∈Z</sub> g<sub>s</sub>(r<sub>ij</sub>) and P<sub>ZZ′</sub>[s,t] = (Σ<sub>j∈Z</sub> g<sub>s</sub> r̂<sub>ij</sub>)·(Σ<sub>k∈Z′</sub> g<sub>t</sub> r̂<sub>ik</sub>).
+          If all neighbours of i are of one element at one distance, S is fixed by that distance and P is proportional to ‖Σ<sub>j</sub> r̂<sub>ij</sub>‖². For
+          CH₄ on the path H<sub>1,2</sub> = r(±sin θ, 0, cos θ), H<sub>3,4</sub> = r(0, ±sin θ, −cos θ) the four unit vectors add to (0, 0, 2 cos θ − 2 cos θ) = 0
+          for every θ. So carbon’s first-pass features are the same for the tetrahedron, the square and everything between, whatever the weights.
+          The hydrogens are not blind: their distances to one another change, from r√(8/3) to r√2 and 2r. Pass 2 convolves the hydrogens’ updated
+          features, so carbon sees the twist one pass later. Higher harmonics (l = 2 already distinguishes the two shapes) would have seen it at once.
+        </p>
+      </Callout>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="A twist the first pass cannot see" labels={['live-calculation', 'precomputed']} number={1} id="fig-methane" framed={false}>
+        <AimnetMethane client:visible />
+        <Fragment slot="caption">
+          Drag θ from tetrahedral to square-planar methane. Carbon’s first-pass invariants, computed live, never change; the released model’s own
+          first-pass features for carbon do not change either (flat line), while the hydrogens’ do, and carbon picks up the change in passes 2 and 3.
+        </Fragment>
+        <Assumptions slot="assumptions" items={methaneAssumptions} />
+        <Fragment slot="source">Features as <Cite id="anstine2025aimnet2" locator="Model design, Eqs. (2)–(5)" /> and aimnetcentral ConvSV. Live part: <code>src/lib/models/aimnet2.ts</code>, tested in <code>aimnet2.test.ts</code>. Precomputed by <code>pipeline/atlas_pipeline/aimnet2.py</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="nqe-h">
+      <h2 id="nqe-h" class="h-section">Charges inside the passes: neural charge equilibration</h2>
+      <p>
+        Passes 1 and 2 also predict a charge q̃<sub>i</sub> and a non-negative weight f<sub>i</sub> for every atom. Neural charge equilibration then shifts the
+        charges so that they add up to the total charge Q, putting the surplus or deficit where f is large
+        <Cite id="anstine2025aimnet2" locator="Model design, Eq. (6)" /> <Cite id="zubatyuk2021nse" locator="Results, Eq. (4)" />:
+      </p>
+      <Math display number="4" tex={String.raw`q_i = \tilde q_i + \frac{f_i}{\sum_j f_j}\Big(Q - \sum_j \tilde q_j\Big)`} />
+      <p>
+        The rule comes from AIMNet-NSE, whose authors describe f as conceptually related to atomic Fukui functions, ∂q/∂Q
+        <Cite id="zubatyuk2021nse" locator="Results" />. In pass 1 the charges are predicted outright; in pass 2 the network predicts a correction to them
+        (code: <code>AIMNet2._update_q</code>). After each update the charges join the inputs of the next pass, so the features of every atom depend on
+        Q. Unlike the charge equilibration of a <a href="/models/long-range/">4G-HDNNP</a>, there is no linear system: the cost is one sum over atoms, and
+        the authors contrast its linear scaling with charge equilibration <Cite id="anstine2025aimnet2" locator="Conclusion" />.
+      </p>
+      <Callout kind="derivation" title="NQE on two fragments that are far apart">
+        <p id="nqe-derivation">
+          Let fragments A and B be farther apart than the cutoff, so no atom of A has a neighbour in B. Sum Eq. (4) over the atoms of A, with
+          Q̃<sub>A</sub> = Σ<sub>i∈A</sub> q̃<sub>i</sub> and F<sub>A</sub> = Σ<sub>i∈A</sub> f<sub>i</sub>: q<sub>A</sub> = Q̃<sub>A</sub> + F<sub>A</sub>/(F<sub>A</sub> + F<sub>B</sub>) · (Q − Q̃<sub>A</sub> − Q̃<sub>B</sub>).
+          (i) The split depends on four numbers, none of which knows how far apart A and B are, so once the fragments sit on separate graphs it is
+          frozen, and only the Coulomb energy of the two frozen charges still changes with distance. (ii) If A and B are identical, Q̃<sub>A</sub> = Q̃<sub>B</sub> and
+          F<sub>A</sub> = F<sub>B</sub> in pass 1, hence q<sub>A</sub> = q<sub>B</sub> = Q/2; the same is then true of everything pass 2 computes, so each fragment ends with exactly
+          Q/2. (iii) With Q = 0 and Q̃<sub>A</sub> + Q̃<sub>B</sub> ≠ 0, the correction is shared in proportion to F rather than within each fragment, so two neutral
+          molecules keep small opposite charges at any distance. (iv) Fragment A’s features depend on B through Q̃<sub>B</sub> and F<sub>B</sub> only: AIMNet2 is not
+          strictly local, but what crosses the gap is two numbers per pass, not geometry.
+        </p>
+      </Callout>
+      <p>
+        The authors name the consequence themselves: the dissociation of charged complexes is a limiting case, because charge is redistributed as a
+        function of learned short-range descriptors, so non-neutral species that move beyond the cutoff without intermediary molecules can be
+        systematically mispredicted <Cite id="anstine2025aimnet2" locator="AIMNet2 in the landscape of MLIPs" />. Figure 2 shows how, in the released
+        model.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Pulling a charged dimer apart" labels={['precomputed']} number={2} id="fig-dimer" framed={false}>
+        <AimnetDimer client:visible />
+        <Fragment slot="caption">
+          Three dimers pulled apart along their axis. In (C₆H₆)₂⁺ each benzene carries exactly ½ e at every distance (derivation (ii)); beyond the
+          cutoff the energy approaches two half-charged benzenes, well below the model’s own C₆H₆⁺ + C₆H₆ limit. In C₆H₆·H₂O⁺ most of the charge sits
+          on benzene, as the model’s integer energies prefer, but not all of it. Neutral C₆H₆·H₂O keeps about 2 × 10⁻³ e on each side at 20 Å
+          (derivation (iii)).
+        </Fragment>
+        <Assumptions slot="assumptions" items={dimerAssumptions} />
+        <Fragment slot="source">Model and NQE as <Cite id="anstine2025aimnet2" locator="Model design, Eqs. (1), (6)" />; caveat stated in <Cite id="anstine2025aimnet2" locator="AIMNet2 in the landscape of MLIPs" />. Precomputed by <code>pipeline/atlas_pipeline/aimnet2.py</code>; the fragment charges, the energy decomposition and the frozen local energy beyond 5 Å are checked in <code>src/lib/models/aimnet2.test.ts</code>.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="frac-h">
+      <h2 id="frac-h" class="h-section">Why half a charge costs the wrong energy</h2>
+      <p id="fractional">
+        For identical fragments an even split is not itself wrong: with the exact functional, the energy of a system with a fractional average number
+        of electrons lies on the straight line between the neighbouring integers <Cite id="perdew1982fractional" locator="Abstract" />, so two separated
+        benzenes sharing one positive charge would cost exactly E(C₆H₆) + E(C₆H₆⁺). For identical separated fragments Eq. (4) gives each atom the shift f<sub>i</sub>/(2F<sub>A</sub>) · (1 − 2Q̃<sub>A</sub>) = f<sub>i</sub>/F<sub>A</sub> · (½ − Q̃<sub>A</sub>), exactly what an
+        isolated benzene told Q = ½ receives, in both passes; so each half is computed as that benzene and the dimer’s limit is 2E<sub>model</sub>(½). The model was trained on integer charges only; between
+        them its E(Q) is whatever the network interpolates. For benzene it sags below the line (Fig. 3, left), so the separated cation is too stable,
+        an error that does not shrink with distance. For unlike fragments the split itself is a guess (Fig. 3,
+        right): the exact limit puts an integer charge on the fragment that is cheaper to ionise, while NQE returns whatever fraction the two
+        fragment sums give.
+      </p>
+    </section>
+
+    <div class="wide fig-wrap">
+      <Figure title="Fractional charge and the NQE split" labels={['precomputed', 'live-calculation']} number={3} id="fig-charge" framed={false}>
+        <AimnetCharge client:visible />
+        <Fragment slot="caption">
+          Left: the released checkpoint’s energy of benzene against the total charge it is given, with straight chords between integers; the gap at
+          Q = ½ appears twice in the separated (C₆H₆)₂⁺ of Fig. 2. Right: Eq. (4) summed over two separated fragments, live; the presets reproduce
+          the checkpoint’s fragment charges at 20 Å.
+        </Fragment>
+        <Assumptions slot="assumptions" items={chargeAssumptions} />
+        <Fragment slot="source">Linearity in fractional electron number: <Cite id="perdew1982fractional" locator="Abstract" />. NQE: <Cite id="anstine2025aimnet2" locator="Eq. (6)" />. Precomputed by <code>pipeline/atlas_pipeline/aimnet2.py</code>; chords and fragment sums in <code>src/lib/models/aimnet2.ts</code>, tested.</Fragment>
+      </Figure>
+    </div>
+
+    <section class="block" aria-labelledby="train-h">
+      <h2 id="train-h" class="h-section">Training data and loss</h2>
+      <p>
+        PubChem and ChEMBL molecules under 20 heavy atoms, in every realistic tautomer and protonation state, were sampled by molecular dynamics,
+        metadynamics, torsion scans and clusters of two to five molecules, and joined by ANI-1x, ANI-2x and OrbNet structures: about 1.2 × 10⁸
+        conformers labelled with B97-3c <Cite id="anstine2025aimnet2" locator="Data distillation; Methods, Dataset preparation" />. Data distillation then
+        grew a training subset: train on 10⁵ structures, add the next 10⁵ predicted worse than three times the current error, continue training, repeat
+        until the whole master set is described, at about {(ds.size?.structures ?? 0) / 1e6} million structures. Those were relabelled at
+        ωB97M/def2-TZVPP and four ensemble members were retrained from scratch <Cite id="anstine2025aimnet2" locator="Data distillation; Fig. 2" />. The
+        loss weighs energies, forces, dipoles and quadrupoles; charges are learned so that they reproduce the DFT dipoles and quadrupoles, not
+        trained to a population analysis <Cite id="anstine2025aimnet2" locator="Methods, Model training" />.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ev-h">
+      <h2 id="ev-h" class="h-section">What the paper shows</h2>
+      <p>
+        Gas-phase optimisations of 113 molecules with rare bonding from the Cambridge Structural Database stayed close to their crystal conformers,
+        except one arsenic iodide anion that broke into fragments, as it also did with GFN2-xTB <Cite id="anstine2025aimnet2" locator="Case study of uncommon bonding; Fig. 3" />. In
+        conformer searches on 676 CSD molecules, AIMNet2 found the experimental conformer about as often as B97-3c and more often than GFN2-xTB
+        <Cite id="anstine2025aimnet2" locator="Fig. 4" />. On GMTKN55 and the NCI Atlas it beat GFN2-xTB except on GMTKN55’s intermolecular interactions and the NCI Atlas’s dispersion-bound complexes,
+        with the largest errors at short separations, such as σ-hole contacts that an atom-centred point-charge model finds hard
+        <Cite id="anstine2025aimnet2" locator="General interaction energy benchmarks; Fig. 5" />. Those WTMAD-2 scores are taken over the GMTKN55
+        subsets each method supports, weighting the others zero, so they are not a ranking on one protocol. Torsion profiles of TorsionNet500 matched
+        B97-3c <Cite id="anstine2025aimnet2" locator="Table 1" />, and dipoles from the charges agreed closely with ωB97M on QM7b
+        <Cite id="anstine2025aimnet2" locator="Fig. 8" />. A 2.5 ns simulation of liquid CO₂ ran stably, with a self-diffusion coefficient below
+        experiment by a margin similar to CO₂-specific models <Cite id="anstine2025aimnet2" locator="Molecular dynamics; Fig. 7" />. The Atlas has not
+        rerun any of these.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="maths-h">
+      <h2 id="maths-h" class="h-section">The mathematics at three depths</h2>
+      <div class="depths">
+        <input type="radio" name="depth" id="l-int" checked />
+        <label for="l-int">Intuition</label>
+        <input type="radio" name="depth" id="l-tech" />
+        <label for="l-tech">Technical</label>
+        <input type="radio" name="depth" id="l-res" />
+        <label for="l-res">Research</label>
+        <div class="depth depth-int">
+          <p>
+            Each atom looks at its neighbours through 16 rings of different radii, noting how much is in each ring and whether it is lopsided. It
+            does this three times, each time also reading what its neighbours concluded. Along the way every atom guesses its charge; if the guesses
+            do not add up to the molecule’s charge, the difference is handed out to the atoms that said they could take it. The charges then pull and
+            push on each other at any distance.
+          </p>
+        </div>
+        <div class="depth depth-tech">
+          <p>
+            Pass-1 features are two-body sums per shell and three-body sums with cos θ only (Eq. 3); higher orders arise through the passes. Charges
+            enter as features and as point charges in Eq. (2), whose short-range part is replaced by the network inside 4.6 Å. NQE (Eq. 4) is a
+            projection onto Σq = Q along the direction f; forces differentiate through it, so they include the response of the charges to the
+            geometry. The receptive field of U<sub>Local</sub> is three cutoffs, but through NQE every atom also sees two molecule-wide sums per pass.
+          </p>
+        </div>
+        <div class="depth depth-res">
+          <p>
+            NQE is linear in Q with slope f<sub>i</sub>/Σf: a learned, local model of the Fukui function <Cite id="zubatyuk2021nse" locator="Results" />. Where
+            the exact ∂q/∂Q is non-local, between separated fragments, no such local weight can be right, which is the fragment problem above; charge
+            equilibration has its own version of it, fractional charges on separated fragments (<a href="/physics-lab/charge-equilibration/">P8</a>). The
+            l ≤ 1 restriction is cheap and complete enough with three passes in practice; the authors place AIMNet2 nearer fast models such as
+            message-passing Deep Potentials than accuracy-first equivariant ones <Cite id="anstine2025aimnet2" locator="AIMNet2 in the landscape of MLIPs" />.
+            Open-shell species need a second charge channel (α and β), which the NSE variant provides <Cite id="zubatyuk2021nse" locator="Results, Eq. (4)" />.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="out-h">
+      <h2 id="out-h" class="h-section">Outputs</h2>
+      <p>
+        Energy, forces (and stress and Hessians in the code) and atomic partial charges for the given total charge; dipoles follow from the charges.
+        Spin is not an input of the closed-shell models. The charges are fitted to multipoles, not to a population analysis, and none of these
+        outputs is an electronic-structure quantity: no orbital energies, Fermi level or density of states.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="fail-h">
+      <h2 id="fail-h" class="h-section">Where it can fail</h2>
+      <p>
+        <strong>From the architecture.</strong> Charge shared between fragments on separate graphs is decided by fragment sums, not by which fragment
+        holds charge more cheaply, and identical fragments always split Q evenly (Fig. 2) <Cite id="anstine2025aimnet2" locator="AIMNet2 in the landscape of MLIPs" />.
+        A fractional charge is evaluated wherever the network’s E(Q) happens to lie between integers (Fig. 3). Neutral fragments can keep small
+        spurious charges at any distance. The first pass reads only l ≤ 1 angular information (Fig. 1); later passes recover more, but not by
+        construction. Point charges cannot describe anisotropic short-range electrostatics such as σ-holes well, which the authors connect to their
+        largest NCI errors <Cite id="anstine2025aimnet2" locator="General interaction energy benchmarks" />. Spin is outside the closed-shell models.
+      </p>
+      <p>
+        <strong>From a checkpoint.</strong> The released models know 14 elements and were trained on gas-phase molecules and small clusters; the
+        authors warn not to expect condensed-phase accuracy and doubt that their CO₂ result extends to biomacromolecules
+        <Cite id="anstine2025aimnet2" locator="Molecular dynamics" />. Reactions and open-shell species are named as open problems for these models
+        <Cite id="anstine2025aimnet2" locator="Conclusion" />. Charges up to |Q| = 9 were in the training data and the authors saw no trend of error
+        with charge <Cite id="anstine2025aimnet2" locator="General interaction energy benchmarks" />, but fractional charges never were.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="ck-h">
+      <h2 id="ck-h" class="h-section">Checkpoints</h2>
+      <div class="table-wrap">
+        <table class="ck">
+          <thead><tr><th>Checkpoint</th><th>Architecture</th><th>Training data</th><th>Outputs</th><th>Licence</th><th>Weights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>{ck.name}</td>
+              <td>AIMNet2, 3 passes, AIM 256, r<sub>c</sub> {HP.rc} Å; {(ck.parameters?.total ?? 0).toLocaleString('en-GB')} parameters; D3(BJ)</td>
+              <td>{ds.name}, ωB97M/def2-TZVPP (no dispersion in the labels)</td>
+              <td>{ck.outputs.join(', ')}</td>
+              <td>{ck.licence}</td>
+              <td><a href={ck.weights?.url}>{DATA.model.file}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        Each released family has four ensemble members; the figures use member 0. The aimnetcentral README also lists AIMNet2-2025 (B97-3c with
+        improved intermolecular interactions), the original B97-3c model, an open-shell NSE family, a palladium family trained with implicit THF
+        solvent, and a reactive H/C/N/O family for neutral systems; these are not recorded as checkpoint cards here. The
+        <a href="/models/checkpoints/">checkpoints page</a> lists every recorded checkpoint.
+      </p>
+      <Callout kind="note" title="Related families">
+        <a href="/models/long-range/">4G-HDNNP</a> equilibrates charge by solving a linear system with learned electronegativities; LES learns latent
+        charges with no total-charge constraint. <a href="/models/schnet/">SchNet</a> and <a href="/models/m3gnet-chgnet/">M3GNet</a> are invariant message
+        passing without charges. <a href="/models/esen-uma/">UMA</a> takes total charge and spin as inputs for molecules without computing
+        electrostatics. <a href="/models/behler-parrinello/">Behler–Parrinello</a> networks use one network per element, which AIMNet’s element
+        embeddings avoid.
+      </Callout>
+    </section>
+
+    <section class="block" aria-labelledby="res-h">
+      <h2 id="res-h" class="h-section">Resources</h2>
+      <ul>
+        <li>AIMNet2: <Cite id="anstine2025aimnet2" />; the first AIMNet: <Cite id="zubatyuk2019aimnet" />; neural charge (and spin) equilibration: <Cite id="zubatyuk2021nse" />.</li>
+        <li>Dispersion: <Cite id="grimme2010d3" /> and <Cite id="grimme2011bj" />. Fractional charge in exact theory: <Cite id="perdew1982fractional" />.</li>
+        <li>Code and weights: <a href="https://github.com/isayevlab/aimnetcentral">isayevlab/aimnetcentral</a> (MIT; ASE, TorchSim and pysisyphus calculators).</li>
+        <li>Training structures: <a href={ds.url}>{ds.url}</a>.</li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+<style>
+  .model-page {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  .head .eyebrow a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .head h1 {
+    margin-block: 0.6rem 1rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    font: 1.1875rem/1.6 var(--font-serif);
+    color: var(--atlas-ink-muted);
+    max-width: 46rem;
+  }
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .glance > div {
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--atlas-rule);
+    border-radius: 0.55rem;
+    background: var(--atlas-surface);
+  }
+  .glance dt {
+    font: 600 0.7rem var(--font-sans);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--atlas-arch);
+  }
+  .glance dd {
+    margin: 0.2rem 0 0;
+    font: 0.9rem/1.4 var(--font-sans);
+  }
+  .glance a,
+  .block a {
+    color: var(--atlas-arch);
+  }
+  .rule-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font: 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+  }
+  .block {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font: 1.0625rem/1.7 var(--font-serif);
+  }
+  .block p {
+    margin-block: 0 1rem;
+  }
+  .fig-wrap {
+    margin-top: 1.5rem;
+  }
+  .depths {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: end;
+  }
+  .depths input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .depths label {
+    padding: 0.5rem 0.95rem;
+    font: 600 0.85rem var(--font-sans);
+    color: var(--atlas-ink-muted);
+    border-bottom: 2px solid var(--atlas-rule);
+    cursor: pointer;
+  }
+  .depths input:checked + label {
+    color: var(--atlas-ink);
+    border-bottom-color: var(--atlas-arch);
+  }
+  .depths input:focus-visible + label {
+    outline: 2px solid var(--atlas-arch);
+    outline-offset: 2px;
+  }
+  .depth {
+    grid-column: 1 / -1;
+    display: none;
+    padding-top: 1rem;
+    border-top: 1px solid var(--atlas-rule);
+    margin-top: -1px;
+  }
+  #l-int:checked ~ .depth-int,
+  #l-tech:checked ~ .depth-tech,
+  #l-res:checked ~ .depth-res {
+    display: block;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .ck {
+    border-collapse: collapse;
+    font: 0.86rem/1.45 var(--font-sans);
+    min-width: 36rem;
+    width: 100%;
+  }
+  .ck th,
+  .ck td {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    border-bottom: 1px solid var(--atlas-rule);
+  }
+  .ck th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--atlas-ink-faint);
+  }
+  .ck td:first-child {
+    font-weight: 600;
+  }
+  .small {
+    font-size: 0.9rem;
+    color: var(--atlas-ink-muted);
+  }
+</style>

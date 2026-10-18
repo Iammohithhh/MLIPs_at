@@ -1,0 +1,14 @@
+title: 'Density-functional theory for fractional particle number: derivative discontinuities of the energy'
+topic: other
+authors:
+  - 'Perdew, J. P.'
+  - 'Parr, R. G.'
+  - 'Levy, M.'
+  - 'Balduz, J. L.'
+year: 1982
+venue: Physical Review Letters 49, 1691
+type: article
+identifiers:
+  doi: 10.1103/PhysRevLett.49.1691
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Cited for its central result, stated in the abstract: the exact ground-state energy of a system with a fractional average electron number is linear between adjacent integers (an ensemble of the two integer states).' }

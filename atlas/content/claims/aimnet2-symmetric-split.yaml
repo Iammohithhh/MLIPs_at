@@ -1,0 +1,8 @@
+statement: >-
+  For two identical fragments farther apart than the cutoff, every per-fragment sum NQE uses is the same for both, so each
+  receives exactly Q/2 after every pass, whatever the network predicts; the released ωB97M-D3 checkpoint gives 0.5 e on
+  each benzene of (C₆H₆)₂⁺ at every separation from 3.4 to 20 Å.
+grade: THEORY
+derivation: /models/aimnet2/#nqe-derivation
+scope: { model_families: [aimnet2], checkpoints: [aimnet2-wb97m-d3] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'At contact the even split also follows from the stacked dimer''s symmetry. PRECOMPUTED by pipeline/atlas_pipeline/aimnet2.py.' }

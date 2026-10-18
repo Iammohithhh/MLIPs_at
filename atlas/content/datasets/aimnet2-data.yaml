@@ -1,0 +1,16 @@
+name: AIMNet2 training set
+domain: [molecules]
+summary: >-
+  About 2 × 10⁷ neutral and charged molecules and molecular clusters of 14 elements (H, B, C, N, O, F, Si, P, S, Cl,
+  As, Se, Br, I), distilled from about 1.2 × 10⁸ conformers labelled with B97-3c: PubChem and ChEMBL molecules under
+  20 heavy atoms in all realistic tautomers and protonation states, sampled by MD, metadynamics, torsion scans and
+  2–5-molecule clusters, plus ANI-1x, ANI-2x and OrbNet structures. The distilled set was relabelled at ωB97M/def2-TZVPP.
+introduced_in: anstine2025aimnet2
+levels_of_theory: [wb97m-def2tzvpp-aimnet2]
+configuration_types: [md-sampled, active-learning, other]
+size:
+  structures: 20000000
+  approximate: true
+  source: { paper: anstine2025aimnet2, locator: 'Data distillation; Fig. 2' }
+url: https://doi.org/10.1184/R1/27629937.v2
+review: { status: draft, last_checked: 2026-10-18, notes: 'Data availability: the molecular structures are public at the DOI above; licence not checked. Dataset statistics are in the ESI, not read.' }

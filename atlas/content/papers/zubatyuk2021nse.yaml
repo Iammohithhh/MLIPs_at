@@ -1,0 +1,17 @@
+title: 'Teaching a neural network to attach and detach electrons from molecules'
+topic: electrostatics
+authors:
+  - 'Zubatyuk, R.'
+  - 'Smith, J. S.'
+  - 'Nebgen, B. T.'
+  - 'Tretiak, S.'
+  - 'Isayev, O.'
+year: 2021
+venue: Nature Communications 12, 4870
+type: article
+identifiers:
+  doi: 10.1038/s41467-021-24904-0
+edges:
+  - { type: extends, target: zubatyuk2019aimnet, documented: true, note: 'AIMNet-NSE adds total charge and spin as inputs (Results, Fig. 1d).' }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read Results through Eq. (5) and Table 1 (Europe PMC PMC8357920): the NSE unit, Eq. (4), and its weights described as conceptually related to atomic Fukui functions ∂q/∂Q.' }

@@ -1,0 +1,22 @@
+name: AIMNet2
+aliases: [AIMNet2, atoms-in-molecules neural network, AIMNet-NSE]
+paradigms: [invariant-message-passing, long-range]
+introduced_in: anstine2025aimnet2
+year: 2025
+summary: >-
+  An invariant message-passing network for molecules with a total charge as input. Atom features are built from 16
+  Gaussian radial shells inside 5 Å, each with an l = 0 part and an l = 1 part that is squared after a learned mix of
+  shells; element embeddings are 16 × 16 matrices, one row per shell, so no element-specific networks are needed. Three
+  passes refine the features; the first two also predict a charge q̃ and a non-negative weight f per atom, and neural
+  charge equilibration (NQE) spreads the difference between Q and Σq̃ over the atoms in proportion to f. The energy is a
+  local network energy plus a Coulomb sum of those charges plus DFT-D3(BJ) dispersion.
+locality:
+  kind: local-plus-long-range
+  note: 'Features see 5 Å per pass (three passes), plus two molecule-wide sums, Σf and Σq̃, through NQE. Coulomb over all pairs (or a 15 Å damped shifted force sum in MD), its short-range part switched off smoothly inside 4.6 Å; D3 over the whole system or a cutoff.'
+symmetry: invariant
+body_order: 'Pass-0 features are two-body (l = 0) and three-body with cos θ only (the square of an l = 1 sum); higher orders arise through the passes.'
+long_range: explicit-charges
+extends: []
+implementations: [aimnetcentral]
+claims: [aimnet2-energy-terms, aimnet2-features, aimnet2-nqe, aimnet2-first-pass-blind, aimnet2-symmetric-split, aimnet2-dissociation-caveat, aimnet2-fractional-limit, aimnet2-neutral-residual-charge, aimnet2-condensed-caveat, aimnet2-co2-md]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read Anstine et al. 2025 (full text) and Zubatyuk et al. 2021 (Results to Table 1); architecture details from aimnetcentral at commit d1469283 (aev.py, aimnet2.py, ops.py, lr.py, model YAML stored in the released checkpoint).' }

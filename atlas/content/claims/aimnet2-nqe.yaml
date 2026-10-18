@@ -1,0 +1,9 @@
+statement: >-
+  After every charge update AIMNet2 applies neural charge equilibration: q_i = q̃_i + f_i (Q − Σ_j q̃_j) / Σ_j f_j, with non-negative weights f predicted alongside the charges, so the charges add up to the given total charge by construction. The scheme comes from AIMNet-NSE, whose authors relate f to atomic Fukui functions ∂q/∂Q.
+grade: THEORY
+sources:
+  - { paper: anstine2025aimnet2, locator: 'Model design, Eq. (6)' }
+  - { paper: zubatyuk2021nse, locator: 'Results, Eq. (4)' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

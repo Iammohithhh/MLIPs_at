@@ -1,0 +1,7 @@
+name: aimnet (aimnetcentral)
+repo: https://github.com/isayevlab/aimnetcentral
+language: Python
+framework: pytorch
+licence: MIT (LICENSE, copyright 2024 Roman Zubatyuk)
+families: [aimnet2]
+review: { status: draft, last_checked: 2026-10-18, notes: 'Read at commit d14692839f (2026-10-15): aimnet/modules/aev.py (AEVSV, ConvSV), aimnet/models/aimnet2.py, aimnet/ops.py (nse, cutoffs, DSF), aimnet/modules/lr.py (LRCoulomb, SRCoulomb, DFTD3), aimnet/calculators/model_registry.yaml (checkpoints and SHA-256). ASE, TorchSim and pysisyphus calculators; Ewald and PME through nvalchemiops for periodic cells.' }

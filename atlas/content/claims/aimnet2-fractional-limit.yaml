@@ -1,0 +1,12 @@
+statement: >-
+  Pulled apart, (C₆H₆)₂⁺ in the released ωB97M-D3 checkpoint becomes two benzenes of charge +½ whose energies are those
+  of an isolated benzene at Q = ½. The checkpoint's E(Q) for benzene is convex between integers, more than 0.5 eV below
+  the straight line that exact theory requires at Q = ½, so the separated dimer lies more than 1 eV below the model's own
+  C₆H₆⁺ + C₆H₆ limit.
+grade: THEORY
+derivation: /models/aimnet2/#fractional
+sources:
+  - { paper: perdew1982fractional, locator: 'Abstract (linearity of E(N) between integers)' }
+verified_against: abstract
+scope: { model_families: [aimnet2], checkpoints: [aimnet2-wb97m-d3] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'PRECOMPUTED by pipeline/atlas_pipeline/aimnet2.py; thresholds checked in src/lib/models/aimnet2.test.ts. One ensemble member, rigid monomers, no DFT reference computed for the dimer.' }

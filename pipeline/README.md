@@ -70,6 +70,20 @@ curl -L -o NequIP-OAM-S-0.1.nequip.zip https://zenodo.org/records/18775904/files
 ATLAS_NEQUIP_PACKAGE=NequIP-OAM-S-0.1.nequip.zip ../.venv-nequip/bin/python -m pytest -q tests/test_xray_nequip.py
 ```
 
+`aimnet2.py` runs the released AIMNet2 ωB97M-D3 checkpoint (ensemble member 0, MIT; SHA-256 checked against the
+aimnetcentral model registry) with the authors' calculator, writing `atlas/src/data/models/aimnet2.json`: benzene at
+fractional total charge, three dimers pulled apart (charges after each charge-equilibration step, energy split into
+local, Coulomb and D3 terms) and methane twisted from Td to D4h with each pass's convolution features recorded. The
+file is a plain state dict read with `torch.load(weights_only=True)`.
+
+```bash
+python3.12 -m venv ../.venv-aimnet2
+../.venv-aimnet2/bin/pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+../.venv-aimnet2/bin/pip install -r requirements-aimnet2.txt
+curl -L -o aimnet2_wb97m_d3_0.pt https://storage.googleapis.com/aimnetcentral/aimnet2v2/AIMNet2/aimnet2_wb97m_d3_0.pt
+../.venv-aimnet2/bin/python -m atlas_pipeline.aimnet2 aimnet2_wb97m_d3_0.pt ../atlas/src/data/models/aimnet2.json
+```
+
 `xray_les.py` opens MACELES-OFF (MACE + Latent Ewald Summation; les_fit, CC BY-NC 4.0), writing
 `atlas/src/data/xray/maceles-off.json`. The file is checked against the MD5 in the les_fit README, read with the same
 restricted unpickler, rebuilt with `mace-torch` (same environment as `xray.py`) and its two charge readouts loaded

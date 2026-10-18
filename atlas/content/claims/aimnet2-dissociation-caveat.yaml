@@ -1,0 +1,8 @@
+statement: >-
+  The AIMNet2 authors name the dissociation of charged complexes as a limiting case: NQE redistributes charge as a function of learned short-range descriptors, so once non-neutral fragments move beyond the message-passing cutoff without intermediary molecules the lack of communication can yield systematic misprediction.
+grade: THEORY
+sources:
+  - { paper: anstine2025aimnet2, locator: 'AIMNet2 in the landscape of MLIPs' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

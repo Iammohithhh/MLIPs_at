@@ -1,0 +1,8 @@
+statement: >-
+  The AIMNet2 authors stress that users of the pretrained models should not expect the molecular and intermolecular-complex training set to yield accuracy in condensed phases, and that their condensed-phase CO₂ result is unlikely to extend to biomacromolecules.
+grade: THEORY
+sources:
+  - { paper: anstine2025aimnet2, locator: 'Molecular dynamics' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

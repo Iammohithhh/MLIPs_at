@@ -1,0 +1,14 @@
+title: 'Accurate and transferable multitask prediction of chemical properties with an atoms-in-molecules neural network'
+topic: descriptors-locality
+authors:
+  - 'Zubatyuk, R.'
+  - 'Smith, J. S.'
+  - 'Leszczynski, J.'
+  - 'Isayev, O.'
+year: 2019
+venue: Science Advances 5, eaav6490
+type: article
+identifiers:
+  doi: 10.1126/sciadv.aav6490
+verified_against: secondary
+review: { status: draft, last_checked: 2026-10-18, notes: 'Not read directly; described here only as summarised in Zubatyuk et al. 2021 (Results, Eq. 3) and Anstine et al. 2025.' }

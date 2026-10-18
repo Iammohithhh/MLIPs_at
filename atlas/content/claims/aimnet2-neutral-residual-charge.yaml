@@ -1,0 +1,8 @@
+statement: >-
+  For neutral benzene and water pulled 20 Å apart, the released ωB97M-D3 checkpoint still puts a small opposite charge on
+  the two molecules (of order 10⁻³ e), because NQE shares the residual Σq̃ in proportion to each fragment's Σf rather
+  than within each fragment.
+grade: THEORY
+derivation: /models/aimnet2/#nqe-derivation
+scope: { model_families: [aimnet2], checkpoints: [aimnet2-wb97m-d3] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'PRECOMPUTED by pipeline/atlas_pipeline/aimnet2.py.' }

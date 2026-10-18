@@ -1,0 +1,10 @@
+statement: >-
+  In AIMNet2's first pass an atom's features depend on its neighbours only through per-shell sums Σ_j a_j g_s(r_ij) and
+  squared norms of mixed sums Σ_j a_j g_s(r_ij) r̂_ij. Twisting CH₄ from tetrahedral to square planar along the D2d path
+  at fixed C–H length keeps every C–H distance and makes the bond vectors sum to zero throughout, so carbon's
+  first-pass features cannot change; the hydrogens' do, and the second and third passes pass that on. The released
+  ωB97M-D3 checkpoint, run on CPU, shows exactly this.
+grade: THEORY
+derivation: /models/aimnet2/#first-pass
+scope: { model_families: [aimnet2], checkpoints: [aimnet2-wb97m-d3] }
+review: { status: draft, last_checked: 2026-10-18, notes: 'Derivation on the page, tested in src/lib/models/aimnet2.test.ts; the checkpoint run is PRECOMPUTED by pipeline/atlas_pipeline/aimnet2.py (relative change of carbon''s pass-0 convolution features below 1e-6 at every angle).' }

@@ -57,6 +57,155 @@
    ]
   }
  },
+ "anstine2025aimnet2": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2025; fetched [2025]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Anstine, D. M.' vs fetched ['anstine']"
+   }
+  ],
+  "cites": [
+   "batatia2022mace",
+   "batzner2022nequip",
+   "fennell2006dsf",
+   "fu2022forces",
+   "grimme2010d3",
+   "ko2021fourth",
+   "musaelian2023allegro",
+   "podryabinkin2017active",
+   "rappe1991qeq",
+   "zhang2018deepmd",
+   "zubatyuk2019aimnet",
+   "zubatyuk2021nse"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Anstine",
+     "given": "Dylan M."
+    },
+    {
+     "family": "Zubatyuk",
+     "given": "Roman"
+    },
+    {
+     "family": "Isayev",
+     "given": "Olexandr"
+    }
+   ],
+   "container": "Chemical Science",
+   "doi": "10.1039/d4sc08572h",
+   "issue": "23",
+   "page": "10228-10244",
+   "title": "AIMNet2: a neural network potential to meet your neutral, charged, organic, and elemental-organic needs",
+   "type": "journal-article",
+   "volume": "16",
+   "year": 2025
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 203,
+   "id": "W4409919879",
+   "publication_year": 2025,
+   "referenced_works": [
+    "W26088913",
+    "W1970486977",
+    "W1971044734",
+    "W1976848779",
+    "W1992339286",
+    "W2035281018",
+    "W2057477511",
+    "W2068644111",
+    "W2092157292",
+    "W2123306226",
+    "W2124088880",
+    "W2170006871",
+    "W2288881701",
+    "W2319902168",
+    "W2325623133",
+    "W2336270984",
+    "W2418973097",
+    "W2541404351",
+    "W2601081289",
+    "W2742127985",
+    "W2749006386",
+    "W2766033847",
+    "W2769832018",
+    "W2774180927",
+    "W2785813126",
+    "W2786557214",
+    "W2788775653",
+    "W2799620402",
+    "W2884430236",
+    "W2900090807",
+    "W2902287157",
+    "W2904141086",
+    "W2906626571",
+    "W2908510526",
+    "W2910264242",
+    "W2911997094",
+    "W2921963218",
+    "W2923693308",
+    "W2954088480",
+    "W2967766509",
+    "W2968071222",
+    "W2969577483",
+    "W2970971581",
+    "W3009761974",
+    "W3022256936",
+    "W3034390843",
+    "W3041502010",
+    "W3043238520",
+    "W3086372695",
+    "W3087680971",
+    "W3089428833",
+    "W3119329252",
+    "W3124804242",
+    "W3141927472",
+    "W3155265294",
+    "W3159653252",
+    "W3173611413",
+    "W3176463279",
+    "W3192643845",
+    "W3203476487",
+    "W3216896057",
+    "W4206723194",
+    "W4210756221",
+    "W4220694746",
+    "W4220834411",
+    "W4225405705",
+    "W4251861863",
+    "W4282923260",
+    "W4282927906",
+    "W4283021369",
+    "W4293089302",
+    "W4298132949",
+    "W4306313211",
+    "W4307468223",
+    "W4315881290",
+    "W4319162181",
+    "W4321435541",
+    "W4376872830",
+    "W4393973933",
+    "W4401816450",
+    "W4409919879",
+    "W7133187714"
+   ]
+  }
+ },
  "barrosoluque2024omat24": {
   "arxiv": {
    "authors": [
@@ -878,12 +1027,15 @@
    "deng2024softening",
    "drautz2019ace",
    "dusson2022ace",
+   "grimme2010d3",
+   "grimme2011bj",
    "kim2024multifidelity",
    "ko2021fourth",
    "riebesell2023matbench",
    "schutt2018schnet",
    "zhang2024dpa1",
-   "zhang2024dpa2"
+   "zhang2024dpa2",
+   "zubatyuk2019aimnet"
   ],
   "crossref": {
    "article_number": "184110",
@@ -3064,7 +3216,8 @@
    "chen2022m3gnet",
    "fu2022forces",
    "ko2021fourth",
-   "rappe1991qeq"
+   "rappe1991qeq",
+   "zubatyuk2021nse"
   ],
   "crossref": {
    "article_number": null,
@@ -3672,7 +3825,8 @@
   "cites": [
    "batatia2022mace",
    "batzner2022nequip",
-   "ko2021fourth"
+   "ko2021fourth",
+   "zubatyuk2021nse"
   ],
   "crossref": null,
   "fetched": "2026-10-15",
@@ -4446,6 +4600,315 @@
    "referenced_works": []
   }
  },
+ "grimme2010d3": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 0.95 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2010; fetched [2010]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Grimme, S.' vs fetched ['grimme']"
+   }
+  ],
+  "cites": [
+   "jurecka2006s22"
+  ],
+  "crossref": {
+   "article_number": "154104",
+   "authors": [
+    {
+     "family": "Grimme",
+     "given": "Stefan"
+    },
+    {
+     "family": "Antony",
+     "given": "Jens"
+    },
+    {
+     "family": "Ehrlich",
+     "given": "Stephan"
+    },
+    {
+     "family": "Krieg",
+     "given": "Helge"
+    }
+   ],
+   "container": "The Journal of Chemical Physics",
+   "doi": "10.1063/1.3382344",
+   "issue": "15",
+   "page": null,
+   "title": "A consistent and accurate\n                    <i>ab initio</i>\n                    parametrization of density functional dispersion correction (DFT-D) for the 94 elements H-Pu",
+   "type": "journal-article",
+   "volume": "132",
+   "year": 2010
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 59303,
+   "id": "W2092157292",
+   "publication_year": 2010,
+   "referenced_works": [
+    "W28713913",
+    "W1496557724",
+    "W1525180030",
+    "W1538688817",
+    "W1966400780",
+    "W1967411343",
+    "W1969642746",
+    "W1970607338",
+    "W1970835510",
+    "W1971803965",
+    "W1973025455",
+    "W1973590575",
+    "W1974431983",
+    "W1978849007",
+    "W1979852875",
+    "W1980299655",
+    "W1981049088",
+    "W1981368803",
+    "W1981607309",
+    "W1981807278",
+    "W1983656816",
+    "W1986518757",
+    "W1986606172",
+    "W1988091937",
+    "W1988978400",
+    "W1989106520",
+    "W1989224265",
+    "W1990262261",
+    "W1993397673",
+    "W1993988797",
+    "W1994120367",
+    "W1995792670",
+    "W1998613997",
+    "W1999602691",
+    "W2001014236",
+    "W2003286577",
+    "W2005236112",
+    "W2005446238",
+    "W2006448954",
+    "W2008423326",
+    "W2012326992",
+    "W2013059500",
+    "W2015794382",
+    "W2017356628",
+    "W2018181242",
+    "W2020753702",
+    "W2021154578",
+    "W2021767732",
+    "W2023271753",
+    "W2028117546",
+    "W2028993363",
+    "W2030686702",
+    "W2030687437",
+    "W2032719166",
+    "W2033121558",
+    "W2034465848",
+    "W2037210960",
+    "W2037238822",
+    "W2038305447",
+    "W2039305094",
+    "W2042796027",
+    "W2044591029",
+    "W2047524879",
+    "W2049299338",
+    "W2050480585",
+    "W2051245001",
+    "W2053415214",
+    "W2054910013",
+    "W2056392825",
+    "W2056871520",
+    "W2058210956",
+    "W2059009347",
+    "W2059885388",
+    "W2060079271",
+    "W2060491737",
+    "W2060718226",
+    "W2063482580",
+    "W2063795972",
+    "W2064142965",
+    "W2069080629",
+    "W2072754743",
+    "W2079595805",
+    "W2080709819",
+    "W2080864929",
+    "W2081939952",
+    "W2082037815",
+    "W2082691688",
+    "W2085336624",
+    "W2085765296",
+    "W2086497428",
+    "W2086821139",
+    "W2086957099",
+    "W2089519452",
+    "W2092157292",
+    "W2095100262",
+    "W2098985212",
+    "W2101081751",
+    "W2102807619",
+    "W2104873860",
+    "W2104904880",
+    "W2106784956",
+    "W2111004309",
+    "W2113382674",
+    "W2126383912",
+    "W2140886907",
+    "W2143729010",
+    "W2143981217",
+    "W2148284063",
+    "W2150126440",
+    "W2158043072",
+    "W2158340988",
+    "W2160144694",
+    "W2160923526",
+    "W2335051141",
+    "W2768565525",
+    "W3036723969",
+    "W3141601914",
+    "W4233978735",
+    "W4299159409",
+    "W6940666869"
+   ]
+  }
+ },
+ "grimme2011bj": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2011; fetched [2011]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Grimme, S.' vs fetched ['grimme']"
+   }
+  ],
+  "cites": [
+   "grimme2010d3",
+   "jurecka2006s22"
+  ],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Grimme",
+     "given": "Stefan"
+    },
+    {
+     "family": "Ehrlich",
+     "given": "Stephan"
+    },
+    {
+     "family": "Goerigk",
+     "given": "Lars"
+    }
+   ],
+   "container": "Journal of Computational Chemistry",
+   "doi": "10.1002/jcc.21759",
+   "issue": "7",
+   "page": "1456-1465",
+   "title": "Effect of the damping function in dispersion corrected density functional theory",
+   "type": "journal-article",
+   "volume": "32",
+   "year": 2011
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 27949,
+   "id": "W2096747776",
+   "publication_year": 2011,
+   "referenced_works": [
+    "W28713913",
+    "W1538688817",
+    "W1645719784",
+    "W1965919971",
+    "W1967411343",
+    "W1971803965",
+    "W1976011815",
+    "W1978320514",
+    "W1978849007",
+    "W1981368803",
+    "W1983729784",
+    "W1984318783",
+    "W1988091937",
+    "W1988343953",
+    "W1988807091",
+    "W1989224265",
+    "W1993397673",
+    "W1995792670",
+    "W1998999462",
+    "W2002322198",
+    "W2003193361",
+    "W2003286577",
+    "W2008423326",
+    "W2012326992",
+    "W2016403501",
+    "W2016800344",
+    "W2018471238",
+    "W2023271753",
+    "W2026645533",
+    "W2028117546",
+    "W2028993363",
+    "W2030687437",
+    "W2032719166",
+    "W2034465848",
+    "W2037210960",
+    "W2038305447",
+    "W2044059202",
+    "W2044591029",
+    "W2047524879",
+    "W2049027055",
+    "W2050480585",
+    "W2051065931",
+    "W2051771360",
+    "W2052497365",
+    "W2059885388",
+    "W2060079271",
+    "W2064142965",
+    "W2064798852",
+    "W2068918072",
+    "W2080709819",
+    "W2080864929",
+    "W2082691688",
+    "W2086957099",
+    "W2087551601",
+    "W2092157292",
+    "W2095100262",
+    "W2104873860",
+    "W2107254944",
+    "W2119547517",
+    "W2124337921",
+    "W2140886907",
+    "W2143981217",
+    "W2147032026",
+    "W2148284063",
+    "W2155557654",
+    "W2158043072",
+    "W2167872912",
+    "W2322605627",
+    "W2335051141",
+    "W3036723969",
+    "W4233978735",
+    "W4388225008"
+   ]
+  }
+ },
  "guo2026alkali": {
   "arxiv": {
    "authors": [
@@ -5108,6 +5571,7 @@
    }
   ],
   "cites": [
+   "anstine2025aimnet2",
    "barrosoluque2024omat24",
    "bartok2010gap",
    "batzner2022nequip",
@@ -5302,6 +5766,7 @@
    "dusson2022ace",
    "eastman2022spice",
    "gonze1997dfpt",
+   "grimme2010d3",
    "ko2021fourth",
    "pozdnyakov2020completeness",
    "prodan2005nearsightedness",
@@ -5454,7 +5919,8 @@
    "prodan2005nearsightedness",
    "rappe1991qeq",
    "schutt2018schnet",
-   "shapeev2016mtp"
+   "shapeev2016mtp",
+   "zubatyuk2021nse"
   ],
   "crossref": {
    "article_number": "398",
@@ -6901,6 +7367,80 @@
    "id": "W4319653980",
    "publication_year": 2023,
    "referenced_works": []
+  }
+ },
+ "perdew1982fractional": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 1982; fetched [1982]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Perdew, J. P.' vs fetched ['perdew']"
+   }
+  ],
+  "cites": [],
+  "crossref": {
+   "article_number": null,
+   "authors": [
+    {
+     "family": "Perdew",
+     "given": "John P."
+    },
+    {
+     "family": "Parr",
+     "given": "Robert G."
+    },
+    {
+     "family": "Levy",
+     "given": "Mel"
+    },
+    {
+     "family": "Balduz",
+     "given": "Jose L."
+    }
+   ],
+   "container": "Physical Review Letters",
+   "doi": "10.1103/physrevlett.49.1691",
+   "issue": "23",
+   "page": "1691-1694",
+   "title": "Density-Functional Theory for Fractional Particle Number: Derivative Discontinuities of the Energy",
+   "type": "journal-article",
+   "volume": "49",
+   "year": 1982
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 3021,
+   "id": "W2086458318",
+   "publication_year": 1982,
+   "referenced_works": [
+    "W285749399",
+    "W1969375919",
+    "W1969560561",
+    "W1973651700",
+    "W1975919191",
+    "W1976195084",
+    "W1976803937",
+    "W1978365214",
+    "W1985010001",
+    "W2004354241",
+    "W2033618515",
+    "W2044202126",
+    "W2052637367",
+    "W2145491862",
+    "W2230728100",
+    "W2329717581"
+   ]
   }
  },
  "perdew2001ladder": {
@@ -8710,6 +9250,8 @@
    }
   ],
   "cites": [
+   "grimme2010d3",
+   "grimme2011bj",
    "jurecka2006s22",
    "perdew2001ladder"
   ],
@@ -10304,6 +10846,260 @@
     "W6600310979",
     "W6601361027",
     "W6810461179"
+   ]
+  }
+ },
+ "zubatyuk2019aimnet": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2019; fetched [2019]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zubatyuk, R.' vs fetched ['zubatyuk']"
+   }
+  ],
+  "cites": [
+   "behler2007generalized",
+   "podryabinkin2017active",
+   "schutt2018schnet"
+  ],
+  "crossref": {
+   "article_number": "eaav6490",
+   "authors": [
+    {
+     "family": "Zubatyuk",
+     "given": "Roman"
+    },
+    {
+     "family": "Smith",
+     "given": "Justin S."
+    },
+    {
+     "family": "Leszczynski",
+     "given": "Jerzy"
+    },
+    {
+     "family": "Isayev",
+     "given": "Olexandr"
+    }
+   ],
+   "container": "Science Advances",
+   "doi": "10.1126/sciadv.aav6490",
+   "issue": "8",
+   "page": null,
+   "title": "Accurate and transferable multitask prediction of chemical properties with an atoms-in-molecules neural network",
+   "type": "journal-article",
+   "volume": "5",
+   "year": 2019
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 276,
+   "id": "W2967766509",
+   "publication_year": 2019,
+   "referenced_works": [
+    "W1480711868",
+    "W1597773817",
+    "W1821012066",
+    "W2004575088",
+    "W2025444507",
+    "W2067718414",
+    "W2104489082",
+    "W2124088880",
+    "W2166459269",
+    "W2184188583",
+    "W2288881701",
+    "W2461093577",
+    "W2541404351",
+    "W2585152223",
+    "W2598115655",
+    "W2613477619",
+    "W2614157797",
+    "W2619383789",
+    "W2746244909",
+    "W2747592475",
+    "W2749006386",
+    "W2768213699",
+    "W2778051509",
+    "W2785813126",
+    "W2786308452",
+    "W2788703071",
+    "W2798405286",
+    "W2806843381",
+    "W2807356792",
+    "W2883583109",
+    "W2884430236",
+    "W2884817966",
+    "W2885190592",
+    "W2889667424",
+    "W2913340405",
+    "W2954088480",
+    "W3099937095",
+    "W4388166534"
+   ]
+  }
+ },
+ "zubatyuk2021nse": {
+  "arxiv": null,
+  "checks": [
+   {
+    "field": "title",
+    "level": "ok",
+    "message": "title similarity 1.00 to the fetched record(s)"
+   },
+   {
+    "field": "year",
+    "level": "ok",
+    "message": "record year 2021; fetched [2021]"
+   },
+   {
+    "field": "authors",
+    "level": "ok",
+    "message": "first author 'Zubatyuk, R.' vs fetched ['zubatyuk']"
+   }
+  ],
+  "cites": [
+   "bartok2010gap",
+   "behler2007generalized",
+   "ko2021fourth",
+   "podryabinkin2017active",
+   "rappe1991qeq",
+   "schutt2018schnet",
+   "zubatyuk2019aimnet"
+  ],
+  "crossref": {
+   "article_number": "4870",
+   "authors": [
+    {
+     "family": "Zubatyuk",
+     "given": "Roman"
+    },
+    {
+     "family": "Smith",
+     "given": "Justin S."
+    },
+    {
+     "family": "Nebgen",
+     "given": "Benjamin T."
+    },
+    {
+     "family": "Tretiak",
+     "given": "Sergei"
+    },
+    {
+     "family": "Isayev",
+     "given": "Olexandr"
+    }
+   ],
+   "container": "Nature Communications",
+   "doi": "10.1038/s41467-021-24904-0",
+   "issue": "1",
+   "page": null,
+   "title": "Teaching a neural network to attach and detach electrons from molecules",
+   "type": "journal-article",
+   "volume": "12",
+   "year": 2021
+  },
+  "fetched": "2026-10-18",
+  "openalex": {
+   "cited_by_count": 126,
+   "id": "W3155265294",
+   "publication_year": 2021,
+   "referenced_works": [
+    "W1513819669",
+    "W1596185547",
+    "W1966651458",
+    "W1985294501",
+    "W1988115241",
+    "W1998260904",
+    "W2009458392",
+    "W2017541734",
+    "W2025444507",
+    "W2033206800",
+    "W2041796969",
+    "W2041841367",
+    "W2055830186",
+    "W2060943125",
+    "W2067718414",
+    "W2069610895",
+    "W2076063813",
+    "W2080635178",
+    "W2082707682",
+    "W2083415705",
+    "W2095269805",
+    "W2101958915",
+    "W2104489082",
+    "W2114500691",
+    "W2123137812",
+    "W2124088880",
+    "W2128332443",
+    "W2129370330",
+    "W2150114669",
+    "W2155478691",
+    "W2166459269",
+    "W2170006871",
+    "W2325623133",
+    "W2337496963",
+    "W2461093577",
+    "W2527189750",
+    "W2541404351",
+    "W2585152223",
+    "W2593724699",
+    "W2611593721",
+    "W2614323262",
+    "W2620687153",
+    "W2749006386",
+    "W2761704992",
+    "W2763817162",
+    "W2764267192",
+    "W2768213699",
+    "W2778051509",
+    "W2785813126",
+    "W2786557214",
+    "W2788873578",
+    "W2811321906",
+    "W2884430236",
+    "W2884817966",
+    "W2885841934",
+    "W2885918708",
+    "W2887143277",
+    "W2889632381",
+    "W2896916724",
+    "W2900090807",
+    "W2900369799",
+    "W2901313308",
+    "W2904552344",
+    "W2911997094",
+    "W2919115771",
+    "W2923693308",
+    "W2954088480",
+    "W2959165901",
+    "W2967766509",
+    "W2970971581",
+    "W2994297759",
+    "W3003486042",
+    "W3006607755",
+    "W3010488723",
+    "W3012519883",
+    "W3015093215",
+    "W3021480024",
+    "W3022256936",
+    "W3033241142",
+    "W3034390843",
+    "W3086372695",
+    "W3102449990",
+    "W4243760158",
+    "W6606450621"
    ]
   }
  },

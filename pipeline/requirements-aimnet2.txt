@@ -1,0 +1,7 @@
+# AIMNet2 precompute (CPU). Torch from the CPU index first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+# then the authors' package at the commit read for the Atlas (pulls warp-lang and nvalchemi-toolkit-ops; both run on CPU):
+aimnet @ git+https://github.com/isayevlab/aimnetcentral@d14692839f4e5544f4eb38c15cf01298c27960f8
+torch==2.14.1
+ase==3.29.0
+pytest==9.1.1

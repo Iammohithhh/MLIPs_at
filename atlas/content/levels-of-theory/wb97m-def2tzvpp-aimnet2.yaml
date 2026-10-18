@@ -1,0 +1,8 @@
+name: ωB97M / def2-TZVPP (D3(BJ) added in the model)
+method: hybrid-DFT
+functional: ωB97M
+basis: def2-TZVPP
+dispersion: 'None in the training labels; two-body DFT-D3(BJ) with ωB97M parameters added by the model'
+codes: [ORCA 5]
+notes: 'AIMNet2 labels: computed with ORCA 5 and used without dispersion; the released models add D3(BJ) (s8 = 0.3908, a1 = 0.566, a2 = 3.128, stored in the checkpoint). Anstine et al. 2025, Data distillation and Methods.'
+review: { status: draft, last_checked: 2026-10-18 }

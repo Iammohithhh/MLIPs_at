@@ -1,0 +1,8 @@
+statement: >-
+  AIMNet2 builds atom features from 16 Gaussian radial basis functions with a cosine cutoff at 5 Å, combined with learned 16 × 16 element embeddings, using harmonics with l = 0 and l = 1 only; the l = 1 part is mixed over shells by a learned linear map and reduced by a vector norm. From the second pass on, the charges enter through the same convolution.
+grade: THEORY
+sources:
+  - { paper: anstine2025aimnet2, locator: 'Model design, Eqs. (2)–(5)' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Equations are images in the copy read; checked against aimnetcentral (aev.py: Gaussian shifts from 0.8 Å to r_c, η from the spacing; ConvSV).' }

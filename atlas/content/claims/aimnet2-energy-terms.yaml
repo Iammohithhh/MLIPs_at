@@ -1,0 +1,8 @@
+statement: >-
+  AIMNet2 writes the total energy as U_local + U_disp + U_Coul: a learned local term from features inside a 5 Å cutoff, an explicit DFT-D3 dispersion correction and the electrostatics of atom-centred point charges, the last two computed for the whole system or with a cutoff such as 15 Å.
+grade: THEORY
+sources:
+  - { paper: anstine2025aimnet2, locator: 'Model design, Eq. (1)' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18 }

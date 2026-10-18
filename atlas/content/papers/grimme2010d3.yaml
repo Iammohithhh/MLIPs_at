@@ -1,0 +1,14 @@
+title: 'A consistent and accurate ab initio parametrization of density functional dispersion correction (DFT-D) for the 94 elements H-Pu'
+topic: other
+authors:
+  - 'Grimme, S.'
+  - 'Antony, J.'
+  - 'Ehrlich, S.'
+  - 'Krieg, H.'
+year: 2010
+venue: The Journal of Chemical Physics 132, 154104
+type: article
+identifiers:
+  doi: 10.1063/1.3382344
+verified_against: abstract
+review: { status: draft, last_checked: 2026-10-18, notes: 'Cited only as the origin of DFT-D3; the AIMNet2 implementation and parameters were read in aimnetcentral.' }

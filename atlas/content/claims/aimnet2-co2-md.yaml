@@ -1,0 +1,10 @@
+statement: >-
+  A pretrained AIMNet2 model ran 2.5 ns of NVT molecular dynamics of 1000 CO₂ molecules at 298 K without instability or
+  broken molecules; its self-diffusion coefficient underestimated the interpolated experimental value,
+  by a factor comparable to the underestimates of CO₂-specific Deep Potential models.
+grade: PUBLISHED_RESULT
+sources:
+  - { paper: anstine2025aimnet2, locator: 'Molecular dynamics; Fig. 7; Methods, MD simulations' }
+scope: { model_families: [aimnet2] }
+verified_against: full-text
+review: { status: draft, last_checked: 2026-10-18, notes: 'Values printed in the text. Electrostatics by damped shifted force over 15 Å.' }
