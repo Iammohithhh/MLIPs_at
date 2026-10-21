@@ -1,0 +1,8 @@
+node_modules
+dist
+.astro
+test-results
+playwright-report
+recordings
+pipeline/.venv
+pipeline/**/__pycache__
